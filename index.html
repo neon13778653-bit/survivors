@@ -1,11 +1,303 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Тест</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Survivors MVP</title>
+<style>
+html,body{margin:0;height:100%;background:#0b0d12;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;font-family:system-ui,sans-serif;color:#f3f4f6}
+canvas{position:fixed;inset:0;width:100%;height:100%}
+#ui{position:fixed;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:10px;background:rgba(8,10,16,.82);text-align:center;padding:16px;box-sizing:border-box;overflow:auto}
+h1,h2,p{margin:4px 0}
+button{font:600 17px system-ui,sans-serif;padding:13px 18px;border:0;border-radius:8px;background:#e8772e;color:#fff;min-width:260px;max-width:92vw}
+button.alt{background:#2b3140}
+button:disabled{opacity:.35}
+button small{font-weight:400;color:#d1d5db}
+</style>
 </head>
-<body style="background:#111;color:#fff;font-family:sans-serif;text-align:center;padding-top:30vh">
-  <h1>Игра скоро будет здесь!</h1>
+<body>
+<canvas id="c"></canvas>
+<div id="ui"></div>
+<script>
+// ===== БАЛАНС: друг правит ТОЛЬКО этот блок =====
+const CONFIG={
+  player:{hp:100,speed:150,pickup:50},
+  weapon:{damage:10,cooldown:0.7,projectiles:1,speed:380,range:420},
+  enemies:{ // from = с какой секунды появляется, weight = как часто
+    slime:{hp:12,speed:45,damage:6,xp:1,r:11,color:'#4ade80',weight:10,from:0},
+    skeleton:{hp:28,speed:60,damage:9,xp:3,r:12,color:'#e5e7eb',weight:4,from:60},
+    ghost:{hp:18,speed:85,damage:7,xp:2,r:10,color:'#93c5fd',weight:3,from:120}
+  },
+  waves:{interval:0.9,minInterval:0.12,decayPerMin:0.75,hpPerMin:0.35,maxEnemies:350},
+  level:{base:5,growth:1.35},
+  meta:{hpStep:0.1,pickStep:0.15,hpCost:20,pickCost:15,costGrowth:1.6}
+};
+// ===== ЗАГЛУШКИ ПЛОЩАДКИ (потом заменить на SDK портала) =====
+const Platform={rewarded:cb=>cb(true),interstitial:()=>{}};
+
+const ABILITIES=[
+  {name:'+1 снаряд',desc:'Больше снарядов за выстрел',max:5,apply:p=>p.proj++},
+  {name:'Скорострельность',desc:'Перезарядка короче на 15%',apply:p=>p.cool*=.85},
+  {name:'Сила удара',desc:'+30% урона',apply:p=>p.dmg*=1.3},
+  {name:'Пробивание',desc:'Снаряд пробивает ещё 1 врага',max:4,apply:p=>p.pierce++},
+  {name:'Быстрый бег',desc:'+15% скорости',max:5,apply:p=>p.speed*=1.15},
+  {name:'Магнит',desc:'+40% радиус сбора',apply:p=>p.pickup*=1.4},
+  {name:'Огненный щит',desc:'+1 шар крутится вокруг героя',max:6,apply:p=>p.orbs++},
+  {name:'Цепная молния',desc:'Молния бьёт цепочкой врагов',max:5,apply:p=>p.chain++},
+  {name:'Вампиризм',desc:'+0.5 HP за каждое убийство',max:5,apply:p=>p.vamp+=.5},
+  {name:'Крепкое тело',desc:'+25 макс. HP и лечение',apply:p=>{p.maxHp+=25;p.hp=Math.min(p.maxHp,p.hp+25)}}
+];
+
+const cv=document.getElementById('c'),cx=cv.getContext('2d'),ui=document.getElementById('ui');
+let W,H,G=null;
+function resize(){const d=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*d;cv.height=H*d;cx.setTransform(d,0,0,d,0,0)}
+addEventListener('resize',resize);resize();
+
+// ===== сохранение =====
+let save={gold:0,hpLv:0,pickLv:0};
+try{Object.assign(save,JSON.parse(localStorage.getItem('surv_save')||'{}'))}catch(e){}
+function persist(){try{localStorage.setItem('surv_save',JSON.stringify(save))}catch(e){}}
+
+// ===== ввод: WASD/стрелки и плавающий джойстик =====
+const keys={};
+addEventListener('keydown',e=>keys[e.code]=1);
+addEventListener('keyup',e=>keys[e.code]=0);
+const joy={on:false,id:-1,ox:0,oy:0,x:0,y:0};
+cv.addEventListener('pointerdown',e=>{joy.on=true;joy.id=e.pointerId;joy.ox=joy.x=e.clientX;joy.oy=joy.y=e.clientY;cv.setPointerCapture(e.pointerId)});
+cv.addEventListener('pointermove',e=>{if(e.pointerId===joy.id){joy.x=e.clientX;joy.y=e.clientY}});
+const joyEnd=e=>{if(e.pointerId===joy.id){joy.on=false;joy.id=-1}};
+cv.addEventListener('pointerup',joyEnd);cv.addEventListener('pointercancel',joyEnd);
+function moveVec(){
+  let x=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0);
+  let y=(keys.KeyS||keys.ArrowDown?1:0)-(keys.KeyW||keys.ArrowUp?1:0);
+  if(joy.on){const dx=joy.x-joy.ox,dy=joy.y-joy.oy,d=Math.hypot(dx,dy);if(d>8){const k=Math.min(d,60)/60;x=dx/d*k;y=dy/d*k}}
+  const m=Math.hypot(x,y);if(m>1){x/=m;y/=m}
+  return[x,y];
+}
+
+// ===== игра =====
+function start(){
+  const hp=CONFIG.player.hp*(1+CONFIG.meta.hpStep*save.hpLv);
+  G={t:0,run:true,pause:false,kills:0,lvl:1,xp:0,need:CONFIG.level.base,spawn:0,
+    enemies:[],shots:[],gems:[],fx:[],revived:false,banked:0,doubled:false,
+    p:{x:0,y:0,r:10,maxHp:hp,hp:hp,speed:CONFIG.player.speed,
+      pickup:CONFIG.player.pickup*(1+CONFIG.meta.pickStep*save.pickLv),
+      dmg:CONFIG.weapon.damage,cool:CONFIG.weapon.cooldown,proj:CONFIG.weapon.projectiles,
+      pierce:0,orbs:0,orbA:0,chain:0,vamp:0,cd:0,chainCd:0,inv:0,got:{}}};
+  ui.style.display='none';
+}
+function spawn(){
+  if(G.enemies.length>=CONFIG.waves.maxEnemies)return;
+  let tot=0;const list=[];
+  for(const k in CONFIG.enemies){const c=CONFIG.enemies[k];if(G.t>=c.from){list.push(c);tot+=c.weight}}
+  let r=Math.random()*tot,c=list[0];
+  for(const q of list){if((r-=q.weight)<0){c=q;break}}
+  const a=Math.random()*6.283,d=Math.max(W,H)*.6+20,m=1+CONFIG.waves.hpPerMin*G.t/60;
+  G.enemies.push({x:G.p.x+Math.cos(a)*d,y:G.p.y+Math.sin(a)*d,hp:c.hp*m,c:c,oh:0,fl:0,dead:false});
+}
+function nearest(x,y,maxD,used){
+  let b=null,bd=maxD*maxD;
+  for(const e of G.enemies){if(e.dead||(used&&used.includes(e)))continue;const d=(e.x-x)**2+(e.y-y)**2;if(d<bd){bd=d;b=e}}
+  return b;
+}
+function hurt(e,d){
+  if(e.dead)return;
+  e.hp-=d;e.fl=.08;
+  if(e.hp<=0){
+    e.dead=true;G.kills++;G.gems.push({x:e.x,y:e.y,v:e.c.xp,mag:false});
+    const p=G.p;if(p.vamp)p.hp=Math.min(p.maxHp,p.hp+p.vamp);
+    for(let i=0;i<5;i++)G.fx.push({x:e.x,y:e.y,vx:(Math.random()-.5)*180,vy:(Math.random()-.5)*180,l:.4,col:e.c.color});
+  }
+}
+function update(dt){
+  const g=G,p=g.p;g.t+=dt;
+  const[mx,my]=moveVec();p.x+=mx*p.speed*dt;p.y+=my*p.speed*dt;
+  if(p.inv>0)p.inv-=dt;
+
+  // волны
+  g.spawn-=dt;
+  const iv=Math.max(CONFIG.waves.minInterval,CONFIG.waves.interval*Math.pow(CONFIG.waves.decayPerMin,g.t/60));
+  const n=1+Math.floor(g.t/90);
+  while(g.spawn<=0){for(let i=0;i<n;i++)spawn();g.spawn+=iv}
+
+  // враги
+  for(const e of g.enemies){
+    const dx=p.x-e.x,dy=p.y-e.y,d=Math.hypot(dx,dy)||1;
+    e.x+=dx/d*e.c.speed*dt;e.y+=dy/d*e.c.speed*dt;
+    if(e.fl>0)e.fl-=dt;if(e.oh>0)e.oh-=dt;
+    if(d<p.r+e.c.r&&p.inv<=0){p.hp-=e.c.damage;p.inv=.4}
+  }
+
+  // автострельба
+  p.cd-=dt;
+  if(p.cd<=0){
+    const t=nearest(p.x,p.y,CONFIG.weapon.range);
+    if(t){
+      const a0=Math.atan2(t.y-p.y,t.x-p.x),sp=CONFIG.weapon.speed;
+      for(let i=0;i<p.proj;i++){
+        const a=a0+(i-(p.proj-1)/2)*.2;
+        g.shots.push({x:p.x,y:p.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,l:1.2,dmg:p.dmg,pr:p.pierce,hit:[]});
+      }
+      p.cd=p.cool;
+    }else p.cd=.1;
+  }
+  for(let i=g.shots.length-1;i>=0;i--){
+    const s=g.shots[i];s.x+=s.vx*dt;s.y+=s.vy*dt;s.l-=dt;
+    let rm=s.l<=0;
+    if(!rm)for(const e of g.enemies){
+      if(e.dead||s.hit.includes(e))continue;
+      const r=e.c.r+4;
+      if((e.x-s.x)**2+(e.y-s.y)**2<r*r){hurt(e,s.dmg);s.hit.push(e);if(s.pr--<=0){rm=true;break}}
+    }
+    if(rm){g.shots[i]=g.shots[g.shots.length-1];g.shots.pop()}
+  }
+
+  // огненный щит
+  if(p.orbs){
+    p.orbA+=dt*3;
+    for(let k=0;k<p.orbs;k++){
+      const a=p.orbA+k*6.283/p.orbs,ox=p.x+Math.cos(a)*60,oy=p.y+Math.sin(a)*60;
+      for(const e of g.enemies){
+        if(e.dead||e.oh>0)continue;
+        const r=e.c.r+7;
+        if((e.x-ox)**2+(e.y-oy)**2<r*r){hurt(e,p.dmg*.7);e.oh=.35}
+      }
+    }
+  }
+
+  // цепная молния
+  if(p.chain){
+    p.chainCd-=dt;
+    if(p.chainCd<=0){
+      p.chainCd=2.2;
+      let cur={x:p.x,y:p.y};const used=[];
+      for(let j=0;j<2+p.chain*2;j++){
+        const e=nearest(cur.x,cur.y,j?160:300,used);if(!e)break;
+        used.push(e);hurt(e,p.dmg*1.5);
+        g.fx.push({ln:1,x:cur.x,y:cur.y,x2:e.x,y2:e.y,l:.15});
+        cur=e;
+      }
+    }
+  }
+
+  // кристаллы опыта
+  for(let i=g.gems.length-1;i>=0;i--){
+    const m=g.gems[i],dx=p.x-m.x,dy=p.y-m.y,d=Math.hypot(dx,dy)||1;
+    if(d<p.pickup)m.mag=true;
+    if(m.mag){m.x+=dx/d*340*dt;m.y+=dy/d*340*dt}
+    if(d<p.r+6){g.xp+=m.v;g.gems[i]=g.gems[g.gems.length-1];g.gems.pop()}
+  }
+
+  // чистка мёртвых и эффекты
+  for(let i=g.enemies.length-1;i>=0;i--)if(g.enemies[i].dead){g.enemies[i]=g.enemies[g.enemies.length-1];g.enemies.pop()}
+  for(let i=g.fx.length-1;i>=0;i--){
+    const f=g.fx[i];f.l-=dt;
+    if(!f.ln){f.x+=f.vx*dt;f.y+=f.vy*dt}
+    if(f.l<=0){g.fx[i]=g.fx[g.fx.length-1];g.fx.pop()}
+  }
+
+  if(g.xp>=g.need){g.xp-=g.need;g.lvl++;g.need=Math.ceil(g.need*CONFIG.level.growth)+1;levelUp()}
+  if(p.hp<=0)die();
+}
+
+// ===== окна =====
+function fmt(t){t|=0;return(t/60|0)+':'+String(t%60).padStart(2,'0')}
+function levelUp(){
+  G.pause=true;
+  const pool=ABILITIES.filter(a=>(G.p.got[a.name]||0)<(a.max||99)),ch=[];
+  while(ch.length<3&&pool.length)ch.push(pool.splice(Math.random()*pool.length|0,1)[0]);
+  ui.innerHTML='<h2>Уровень '+G.lvl+'</h2><p>Выберите способность</p>'+
+    ch.map((a,i)=>'<button data-i="'+i+'">'+a.name+'<br><small>'+a.desc+'</small></button>').join('');
+  ui.style.display='flex';
+  ui.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    const a=ch[b.dataset.i];a.apply(G.p);G.p.got[a.name]=(G.p.got[a.name]||0)+1;
+    ui.style.display='none';G.pause=false;
+  });
+}
+function die(){
+  G.run=false;
+  G.gold=Math.floor(G.kills*.5+G.t/6);
+  G.banked=G.gold;save.gold+=G.gold;persist();
+  showOver();
+}
+function showOver(){
+  const g=G;
+  ui.innerHTML='<h2>Вы погибли</h2><p>Время '+fmt(g.t)+', убийств '+g.kills+', уровень '+g.lvl+'<br>Золото за забег: <b>'+g.banked+'</b></p>'+
+    (!g.revived?'<button id="rv">Воскреснуть (реклама)</button>':'')+
+    (!g.doubled?'<button id="x2" class="alt">Золото ×2 (реклама)</button>':'')+
+    '<button id="mn">В меню</button>';
+  ui.style.display='flex';
+  const rv=document.getElementById('rv'),x2=document.getElementById('x2');
+  if(rv)rv.onclick=()=>Platform.rewarded(ok=>{
+    if(!ok)return;
+    save.gold-=g.banked;g.banked=0;g.doubled=false;persist();
+    g.revived=true;g.p.hp=g.p.maxHp*.5;g.p.inv=2;
+    g.enemies=g.enemies.filter(e=>(e.x-g.p.x)**2+(e.y-g.p.y)**2>250*250);
+    g.run=true;ui.style.display='none';
+  });
+  if(x2)x2.onclick=()=>Platform.rewarded(ok=>{
+    if(!ok)return;
+    save.gold+=g.banked;g.banked*=2;g.doubled=true;persist();showOver();
+  });
+  document.getElementById('mn').onclick=()=>{Platform.interstitial();G=null;showMenu()};
+}
+function cost(base,lv){return Math.floor(base*Math.pow(CONFIG.meta.costGrowth,lv))}
+function showMenu(){
+  const ch=cost(CONFIG.meta.hpCost,save.hpLv),cp=cost(CONFIG.meta.pickCost,save.pickLv);
+  ui.innerHTML='<h1>Survivors</h1><p>Золото: <b>'+save.gold+'</b></p>'+
+    '<button id="pl">Играть</button>'+
+    '<button id="bh" class="alt" '+(save.gold<ch?'disabled':'')+'>+10% здоровья, ур. '+save.hpLv+'<br><small>Цена: '+ch+'</small></button>'+
+    '<button id="bp" class="alt" '+(save.gold<cp?'disabled':'')+'>+15% радиус сбора, ур. '+save.pickLv+'<br><small>Цена: '+cp+'</small></button>'+
+    '<small>ПК: WASD или стрелки. Телефон: двигайте пальцем по экрану.</small>';
+  ui.style.display='flex';
+  document.getElementById('pl').onclick=start;
+  document.getElementById('bh').onclick=()=>{save.gold-=ch;save.hpLv++;persist();showMenu()};
+  document.getElementById('bp').onclick=()=>{save.gold-=cp;save.pickLv++;persist();showMenu()};
+}
+
+// ===== отрисовка (потом заменится на спрайты) =====
+function circle(x,y,r,col){cx.fillStyle=col;cx.beginPath();cx.arc(x,y,r,0,6.283);cx.fill()}
+let fps=0;
+function draw(){
+  cx.fillStyle='#0b0d12';cx.fillRect(0,0,W,H);
+  if(!G)return;
+  const p=G.p,ox=W/2-p.x,oy=H/2-p.y,s=64;
+  cx.strokeStyle='#171b26';cx.lineWidth=1;cx.beginPath();
+  for(let x=((ox%s)+s)%s;x<W;x+=s){cx.moveTo(x,0);cx.lineTo(x,H)}
+  for(let y=((oy%s)+s)%s;y<H;y+=s){cx.moveTo(0,y);cx.lineTo(W,y)}
+  cx.stroke();
+  cx.fillStyle='#38bdf8';for(const m of G.gems)cx.fillRect(m.x+ox-3,m.y+oy-3,6,6);
+  for(const e of G.enemies)circle(e.x+ox,e.y+oy,e.c.r,e.fl>0?'#fff':e.c.color);
+  cx.fillStyle='#fde047';for(const q of G.shots){cx.beginPath();cx.arc(q.x+ox,q.y+oy,4,0,6.283);cx.fill()}
+  for(let k=0;k<p.orbs;k++){const a=p.orbA+k*6.283/p.orbs;circle(W/2+Math.cos(a)*60,H/2+Math.sin(a)*60,7,'#fb923c')}
+  circle(W/2,H/2,p.r,p.inv>0&&((G.t*20)|0)%2?'#fff':'#f87171');
+  for(const f of G.fx){
+    if(f.ln){cx.strokeStyle='#a5f3fc';cx.lineWidth=3;cx.beginPath();cx.moveTo(f.x+ox,f.y+oy);cx.lineTo(f.x2+ox,f.y2+oy);cx.stroke()}
+    else{cx.fillStyle=f.col;cx.fillRect(f.x+ox-2,f.y+oy-2,4,4)}
+  }
+  // интерфейс
+  cx.fillStyle='#1f2937';cx.fillRect(0,0,W,10);
+  cx.fillStyle='#38bdf8';cx.fillRect(0,0,W*Math.min(1,G.xp/G.need),10);
+  cx.fillStyle='#450a0a';cx.fillRect(10,18,160,12);
+  cx.fillStyle='#ef4444';cx.fillRect(10,18,160*Math.max(0,p.hp/p.maxHp),12);
+  cx.fillStyle='#f3f4f6';cx.font='14px system-ui,sans-serif';
+  cx.fillText('Ур. '+G.lvl+'   '+fmt(G.t)+'   Убийств: '+G.kills,10,48);
+  cx.fillStyle='#6b7280';cx.fillText('FPS '+fps+'  врагов '+G.enemies.length,10,H-10);
+  if(joy.on){
+    const dx=joy.x-joy.ox,dy=joy.y-joy.oy,d=Math.min(Math.hypot(dx,dy),60),a=Math.atan2(dy,dx);
+    cx.strokeStyle='rgba(255,255,255,.35)';cx.lineWidth=2;cx.beginPath();cx.arc(joy.ox,joy.oy,60,0,6.283);cx.stroke();
+    circle(joy.ox+Math.cos(a)*d,joy.oy+Math.sin(a)*d,22,'rgba(255,255,255,.35)');
+  }
+}
+
+let last=performance.now(),fc=0,ft=0;
+function loop(now){
+  const raw=(now-last)/1000;last=now;fc++;ft+=raw;
+  if(ft>=.5){fps=Math.round(fc/ft);fc=0;ft=0}
+  if(G&&G.run&&!G.pause)update(Math.min(raw,.05));
+  draw();requestAnimationFrame(loop);
+}
+showMenu();requestAnimationFrame(loop);
+</script>
 </body>
 </html>
