@@ -352,13 +352,29 @@ button:disabled{opacity:.35;cursor:default;transform:none}
 .dock-play-btn{animation:playPulse 2.4s ease-in-out infinite}
 .player-profile-badge,.currency-chip,.tactical-icon-btn{backdrop-filter:blur(6px)}
 .lvl-info-card{border-color:rgba(249,115,22,.3)}
-.modal-body>button:not(.start-action-btn){background:linear-gradient(180deg,#2e3956,#1d2539)!important;border:1px solid rgba(255,255,255,.12)!important;box-shadow:0 3px 0 #0d1220;color:#e5e7eb;border-radius:12px}
-.ability-btn{flex-direction:row;align-items:center;gap:12px;padding:10px 12px;margin-bottom:8px;background:linear-gradient(135deg,rgba(34,44,68,.95),rgba(16,22,36,.95));border:1px solid rgba(255,255,255,.12);border-left:3px solid var(--primary);animation:uiCard .28s both}
-.ability-btn:nth-child(2){animation-delay:.07s}.ability-btn:nth-child(3){animation-delay:.14s}
-.ability-btn:hover,.ability-btn:active{border-color:var(--primary);box-shadow:0 0 18px rgba(249,115,22,.35)}
-.ab-ico{flex:none;width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:23px;background:radial-gradient(circle at 30% 25%,rgba(249,115,22,.5),rgba(249,115,22,.08));border:1px solid rgba(249,115,22,.45)}
-.ab-txt{display:flex;flex-direction:column;gap:2px;min-width:0}
-.ability-desc{color:#94a3b8;font-size:13px}
+.modal-body>button:not(.start-action-btn):not(.ability-card){background:linear-gradient(180deg,#2e3956,#1d2539)!important;border:1px solid rgba(255,255,255,.12)!important;box-shadow:0 3px 0 #0d1220;color:#e5e7eb;border-radius:12px}
+.ability-card{width:100%!important;padding:12px 14px!important;border-radius:16px!important;background:linear-gradient(135deg,rgba(28,38,62,.96) 0%,rgba(13,18,32,.98) 100%)!important;border:1.5px solid var(--theme-border,rgba(255,255,255,.12))!important;border-left:4px solid var(--theme-color,#f97316)!important;box-shadow:0 6px 18px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.12)!important;display:flex!important;flex-direction:row!important;align-items:center!important;gap:12px;margin-bottom:10px;cursor:pointer;text-align:left;animation:uiCard .28s both;outline:none;-webkit-tap-highlight-color:transparent;transition:transform .14s ease,border-color .14s ease,box-shadow .14s ease}
+.ability-card:nth-child(2){animation-delay:.06s}
+.ability-card:nth-child(3){animation-delay:.12s}
+.ability-card:hover{transform:translateY(-2px);border-color:var(--theme-color,#f97316)!important;box-shadow:0 8px 24px rgba(0,0,0,.65),0 0 16px var(--theme-glow,rgba(249,115,22,.35))!important}
+.ability-card:active{transform:translateY(1px) scale(.985)}
+.ab-ico-box{width:48px;height:48px;flex:none;border-radius:14px;background:radial-gradient(circle at 35% 25%,var(--theme-glow,rgba(249,115,22,.45)),rgba(8,12,22,.95) 80%);border:1.5px solid var(--theme-border,rgba(255,255,255,.3));box-shadow:inset 0 1.5px 0 rgba(255,255,255,.35),inset 0 -2px 0 rgba(0,0,0,.5),0 4px 10px rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;font-size:24px;position:relative}
+.ab-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.ab-meta-row{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:2px}
+.ab-cat-tag{font-size:9px;font-weight:800;letter-spacing:1.2px;padding:2px 6px;border-radius:5px;text-transform:uppercase;background:var(--theme-tag-bg,rgba(249,115,22,.2));color:var(--theme-color,#fb923c);border:1px solid var(--theme-tag-border,rgba(249,115,22,.4))}
+.ab-lvl-badge{font-size:10px;font-weight:800;letter-spacing:.8px;display:flex;align-items:center;gap:5px;color:#94a3b8}
+.ab-lvl-badge.is-new{color:#4ade80;font-weight:800;text-shadow:0 0 8px rgba(74,222,128,.5)}
+.ab-pips{display:inline-flex;gap:3px;margin-left:4px}
+.ab-pips i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);display:inline-block}
+.ab-pips i.on{background:var(--theme-color,#fb923c);border-color:#fff;box-shadow:0 0 5px var(--theme-color,#fb923c)}
+.ab-title{font-family:'Russo One',sans-serif;font-size:15px;color:#fff;letter-spacing:.5px;line-height:1.15}
+.ab-desc{font-size:12px;font-weight:600;color:#94a3b8;line-height:1.25}
+.ab-desc b{color:#f1f5f9}
+.ab-arrow{flex:none;width:24px;height:24px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:11px;color:#94a3b8;transition:transform .15s,background .15s,color .15s}
+.ability-card:hover .ab-arrow{transform:translateX(2px);background:var(--theme-color,#f97316);color:#fff;border-color:#fff;box-shadow:0 0 10px var(--theme-glow,rgba(249,115,22,.5))}
+.theme-weapon{--theme-color:#f97316;--theme-border:rgba(249,115,22,.4);--theme-glow:rgba(249,115,22,.45);--theme-tag-bg:rgba(249,115,22,.18);--theme-tag-border:rgba(249,115,22,.45)}
+.theme-tactical{--theme-color:#38bdf8;--theme-border:rgba(56,189,248,.4);--theme-glow:rgba(56,189,248,.45);--theme-tag-bg:rgba(56,189,248,.18);--theme-tag-border:rgba(56,189,248,.45)}
+.theme-tech{--theme-color:#a855f7;--theme-border:rgba(168,85,247,.4);--theme-glow:rgba(168,85,247,.45);--theme-tag-bg:rgba(168,85,247,.18);--theme-tag-border:rgba(168,85,247,.45)}
 .go-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .go-tile{background:rgba(0,0,0,.38);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px 4px;display:flex;flex-direction:column;gap:2px;align-items:center}
 .go-tile b{font-family:'Russo One',sans-serif;font-size:19px;color:#fff;font-weight:400}
@@ -1069,16 +1085,17 @@ const CONFIG={
 const Platform={rewarded:cb=>cb(true),interstitial:()=>{}};
 
 const ABILITIES=[
-  {name:'+1 снаряд',desc:'Больше снарядов за выстрел',max:5,apply:p=>p.proj++},
-  {name:'Скорострельность',desc:'Перезарядка короче на 15%',apply:p=>p.cool*=.85},
-  {name:'Сила удара',desc:'+30% урона',apply:p=>p.dmg*=1.3},
-  {name:'Пробивание',desc:'Снаряд пробивает ещё 1 врага',max:4,apply:p=>p.pierce++},
-  {name:'Быстрый бег',desc:'+15% скорости',max:5,apply:p=>p.speed*=1.15},
-  {name:'Магнит',desc:'+40% радиус сбора',apply:p=>p.pickup*=1.4},
-  {name:'Огненный щит',desc:'+1 шар крутится вокруг героя',max:6,apply:p=>p.orbs++},
-  {name:'Цепная молния',desc:'Молния бьёт цепочкой врагов',max:5,apply:p=>p.chain++},
-  {name:'Вампиризм',desc:'+0.5 HP за каждое убийство',max:5,apply:p=>p.vamp+=.5},
-  {name:'Крепкое тело',desc:'+25 макс. HP и лечение',apply:p=>{p.maxHp+=25;p.hp=Math.min(p.maxHp,p.hp+25)}}
+  {id:'proj',name:'+1 снаряд',desc:'Дополнительная пуля в каждом залпе',cat:'weapon',catName:'ОРУЖИЕ',icon:'🔫',max:5,apply:p=>{p.proj++}},
+  {id:'cool',name:'Скорострельность',desc:'Перезарядка оружия быстрее на 15%',cat:'weapon',catName:'ОРУЖИЕ',icon:'⚡',max:5,apply:p=>{p.cool*=.85}},
+  {id:'dmg',name:'Тяжелый калибр',desc:'Урон всех пуль увеличен на +30%',cat:'weapon',catName:'ОРУЖИЕ',icon:'💥',max:5,apply:p=>{p.dmg*=1.3}},
+  {id:'pierce',name:'Бронебойность',desc:'Пули прошивают насквозь ещё +1 врага',cat:'weapon',catName:'ОРУЖИЕ',icon:'🎯',max:4,apply:p=>{p.pierce++}},
+  {id:'spd',name:'Тактический бег',desc:'Скорость перемещения героя +15%',cat:'tactical',catName:'ТАКТИКА',icon:'👟',max:5,apply:p=>{p.speed*=1.15}},
+  {id:'pick',name:'Квантовый магнит',desc:'Радиус сбора кристаллов и золота +45%',cat:'tactical',catName:'ТАКТИКА',icon:'🧲',max:5,apply:p=>{p.pickup*=1.45}},
+  {id:'hp',name:'Стойкость бойца',desc:'+30 к максимальному HP и полное лечение',cat:'tactical',catName:'ТАКТИКА',icon:'❤️',max:5,apply:p=>{p.maxHp+=30;p.hp=p.maxHp}},
+  {id:'armor',name:'Титановая броня',desc:'Снижает весь получаемый урон на -15%',cat:'tactical',catName:'ТАКТИКА',icon:'🛡️',max:4,apply:p=>{p.armor=(p.armor||0)+.15}},
+  {id:'regen',name:'Нано-регенерация',desc:'Автоматическое лечение +1.5 HP в секунду',cat:'tactical',catName:'ТАКТИКА',icon:'💉',max:5,apply:p=>{p.regen=(p.regen||0)+1.5}},
+  {id:'orbs',name:'Плазменный барьер',desc:'+1 огненный шар крутится вокруг героя',cat:'tech',catName:'ТЕХНОЛОГИИ',icon:'🔥',max:5,apply:p=>{p.orbs++}},
+  {id:'chain',name:'Тесла-разряд',desc:'Периодическая молния поражает врагов',cat:'tech',catName:'ТЕХНОЛОГИИ',icon:'🌩️',max:5,apply:p=>{p.chain++}}
 ];
 
 // Хранилище
@@ -1281,7 +1298,7 @@ const EN={'ЗОНА ОТЧУЖДЕНИЯ':'Exclusion Zone','НАЖМИТЕ, ЧТ
 'Персонажи':'Characters','Инвентарь':'Inventory','В бой':'Play','Характеристики':'Stats','Награды':'Rewards',
 'Зомби • Обычная сложность':'Zombies • Normal difficulty','Зомби и Гончие • Обычная сложность':'Zombies & Hounds • Normal difficulty','★ ГЛАВА 2 ★':'★ Chapter 2 ★','КЛАДБИЩЕ МУТАНТОВ':'Mutant Graveyard','Скелеты • Средняя сложность':'Skeletons • Medium difficulty','СЛОЖНО':'Hard','★ ГЛАВА 3 ★':'★ Chapter 3 ★','СЕКРЕТНЫЙ БУНКЕР':'Secret Bunker','Призраки • Кошмар':'Ghosts • Nightmare','ЭКСТРИМ':'Extreme',
 'ДЖОН':'John','Ветеран Пустошей':'Wasteland Veteran','Сбалансированный боец. Надёжен в любой перестрелке.':'Balanced fighter. Reliable in any firefight.','100 HP, 150 Скорость, 10 Урон':'100 HP, 150 Speed, 10 Damage','МАРКУС':'Marcus','Штурмовик Джаггернаут':'Juggernaut Assaulter','Тяжёлая броня и огневая мощь. Стреляет сразу 2 пулями!':'Heavy armor and firepower. Fires 2 bullets at once!','+40% HP, +1 снаряд за залп, -10% Скорость':'+40% HP, +1 projectile per volley, -10% Speed','ЛЕОН':'Leon','Призрак Разведчик':'Ghost Scout','Сверхбыстрый боец с ураганным темпом стрельбы.':'Super-fast fighter with a hurricane rate of fire.','+20% Скорость бега, +35% скорострельность, -15% HP':'+20% Move speed, +35% fire rate, -15% HP',
-'+1 снаряд':'+1 Projectile','Больше снарядов за выстрел':'More projectiles per shot','Скорострельность':'Fire rate','Перезарядка короче на 15%':'15% shorter reload','Сила удара':'Impact force','+30% урона':'+30% damage','Пробивание':'Piercing','Снаряд пробивает ещё 1 врага':'Bullets pierce 1 more enemy','Быстрый бег':'Swift legs','+15% скорости':'+15% speed','Магнит':'Magnet','+40% радиус сбора':'+40% pickup radius','Огненный щит':'Fire shield','+1 шар крутится вокруг героя':'+1 orb spins around the hero','Цепная молния':'Chain lightning','Молния бьёт цепочкой врагов':'Lightning strikes a chain of enemies','Вампиризм':'Vampirism','+0.5 HP за каждое убийство':'+0.5 HP per kill','Крепкое тело':'Tough body','+25 макс. HP и лечение':'+25 max HP and heal',
+'+1 снаряд':'+1 Projectile','Дополнительная пуля в каждом залпе':'Extra bullet in each volley','Скорострельность':'Fire Rate','Перезарядка оружия быстрее на 15%':'Weapon reload 15% faster','Тяжелый калибр':'Heavy Caliber','Урон всех пуль увеличен на +30%':'All bullet damage +30%','Бронебойность':'Armor Piercing','Пули прошивают насквозь ещё +1 врага':'Bullets pierce +1 more enemy','Тактический бег':'Tactical Sprint','Скорость перемещения героя +15%':'Hero move speed +15%','Квантовый магнит':'Quantum Magnet','Радиус сбора кристаллов и золота +45%':'Pickup radius +45%','Стойкость бойца':'Fighter Resilience','+30 к максимальному HP и полное лечение':'+30 max HP and full heal','Титановая броня':'Titanium Armor','Снижает весь получаемый урон на -15%':'Reduces all damage by -15%','Нано-регенерация':'Nano-Regen','Автоматическое лечение +1.5 HP в секунду':'Auto-healing +1.5 HP/sec','Плазменный барьер':'Plasma Barrier','+1 огненный шар крутится вокруг героя':'+1 orb spins around the hero','Тесла-разряд':'Tesla Discharge','Периодическая молния поражает врагов':'Periodic lightning strikes enemies','ТАКТИКА':'TACTICS','ТЕХНОЛОГИИ':'TECH','НОВАЯ!':'NEW!','УРОВЕНЬ':'LEVEL',
 '💀 ПЕРВАЯ КРОВЬ':'💀 First Blood','Уничтожить 20 зомби в вылазках':'Destroy 20 zombies in runs','⏱️ СТОЙКИЙ БОЕЦ':'⏱️ Steadfast Fighter','Продержаться в живых 60 секунд':'Survive for 60 seconds','🧟 ГРОЗА МЕРТВЕЦОВ':'🧟 Bane of the Dead','Уничтожить 100 зомби за всё время':'Destroy 100 zombies in total','🎮 ВЕТЕРАН ЗОНЫ':'🎮 Zone Veteran','Сыграть 5 матчей на выживание':'Play 5 survival matches','ПОЛУЧЕНО':'Claimed',
 'ОРУЖИЕ':'Weapon','БРОНЯ':'Armor','БОТИНКИ':'Boots','ЧИП':'Chip','Обычный':'Common','Редкий':'Rare','Эпический':'Epic','Легендарный':'Legendary','Стандартный пистолет. Надёжен и точен.':'Standard pistol. Reliable and accurate.','Скорпион SMG':'Scorpion SMG','Очень частая стрельба, но слабее урон.':'Very high fire rate, but weaker damage.','Дробовик':'Shotgun','Стреляет веером из трёх пуль.':'Fires a fan of three bullets.','Винтовка «Тень»':'"Shadow" Rifle','Мощные пули пробивают врагов насквозь.':'Powerful bullets pierce enemies.','Куртка тактик':'Tactical Jacket','Лёгкая защита.':'Light protection.','Кевларовый жилет':'Kevlar Vest','Плотная баллистическая защита.':'Dense ballistic protection.','Экзо-каркас':'Exo-Frame','Тяжёлая броня за счёт подвижности.':'Heavy armor at the cost of mobility.','Берцы спецназ':'Special Forces Boots','Удобная обувь для долгих забегов.':'Comfortable boots for long runs.','Кроссовки бегуна':'Runner Sneakers','Лёгкие и быстрые.':'Light and fast.','Реактивные ботинки':'Jet Boots','Невероятная скорость бега.':'Incredible running speed.','Неодим-чип':'Neodymium Chip','Притягивает кристаллы издалека.':'Pulls crystals from afar.','Чип «Разгон»':'"Overclock" Chip','Ускоряет перезарядку оружия.':'Speeds up weapon reload.','Квантовое ядро':'Quantum Core','Усиливает урон и радиус сбора.':'Boosts damage and pickup radius.',
 'Здоровье':'Health','Урон':'Damage','Скорость бега':'Move speed','Радиус сбора':'Pickup radius','Снаряды':'Projectiles','Пусто':'Empty','НАДЕТО':'Equipped','НАДЕТЬ':'Equip','Здесь пока пусто. Предметы выпадают после боёв.':'Nothing here yet. Items drop after battles.','Базовые характеристики':'Base stats','ВЫБРАН':'Selected','ВЫБРАТЬ':'Select'};
@@ -1567,7 +1584,7 @@ function startGame(){
     spawnFxSpawned:false,
     p:{
       x:0,y:0,r:15,maxHp:maxHp,hp:maxHp,speed:spd,pickup:pick,
-      dmg:dmg,cool:cool,proj:proj,pierce:EM.pierce,orbs:0,orbA:0,chain:0,vamp:0,
+      dmg:dmg,cool:cool,proj:proj,pierce:EM.pierce,orbs:0,orbA:0,chain:0,regen:0,armor:0,
       cd:0,chainCd:0,inv:1.2,got:{},facing:1,frame:0,animT:0,aimA:.35,recoil:0
     }
   };
@@ -1627,32 +1644,58 @@ function hurt(e,d){
     e.dead=true;G.kills++;
     const gemVal=Math.round(e.c.xp*G.lvlConfig.multGold);
     G.gems.push({x:e.x,y:e.y,v:gemVal,mag:false});
-    const p=G.p;if(p.vamp)p.hp=Math.min(p.maxHp,p.hp+p.vamp);
     for(let i=0;i<5;i++)G.fx.push({x:e.x,y:e.y,vx:(Math.random()-.5)*180,vy:(Math.random()-.5)*180,l:.4,col:e.c.color});
   }
 }
 
-const AB_ICON=[[/снар/i,'🔫'],[/перезар|скорострел/i,'⚡'],[/урон|сил/i,'💥'],[/пробив/i,'🎯'],[/бег|скорост/i,'👟'],[/магнит|радиус/i,'🧲'],[/щит|огн/i,'🔥'],[/молни/i,'🌩️'],[/вампир/i,'🩸'],[/здоров|тел/i,'❤️']];
-function abIcon(n){for(const[r,i]of AB_ICON)if(r.test(n))return i;return '✨'}
 function triggerLevelUp(){
   Sfx.play('levelup');
   G.pause=true;
-  const pool=ABILITIES.filter(a=>(G.p.got[a.name]||0)<(a.max||99)),ch=[];
+  const pool=ABILITIES.filter(a=>(G.p.got[a.id||a.name]||0)<(a.max||99)),ch=[];
   while(ch.length<3&&pool.length)ch.push(pool.splice(Math.random()*pool.length|0,1)[0]);
   const boxEl=document.getElementById('levelup-cards-box');
-  boxEl.innerHTML=ch.map((a,i)=>`
-    <button class="ability-btn" data-i="${i}">
-      <span class="ab-ico">${abIcon(a.name)}</span>
-      <span class="ab-txt"><span class="ability-name">${a.name}</span><span class="ability-desc">${a.desc}</span></span>
-    </button>
-  `).join('');
-  document.querySelector('#modal-levelup .modal-title').innerHTML='<span>⭐</span> УРОВЕНЬ '+G.lvl+': ВЫБЕРИТЕ УЛУЧШЕНИЕ';
+  boxEl.innerHTML=ch.map((a,i)=>{
+    const curLv=G.p.got[a.id||a.name]||0;
+    const nextLv=curLv+1;
+    const maxLv=a.max||5;
+    const isNew=curLv===0;
+    const themeCls=a.cat==='weapon'?'theme-weapon':(a.cat==='tech'?'theme-tech':'theme-tactical');
+    let pipsHtml='';
+    for(let k=1;k<=maxLv;k++){
+      pipsHtml+=`<i class="${k<=nextLv?'on':''}"></i>`;
+    }
+    const lvlBadge=isNew
+      ? `<span class="ab-lvl-badge is-new">✨ ${trText('НОВАЯ!')}</span>`
+      : `<span class="ab-lvl-badge">${trText('УР.')} ${curLv} ➔ ${nextLv}<span class="ab-pips">${pipsHtml}</span></span>`;
+
+    return `
+      <button class="ability-card ${themeCls}" data-i="${i}">
+        <div class="ab-ico-box">${a.icon||'✨'}</div>
+        <div class="ab-body">
+          <div class="ab-meta-row">
+            <span class="ab-cat-tag">${trText(a.catName||'НАВЫК')}</span>
+            ${lvlBadge}
+          </div>
+          <div class="ab-title">${trText(a.name)}</div>
+          <div class="ab-desc">${trText(a.desc)}</div>
+        </div>
+        <div class="ab-arrow">▶</div>
+      </button>
+    `;
+  }).join('');
+  document.querySelector('#modal-levelup .modal-title').innerHTML=
+    `<span>⭐</span><div style="display:flex;flex-direction:column;gap:1px"><span style="font-size:10px;font-weight:800;letter-spacing:1.5px;color:#fb923c;line-height:1">${trText('УРОВЕНЬ')} ${G.lvl}</span><span style="font-size:16px;line-height:1.2">${trText('ВЫБЕРИТЕ УЛУЧШЕНИЕ')}</span></div>`;
   openModal('modal-levelup');
-  boxEl.querySelectorAll('button').forEach(b=>b.onclick=()=>{
-    Sfx.play('click');
-    const a=ch[b.dataset.i];a.apply(G.p);G.p.got[a.name]=(G.p.got[a.name]||0)+1;
-    closeModal('modal-levelup');
-    G.pause=false;
+  boxEl.querySelectorAll('button').forEach(b=>{
+    b.onclick=()=>{
+      Sfx.play('click');
+      const a=ch[b.dataset.i];
+      a.apply(G.p);
+      const key=a.id||a.name;
+      G.p.got[key]=(G.p.got[key]||0)+1;
+      closeModal('modal-levelup');
+      G.pause=false;
+    };
   });
 }
 
@@ -1701,6 +1744,7 @@ function update(dt){
   g.t+=dt;
   if(g.spawnT>0)g.spawnT=Math.max(0,g.spawnT-dt);
   if(p.inv>0)p.inv-=dt;
+  if(p.regen>0&&p.hp<p.maxHp)p.hp=Math.min(p.maxHp,p.hp+p.regen*dt);
 
   const isAirborne = g.spawnT>0 && (1 - g.spawnT/0.9) < 0.52;
   const [mx,my]=isAirborne ? [0,0] : moveVec();
@@ -1792,7 +1836,11 @@ function update(dt){
     if(d<minContact){
       e.x=p.x-(dx/d)*minContact;
       e.y=p.y-(dy/d)*minContact;
-      if(p.inv<=0){p.hp-=e.c.damage;p.inv=.4}
+      if(p.inv<=0){
+        const dmgVal=Math.max(1,Math.round(e.c.damage*(p.armor?Math.max(0.2,1-p.armor):1)));
+        p.hp-=dmgVal;
+        p.inv=.4;
+      }
     }
   }
 
