@@ -1,38 +1,1071 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Survivors MVP</title>
+<!-- Профессиональные игровые шрифты -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700;800&family=Russo+One&display=swap" rel="stylesheet">
+
 <style>
-html,body{margin:0;height:100%;background:#0b0d12;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;font-family:system-ui,sans-serif;color:#f3f4f6}
-canvas{position:fixed;inset:0;width:100%;height:100%}
-#ui{position:fixed;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:10px;background:rgba(8,10,16,.82);text-align:center;padding:16px;box-sizing:border-box;overflow:auto}
-h1,h2,p{margin:4px 0}
-button{font:600 17px system-ui,sans-serif;padding:13px 18px;border:0;border-radius:8px;background:#e8772e;color:#fff;min-width:260px;max-width:92vw}
-button.alt{background:#2b3140}
-button:disabled{opacity:.35}
-button small{font-weight:400;color:#d1d5db}
+:root{
+  --primary:#f97316;
+  --primary-hover:#fb923c;
+  --primary-shadow:#9a3412;
+  --bg-dark:#06080d;
+  --card-bg:rgba(18,24,38,0.94);
+  --card-border:rgba(255,255,255,0.12);
+  --cyan:#38bdf8;
+  --green:#4ade80;
+  --red:#ef4444;
+  --gold:#facc15;
+}
+*{box-sizing:border-box}
+html,body{
+  margin:0;height:100%;background:#040508;overflow:hidden;
+  touch-action:none;user-select:none;-webkit-user-select:none;
+  font-family:'Rajdhani',system-ui,sans-serif;font-weight:700;
+  color:#f3f4f6;display:flex;align-items:center;justify-content:center;
+}
+#game-box{
+  position:relative;height:min(94vh,840px);max-width:96vw;aspect-ratio:9/18.5;
+  background:#090d15;overflow:hidden;border-radius:36px;
+  box-shadow:0 0 0 3px #1e293b,0 0 0 8px #080b12,0 30px 70px rgba(0,0,0,0.9);
+}
+@media (max-width:500px),(max-height:500px){
+  #game-box{width:100vw;height:100%;max-width:100vw;max-height:100vh;aspect-ratio:auto;border-radius:0;box-shadow:none}
+}
+canvas{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:1}
+
+/* Общий контейнер UI */
+#ui-root{position:absolute;inset:0;z-index:10;pointer-events:none}
+.screen{position:absolute;inset:0;display:none;flex-direction:column;pointer-events:none;transition:opacity .2s ease}
+.screen.active{display:flex}
+
+/* Базовые кнопки с тактильным эффектом */
+button{
+  font-family:'Russo One',sans-serif;border:0;cursor:pointer;
+  pointer-events:auto;touch-action:manipulation;
+  transition:transform .12s cubic-bezier(0.2,0.8,0.2,1),filter .15s ease,box-shadow .15s ease;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+}
+button:active{transform:translateY(2px) scale(.97)}
+button:disabled{opacity:.35;cursor:default;transform:none}
+
+/* Скроллбары */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:rgba(0,0,0,0.2)}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.18);border-radius:3px}
+
+/* ===== ЭКРАН 1: ТИТУЛЬНЫЙ СТАРТ ===== */
+#screen-start{
+  background:radial-gradient(circle at center,rgba(26,38,62,.4) 0%,rgba(6,8,13,.95) 80%);
+  justify-content:center;align-items:center;padding:24px;text-align:center;pointer-events:auto;
+}
+.start-logo-box{display:flex;flex-direction:column;align-items:center;margin-bottom:36px}
+.start-badge{
+  font-family:'Rajdhani',sans-serif;font-weight:800;font-size:11px;letter-spacing:3px;
+  color:#f97316;background:rgba(249,115,22,0.15);border:1px solid rgba(249,115,22,0.3);
+  padding:3px 12px;border-radius:10px;text-transform:uppercase;margin-bottom:8px;
+}
+.start-title{
+  font-family:'Russo One',sans-serif;font-size:42px;letter-spacing:4px;color:#fff;
+  text-shadow:0 0 25px rgba(249,115,22,0.7),0 0 50px rgba(249,115,22,0.35);margin:0;line-height:1;
+}
+.start-sub{
+  font-size:12px;letter-spacing:4px;color:#94a3b8;margin-top:8px;text-transform:uppercase;font-weight:700;
+}
+.start-action-btn{
+  width:230px;height:58px;font-size:22px;letter-spacing:2px;border-radius:29px;
+  background:linear-gradient(180deg,#ff9f43 0%,#f97316 45%,#ea580c 85%,#c2410c 100%);
+  color:#fff;box-shadow:0 6px 0 #9a3412,0 12px 30px rgba(249,115,22,0.7),inset 0 2px 0 rgba(255,255,255,0.4);
+  animation:pulse-start 2s infinite ease-in-out;
+}
+.start-action-btn:active{transform:translateY(4px);box-shadow:0 2px 0 #9a3412,0 6px 15px rgba(249,115,22,0.5)}
+.start-hint-text{margin-top:20px;font-size:12px;color:#64748b;letter-spacing:1px}
+@keyframes pulse-start{
+  0%,100%{filter:drop-shadow(0 0 15px rgba(249,115,22,0.5))}
+  50%{filter:drop-shadow(0 0 30px rgba(249,115,22,0.9))}
+}
+
+/* ===== ЭКРАН 2: ПРОФЕССИОНАЛЬНОЕ ЛОББИ ===== */
+#screen-menu{padding:14px;justify-content:space-between}
+.menu-top-section{display:flex;flex-direction:column;gap:10px;pointer-events:auto;z-index:2;width:100%}
+
+/* Верхняя панель: профиль игрока и ресурсы */
+.menu-top-bar{display:flex;justify-content:space-between;align-items:center}
+.player-profile-badge{
+  display:flex;align-items:center;gap:8px;
+  background:linear-gradient(135deg,rgba(22,30,48,0.92),rgba(12,17,28,0.95));
+  border:1px solid rgba(255,255,255,0.12);border-radius:24px;padding:4px 12px 4px 5px;
+  box-shadow:0 4px 15px rgba(0,0,0,0.5);backdrop-filter:blur(10px);
+}
+.profile-avatar-hex{
+  width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#f97316,#ea580c);
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;
+  box-shadow:0 0 10px rgba(249,115,22,0.5);border:1px solid rgba(255,255,255,0.3);
+}
+.profile-info{display:flex;flex-direction:column;line-height:1.1}
+.profile-name{font-family:'Russo One',sans-serif;font-size:12px;letter-spacing:.8px;color:#fff}
+.profile-meta{display:flex;align-items:center;gap:6px;font-size:11px}
+.profile-lvl-tag{color:#facc15;font-weight:800}
+.profile-energy{color:#38bdf8}
+
+.currencies-group{display:flex;align-items:center;gap:6px}
+.currency-chip{
+  display:flex;align-items:center;gap:5px;
+  background:linear-gradient(135deg,rgba(20,26,42,0.9),rgba(10,14,24,0.95));
+  border:1px solid rgba(255,255,255,0.1);border-radius:18px;padding:4px 8px 4px 10px;
+  font-family:'Rajdhani',sans-serif;font-weight:800;font-size:14px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.4);backdrop-filter:blur(8px);
+}
+.currency-chip.gold{border-color:rgba(250,204,21,0.35);color:#fef08a}
+.currency-chip.gems{border-color:rgba(56,189,248,0.35);color:#bae6fd}
+.currency-chip .plus-btn{
+  width:18px;height:18px;border-radius:50%;background:#22c55e;color:#fff;
+  font-size:13px;line-height:1;padding:0;box-shadow:0 0 6px rgba(34,197,94,0.6);
+}
+.tactical-icon-btn{
+  width:36px;height:36px;border-radius:12px;padding:0;
+  background:linear-gradient(135deg,rgba(24,32,50,0.9),rgba(14,19,30,0.95));
+  border:1px solid rgba(255,255,255,0.12);font-size:15px;color:#fff;
+  box-shadow:0 4px 12px rgba(0,0,0,0.4);
+}
+
+/* Селектор уровней (Chapter Card) */
+.lvl-selector-wrap{display:flex;align-items:center;justify-content:center;gap:8px}
+.tactical-arrow-btn{
+  width:40px;height:54px;border-radius:14px;
+  background:linear-gradient(180deg,rgba(32,42,66,0.9) 0%,rgba(16,22,36,0.95) 100%);
+  border:1px solid rgba(255,255,255,0.14);color:#f97316;font-size:18px;padding:0;
+  box-shadow:0 6px 16px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.15);
+}
+.lvl-info-card{
+  flex:1;max-width:250px;position:relative;overflow:hidden;
+  background:linear-gradient(180deg,rgba(24,32,50,0.92) 0%,rgba(12,17,28,0.96) 100%);
+  border:1px solid rgba(255,255,255,0.14);border-radius:18px;padding:8px 12px;
+  text-align:center;box-shadow:0 8px 24px rgba(0,0,0,0.55),inset 0 1px 0 rgba(255,255,255,0.12);
+}
+.lvl-top-accent{
+  position:absolute;top:0;left:10%;right:10%;height:2px;
+  background:linear-gradient(90deg,transparent,#f97316,transparent);
+}
+.lvl-header-row{display:flex;align-items:center;justify-content:space-between}
+.lvl-badge{
+  font-family:'Rajdhani',sans-serif;font-weight:800;font-size:11px;
+  letter-spacing:1.5px;color:#f97316;text-transform:uppercase;
+}
+.lvl-diff-tag{
+  font-size:10px;font-weight:800;padding:1px 6px;border-radius:6px;
+  background:rgba(74,222,128,0.15);color:#4ade80;border:1px solid rgba(74,222,128,0.3);
+}
+.lvl-name{
+  font-family:'Russo One',sans-serif;font-size:15px;letter-spacing:.8px;
+  color:#fff;margin:3px 0;text-shadow:0 2px 8px rgba(0,0,0,0.6);
+}
+.lvl-footer-row{display:flex;align-items:center;justify-content:center;gap:8px}
+.lvl-info-pill{
+  font-size:10px;font-weight:700;color:#94a3b8;background:rgba(0,0,0,0.3);
+  padding:2px 8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);
+}
+.lvl-info-pill.gold{color:#facc15;border-color:rgba(250,204,21,0.25)}
+
+/* ===== НИЖНЯЯ ПАНЕЛЬ (DOCK): 2 СЛЕВА + PLAY В ЦЕНТРЕ + 2 СПРАВА ===== */
+.menu-bottom-dock{
+  display:flex;align-items:center;justify-content:space-between;gap:5px;
+  width:100%;padding:8px 8px 6px;
+  background:linear-gradient(180deg,rgba(22,30,48,0.96) 0%,rgba(10,14,24,0.98) 100%);
+  border:1px solid rgba(255,255,255,0.14);border-top:1px solid rgba(255,255,255,0.22);
+  border-radius:24px;backdrop-filter:blur(16px);
+  box-shadow:0 -6px 25px rgba(0,0,0,0.7),0 12px 30px rgba(0,0,0,0.9),inset 0 1px 0 rgba(255,255,255,0.15);
+  pointer-events:auto;z-index:2;margin-bottom:2px;
+}
+.dock-btn{
+  flex:1;height:52px;border-radius:14px;
+  background:linear-gradient(180deg,rgba(30,40,62,0.6) 0%,rgba(18,24,38,0.85) 100%);
+  border:1px solid rgba(255,255,255,0.08);border-top:1px solid rgba(255,255,255,0.15);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2px;padding:3px;box-shadow:0 4px 10px rgba(0,0,0,0.35);position:relative;
+}
+.dock-btn:hover{
+  background:linear-gradient(180deg,rgba(40,54,82,0.8) 0%,rgba(24,32,50,0.95) 100%);
+  border-color:rgba(56,189,248,0.35);
+}
+.dock-icon-box{width:22px;height:22px;position:relative;display:flex;align-items:center;justify-content:center}
+.dock-svg{width:100%;height:100%;display:block}
+.dock-label{
+  font-family:'Rajdhani',sans-serif;font-weight:800;font-size:10px;
+  color:#cbd5e1;letter-spacing:.6px;text-transform:uppercase;line-height:1;
+}
+.badge-dot{
+  position:absolute;top:-2px;right:-3px;width:7px;height:7px;border-radius:50%;
+  background:#ef4444;box-shadow:0 0 6px #ef4444;display:none;
+}
+.badge-dot.show{display:block}
+
+/* ЦЕНТРАЛЬНАЯ 3D КНОПКА PLAY */
+.dock-play-btn{
+  flex:1.35;height:56px;border-radius:18px;position:relative;overflow:hidden;
+  background:linear-gradient(180deg,#ff9f43 0%,#ff7919 45%,#ea580c 85%,#c2410c 100%);
+  border:1px solid rgba(255,255,255,0.35);
+  box-shadow:0 5px 0 #9a3412,0 10px 24px rgba(249,115,22,0.65),inset 0 2px 0 rgba(255,255,255,0.45);
+  display:flex;align-items:center;justify-content:center;gap:6px;color:#fff;
+  padding:0 8px;margin:0 2px;
+}
+.dock-play-btn:active{
+  transform:translateY(3px);box-shadow:0 2px 0 #9a3412,0 5px 12px rgba(249,115,22,0.45);
+}
+.play-flare{
+  position:absolute;top:0;left:0;right:0;height:45%;
+  background:linear-gradient(180deg,rgba(255,255,255,0.35),transparent);
+  border-radius:16px 16px 0 0;pointer-events:none;
+}
+.dock-play-icon{font-size:16px;text-shadow:0 2px 4px rgba(0,0,0,0.5)}
+.dock-play-text{
+  font-family:'Russo One',sans-serif;font-size:17px;letter-spacing:1.5px;
+  text-shadow:0 2px 4px rgba(0,0,0,0.5);
+}
+
+/* ===== МОДАЛЬНЫЕ ОКНА ===== */
+.modal-overlay{
+  position:absolute;inset:0;background:rgba(4,6,10,0.88);backdrop-filter:blur(10px);
+  display:none;align-items:center;justify-content:center;padding:14px;z-index:30;pointer-events:auto;
+}
+.modal-overlay.open{display:flex}
+.modal-window{
+  width:100%;max-width:360px;max-height:86vh;
+  background:linear-gradient(180deg,#141b2a 0%,#0e1422 100%);
+  border:1px solid rgba(255,255,255,0.14);border-top:2px solid var(--primary);
+  border-radius:22px;display:flex;flex-direction:column;overflow:hidden;
+  box-shadow:0 25px 60px rgba(0,0,0,0.85);
+}
+.modal-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.02);
+}
+.modal-title{
+  font-family:'Russo One',sans-serif;font-size:16px;letter-spacing:1px;
+  color:#fff;display:flex;align-items:center;gap:8px;
+}
+.modal-close-btn{
+  width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.08);
+  font-family:'Russo One',sans-serif;font-size:14px;padding:0;color:#94a3b8;
+}
+.modal-close-btn:hover{background:rgba(239,68,68,0.2);color:#ef4444}
+.modal-body{padding:14px 16px;overflow-y:auto;display:flex;flex-direction:column;gap:12px}
+
+.section-tag{
+  font-family:'Russo One',sans-serif;font-size:11px;color:#94a3b8;
+  letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;
+}
+.equip-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.equip-slot{
+  background:linear-gradient(135deg,rgba(26,34,52,0.8),rgba(16,22,34,0.9));
+  border:1px solid rgba(255,255,255,0.09);border-radius:14px;padding:10px;
+  display:flex;align-items:center;gap:10px;box-shadow:0 4px 12px rgba(0,0,0,0.3);
+}
+.equip-slot .slot-icon{font-size:22px}
+.equip-slot .slot-name{font-family:'Russo One',sans-serif;font-size:12px;color:#fff}
+.equip-slot .slot-val{font-size:11px;color:#38bdf8;font-weight:700}
+
+.upgrade-card{
+  background:linear-gradient(135deg,rgba(22,30,46,0.85),rgba(14,20,32,0.95));
+  border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:10px 12px;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.3);
+}
+.up-info{display:flex;flex-direction:column;gap:2px}
+.up-title{font-family:'Russo One',sans-serif;font-size:13px;color:#fff}
+.up-desc{font-size:11px;color:#94a3b8;font-weight:600}
+.up-btn{
+  padding:8px 14px;border-radius:10px;font-family:'Russo One',sans-serif;
+  font-size:12px;letter-spacing:.5px;background:linear-gradient(180deg,#f97316,#ea580c);
+  color:#fff;white-space:nowrap;box-shadow:0 3px 0 #9a3412;
+}
+
+.stat-row{
+  display:flex;justify-content:space-between;align-items:center;padding:9px 12px;
+  background:rgba(20,28,44,0.65);border:1px solid rgba(255,255,255,0.05);border-radius:10px;
+}
+.stat-row .stat-label{color:#94a3b8;display:flex;align-items:center;gap:6px;font-size:13px}
+.stat-row .stat-val{font-family:'Russo One',sans-serif;color:#38bdf8;font-size:14px}
+
+.char-card{
+  background:linear-gradient(135deg,rgba(22,30,48,0.85),rgba(14,19,32,0.95));
+  border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:12px;
+  display:flex;flex-direction:column;gap:8px;box-shadow:0 6px 18px rgba(0,0,0,0.35);
+}
+.char-card.selected{border-color:#38bdf8;box-shadow:0 0 18px rgba(56,189,248,0.3)}
+.char-header{display:flex;justify-content:space-between;align-items:center}
+.char-card-name{font-family:'Russo One',sans-serif;font-size:15px;color:#fff}
+.char-card-title{font-size:11px;color:#38bdf8;font-weight:800}
+.char-card-bonus{
+  font-size:12px;color:#cbd5e1;background:rgba(0,0,0,0.35);padding:6px 10px;
+  border-radius:8px;border-left:3px solid #f97316;
+}
+
+.reward-card{
+  background:linear-gradient(135deg,rgba(22,30,48,0.85),rgba(14,19,32,0.95));
+  border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:10px 12px;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+}
+.reward-info{display:flex;flex-direction:column;gap:2px}
+.reward-title{font-family:'Russo One',sans-serif;font-size:13px;color:#fff}
+.reward-desc{font-size:11px;color:#94a3b8;font-weight:600}
+.reward-claim-btn{
+  padding:8px 14px;border-radius:10px;font-family:'Russo One',sans-serif;
+  font-size:12px;background:#334155;color:#fff;box-shadow:0 3px 0 #1e293b;
+}
+.reward-claim-btn.ready{
+  background:linear-gradient(180deg,#22c55e,#16a34a);box-shadow:0 3px 0 #15803d;
+}
+
+/* ===== ВНУТРИИГРОВОЙ ИНТЕРФЕЙС (HUD) ===== */
+
+.game-top-hud{display:flex;flex-direction:column;gap:7px;pointer-events:auto;padding:8px 10px;background:linear-gradient(180deg,rgba(15,23,42,.72),rgba(8,12,22,.5));backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.09);border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,.45)}
+.xp-bar-wrap{width:100%;height:10px;background:rgba(2,6,23,.75);border:1px solid rgba(56,189,248,.35);border-radius:6px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,.6)}
+.xp-bar-fill{height:100%;width:0%;background:linear-gradient(180deg,#7dd3fc,#0284c7);box-shadow:0 0 10px #38bdf8;transition:width .15s ease}
+.hud-stats-row{display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:800;text-shadow:0 1px 2px #000}
+.hp-bar-wrap{width:130px;height:14px;background:rgba(2,6,23,.75);border:1px solid rgba(248,113,113,.45);border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,.6)}
+.hp-bar-fill{height:100%;width:100%;background:linear-gradient(180deg,#fca5a5 0%,#ef4444 45%,#b91c1c 100%);transition:width .12s ease}
+
+.ability-btn{
+  width:100%;padding:12px;border-radius:14px;background:rgba(26,34,52,.92);
+  border:1px solid rgba(255,255,255,.1);text-align:left;display:flex;flex-direction:column;gap:3px;
+}
+.ability-btn:hover{background:rgba(38,50,76,.96);border-color:#38bdf8}
+.ability-name{font-family:'Russo One',sans-serif;font-size:14px;color:#fff}
+.ability-desc{font-size:12px;color:#94a3b8}
+.results-box{background:rgba(0,0,0,.35);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:6px;text-align:center}
+
+/* ===== UI v2 ===== */
+@keyframes uiPop{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes uiCard{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:none}}
+@keyframes playPulse{0%,100%{box-shadow:0 5px 0 #9a3412,0 10px 24px rgba(249,115,22,.5),inset 0 2px 0 rgba(255,255,255,.45)}50%{box-shadow:0 5px 0 #9a3412,0 10px 36px rgba(249,115,22,.95),inset 0 2px 0 rgba(255,255,255,.45)}}
+.modal-overlay.open .modal-window{animation:uiPop .22s cubic-bezier(.2,.8,.2,1)}
+.modal-window{background:linear-gradient(180deg,rgba(26,34,54,.97),rgba(10,15,27,.98));box-shadow:0 25px 60px rgba(0,0,0,.85),0 0 44px rgba(249,115,22,.14)}
+.modal-header{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,0))}
+.modal-title{letter-spacing:1.5px;text-shadow:0 2px 8px rgba(0,0,0,.6)}
+.dock-play-btn{animation:playPulse 2.4s ease-in-out infinite}
+.player-profile-badge,.currency-chip,.tactical-icon-btn{backdrop-filter:blur(6px)}
+.lvl-info-card{border-color:rgba(249,115,22,.3)}
+.modal-body>button:not(.start-action-btn){background:linear-gradient(180deg,#2e3956,#1d2539)!important;border:1px solid rgba(255,255,255,.12)!important;box-shadow:0 3px 0 #0d1220;color:#e5e7eb;border-radius:12px}
+.ability-btn{flex-direction:row;align-items:center;gap:12px;padding:10px 12px;margin-bottom:8px;background:linear-gradient(135deg,rgba(34,44,68,.95),rgba(16,22,36,.95));border:1px solid rgba(255,255,255,.12);border-left:3px solid var(--primary);animation:uiCard .28s both}
+.ability-btn:nth-child(2){animation-delay:.07s}.ability-btn:nth-child(3){animation-delay:.14s}
+.ability-btn:hover,.ability-btn:active{border-color:var(--primary);box-shadow:0 0 18px rgba(249,115,22,.35)}
+.ab-ico{flex:none;width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:23px;background:radial-gradient(circle at 30% 25%,rgba(249,115,22,.5),rgba(249,115,22,.08));border:1px solid rgba(249,115,22,.45)}
+.ab-txt{display:flex;flex-direction:column;gap:2px;min-width:0}
+.ability-desc{color:#94a3b8;font-size:13px}
+.go-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.go-tile{background:rgba(0,0,0,.38);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px 4px;display:flex;flex-direction:column;gap:2px;align-items:center}
+.go-tile b{font-family:'Russo One',sans-serif;font-size:19px;color:#fff;font-weight:400}
+.go-tile span{font-size:11px;color:#94a3b8;letter-spacing:1px}
+.go-tile.gold b{color:var(--gold)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+
+/* ===== UI v3: премиум-оформление нижней панели и окон ===== */
+.menu-bottom-dock{border-radius:26px;background:linear-gradient(180deg,#1c2744 0%,#0a0f1c 100%);border:1px solid rgba(255,255,255,.16);box-shadow:0 -8px 30px rgba(249,115,22,.1),0 14px 30px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.2),inset 0 -2px 0 rgba(0,0,0,.5)}
+.dock-btn{flex-direction:column;gap:4px;background:none;border:0}
+.dock-icon-box{position:relative;overflow:visible;width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:none;border:none;box-shadow:none;transition:transform .12s}
+.dock-icon-img{width:48px;height:48px;object-fit:contain;display:block;filter:drop-shadow(0 3px 6px rgba(0,0,0,.6));border-radius:14px;transition:filter .15s,transform .12s}
+.dock-btn:active .dock-icon-box{transform:translateY(2px) scale(.96)}
+.dock-label{font-size:10px;font-weight:800;letter-spacing:1.3px;color:#cbd5e1;text-shadow:0 1px 2px #000}
+.menu-bottom-dock>:nth-child(1){--c1:#38bdf8;--cg:rgba(56,189,248,.45)}
+.menu-bottom-dock>:nth-child(2){--c1:#fb923c;--cg:rgba(249,115,22,.45)}
+.menu-bottom-dock>:nth-child(4){--c1:#4ade80;--cg:rgba(74,222,128,.45)}
+.menu-bottom-dock>:nth-child(5){--c1:#facc15;--cg:rgba(250,204,21,.45)}
+.dock-play-btn{transform:translateY(-12px);height:66px;border-radius:22px}
+.dock-play-btn:active{transform:translateY(-9px) scale(.97)}
+.modal-window{position:relative;border-radius:20px}
+.modal-window::before{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.022) 0 1px,transparent 1px 3px);z-index:0}
+.modal-window::after{content:'';position:absolute;inset:6px;pointer-events:none;z-index:3;--b:linear-gradient(#f97316,#f97316);background:var(--b) 0 0/16px 2px,var(--b) 0 0/2px 16px,var(--b) 100% 0/16px 2px,var(--b) 100% 0/2px 16px,var(--b) 0 100%/16px 2px,var(--b) 0 100%/2px 16px,var(--b) 100% 100%/16px 2px,var(--b) 100% 100%/2px 16px;background-repeat:no-repeat;opacity:.75}
+.modal-header{background:linear-gradient(90deg,rgba(249,115,22,.18),transparent 75%),repeating-linear-gradient(135deg,rgba(255,255,255,.035) 0 6px,transparent 6px 12px)}
+.modal-title>span:first-child{display:inline-flex;width:32px;height:32px;align-items:center;justify-content:center;border-radius:10px;font-size:17px;margin-right:9px;background:linear-gradient(160deg,#fb923c,#c2410c);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 3px 10px rgba(249,115,22,.45)}
+.modal-close-btn{width:34px;height:34px;border-radius:10px;background:linear-gradient(180deg,#2c3650,#1a2236);border:1px solid rgba(255,255,255,.18);box-shadow:0 3px 0 #0b101c}
+.section-tag{display:flex;align-items:center;gap:8px;color:#fb923c;letter-spacing:2px}
+.section-tag::before{content:'';width:7px;height:7px;background:#f97316;transform:rotate(45deg);flex:none}
+.section-tag::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(249,115,22,.55),transparent)}
+.equip-slot,.upgrade-card,.stat-row,.char-card,.reward-card{background:linear-gradient(180deg,rgba(42,54,80,.9),rgba(17,24,39,.95));border:1px solid rgba(255,255,255,.1);border-radius:14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 4px 10px rgba(0,0,0,.35)}
+.equip-slot{border-left:3px solid var(--cyan)}
+.slot-icon{flex:none;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:11px;font-size:22px;background:radial-gradient(circle at 30% 20%,rgba(56,189,248,.4),rgba(8,12,22,.9));border:1px solid rgba(56,189,248,.45)}
+.upgrade-card{border-left:3px solid var(--gold)}
+.up-btn{background:linear-gradient(180deg,#fde047,#f59e0b 60%,#b45309)!important;color:#3a1d00!important;border:1px solid rgba(255,255,255,.55)!important;box-shadow:0 3px 0 #78350f,inset 0 1px 0 rgba(255,255,255,.7)!important;border-radius:12px!important}
+.up-btn:disabled{filter:grayscale(.9) brightness(.65)}
+.stat-row[style*="--p"]{position:relative;padding-bottom:17px}
+.stat-row[style*="--p"]::after{content:'';position:absolute;left:12px;right:12px;bottom:7px;height:5px;border-radius:3px;background:linear-gradient(90deg,#38bdf8 var(--p),rgba(255,255,255,.09) var(--p));box-shadow:0 0 8px rgba(56,189,248,.35)}
+.char-card{position:relative;padding:12px 12px 12px 88px!important;min-height:116px}
+.char-card.selected{border-color:#38bdf8;box-shadow:0 0 0 1px #38bdf8,0 0 22px rgba(56,189,248,.25),inset 0 1px 0 rgba(255,255,255,.12)}
+.char-port{position:absolute;left:16px;top:50%;width:59px;height:80px;margin-top:-40px;background:var(--hero-sheet) 0 0/auto 80px no-repeat;image-rendering:pixelated}
+.char-port::after{content:'';position:absolute;left:-8px;right:-8px;bottom:-5px;height:12px;border-radius:50%;background:radial-gradient(rgba(56,189,248,.6),transparent 70%)}
+#chars-list-container .char-card:nth-child(2) .char-port{filter:hue-rotate(-30deg) saturate(1.3)}
+#chars-list-container .char-card:nth-child(3) .char-port{filter:hue-rotate(170deg)}
+.char-port.lock{filter:grayscale(1) brightness(.4)!important}
+.rw-ico{flex:none;width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:12px;font-size:21px;margin-right:10px;background:radial-gradient(circle at 30% 20%,rgba(250,204,21,.4),rgba(8,12,22,.9));border:1px solid rgba(250,204,21,.45)}
+.reward-info{flex:1;min-width:0}
+.reward-card.ready{border-color:#22c55e;box-shadow:0 0 18px rgba(34,197,94,.28),inset 0 1px 0 rgba(255,255,255,.1)}
+.reward-card.done{opacity:.55}
+.rw-bar{height:6px;border-radius:3px;background:rgba(255,255,255,.09);overflow:hidden;margin-top:7px}
+.rw-bar i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,#0284c7,#38bdf8)}
+
+/* ===== UI v4: полноэкранные меню и склад ===== */
+.dock-icon-box::before{display:none}
+#modal-inventory,#modal-stats,#modal-rewards,#modal-characters{padding:0;background:#070a11}
+#modal-inventory .modal-window,#modal-stats .modal-window,#modal-rewards .modal-window,#modal-characters .modal-window{max-width:none;width:100%;height:100%;max-height:none;border-radius:0;border:0;border-top:2px solid var(--primary)}
+#modal-inventory .modal-body,#modal-stats .modal-body,#modal-rewards .modal-body,#modal-characters .modal-body{flex:1;overflow-y:auto;padding-bottom:24px}
+#inv-tabs{display:flex;gap:6px;padding:4px;background:rgba(0,0,0,.45);border-radius:14px;margin-bottom:12px}
+#inv-tabs button{flex:1;height:40px;border-radius:10px;background:transparent;color:#94a3b8;font-size:13px;letter-spacing:1px}
+#inv-tabs button.on{background:linear-gradient(180deg,#fb923c,#c2410c);color:#fff;box-shadow:0 3px 0 #7c2d12,inset 0 1px 0 rgba(255,255,255,.4)}
+.eq-slots{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.eq-slot{flex-direction:column;gap:3px;padding:8px 2px;border-radius:14px;background:linear-gradient(180deg,rgba(40,52,78,.9),rgba(14,20,34,.95));border:1.5px solid var(--rc);color:#e5e7eb;font-size:9px;min-width:0}
+.eq-slot i{font-style:normal;font-size:26px;width:46px;height:46px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:radial-gradient(circle at 50% 20%,color-mix(in srgb,var(--rc) 45%,transparent),rgba(8,12,22,.9) 80%)}
+.eq-slot span{color:#94a3b8;letter-spacing:1px}
+.eq-slot b{font-family:'Rajdhani',sans-serif;font-size:11px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 3px}
+.eq-slot.on{box-shadow:0 0 0 2px #f97316,0 0 16px rgba(249,115,22,.4)}
+.bag{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.bag-it{position:relative;aspect-ratio:1;border-radius:14px;background:radial-gradient(circle at 50% 15%,color-mix(in srgb,var(--rc) 35%,transparent),rgba(10,15,27,.95) 80%);border:1.5px solid var(--rc);font-size:28px;color:#fff}
+.bag-it.sel{box-shadow:0 0 0 2px #fff,0 0 14px var(--rc)}
+.bag-it em{position:absolute;right:4px;bottom:2px;font:800 11px 'Rajdhani',sans-serif;background:rgba(0,0,0,.65);padding:0 5px;border-radius:6px}
+.bag-it u{position:absolute;left:3px;top:3px;font:800 8px 'Rajdhani',sans-serif;text-decoration:none;background:#22c55e;color:#032;padding:0 4px;border-radius:5px}
+.bag-empty{grid-column:1/-1;color:#64748b;text-align:center;padding:22px 0;font-size:13px}
+.it-detail{border-radius:16px;padding:12px;background:linear-gradient(180deg,rgba(32,42,66,.95),rgba(12,18,30,.98));border:1.5px solid var(--rc);box-shadow:0 0 18px color-mix(in srgb,var(--rc) 30%,transparent)}
+.it-head{display:flex;align-items:center;gap:12px}
+.it-head i{font-style:normal;font-size:30px;width:56px;height:56px;display:flex;align-items:center;justify-content:center;border-radius:14px;border:1.5px solid var(--rc);background:radial-gradient(circle at 50% 20%,color-mix(in srgb,var(--rc) 45%,transparent),rgba(8,12,22,.9) 80%)}
+.it-name{font-family:'Russo One',sans-serif;font-size:16px;color:#fff}
+.it-rar{font-size:12px;letter-spacing:1.5px;color:var(--rc)}
+.it-desc{color:#94a3b8;font-size:13px;margin:8px 0}
+.it-mod{display:flex;justify-content:space-between;padding:6px 10px;border-radius:9px;background:rgba(0,0,0,.32);margin-top:4px;font-size:13px}
+.it-mod.pos b{color:#4ade80}.it-mod.neg b{color:#f87171}
+.it-act{display:flex;gap:8px;margin-top:12px}
+.it-act button{flex:1;height:44px;border-radius:12px;font-size:13px}
+.it-eq{background:linear-gradient(180deg,#fb923c,#c2410c);color:#fff;box-shadow:0 3px 0 #7c2d12,inset 0 1px 0 rgba(255,255,255,.4)}
+.it-sell{background:linear-gradient(180deg,#2e3956,#1d2539);color:#fde68a;box-shadow:0 3px 0 #0d1220}
+.loot-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.loot-chip{display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:12px;background:rgba(0,0,0,.4);border:1.5px solid var(--rc);font-size:13px}
+
+/* ===== нижняя панель всегда видна ===== */
+#screen-menu{z-index:40}
+.sys-open .menu-top-section{visibility:hidden}
+#modal-inventory,#modal-stats,#modal-rewards,#modal-characters{bottom:var(--dock-h,100px)}
+.dock-btn.act .dock-icon-box{transform:translateY(-3px);filter:drop-shadow(0 0 8px var(--cg))}
+.dock-btn.act .dock-label{color:#fff}
+
+/* ===== фон страниц под панелью, исправление иконок ===== */
+#modal-inventory,#modal-stats,#modal-rewards,#modal-characters{bottom:0}
+#modal-inventory .modal-window,#modal-stats .modal-window,#modal-rewards .modal-window,#modal-characters .modal-window{padding-bottom:var(--dock-h,100px)}
+#modal-inventory .modal-window::after,#modal-stats .modal-window::after,#modal-rewards .modal-window::after,#modal-characters .modal-window::after{inset:6px 6px calc(var(--dock-h,100px) + 4px)}
+.dock-btn{height:auto;min-height:74px;padding:4px 0;outline:none;-webkit-tap-highlight-color:transparent}
+.dock-btn:focus,.dock-btn:focus-visible{outline:none}
+.dock-icon-box{flex:none}
+
+/* ===== настройки ===== */
+#modal-settings{padding:0;background:#070a11;bottom:0}
+#modal-settings .modal-window{max-width:none;width:100%;height:100%;max-height:none;border-radius:0;border:0;border-top:2px solid var(--primary);padding-bottom:var(--dock-h,100px)}
+#modal-settings .modal-window::after{inset:6px 6px calc(var(--dock-h,100px) + 4px)}
+#modal-settings .modal-body{flex:1;overflow-y:auto;padding-bottom:24px}
+#btn-sound-toggle{display:none}
+.seg{display:flex;gap:6px;padding:4px;background:rgba(0,0,0,.45);border-radius:14px}
+.seg button{flex:1;height:42px;border-radius:10px;background:transparent;color:#94a3b8;font-size:14px}
+.seg button.on{background:linear-gradient(180deg,#fb923c,#c2410c);color:#fff;box-shadow:0 3px 0 #7c2d12,inset 0 1px 0 rgba(255,255,255,.4)}
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px;margin-top:8px;border-radius:14px;background:linear-gradient(180deg,rgba(42,54,80,.9),rgba(17,24,39,.95));border:1px solid rgba(255,255,255,.1);box-shadow:inset 0 1px 0 rgba(255,255,255,.1)}
+.set-t{font-family:'Russo One',sans-serif;font-size:14px;color:#fff}
+.set-d{font-size:12px;color:#94a3b8;font-weight:600}
+.sw{flex:none;width:58px;height:30px;border-radius:15px;background:#1f2937;border:1px solid rgba(255,255,255,.15);position:relative;padding:0}
+.sw::after{content:'';position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#94a3b8;transition:transform .15s}
+.sw.on{background:linear-gradient(180deg,#fb923c,#c2410c)}
+.sw.on::after{transform:translateX(28px);background:#fff}
+.set-danger{width:100%;height:46px;border-radius:12px;background:linear-gradient(180deg,#7f1d1d,#450a0a);color:#fecaca;border:1px solid #ef4444;font-size:13px;margin-top:8px}
+
+/* ===== прокачка характеристик ===== */
+#inv-tabs{display:none}
+#inv-tab-up{display:none!important}
+.acc-card{display:flex;gap:12px;align-items:center;padding:12px;border-radius:16px;margin-bottom:12px;background:linear-gradient(135deg,rgba(249,115,22,.24),rgba(17,24,39,.95));border:1px solid rgba(249,115,22,.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.12)}
+.acc-lv{flex:none;width:62px;height:62px;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(160deg,#fb923c,#c2410c);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 4px 0 #7c2d12}
+.acc-lv b{font:400 26px 'Russo One',sans-serif;line-height:1;color:#fff}
+.acc-lv span{font-size:9px;letter-spacing:1.5px;color:#ffedd5}
+.acc-main{flex:1;min-width:0}
+.acc-t{font-family:'Russo One',sans-serif;font-size:15px;color:#fff}
+.acc-bar{height:10px;border-radius:5px;background:rgba(0,0,0,.5);overflow:hidden;margin:6px 0 4px;border:1px solid rgba(255,255,255,.1)}
+.acc-bar i{display:block;height:100%;background:linear-gradient(180deg,#fdba74,#ea580c);box-shadow:0 0 8px #f97316}
+.acc-d{font-size:11px;color:#cbd5e1;font-weight:600}
+.su-card{display:flex;align-items:center;gap:10px;padding:10px;margin-bottom:8px;border-radius:14px;background:linear-gradient(180deg,rgba(42,54,80,.9),rgba(17,24,39,.95));border:1px solid rgba(255,255,255,.1);border-left:3px solid #38bdf8;box-shadow:inset 0 1px 0 rgba(255,255,255,.1)}
+.su-card.lock{opacity:.6;border-left-color:#475569}
+.su-ic{flex:none;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;border-radius:12px;background:radial-gradient(circle at 30% 20%,rgba(56,189,248,.4),rgba(8,12,22,.9));border:1px solid rgba(56,189,248,.45)}
+.su-mid{flex:1;min-width:0}
+.su-name{font-family:'Russo One',sans-serif;font-size:14px;color:#fff}
+.su-name em{font:700 11px 'Rajdhani',sans-serif;color:#94a3b8;font-style:normal;margin-left:6px}
+.su-val{font-size:14px;font-weight:700;color:#e5e7eb;margin-top:2px}
+.su-val b{color:#4ade80}.su-val s{text-decoration:none;color:#64748b}
+.su-bar{height:5px;border-radius:3px;background:rgba(255,255,255,.09);margin-top:6px;overflow:hidden}
+.su-bar i{display:block;height:100%;background:linear-gradient(90deg,#38bdf8,#0ea5e9)}
+.su-go{flex:none;min-width:78px;height:44px;border-radius:12px;font-size:13px;background:linear-gradient(180deg,#fde047,#f59e0b 60%,#b45309);color:#3a1d00;border:1px solid rgba(255,255,255,.55);box-shadow:0 3px 0 #78350f,inset 0 1px 0 rgba(255,255,255,.7)}
+.su-go:disabled{filter:grayscale(.9) brightness(.6)}
+.prof-xp{height:4px;border-radius:2px;background:rgba(255,255,255,.14);margin-top:4px;overflow:hidden}
+.prof-xp i{display:block;height:100%;width:0;background:linear-gradient(90deg,#fb923c,#fde047)}
+.go-xp{text-align:center;font-weight:700;color:#7dd3fc;margin:8px 0}
+
+
+
+/* ===== БЕЗОПАСНЫЙ ИГРОВОЙ HUD (SURVIVOR PRO SAFE AREA) ===== */
+#screen-game {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  padding: calc(14px + env(safe-area-inset-top, 0px)) 16px 0;
+  display: none !important;
+  flex-direction: column;
+  justify-content: flex-start !important;
+  gap: 8px;
+  z-index: 25;
+}
+#screen-game.active {
+  display: flex !important;
+}
+
+/* РЯД 1: ПОЛНОСТЬЮ ИНТЕГРИРОВАННАЯ ШКАЛА ОПЫТА С ГЕРБОМ */
+.hud-xp-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: auto;
+}
+.hud-lvl-crest {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(180deg, #fde047 0%, #f59e0b 45%, #b45309 100%);
+  clip-path: polygon(28% 0%, 72% 0%, 100% 28%, 100% 72%, 72% 100%, 28% 100%, 0% 72%, 0% 28%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 2px 5px rgba(0,0,0,0.7));
+}
+.hud-lvl-crest-inner {
+  width: 27px;
+  height: 27px;
+  background: linear-gradient(180deg, #1e293b 0%, #0a0f1d 100%);
+  clip-path: polygon(28% 0%, 72% 0%, 100% 28%, 100% 72%, 72% 100%, 28% 100%, 0% 72%, 0% 28%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+.hud-lvl-lbl {
+  font: 800 7px 'Rajdhani', sans-serif;
+  color: #facc15;
+  letter-spacing: 0.5px;
+  margin-top: 1px;
+}
+.hud-lvl-val {
+  font: 400 14px 'Russo One', sans-serif;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+}
+
+.hud-xp-track {
+  flex: 1;
+  height: 12px;
+  background: #060b14;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(56,189,248,0.25);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.9);
+  position: relative;
+}
+.hud-xp-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(180deg, #7dd3fc 0%, #0284c7 50%, #0369a1 100%);
+  box-shadow: 0 0 10px #38bdf8;
+  position: relative;
+  border-radius: 5px;
+  transition: width 0.15s ease;
+}
+.hud-xp-fill::after {
+  content: '';
+  position: absolute;
+  top: 0; right: 0; bottom: 0; width: 4px;
+  background: #ffffff;
+  box-shadow: 0 0 6px #ffffff;
+}
+
+/* РЯД 2: БОЕВАЯ КОНСОЛЬ (ЗДОРОВЬЕ, ТАЙМЕР, ФРАГИ, ПАУЗА) */
+.hud-sub-row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+}
+
+
+
+.hud-timer-badge {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: linear-gradient(180deg, rgba(17,25,42,0.92) 0%, rgba(10,15,26,0.92) 100%);
+  border: 1px solid rgba(56,189,248,0.3);
+  border-radius: 16px;
+  padding: 3px 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+.hud-timer-digits {
+  font: 400 14px 'Russo One', sans-serif;
+  color: #38bdf8;
+  text-shadow: 0 0 8px rgba(56,189,248,0.5);
+  letter-spacing: 1px;
+}
+
+.hud-right-group {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.hud-kills-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(180deg, rgba(17,25,42,0.92) 0%, rgba(10,15,26,0.92) 100%);
+  border: 1px solid rgba(255,255,255,0.11);
+  border-radius: 8px;
+  padding: 3px 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  font: 400 13px 'Russo One', sans-serif;
+  color: #e2e8f0;
+}
+.hud-pause-btn {
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(180deg, #334155 0%, #1e293b 100%);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 7px;
+  box-shadow: 0 2px 0 #0f172a, 0 3px 6px rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.12s ease;
+}
+.hud-pause-btn:hover { background: linear-gradient(180deg, #475569 0%, #334155 100%); }
+.hud-pause-btn:active { transform: translateY(1px); box-shadow: 0 1px 0 #0f172a; }
 </style>
 </head>
 <body>
-<canvas id="c"></canvas>
-<div id="ui"></div>
+<div id="game-box">
+  <canvas id="c"></canvas>
+
+  <div id="ui-root">
+    <!-- 1. ЭКРАН СТАРТА: "начало Play переходишь в меню" -->
+    <div id="screen-start" class="screen active">
+      <div class="start-logo-box">
+        <div class="start-badge">BETA 1.0 • SURVIVAL SHOOTER</div>
+        <h1 class="start-title">SURVIVORS</h1>
+        <div class="start-sub">ЗОНА ОТЧУЖДЕНИЯ</div>
+      </div>
+      <button id="btn-start-play" class="start-action-btn">PLAY</button>
+      <div class="start-hint-text">НАЖМИТЕ, ЧТОБЫ ВОЙТИ В МЕНЮ</div>
+    </div>
+
+    <!-- 2. ЭКРАН ГЛАВНОГО МЕНЮ (LOBBY HUB) -->
+    <div id="screen-menu" class="screen">
+      <!-- Верхняя секция: Профиль, валюта и селектор уровней -->
+      <div class="menu-top-section">
+        <div class="menu-top-bar">
+          <div class="player-profile-badge">
+            <div class="profile-avatar-hex">★</div>
+            <div class="profile-info">
+              <div class="profile-name">ВЫЖИВШИЙ</div>
+              <div class="profile-meta">
+                <span class="profile-lvl-tag">УР. 1</span>
+                <span class="profile-energy">⚡ 10/10</span>
+              </div>
+              <div class="prof-xp"><i id="prof-xp-fill"></i></div>
+            </div>
+          </div>
+
+          <div class="currencies-group">
+            <div class="currency-chip gold">
+              <span>🪙</span>
+              <span id="menu-gold">0</span>
+              <button class="plus-btn" onclick="openModal('modal-rewards')">+</button>
+            </div>
+            <div class="currency-chip gems">
+              <span>💎</span>
+              <span>15</span>
+            </div>
+            <button id="btn-sound-toggle" class="tactical-icon-btn">🔊</button>
+            <button id="btn-settings" class="tactical-icon-btn">⚙️</button>
+          </div>
+        </div>
+
+        <!-- Селектор глав / уровней -->
+        <div class="lvl-selector-wrap">
+          <button id="btn-lvl-prev" class="tactical-arrow-btn">◀</button>
+          <div class="lvl-info-card" id="lvl-card-frame">
+            <div class="lvl-top-accent" id="lvl-card-accent"></div>
+            <div class="lvl-header-row">
+              <span class="lvl-badge" id="lvl-badge-text">★ ГЛАВА 1 ★</span>
+              <span class="lvl-diff-tag" id="lvl-diff-tag">НОРМАЛЬНО</span>
+            </div>
+            <div class="lvl-name" id="lvl-name-text">ЗАБРОШЕННЫЙ ГОРОД</div>
+            <div class="lvl-footer-row">
+              <span class="lvl-info-pill">💀 Зомби</span>
+              <span class="lvl-info-pill gold" id="lvl-bonus-pill">Золото ×1.0</span>
+            </div>
+          </div>
+          <button id="btn-lvl-next" class="tactical-arrow-btn">▶</button>
+        </div>
+      </div>
+
+      <!-- Нижняя панель (Dock): 2 кнопки слева + PLAY по центру + 2 кнопки справа -->
+      <div class="menu-bottom-dock">
+        <button id="btn-dock-chars" class="dock-btn" title="Персонажи">
+          <div class="dock-icon-box">
+            <img src="dock_heroes.png" class="dock-icon-img" alt="Герои">
+          </div>
+          <span class="dock-label">ГЕРОИ</span>
+        </button>
+
+        <button id="btn-dock-inventory" class="dock-btn" title="Инвентарь">
+          <div class="dock-icon-box">
+            <img src="dock_storage.png" class="dock-icon-img" alt="Склад">
+          </div>
+          <span class="dock-label">СКЛАД</span>
+        </button>
+
+        <!-- 3D PUNCHY PLAY BUTTON -->
+        <button id="btn-dock-play" class="dock-play-btn" title="В бой">
+          <div class="play-flare"></div>
+          <span class="dock-play-icon">▶</span>
+          <span class="dock-play-text">В БОЙ!</span>
+        </button>
+
+        <button id="btn-dock-stats" class="dock-btn" title="Характеристики">
+          <div class="dock-icon-box">
+            <img src="dock_stats.png" class="dock-icon-img" alt="Статы">
+          </div>
+          <span class="dock-label">СТАТЫ</span>
+        </button>
+
+        <button id="btn-dock-rewards" class="dock-btn" title="Награды">
+          <div class="dock-icon-box">
+            <div id="reward-badge-dot" class="badge-dot"></div>
+            <img src="dock_rewards.png" class="dock-icon-img" alt="Награды">
+          </div>
+          <span class="dock-label">НАГРАДЫ</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 3. ИГРОВОЙ ИНТЕРФЕЙС (HUD: SURVIVOR PRO SAFE AREA) -->
+    <div id="screen-game" class="screen">
+      <!-- РЯД 1: ПОЛНОСТЬЮ ИНТЕГРИРОВАННЫЙ XP-БАР -->
+      <div class="hud-xp-row">
+        <div class="hud-lvl-crest">
+          <div class="hud-lvl-crest-inner">
+            <span class="hud-lvl-lbl">LV</span>
+            <b id="hud-lvl" class="hud-lvl-val">1</b>
+          </div>
+        </div>
+        <div class="hud-xp-track">
+          <div id="hud-xp-fill" class="hud-xp-fill"></div>
+        </div>
+      </div>
+
+      <!-- РЯД 2: БОЕВАЯ КОНСОЛЬ -->
+      <div class="hud-sub-row">
+        <!-- Таймер -->
+        <div class="hud-timer-badge">
+          <svg viewBox="0 0 24 24" width="12" height="12"><circle cx="12" cy="12" r="9" fill="none" stroke="#64748b" stroke-width="2"/><path d="M12 7v5l3 3" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/></svg>
+          <span id="hud-timer" class="hud-timer-digits">00:00</span>
+        </div>
+
+        <!-- Фраги и Пауза -->
+        <div class="hud-right-group">
+          <div class="hud-kills-badge">
+            <svg viewBox="0 0 24 24" width="12" height="12"><path d="M12 2C7.58 2 4 5.58 4 10c0 2.5 1.15 4.73 2.95 6.22V19a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-2.78C18.85 14.73 20 12.5 20 10c0-4.42-3.58-8-8-8zm-3 10a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm6 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" fill="#cbd5e1"/><rect x="8" y="17" width="2" height="2" rx="0.5" fill="#0f172a"/><rect x="11" y="17" width="2" height="2" rx="0.5" fill="#0f172a"/><rect x="14" y="17" width="2" height="2" rx="0.5" fill="#0f172a"/></svg>
+            <span id="hud-kills">0</span>
+          </div>
+          <button id="btn-game-pause" class="hud-pause-btn" aria-label="Пауза">
+            <svg viewBox="0 0 24 24" width="12" height="12"><rect x="6" y="5" width="4" height="14" rx="1" fill="#fff"/><rect x="14" y="5" width="4" height="14" rx="1" fill="#fff"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== МОДАЛКА: ИНВЕНТАРЬ ===== -->
+    <div id="modal-inventory" class="modal-overlay">
+      <div class="modal-window">
+        <div class="modal-header">
+          <div class="modal-title"><span>🎒</span> СКЛАД И ЭКИПИРОВКА</div>
+          <button class="modal-close-btn" onclick="closeModal('modal-inventory')">✕</button>
+        </div>
+        <div class="modal-body">
+          <div id="inv-tabs"><button class="on" data-tab="eq">СНАРЯЖЕНИЕ</button><button data-tab="up">УЛУЧШЕНИЯ</button></div>
+          <div id="inv-tab-eq"><div id="inv-equip-root"></div></div>
+          <div id="inv-tab-up" style="display:none">
+          <div class="section-tag" style="margin-top:6px">ПОСТОЯННЫЕ УЛУЧШЕНИЯ</div>
+          <div class="upgrade-card">
+            <div class="up-info">
+              <div class="up-title">❤️ Здоровье (+10%)</div>
+              <div class="up-desc">Текущий уровень: <b id="up-hp-lvl">0</b></div>
+            </div>
+            <button id="btn-up-hp" class="up-btn">20 🪙</button>
+          </div>
+          <div class="upgrade-card">
+            <div class="up-info">
+              <div class="up-title">🧲 Радиус сбора (+15%)</div>
+              <div class="up-desc">Текущий уровень: <b id="up-pick-lvl">0</b></div>
+            </div>
+            <button id="btn-up-pick" class="up-btn">15 🪙</button>
+          </div>
+          <div class="upgrade-card">
+            <div class="up-info">
+              <div class="up-title">⚔️ Урон оружия (+10%)</div>
+              <div class="up-desc">Текущий уровень: <b id="up-dmg-lvl">0</b></div>
+            </div>
+            <button id="btn-up-dmg" class="up-btn">25 🪙</button>
+          </div>
+          <div class="upgrade-card">
+            <div class="up-info">
+              <div class="up-title">👟 Скорость бега (+5%)</div>
+              <div class="up-desc">Текущий уровень: <b id="up-spd-lvl">0</b></div>
+            </div>
+            <button id="btn-up-spd" class="up-btn">25 🪙</button>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== МОДАЛКА: СТАТЫ ===== -->
+    <div id="modal-stats" class="modal-overlay">
+      <div class="modal-window">
+        <div class="modal-header">
+          <div class="modal-title"><span>📊</span> БОЕВЫЕ ХАРАКТЕРИСТИКИ</div>
+          <button class="modal-close-btn" onclick="closeModal('modal-stats')">✕</button>
+        </div>
+        <div class="modal-body">
+          <div id="acc-card"></div>
+          <div class="section-tag">УЛУЧШЕНИЯ</div>
+          <div id="stat-up-list"></div>
+
+          <div class="section-tag" style="margin-top:6px">РЕКОРДЫ КАРЬЕРЫ</div>
+          <div class="stat-row">
+            <span class="stat-label">⏱️ Рекорд выживания:</span>
+            <span class="stat-val" id="stat-best-time">0:00</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">💀 Уничтожено врагов:</span>
+            <span class="stat-val" id="stat-total-kills">0</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">🪙 Всего золота добыто:</span>
+            <span class="stat-val" id="stat-total-gold">0</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">🎮 Сыграно вылазок:</span>
+            <span class="stat-val" id="stat-games-played">0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== МОДАЛКА: ПЕРСОНАЖИ ===== -->
+    <div id="modal-characters" class="modal-overlay">
+      <div class="modal-window">
+        <div class="modal-header">
+          <div class="modal-title"><span>👤</span> ОТРЯД ВЫЖИВШИХ</div>
+          <button class="modal-close-btn" onclick="closeModal('modal-characters')">✕</button>
+        </div>
+        <div class="modal-body" id="chars-list-container"></div>
+      </div>
+    </div>
+
+    <!-- ===== МОДАЛКА: НАГРАДЫ ===== -->
+    <div id="modal-rewards" class="modal-overlay">
+      <div class="modal-window">
+        <div class="modal-header">
+          <div class="modal-title"><span>🏆</span> БОЕВЫЕ НАГРАДЫ</div>
+          <button class="modal-close-btn" onclick="closeModal('modal-rewards')">✕</button>
+        </div>
+        <div class="modal-body" id="rewards-list-container"></div>
+      </div>
+    </div>
+
+    <div id="modal-settings" class="modal-overlay">
+      <div class="modal-window">
+        <div class="modal-header"><div class="modal-title"><span>⚙️</span> SETTINGS</div><button class="modal-close-btn" onclick="closeModal('modal-settings')">✕</button></div>
+        <div class="modal-body" id="settings-body"></div>
+      </div>
+    </div>
+
+    <!-- ===== МОДАЛКА: LEVEL UP ===== -->
+    <div id="modal-levelup" class="modal-overlay">
+      <div class="modal-window">
+        <div class="modal-header">
+          <div class="modal-title"><span>⭐</span> ВЫБЕРИТЕ УЛУЧШЕНИЕ</div>
+        </div>
+        <div class="modal-body" id="levelup-cards-box"></div>
+      </div>
+    </div>
+
+    <!-- ===== МОДАЛКА: ПАУЗА ===== -->
+    <div id="modal-pause" class="modal-overlay">
+      <div class="modal-window" style="text-align:center">
+        <div class="modal-header">
+          <div class="modal-title"><span>⏸</span> ПАУЗА</div>
+        </div>
+        <div class="modal-body">
+          <p style="color:#94a3b8;margin:8px 0">Бой приостановлен</p>
+          <button class="start-action-btn" style="width:100%;height:46px;font-size:16px" onclick="resumeGame()">ПРОДОЛЖИТЬ</button>
+          <button style="width:100%;height:46px;background:#242d40;border-radius:12px" onclick="quitToMenu()">В ГЛАВНОЕ МЕНЮ</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== МОДАЛКА: GAME OVER ===== -->
+    <div id="modal-gameover" class="modal-overlay">
+      <div class="modal-window">
+        <div class="modal-header">
+          <div class="modal-title" style="color:#ef4444"><span>💀</span> ВЫ ПОГИБЛИ</div>
+        </div>
+        <div class="modal-body">
+          <div class="go-stats">
+            <div class="go-tile"><b id="go-time">0:00</b><span>ВРЕМЯ</span></div>
+            <div class="go-tile"><b id="go-kills">0</b><span>УБИТО</span></div>
+            <div class="go-tile gold"><b>+<span id="go-gold">0</span></b><span>ЗОЛОТО</span></div>
+          </div>
+          <div class="go-xp" id="go-xp"></div>
+          <div class="section-tag">ВЫПАЛО В БОЮ</div><div class="loot-row" id="go-loot"></div>
+          <button id="btn-go-revive" class="start-action-btn" style="width:100%;height:46px;font-size:15px">ВОСКРЕСНУТЬ (РЕКЛАМА)</button>
+          <button id="btn-go-x2" style="width:100%;height:46px;background:#3b475f;border-radius:12px">УДВОИТЬ ЗОЛОТО ×2</button>
+          <button style="width:100%;height:46px;background:#242d40;border-radius:12px" onclick="quitToMenu()">В ГЛАВНОЕ МЕНЮ</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-// ===== БАЛАНС: друг правит ТОЛЬКО этот блок =====
+// ===== ЗВУКОВОЙ ДВИЖОК =====
+const Sfx={
+  ctx:null,enabled:true,
+  init(){
+    if(!this.ctx){
+      const AC=window.AudioContext||window.webkitAudioContext;
+      if(AC)this.ctx=new AC();
+    }
+  },
+  play(type){
+    if(!this.enabled)return;
+    this.init();if(!this.ctx)return;
+    try{
+      const t=this.ctx.currentTime;
+      if(type==='click'){
+        const o=this.ctx.createOscillator(),g=this.ctx.createGain();
+        o.type='sine';o.frequency.setValueAtTime(650,t);o.frequency.exponentialRampToValueAtTime(850,t+.05);
+        g.gain.setValueAtTime(.12,t);g.gain.linearRampToValueAtTime(0,t+.05);
+        o.connect(g);g.connect(this.ctx.destination);o.start(t);o.stop(t+.05);
+      }else if(type==='start'){
+        const o=this.ctx.createOscillator(),g=this.ctx.createGain();
+        o.type='triangle';o.frequency.setValueAtTime(260,t);o.frequency.exponentialRampToValueAtTime(520,t+.18);
+        g.gain.setValueAtTime(.18,t);g.gain.linearRampToValueAtTime(0,t+.18);
+        o.connect(g);g.connect(this.ctx.destination);o.start(t);o.stop(t+.18);
+      }else if(type==='shoot'){
+        const o=this.ctx.createOscillator(),g=this.ctx.createGain();
+        o.type='sawtooth';o.frequency.setValueAtTime(420,t);o.frequency.exponentialRampToValueAtTime(80,t+.08);
+        g.gain.setValueAtTime(.14,t);g.gain.linearRampToValueAtTime(0,t+.08);
+        o.connect(g);g.connect(this.ctx.destination);o.start(t);o.stop(t+.08);
+      }else if(type==='gem'){
+        const o=this.ctx.createOscillator(),g=this.ctx.createGain();
+        o.type='sine';o.frequency.setValueAtTime(880,t);o.frequency.exponentialRampToValueAtTime(1320,t+.06);
+        g.gain.setValueAtTime(.08,t);g.gain.linearRampToValueAtTime(0,t+.06);
+        o.connect(g);g.connect(this.ctx.destination);o.start(t);o.stop(t+.06);
+      }else if(type==='levelup'){
+        const o=this.ctx.createOscillator(),g=this.ctx.createGain();
+        o.type='triangle';o.frequency.setValueAtTime(440,t);o.frequency.linearRampToValueAtTime(660,t+.1);o.frequency.linearRampToValueAtTime(880,t+.2);
+        g.gain.setValueAtTime(.15,t);g.gain.linearRampToValueAtTime(0,t+.25);
+        o.connect(g);g.connect(this.ctx.destination);o.start(t);o.stop(t+.25);
+      }
+    }catch(e){}
+  }
+};
+
+// ===== УРОВНИ И ГЕРОИ =====
+const LEVELS=[
+  {
+    id:1,badge:'★ ГЛАВА 1 ★',name:'ЗАБРОШЕННЫЙ ГОРОД',sub:'Зомби и Гончие • Обычная сложность',
+    diffText:'НОРМАЛЬНО',diffColor:'#4ade80',
+    bgColor:'#080d16',gridColor:'#182338',pedColor:'#f97316',
+    multHp:1.0,multSpeed:1.0,multGold:1.0,
+    bonusText:'Золото ×1.0',
+    emberCols:['rgba(249,115,22,0.7)','rgba(251,146,60,0.5)','rgba(56,189,248,0.4)']
+  },
+  {
+    id:2,badge:'★ ГЛАВА 2 ★',name:'КЛАДБИЩЕ МУТАНТОВ',sub:'Скелеты • Средняя сложность',
+    diffText:'СЛОЖНО',diffColor:'#facc15',
+    bgColor:'#100a18',gridColor:'#2e1938',pedColor:'#a855f7',
+    multHp:1.3,multSpeed:1.15,multGold:1.5,
+    bonusText:'Золото ×1.5',
+    emberCols:['rgba(168,85,247,0.7)','rgba(192,132,252,0.55)','rgba(74,222,128,0.55)']
+  },
+  {
+    id:3,badge:'★ ГЛАВА 3 ★',name:'СЕКРЕТНЫЙ БУНКЕР',sub:'Призраки • Кошмар',
+    diffText:'ЭКСТРИМ',diffColor:'#ef4444',
+    bgColor:'#140808',gridColor:'#361616',pedColor:'#ef4444',
+    multHp:1.6,multSpeed:1.3,multGold:2.0,
+    bonusText:'Золото ×2.0',
+    emberCols:['rgba(239,68,68,0.75)','rgba(248,113,113,0.5)','rgba(251,191,36,0.55)']
+  }
+];
+
+const CHARACTERS=[
+  {
+    id:'john',name:'ДЖОН',title:'Ветеран Пустошей',cost:0,
+    desc:'Сбалансированный боец. Надёжен в любой перестрелке.',
+    bonus:'100 HP, 150 Скорость, 10 Урон',
+    hpMod:1.0,spdMod:1.0,dmgMod:1.0,projMod:1,coolMod:1.0
+  },
+  {
+    id:'marcus',name:'МАРКУС',title:'Штурмовик Джаггернаут',cost:50,
+    desc:'Тяжёлая броня и огневая мощь. Стреляет сразу 2 пулями!',
+    bonus:'+40% HP, +1 снаряд за залп, -10% Скорость',
+    hpMod:1.4,spdMod:0.9,dmgMod:1.0,projMod:2,coolMod:1.0
+  },
+  {
+    id:'leon',name:'ЛЕОН',title:'Призрак Разведчик',cost:100,
+    desc:'Сверхбыстрый боец с ураганным темпом стрельбы.',
+    bonus:'+20% Скорость бега, +35% скорострельность, -15% HP',
+    hpMod:0.85,spdMod:1.2,dmgMod:0.95,projMod:1,coolMod:0.65
+  }
+];
+
 const CONFIG={
   player:{hp:100,speed:150,pickup:50},
-  weapon:{damage:10,cooldown:0.7,projectiles:1,speed:380,range:420},
-  enemies:{ // from = с какой секунды появляется, weight = как часто
-    slime:{hp:12,speed:45,damage:6,xp:1,r:11,color:'#4ade80',weight:10,from:0},
-    skeleton:{hp:28,speed:60,damage:9,xp:3,r:12,color:'#e5e7eb',weight:4,from:60},
-    ghost:{hp:18,speed:85,damage:7,xp:2,r:10,color:'#93c5fd',weight:3,from:120}
+  weapon:{damage:10,cooldown:0.7,projectiles:1,speed:820,range:480},
+  enemies:{
+    zombie:{name:'Зомби',hp:12,speed:45,damage:6,xp:1,r:13,color:'#4ade80',weight:10,from:0},
+    hound:{name:'Мутант-Гончая',hp:9,speed:95,damage:5,xp:1,r:14,color:'#ea580c',weight:6,from:8},
+    skeleton:{name:'Скелет',hp:28,speed:60,damage:9,xp:3,r:12,color:'#e5e7eb',weight:4,from:50},
+    ghost:{name:'Призрак',hp:18,speed:85,damage:7,xp:2,r:10,color:'#93c5fd',weight:3,from:100}
   },
   waves:{interval:0.9,minInterval:0.12,decayPerMin:0.75,hpPerMin:0.35,maxEnemies:350},
   level:{base:5,growth:1.35},
-  meta:{hpStep:0.1,pickStep:0.15,hpCost:20,pickCost:15,costGrowth:1.6}
+  meta:{
+    hpStep:0.1,pickStep:0.15,dmgStep:0.1,spdStep:0.05,
+    hpCost:20,pickCost:15,dmgCost:25,spdCost:25,costGrowth:1.55
+  }
 };
-// ===== ЗАГЛУШКИ ПЛОЩАДКИ (потом заменить на SDK портала) =====
+
 const Platform={rewarded:cb=>cb(true),interstitial:()=>{}};
 
 const ABILITIES=[
@@ -48,95 +1081,682 @@ const ABILITIES=[
   {name:'Крепкое тело',desc:'+25 макс. HP и лечение',apply:p=>{p.maxHp+=25;p.hp=Math.min(p.maxHp,p.hp+25)}}
 ];
 
-const cv=document.getElementById('c'),cx=cv.getContext('2d'),ui=document.getElementById('ui');
-let W,H,G=null;
-function resize(){const d=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*d;cv.height=H*d;cx.setTransform(d,0,0,d,0,0)}
-addEventListener('resize',resize);resize();
-
-// ===== сохранение =====
-let save={gold:0,hpLv:0,pickLv:0};
+// Хранилище
+let save={
+  gold:0,hpLv:0,pickLv:0,dmgLv:0,spdLv:0,
+  selectedChar:'john',unlockedChars:['john'],selectedLvl:1,
+  totalKills:0,totalGoldEarned:0,bestTime:0,gamesPlayed:0,
+  claimedRewards:[]
+};
 try{Object.assign(save,JSON.parse(localStorage.getItem('surv_save')||'{}'))}catch(e){}
 function persist(){try{localStorage.setItem('surv_save',JSON.stringify(save))}catch(e){}}
 
-// ===== ввод: WASD/стрелки и плавающий джойстик =====
+// Canvas & Sizing
+const box=document.getElementById('game-box'),cv=document.getElementById('c'),cx=cv.getContext('2d');
+let W,H,G=null;
+function resize(){
+  const d=Math.min(window.devicePixelRatio||1,2);
+  const rect=box.getBoundingClientRect();
+  W=Math.floor(rect.width);H=Math.floor(rect.height);
+  cv.width=W*d;cv.height=H*d;
+  cx.setTransform(d,0,0,d,0,0);
+  cx.imageSmoothingEnabled=false;
+}
+addEventListener('resize',resize);resize();
+
+// Спрайты
+const heroImg=new Image();heroImg.src='hero_sheet.png';
+const heroArmsImg=new Image();heroArmsImg.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABQCAYAAABcbTqwAAACLUlEQVR4nO3dsWpUQRiG4YkES4lRgrEQTEBERDuLFJY2olXuICCCtQi5gIBYCyLkDlIpNinEKoKlhUIgES1ERFewFEGvwI8fMnAOx+ephz17dvdlAn9md64NZHHx7J82AbPZ57k2AdX3Yzby++19H8eO/IxgwgQCgUAgEAgEAoFAIBAIBAKBQCAQCObbQJPvGyvlS4/abuv7ulQnvL3fj3v3N0vrVldXRv0fEAcHh6V1jx9tle7DDgKBQCAQCAQCgUAgEAgEAoFAIBAIBALBXHUi+/D2udbTg2ef2pj1nvTvHv7u+ngnT58qrbt4+WrX607F61cvS+vsIBAIBAKBQCAQCAQCgUAgEAgEAoFAINBjkn732kLr6fyZE20IY5/g723e6vp4N5/utf/Jj2/fS+t8uzt04E8sCAQCgUAgEAgEAoFAIBAIBAKBQDDYV6x/+PJzkOv2Pls/1AR/aXm5tO7FnbXSurWt520Kv5Pemx0EAoFAIBAIBAKBQCAQCAQCgUAgEAgEgvnqZPTJm1Y6u35p4Vfr6fqFpUlM8Kve738c5Lrb61dK6zZ2ap+DqUzc7SAQCAQCgUAgEAgEAoFAIBAIBAKBQCDQ40x6dTL6rtW+Lb5s/2ubhuOlVRs7b0vrtteP+HQosYNAIBAIBAKBQCAQCAQCgUAgEAgEAoFAMPpzw9XfcR+73me0h3pdZhM5a15lB4FAIBAIBAKBQCAQCAQCgUAgEAgEAoH2b38Bvj9iQ6M1TBQAAAAASUVORK5CYII=';
+const zombieImg=new Image();zombieImg.src='zombie_sheet.png';
+const houndImg=new Image();houndImg.src='hound_sheet.png';
+
+// Частицы
+const menuParticles=Array.from({length:36},()=>({
+  x:Math.random()*400,y:Math.random()*800,
+  speed:22+Math.random()*38,size:1.5+Math.random()*2.5,
+  seed:Math.random()
+}));
+
+// Фоновые арты глав лобби
+const bgLvlImages=[new Image(),new Image(),new Image()];
+bgLvlImages[0].src='bg_lvl1.png';
+bgLvlImages[1].src='bg_lvl2.png';
+bgLvlImages[2].src='bg_lvl3.png';
+
+// Состояние
+let currentScreen='start';
+let selectedLvlIdx=Math.max(0,LEVELS.findIndex(l=>l.id===save.selectedLvl));
+if(selectedLvlIdx<0)selectedLvlIdx=0;
+let prevLvlIdx=selectedLvlIdx;
+let lvlTransition=1.0;
+
+function showScreen(name){
+  currentScreen=name;
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById('screen-'+name);
+  if(el)el.classList.add('active');
+  if(name==='menu')updateMenuUI();
+}
+
+const SYS=['modal-characters','modal-inventory','modal-stats','modal-rewards','modal-settings'];
+const SYS_BTN={'modal-characters':'btn-dock-chars','modal-inventory':'btn-dock-inventory','modal-stats':'btn-dock-stats','modal-rewards':'btn-dock-rewards'};
+function syncSys(){
+  const open=SYS.find(i=>document.getElementById(i).classList.contains('open'));
+  document.body.classList.toggle('sys-open',!!open);
+  for(const i of SYS){const bt=SYS_BTN[i]&&document.getElementById(SYS_BTN[i]);if(bt)bt.classList.toggle('act',i===open)}
+  if(open){const d=document.querySelector('.menu-bottom-dock').getBoundingClientRect(),b=document.getElementById('game-box').getBoundingClientRect();
+    document.documentElement.style.setProperty('--dock-h',Math.max(0,b.bottom-d.top+14)+'px')}
+}
+function closeSys(){SYS.forEach(i=>document.getElementById(i).classList.remove('open'));syncSys()}
+function openModal(id){
+  if(SYS.includes(id)&&document.getElementById(id).classList.contains('open')){closeModal(id);return}
+  Sfx.play('click');
+  if(SYS.includes(id))SYS.forEach(i=>document.getElementById(i).classList.remove('open'));
+  document.getElementById(id).classList.add('open');
+  syncSys();
+  if(id==='modal-inventory')renderInventory();
+  if(id==='modal-stats')renderStats();
+  if(id==='modal-characters')renderCharacters();
+  if(id==='modal-rewards')renderRewards();
+  if(id==='modal-settings')renderSettings();
+}
+function closeModal(id){
+  Sfx.play('click');
+  document.getElementById(id).classList.remove('open');
+  syncSys();
+  updateMenuUI();
+}
+
+function cost(base,lv){return Math.floor(base*Math.pow(CONFIG.meta.costGrowth,lv))}
+function fmt(t){t|=0;return String(t/60|0).padStart(2,'0')+':'+String(t%60).padStart(2,'0')}
+
+function updateMenuUI(){
+  const al=save.accLv||1;document.querySelector('.profile-lvl-tag').textContent='УР. '+al;document.getElementById('prof-xp-fill').style.width=Math.round((save.accXp||0)/accNeed(al)*100)+'%';
+  document.getElementById('menu-gold').textContent=save.gold;
+  const lvl=LEVELS[selectedLvlIdx];
+  document.getElementById('lvl-badge-text').textContent=lvl.badge;
+  document.getElementById('lvl-name-text').textContent=lvl.name;
+  document.getElementById('lvl-diff-tag').textContent=lvl.diffText;
+  document.getElementById('lvl-diff-tag').style.color=lvl.diffColor;
+  document.getElementById('lvl-bonus-pill').textContent=lvl.bonusText;
+  document.getElementById('lvl-card-accent').style.background=`linear-gradient(90deg,transparent,${lvl.pedColor},transparent)`;
+
+  // Проверка уведомлений наград
+  const hasReward=REWARDS.some(r=>!save.claimedRewards.includes(r.id)&&r.check());
+  document.getElementById('reward-badge-dot').classList.toggle('show',hasReward);
+}
+
+document.getElementById('btn-lvl-prev').onclick=()=>{
+  Sfx.play('click');
+  prevLvlIdx=selectedLvlIdx;
+  selectedLvlIdx=(selectedLvlIdx-1+LEVELS.length)%LEVELS.length;
+  lvlTransition=0;
+  save.selectedLvl=LEVELS[selectedLvlIdx].id;persist();
+  updateMenuUI();
+};
+document.getElementById('btn-lvl-next').onclick=()=>{
+  Sfx.play('click');
+  prevLvlIdx=selectedLvlIdx;
+  selectedLvlIdx=(selectedLvlIdx+1)%LEVELS.length;
+  lvlTransition=0;
+  save.selectedLvl=LEVELS[selectedLvlIdx].id;persist();
+  updateMenuUI();
+};
+
+const sndBtn=document.getElementById('btn-sound-toggle');
+sndBtn.onclick=()=>{
+  Sfx.enabled=!Sfx.enabled;
+  sndBtn.textContent=Sfx.enabled?'🔊':'🔇';ensureSet();save.settings.sfx=Sfx.enabled;persist();
+  Sfx.play('click');
+};
+
+document.getElementById('btn-start-play').onclick=()=>{
+  Sfx.play('start');
+  showScreen('menu');
+};
+
+// Dock кнопки
+document.getElementById('btn-dock-chars').onclick=()=>openModal('modal-characters');
+document.getElementById('btn-dock-inventory').onclick=()=>openModal('modal-inventory');
+document.getElementById('btn-dock-play').onclick=()=>{
+  Sfx.play('start');
+  startGame();
+};
+document.getElementById('btn-dock-stats').onclick=()=>openModal('modal-stats');
+document.getElementById('btn-dock-rewards').onclick=()=>openModal('modal-rewards');
+
+// Награды
+const REWARDS=[
+  {id:'r1',title:'💀 ПЕРВАЯ КРОВЬ',desc:'Уничтожить 20 зомби в вылазках',reward:30,check:()=>save.totalKills>=20,cur:()=>save.totalKills,need:20},
+  {id:'r2',title:'⏱️ СТОЙКИЙ БОЕЦ',desc:'Продержаться в живых 60 секунд',reward:40,check:()=>save.bestTime>=60,cur:()=>save.bestTime,need:60,fmtSec:true},
+  {id:'r3',title:'🧟 ГРОЗА МЕРТВЕЦОВ',desc:'Уничтожить 100 зомби за всё время',reward:75,check:()=>save.totalKills>=100,cur:()=>save.totalKills,need:100},
+  {id:'r4',title:'🎮 ВЕТЕРАН ЗОНЫ',desc:'Сыграть 5 матчей на выживание',reward:50,check:()=>save.gamesPlayed>=5,cur:()=>save.gamesPlayed,need:5}
+];
+
+function renderRewards(){
+  save.claimedRewards=save.claimedRewards||[];
+  const container=document.getElementById('rewards-list-container');
+  container.innerHTML='';
+  REWARDS.forEach(r=>{
+    const claimed=save.claimedRewards.includes(r.id);
+    const ready=!claimed&&r.check();
+    const curVal=r.cur();
+    const valText=r.fmtSec?fmt(curVal)+'/'+fmt(r.need):curVal+'/'+r.need;
+    const card=document.createElement('div');
+    card.className='reward-card'+(ready?' ready':'')+(claimed?' done':'');
+    card.innerHTML=`
+      <div class="rw-ico">${claimed?'✅':(ready?'🎁':'🏆')}</div>
+      <div class="reward-info">
+        <div class="reward-title">${r.title}</div>
+        <div class="reward-desc">${r.desc} • <b style="color:#38bdf8">${valText}</b></div>
+        <div class="rw-bar"><i style="width:${Math.min(100,Math.round(curVal/r.need*100))}%"></i></div>
+      </div>
+      <button class="reward-claim-btn ${ready?'ready':''}" id="btn-rew-${r.id}" ${claimed||!ready?'disabled':''}>
+        ${claimed?'ПОЛУЧЕНО':(ready?`ЗАБРАТЬ +${r.reward} 🪙`:`+${r.reward} 🪙`)}
+      </button>
+    `;
+    container.appendChild(card);
+    if(ready){
+      card.querySelector(`#btn-rew-${r.id}`).onclick=()=>{
+        Sfx.play('levelup');
+        save.gold+=r.reward;
+        save.totalGoldEarned=(save.totalGoldEarned||0)+r.reward;
+        save.claimedRewards.push(r.id);
+        persist();
+        renderRewards();
+        updateMenuUI();
+      };
+    }
+  });
+}
+
+
+
+// ===== ЯЗЫК И НАСТРОЙКИ =====
+let LANG='en';
+const EN={'ЗОНА ОТЧУЖДЕНИЯ':'Exclusion Zone','НАЖМИТЕ, ЧТОБЫ ВОЙТИ В МЕНЮ':'Tap to enter the menu','ВЫЖИВШИЙ':'Survivor','★ ГЛАВА 1 ★':'★ Chapter 1 ★','НОРМАЛЬНО':'Normal','ЗАБРОШЕННЫЙ ГОРОД':'Abandoned City','💀 Зомби':'💀 Zombies','ГЕРОИ':'Heroes','СКЛАД':'Storage','В БОЙ!':'Play','СТАТЫ':'Stats','НАГРАДЫ':'Rewards','УР.':'LV.',
+'СКЛАД И ЭКИПИРОВКА':'Storage & Gear','СНАРЯЖЕНИЕ':'Gear','УЛУЧШЕНИЯ':'Upgrades','ПОСТОЯННЫЕ УЛУЧШЕНИЯ':'Permanent upgrades','❤️ Здоровье (+10%)':'❤️ Health (+10%)','Текущий уровень:':'Current level:','🧲 Радиус сбора (+15%)':'🧲 Pickup radius (+15%)','⚔️ Урон оружия (+10%)':'⚔️ Weapon damage (+10%)','👟 Скорость бега (+5%)':'👟 Move speed (+5%)',
+'БОЕВЫЕ ХАРАКТЕРИСТИКИ':'Combat Stats','ТАКТИЧЕСКИЕ ДАННЫЕ':'Tactical data','❤️ Максимальное HP:':'❤️ Max HP:','⚔️ Базовый урон выстрела:':'⚔️ Base shot damage:','⚡ Скорострельность:':'⚡ Fire rate:','👟 Скорость перемещения:':'👟 Move speed:','🧲 Радиус сбора кристаллов:':'🧲 Crystal pickup radius:','РЕКОРДЫ КАРЬЕРЫ':'Career records','⏱️ Рекорд выживания:':'⏱️ Best survival time:','💀 Уничтожено врагов:':'💀 Enemies destroyed:','🪙 Всего золота добыто:':'🪙 Total gold earned:','🎮 Сыграно вылазок:':'🎮 Runs played:',
+'ОТРЯД ВЫЖИВШИХ':'Survivor Squad','БОЕВЫЕ НАГРАДЫ':'Battle Rewards','ВЫБЕРИТЕ УЛУЧШЕНИЕ':'Choose an upgrade','ПАУЗА':'Paused','Бой приостановлен':'The battle is paused','ПРОДОЛЖИТЬ':'Resume','В ГЛАВНОЕ МЕНЮ':'Main menu','ВЫ ПОГИБЛИ':'You died','ВРЕМЯ':'Time','УБИТО':'Kills','ЗОЛОТО':'Gold','ВЫПАЛО В БОЮ':'Dropped in battle','ВОСКРЕСНУТЬ (РЕКЛАМА)':'Revive (ad)','УДВОИТЬ ЗОЛОТО ×2':'Double gold ×2',
+'Персонажи':'Characters','Инвентарь':'Inventory','В бой':'Play','Характеристики':'Stats','Награды':'Rewards',
+'Зомби • Обычная сложность':'Zombies • Normal difficulty','Зомби и Гончие • Обычная сложность':'Zombies & Hounds • Normal difficulty','★ ГЛАВА 2 ★':'★ Chapter 2 ★','КЛАДБИЩЕ МУТАНТОВ':'Mutant Graveyard','Скелеты • Средняя сложность':'Skeletons • Medium difficulty','СЛОЖНО':'Hard','★ ГЛАВА 3 ★':'★ Chapter 3 ★','СЕКРЕТНЫЙ БУНКЕР':'Secret Bunker','Призраки • Кошмар':'Ghosts • Nightmare','ЭКСТРИМ':'Extreme',
+'ДЖОН':'John','Ветеран Пустошей':'Wasteland Veteran','Сбалансированный боец. Надёжен в любой перестрелке.':'Balanced fighter. Reliable in any firefight.','100 HP, 150 Скорость, 10 Урон':'100 HP, 150 Speed, 10 Damage','МАРКУС':'Marcus','Штурмовик Джаггернаут':'Juggernaut Assaulter','Тяжёлая броня и огневая мощь. Стреляет сразу 2 пулями!':'Heavy armor and firepower. Fires 2 bullets at once!','+40% HP, +1 снаряд за залп, -10% Скорость':'+40% HP, +1 projectile per volley, -10% Speed','ЛЕОН':'Leon','Призрак Разведчик':'Ghost Scout','Сверхбыстрый боец с ураганным темпом стрельбы.':'Super-fast fighter with a hurricane rate of fire.','+20% Скорость бега, +35% скорострельность, -15% HP':'+20% Move speed, +35% fire rate, -15% HP',
+'+1 снаряд':'+1 Projectile','Больше снарядов за выстрел':'More projectiles per shot','Скорострельность':'Fire rate','Перезарядка короче на 15%':'15% shorter reload','Сила удара':'Impact force','+30% урона':'+30% damage','Пробивание':'Piercing','Снаряд пробивает ещё 1 врага':'Bullets pierce 1 more enemy','Быстрый бег':'Swift legs','+15% скорости':'+15% speed','Магнит':'Magnet','+40% радиус сбора':'+40% pickup radius','Огненный щит':'Fire shield','+1 шар крутится вокруг героя':'+1 orb spins around the hero','Цепная молния':'Chain lightning','Молния бьёт цепочкой врагов':'Lightning strikes a chain of enemies','Вампиризм':'Vampirism','+0.5 HP за каждое убийство':'+0.5 HP per kill','Крепкое тело':'Tough body','+25 макс. HP и лечение':'+25 max HP and heal',
+'💀 ПЕРВАЯ КРОВЬ':'💀 First Blood','Уничтожить 20 зомби в вылазках':'Destroy 20 zombies in runs','⏱️ СТОЙКИЙ БОЕЦ':'⏱️ Steadfast Fighter','Продержаться в живых 60 секунд':'Survive for 60 seconds','🧟 ГРОЗА МЕРТВЕЦОВ':'🧟 Bane of the Dead','Уничтожить 100 зомби за всё время':'Destroy 100 zombies in total','🎮 ВЕТЕРАН ЗОНЫ':'🎮 Zone Veteran','Сыграть 5 матчей на выживание':'Play 5 survival matches','ПОЛУЧЕНО':'Claimed',
+'ОРУЖИЕ':'Weapon','БРОНЯ':'Armor','БОТИНКИ':'Boots','ЧИП':'Chip','Обычный':'Common','Редкий':'Rare','Эпический':'Epic','Легендарный':'Legendary','Стандартный пистолет. Надёжен и точен.':'Standard pistol. Reliable and accurate.','Скорпион SMG':'Scorpion SMG','Очень частая стрельба, но слабее урон.':'Very high fire rate, but weaker damage.','Дробовик':'Shotgun','Стреляет веером из трёх пуль.':'Fires a fan of three bullets.','Винтовка «Тень»':'"Shadow" Rifle','Мощные пули пробивают врагов насквозь.':'Powerful bullets pierce enemies.','Куртка тактик':'Tactical Jacket','Лёгкая защита.':'Light protection.','Кевларовый жилет':'Kevlar Vest','Плотная баллистическая защита.':'Dense ballistic protection.','Экзо-каркас':'Exo-Frame','Тяжёлая броня за счёт подвижности.':'Heavy armor at the cost of mobility.','Берцы спецназ':'Special Forces Boots','Удобная обувь для долгих забегов.':'Comfortable boots for long runs.','Кроссовки бегуна':'Runner Sneakers','Лёгкие и быстрые.':'Light and fast.','Реактивные ботинки':'Jet Boots','Невероятная скорость бега.':'Incredible running speed.','Неодим-чип':'Neodymium Chip','Притягивает кристаллы издалека.':'Pulls crystals from afar.','Чип «Разгон»':'"Overclock" Chip','Ускоряет перезарядку оружия.':'Speeds up weapon reload.','Квантовое ядро':'Quantum Core','Усиливает урон и радиус сбора.':'Boosts damage and pickup radius.',
+'Здоровье':'Health','Урон':'Damage','Скорость бега':'Move speed','Радиус сбора':'Pickup radius','Снаряды':'Projectiles','Пусто':'Empty','НАДЕТО':'Equipped','НАДЕТЬ':'Equip','Здесь пока пусто. Предметы выпадают после боёв.':'Nothing here yet. Items drop after battles.','Базовые характеристики':'Base stats','ВЫБРАН':'Selected','ВЫБРАТЬ':'Select'};
+const _EN={};for(const k in EN)_EN[k.toLowerCase()]=EN[k];
+const PAT=[[/^УР\.\s*(\d+)$/i,m=>'LV. '+m[1]],[/^КУПИТЬ ЗА (\d+)(.*)$/i,m=>'BUY FOR '+m[1]+m[2]],[/^ЗАБРАТЬ \+(\d+)(.*)$/i,m=>'CLAIM +'+m[1]+m[2]],[/^ПРОДАТЬ \+(\d+)(.*)$/i,m=>'SELL +'+m[1]+m[2]],[/^Золото ×([\d.]+)$/i,m=>'Gold ×'+m[1]],[/^УРОВЕНЬ (\d+): ВЫБЕРИТЕ УЛУЧШЕНИЕ$/i,m=>'LEVEL '+m[1]+': CHOOSE AN UPGRADE'],[/^([\d.]+) в\/сек$/,m=>m[1]+' /sec'],[/^РЮКЗАК · (.+)$/i,m=>'BAG · '+trText(m[1])]];
+const CYR=/[А-Яа-яЁё]/;
+function trText(s){
+  if(LANG!=='en'||!CYR.test(s))return s;
+  const m=/^(\s*)([\s\S]*?)(\s*)$/.exec(s),core=m[2];
+  let v=_EN[core.toLowerCase()];
+  if(v===undefined){for(const[re,f]of PAT){const x=re.exec(core);if(x){v=f(x);break}}}
+  if(v===undefined){const p=/^([^A-Za-zА-Яа-яЁё0-9+\-]+)([\s\S]+)$/.exec(core);if(p){const r=trText(p[2]);if(r!==p[2])return m[1]+p[1]+r+m[3]}}
+  if(v===undefined)return s;
+  return m[1]+(core===core.toUpperCase()?v.toUpperCase():v)+m[3];
+}
+function trNode(n){
+  if(LANG!=='en'||(n._t!==undefined&&n.nodeValue===n._t))return;
+  const o=n.nodeValue,out=trText(o);n._o=o;
+  if(out!==o){n._t=out;n.nodeValue=out}else n._t=undefined;
+}
+function walkTr(root){
+  if(root.nodeType===3){trNode(root);return}
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;while(n=w.nextNode())trNode(n);
+}
+function applyLang(){
+  const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let n;
+  while(n=w.nextNode()){if(n._o!==undefined&&n._t!==undefined&&n.nodeValue===n._t)n.nodeValue=n._o;n._t=undefined;trNode(n)}
+  document.querySelectorAll('[title]').forEach(el=>{if(el._ot===undefined)el._ot=el.title;el.title=LANG==='en'?trText(el._ot):el._ot});
+  document.documentElement.lang=LANG;
+}
+function ensureSet(){save.settings=Object.assign({lang:'en',sfx:true,dmg:true,shake:true},save.settings||{})}
+function opt(k){return !save.settings||save.settings[k]!==false}
+function T(en,ru){return LANG==='ru'?ru:en}
+function setLang(l){LANG=l;ensureSet();save.settings.lang=l;persist();applyLang();if(currentScreen==='menu')updateMenuUI()}
+function initI18n(){
+  ensureSet();LANG=save.settings.lang==='ru'?'ru':'en';
+  Sfx.enabled=save.settings.sfx!==false;sndBtn.textContent=Sfx.enabled?'🔊':'🔇';
+  applyLang();
+  new MutationObserver(ms=>{if(LANG!=='en')return;for(const m of ms){if(m.type==='characterData')trNode(m.target);else m.addedNodes.forEach(walkTr)}}).observe(document.body,{childList:true,subtree:true,characterData:true});
+  document.getElementById('btn-settings').onclick=()=>openModal('modal-settings');
+}
+function renderSettings(){
+  ensureSet();const b=document.getElementById('settings-body'),S=save.settings;
+  document.querySelector('#modal-settings .modal-title').innerHTML='<span>⚙️</span> '+T('SETTINGS','НАСТРОЙКИ');
+  const row=(k,en,ru,de,dr)=>`<div class="set-row"><div><div class="set-t">${T(en,ru)}</div><div class="set-d">${T(de,dr)}</div></div><button class="sw${S[k]!==false?' on':''}" data-set="${k}"></button></div>`;
+  b.innerHTML=`<div class="section-tag">${T('LANGUAGE','ЯЗЫК')}</div><div class="seg"><button data-lang="en" class="${LANG==='en'?'on':''}">English</button><button data-lang="ru" class="${LANG==='ru'?'on':''}">Русский</button></div>`
+    +`<div class="section-tag" style="margin-top:14px">${T('GAME','ИГРА')}</div>`
+    +row('sfx','Sound effects','Звуковые эффекты','Shots, hits and menu clicks','Выстрелы, попадания и клики')
+    +row('dmg','Damage numbers','Цифры урона','Show floating damage in battle','Показывать урон над врагами')
+    +row('shake','Screen shake','Тряска экрана','Shake and red flash when hit','Тряска и красная вспышка при уроне')
+    +`<div class="section-tag" style="margin-top:14px">${T('DATA','ДАННЫЕ')}</div><button class="set-danger" id="btn-reset">${T('RESET PROGRESS','СБРОСИТЬ ПРОГРЕСС')}</button><div class="set-d" style="text-align:center;margin-top:10px">Survivors · beta 1.0</div>`;
+  b.querySelectorAll('[data-lang]').forEach(x=>x.onclick=()=>{Sfx.play('click');setLang(x.dataset.lang);renderSettings()});
+  b.querySelectorAll('[data-set]').forEach(x=>x.onclick=()=>{const k=x.dataset.set;S[k]=S[k]===false;if(k==='sfx'){Sfx.enabled=S.sfx;sndBtn.textContent=Sfx.enabled?'🔊':'🔇'}persist();Sfx.play('click');renderSettings()});
+  const rb=document.getElementById('btn-reset');let armed=false;
+  rb.onclick=()=>{if(!armed){armed=true;rb.textContent=T('TAP AGAIN TO CONFIRM','НАЖМИТЕ ЕЩЁ РАЗ');return}try{localStorage.removeItem('surv_save')}catch(e){}location.reload()};
+}
+
+// ===== СНАРЯЖЕНИЕ И ПРЕДМЕТЫ =====
+const SLOTS=[['weapon','🔫','ОРУЖИЕ'],['armor','🦺','БРОНЯ'],['boots','👟','БОТИНКИ'],['chip','💾','ЧИП']];
+const RAR={c:['Обычный','#94a3b8',5],r:['Редкий','#38bdf8',15],e:['Эпический','#a855f7',40],l:['Легендарный','#f59e0b',100]};
+const ITEMS={
+  pistol:{s:'weapon',n:'M1911',r:'c',ic:'🔫',d:'Стандартный пистолет. Надёжен и точен.',m:{}},
+  smg:{s:'weapon',n:'Скорпион SMG',r:'r',ic:'🔫',d:'Очень частая стрельба, но слабее урон.',m:{cool:.62,dmg:-.25}},
+  shotgun:{s:'weapon',n:'Дробовик',r:'e',ic:'💥',d:'Стреляет веером из трёх пуль.',m:{proj:2,dmg:-.2,cool:1.25}},
+  rifle:{s:'weapon',n:'Винтовка «Тень»',r:'l',ic:'🎯',d:'Мощные пули пробивают врагов насквозь.',m:{dmg:.9,cool:1.15,pierce:2}},
+  vest:{s:'armor',n:'Куртка тактик',r:'c',ic:'🦺',d:'Лёгкая защита.',m:{hp:.1}},
+  kevlar:{s:'armor',n:'Кевларовый жилет',r:'r',ic:'🛡️',d:'Плотная баллистическая защита.',m:{hp:.25}},
+  exo:{s:'armor',n:'Экзо-каркас',r:'e',ic:'🤖',d:'Тяжёлая броня за счёт подвижности.',m:{hp:.5,spd:-.05}},
+  boots:{s:'boots',n:'Берцы спецназ',r:'c',ic:'👟',d:'Удобная обувь для долгих забегов.',m:{spd:.05}},
+  runner:{s:'boots',n:'Кроссовки бегуна',r:'r',ic:'🥾',d:'Лёгкие и быстрые.',m:{spd:.15}},
+  jet:{s:'boots',n:'Реактивные ботинки',r:'l',ic:'🚀',d:'Невероятная скорость бега.',m:{spd:.3}},
+  magchip:{s:'chip',n:'Неодим-чип',r:'c',ic:'🧲',d:'Притягивает кристаллы издалека.',m:{pick:.25}},
+  overclock:{s:'chip',n:'Чип «Разгон»',r:'r',ic:'💾',d:'Ускоряет перезарядку оружия.',m:{cool:.85,dmg:.05}},
+  quantum:{s:'chip',n:'Квантовое ядро',r:'e',ic:'🔮',d:'Усиливает урон и радиус сбора.',m:{dmg:.2,pick:.4}}
+};
+let invSel={slot:'weapon',id:null};
+function ensureInv(){if(!save.inv)save.inv=['pistol','vest','boots','magchip'];if(!save.equip)save.equip={weapon:'pistol',armor:'vest',boots:'boots',chip:'magchip'}}
+function equipMods(){ensureInv();const m={hp:0,dmg:0,spd:0,pick:0,cool:1,proj:0,pierce:0};
+  for(const sl in save.equip){const it=ITEMS[save.equip[sl]];if(!it)continue;for(const k in it.m){if(k==='cool')m.cool*=it.m[k];else m[k]+=it.m[k]}}return m}
+function modLines(m){const r=[],pc=(l,v)=>r.push([l,(v>0?'+':'')+Math.round(v*100)+'%',v>0]);
+  if(m.hp)pc('Здоровье',m.hp);if(m.dmg)pc('Урон',m.dmg);if(m.spd)pc('Скорость бега',m.spd);if(m.pick)pc('Радиус сбора',m.pick);
+  if(m.cool)pc('Скорострельность',1/m.cool-1);if(m.proj)r.push(['Снаряды','+'+m.proj,true]);if(m.pierce)r.push(['Пробивание','+'+m.pierce,true]);return r}
+function rollLoot(){ensureInv();const mn=G.t/60,n=1+(mn>=2?1:0)+(mn>=5?1:0),wt={c:Math.max(20,62-mn*5),r:28+mn*2,e:8+mn*1.5,l:1.5+mn*.5},out=[];
+  for(let i=0;i<n;i++){let x=Math.random()*(wt.c+wt.r+wt.e+wt.l),k='c';for(const q of 'crel'){if((x-=wt[q])<0){k=q;break}}
+    const pool=Object.keys(ITEMS).filter(id=>ITEMS[id].r===k),id=pool[Math.random()*pool.length|0];save.inv.push(id);out.push(id)}return out}
+function renderEquip(){
+  ensureInv();const root=document.getElementById('inv-equip-root');if(!root)return;
+  const cnt={};save.inv.forEach(i=>cnt[i]=(cnt[i]||0)+1);
+  const eq=save.equip,sl=invSel.slot,ord='lerc';
+  const ids=Object.keys(cnt).filter(i=>ITEMS[i]&&ITEMS[i].s===sl).sort((a,b)=>ord.indexOf(ITEMS[a].r)-ord.indexOf(ITEMS[b].r));
+  const sid=ids.includes(invSel.id)?invSel.id:(ids.includes(eq[sl])?eq[sl]:ids[0]);
+  let h='<div class="eq-slots">'+SLOTS.map(([k,ic,nm])=>{const it=ITEMS[eq[k]];return `<button class="eq-slot${k===sl?' on':''}" data-slot="${k}" style="--rc:${it?RAR[it.r][1]:'#475569'}"><i>${it?it.ic:ic}</i><span>${nm}</span><b>${it?it.n:'Пусто'}</b></button>`}).join('')+'</div>';
+  h+=`<div class="section-tag" style="margin-top:12px">РЮКЗАК · ${SLOTS.find(x=>x[0]===sl)[2]}</div><div class="bag">`+(ids.length?ids.map(i=>{const it=ITEMS[i];return `<button class="bag-it${i===sid?' sel':''}" data-item="${i}" style="--rc:${RAR[it.r][1]}">${it.ic}${eq[sl]===i?'<u>НАДЕТО</u>':''}${cnt[i]>1?`<em>×${cnt[i]}</em>`:''}</button>`}).join(''):'<div class="bag-empty">Здесь пока пусто. Предметы выпадают после боёв.</div>')+'</div>';
+  if(sid){const it=ITEMS[sid],rc=RAR[it.r],on=eq[sl]===sid,canSell=cnt[sid]>(on?1:0);
+    h+=`<div class="it-detail" style="--rc:${rc[1]}"><div class="it-head"><i>${it.ic}</i><div><div class="it-name">${it.n}</div><div class="it-rar">${rc[0].toUpperCase()}</div></div></div><div class="it-desc">${it.d}</div>`
+      +(modLines(it.m).map(([l,v,p])=>`<div class="it-mod ${p?'pos':'neg'}"><span>${l}</span><b>${v}</b></div>`).join('')||'<div class="it-mod"><span>Базовые характеристики</span><b>—</b></div>')
+      +`<div class="it-act"><button class="it-eq" data-act="eq" ${on?'disabled':''}>${on?'НАДЕТО':'НАДЕТЬ'}</button>`+(canSell?`<button class="it-sell" data-act="sell">ПРОДАТЬ +${rc[2]} 🪙</button>`:'')+'</div></div>'}
+  root.innerHTML=h;root._sid=sid;
+}
+document.getElementById('inv-equip-root').onclick=e=>{
+  const b=e.target.closest('[data-slot],[data-item],[data-act]');if(!b)return;Sfx.play('click');const root=e.currentTarget;
+  if(b.dataset.slot)invSel={slot:b.dataset.slot,id:null};
+  else if(b.dataset.item)invSel.id=b.dataset.item;
+  else if(b.dataset.act==='eq'){const it=ITEMS[root._sid];save.equip[it.s]=root._sid;persist();Sfx.play('levelup')}
+  else if(b.dataset.act==='sell'){const id=root._sid,it=ITEMS[id];save.inv.splice(save.inv.indexOf(id),1);save.gold+=RAR[it.r][2];persist();updateMenuUI()}
+  renderEquip();
+};
+document.getElementById('inv-tabs').onclick=e=>{const b=e.target.closest('[data-tab]');if(!b)return;Sfx.play('click');
+  document.querySelectorAll('#inv-tabs button').forEach(x=>x.classList.toggle('on',x===b));
+  document.getElementById('inv-tab-eq').style.display=b.dataset.tab==='eq'?'block':'none';
+  document.getElementById('inv-tab-up').style.display=b.dataset.tab==='up'?'block':'none'};
+
+function renderInventory(){
+  renderEquip();
+  const ch=cost(CONFIG.meta.hpCost,save.hpLv);
+  const cp=cost(CONFIG.meta.pickCost,save.pickLv);
+  const cd=cost(CONFIG.meta.dmgCost,save.dmgLv);
+  const cs=cost(CONFIG.meta.spdCost,save.spdLv);
+
+  document.getElementById('up-hp-lvl').textContent=save.hpLv;
+  document.getElementById('up-pick-lvl').textContent=save.pickLv;
+  document.getElementById('up-dmg-lvl').textContent=save.dmgLv;
+  document.getElementById('up-spd-lvl').textContent=save.spdLv;
+
+  const bHp=document.getElementById('btn-up-hp');
+  const bPick=document.getElementById('btn-up-pick');
+  const bDmg=document.getElementById('btn-up-dmg');
+  const bSpd=document.getElementById('btn-up-spd');
+
+  bHp.textContent=ch+' 🪙';bHp.disabled=save.gold<ch;
+  bPick.textContent=cp+' 🪙';bPick.disabled=save.gold<cp;
+  bDmg.textContent=cd+' 🪙';bDmg.disabled=save.gold<cd;
+  bSpd.textContent=cs+' 🪙';bSpd.disabled=save.gold<cs;
+
+  bHp.onclick=()=>{if(save.gold>=ch){save.gold-=ch;save.hpLv++;persist();Sfx.play('levelup');renderInventory();updateMenuUI()}};
+  bPick.onclick=()=>{if(save.gold>=cp){save.gold-=cp;save.pickLv++;persist();Sfx.play('levelup');renderInventory();updateMenuUI()}};
+  bDmg.onclick=()=>{if(save.gold>=cd){save.gold-=cd;save.dmgLv++;persist();Sfx.play('levelup');renderInventory();updateMenuUI()}};
+  bSpd.onclick=()=>{if(save.gold>=cs){save.gold-=cs;save.spdLv++;persist();Sfx.play('levelup');renderInventory();updateMenuUI()}};
+}
+
+// ===== УРОВЕНЬ ВЫЖИВШЕГО И ПРОКАЧКА ХАРАКТЕРИСТИК =====
+function accNeed(lv){return Math.round(40*Math.pow(1.35,lv-1))}
+function gainAccXp(n){save.accLv=save.accLv||1;save.accXp=(save.accXp||0)+n;let up=0;
+  while(save.accXp>=accNeed(save.accLv)){save.accXp-=accNeed(save.accLv);save.accLv++;up++}persist();return up}
+const STAT_UP=[
+  {k:'hp',lv:'hpLv',ic:'❤️',n:'Max HP',ru:'Макс. HP',unlock:1,base:20},
+  {k:'dmg',lv:'dmgLv',ic:'⚔️',n:'Shot damage',ru:'Урон выстрела',unlock:1,base:25},
+  {k:'spd',lv:'spdLv',ic:'👟',n:'Move speed',ru:'Скорость бега',unlock:2,base:25},
+  {k:'pick',lv:'pickLv',ic:'🧲',n:'Pickup radius',ru:'Радиус сбора',unlock:3,base:15},
+  {k:'rate',lv:'rateLv',ic:'⚡',n:'Fire rate',ru:'Скорострельность',unlock:4,base:40}
+];
+function statCap(){return 3+2*(save.accLv||1)}
+function upCost(u){return Math.floor(u.base*Math.pow(CONFIG.meta.costGrowth,save[u.lv]||0))}
+function calcStats(o){
+  const EM=equipMods(),c=CHARACTERS.find(c=>c.id===save.selectedChar)||CHARACTERS[0];
+  const L=Object.assign({hpLv:save.hpLv||0,dmgLv:save.dmgLv||0,spdLv:save.spdLv||0,pickLv:save.pickLv||0,rateLv:save.rateLv||0},o||{});
+  return{hp:CONFIG.player.hp*(1+CONFIG.meta.hpStep*L.hpLv)*c.hpMod*(1+EM.hp),
+    dmg:CONFIG.weapon.damage*(1+CONFIG.meta.dmgStep*L.dmgLv)*c.dmgMod*(1+EM.dmg),
+    spd:CONFIG.player.speed*(1+CONFIG.meta.spdStep*L.spdLv)*c.spdMod*(1+EM.spd),
+    pick:CONFIG.player.pickup*(1+CONFIG.meta.pickStep*L.pickLv)*(1+EM.pick),
+    rate:1/(CONFIG.weapon.cooldown*c.coolMod*EM.cool*Math.pow(.95,L.rateLv))};
+}
+function fmtS(k,v){return k==='dmg'?v.toFixed(1):k==='rate'?v.toFixed(2)+T(' /sec',' в/сек'):k==='pick'?Math.round(v)+' px':String(Math.round(v))}
+function renderStats(){
+  const lv=save.accLv||1,xp=save.accXp||0,need=accNeed(lv),cur=calcStats(),cap=statCap();
+  document.getElementById('acc-card').innerHTML=`<div class="acc-card"><div class="acc-lv"><b>${lv}</b><span>${T('LEVEL','УРОВЕНЬ')}</span></div><div class="acc-main"><div class="acc-t">${T('Survivor level','Уровень выжившего')}</div><div class="acc-bar"><i style="width:${Math.round(xp/need*100)}%"></i></div><div class="acc-d">${xp} / ${need} XP · ${T('earn XP in battles to unlock upgrades','получайте опыт в боях, чтобы открывать улучшения')}</div></div></div>`;
+  document.getElementById('stat-up-list').innerHTML=STAT_UP.map(u=>{
+    const l=save[u.lv]||0,locked=lv<u.unlock,max=l>=cap,cost=upCost(u),nxt=calcStats({[u.lv]:l+1});
+    const lbl=locked?'🔒 '+T('LV.','УР.')+u.unlock:max?T('MAX','МАКС'):cost+' 🪙';
+    const sub=locked?T('Unlocks at survivor level '+u.unlock,'Откроется на уровне '+u.unlock):max?T('Reach a higher survivor level to continue','Повысьте уровень выжившего, чтобы продолжить'):fmtS(u.k,cur[u.k])+' <s>→</s> <b>'+fmtS(u.k,nxt[u.k])+'</b>';
+    return `<div class="su-card${locked?' lock':''}"><div class="su-ic">${u.ic}</div><div class="su-mid"><div class="su-name">${T(u.n,u.ru)}<em>${locked?'':'Lv '+l+'/'+cap}</em></div><div class="su-val">${locked||max?'<span class="set-d">'+sub+'</span>':sub}</div><div class="su-bar"><i style="width:${locked?0:Math.min(100,Math.round(l/cap*100))}%"></i></div></div><button class="su-go" data-up="${u.k}" ${locked||max||save.gold<cost?'disabled':''}>${lbl}</button></div>`}).join('');
+  document.getElementById('stat-best-time').textContent=fmt(save.bestTime||0);
+  document.getElementById('stat-total-kills').textContent=save.totalKills||0;
+  document.getElementById('stat-total-gold').textContent=save.totalGoldEarned||0;
+  document.getElementById('stat-games-played').textContent=save.gamesPlayed||0;
+}
+document.getElementById('stat-up-list').onclick=e=>{
+  const b=e.target.closest('[data-up]');if(!b||b.disabled)return;
+  const u=STAT_UP.find(x=>x.k===b.dataset.up),cost=upCost(u);
+  if(save.gold<cost||(save[u.lv]||0)>=statCap()||(save.accLv||1)<u.unlock)return;
+  save.gold-=cost;save[u.lv]=(save[u.lv]||0)+1;persist();Sfx.play('levelup');updateMenuUI();renderStats();
+};
+function renderCharacters(){
+  document.documentElement.style.setProperty('--hero-sheet','url('+heroImg.src+')');
+  const container=document.getElementById('chars-list-container');
+  container.innerHTML='';
+  CHARACTERS.forEach(c=>{
+    const isUnlocked=save.unlockedChars.includes(c.id);
+    const isSelected=save.selectedChar===c.id;
+    const card=document.createElement('div');
+    card.className='char-card'+(isSelected?' selected':'');
+    card.innerHTML=`
+      <div class="char-port${isUnlocked?'':' lock'}"></div>
+      <div class="char-header">
+        <div>
+          <span class="char-card-name">${c.name}</span>
+          <span class="char-card-title"> • ${c.title}</span>
+        </div>
+        ${isSelected?'<span style="font-family:Russo One;font-size:12px;color:#38bdf8">ВЫБРАН</span>':''}
+      </div>
+      <div style="font-size:12px;color:#94a3b8;font-weight:600">${c.desc}</div>
+      <div class="char-card-bonus">⭐ ${c.bonus}</div>
+      <button class="${isSelected?'start-action-btn':''}" style="height:38px;margin-top:2px;border-radius:10px;font-size:13px;background:${isSelected?'linear-gradient(180deg,#f97316,#ea580c)':'#242d40'}" id="char-btn-${c.id}">
+        ${isSelected?'ВЫБРАН':(isUnlocked?'ВЫБРАТЬ':`КУПИТЬ ЗА ${c.cost} 🪙`)}
+      </button>
+    `;
+    container.appendChild(card);
+    const btn=card.querySelector(`#char-btn-${c.id}`);
+    if(isSelected){
+      btn.disabled=true;
+    }else if(isUnlocked){
+      btn.onclick=()=>{
+        Sfx.play('click');
+        save.selectedChar=c.id;persist();
+        renderCharacters();updateMenuUI();
+      };
+    }else{
+      btn.disabled=save.gold<c.cost;
+      btn.onclick=()=>{
+        if(save.gold>=c.cost){
+          Sfx.play('levelup');
+          save.gold-=c.cost;
+          save.unlockedChars.push(c.id);
+          save.selectedChar=c.id;
+          persist();
+          renderCharacters();updateMenuUI();
+        }
+      };
+    }
+  });
+}
+
+// ===== УПРАВЛЕНИЕ ИГРОЙ =====
 const keys={};
 addEventListener('keydown',e=>keys[e.code]=1);
 addEventListener('keyup',e=>keys[e.code]=0);
 const joy={on:false,id:-1,ox:0,oy:0,x:0,y:0};
-cv.addEventListener('pointerdown',e=>{joy.on=true;joy.id=e.pointerId;joy.ox=joy.x=e.clientX;joy.oy=joy.y=e.clientY;cv.setPointerCapture(e.pointerId)});
-cv.addEventListener('pointermove',e=>{if(e.pointerId===joy.id){joy.x=e.clientX;joy.y=e.clientY}});
+cv.addEventListener('pointerdown',e=>{
+  if(currentScreen!=='game')return;
+  const rect=cv.getBoundingClientRect();
+  joy.on=true;joy.id=e.pointerId;
+  joy.ox=joy.x=e.clientX-rect.left;joy.oy=joy.y=e.clientY-rect.top;
+  cv.setPointerCapture(e.pointerId);
+});
+cv.addEventListener('pointermove',e=>{
+  if(joy.on&&e.pointerId===joy.id){
+    const rect=cv.getBoundingClientRect();
+    joy.x=e.clientX-rect.left;joy.y=e.clientY-rect.top;
+  }
+});
 const joyEnd=e=>{if(e.pointerId===joy.id){joy.on=false;joy.id=-1}};
 cv.addEventListener('pointerup',joyEnd);cv.addEventListener('pointercancel',joyEnd);
+
 function moveVec(){
   let x=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0);
   let y=(keys.KeyS||keys.ArrowDown?1:0)-(keys.KeyW||keys.ArrowUp?1:0);
-  if(joy.on){const dx=joy.x-joy.ox,dy=joy.y-joy.oy,d=Math.hypot(dx,dy);if(d>8){const k=Math.min(d,60)/60;x=dx/d*k;y=dy/d*k}}
+  if(joy.on){
+    const dx=joy.x-joy.ox,dy=joy.y-joy.oy,d=Math.hypot(dx,dy);
+    if(d>8){const k=Math.min(d,60)/60;x=dx/d*k;y=dy/d*k}
+  }
   const m=Math.hypot(x,y);if(m>1){x/=m;y/=m}
   return[x,y];
 }
 
-// ===== игра =====
-function start(){
-  const hp=CONFIG.player.hp*(1+CONFIG.meta.hpStep*save.hpLv);
-  G={t:0,run:true,pause:false,kills:0,lvl:1,xp:0,need:CONFIG.level.base,spawn:0,
+function startGame(){
+  closeSys();
+  const EM=equipMods();
+  const curChar=CHARACTERS.find(c=>c.id===save.selectedChar)||CHARACTERS[0];
+  const curLvl=LEVELS[selectedLvlIdx]||LEVELS[0];
+
+  const maxHp=CONFIG.player.hp*(1+CONFIG.meta.hpStep*save.hpLv)*curChar.hpMod*(1+EM.hp);
+  const spd=CONFIG.player.speed*(1+CONFIG.meta.spdStep*save.spdLv)*curChar.spdMod*(1+EM.spd);
+  const dmg=CONFIG.weapon.damage*(1+CONFIG.meta.dmgStep*save.dmgLv)*curChar.dmgMod*(1+EM.dmg);
+  const cool=CONFIG.weapon.cooldown*curChar.coolMod*EM.cool*Math.pow(.95,save.rateLv||0);
+  const proj=CONFIG.weapon.projectiles+(curChar.projMod-1)+EM.proj;
+  const pick=CONFIG.player.pickup*(1+CONFIG.meta.pickStep*save.pickLv)*(1+EM.pick);
+
+  G={
+    t:0,run:true,pause:false,kills:0,lvl:1,xp:0,need:CONFIG.level.base,spawn:0,
     enemies:[],shots:[],gems:[],fx:[],revived:false,banked:0,doubled:false,
-    p:{x:0,y:0,r:10,maxHp:hp,hp:hp,speed:CONFIG.player.speed,
-      pickup:CONFIG.player.pickup*(1+CONFIG.meta.pickStep*save.pickLv),
-      dmg:CONFIG.weapon.damage,cool:CONFIG.weapon.cooldown,proj:CONFIG.weapon.projectiles,
-      pierce:0,orbs:0,orbA:0,chain:0,vamp:0,cd:0,chainCd:0,inv:0,got:{}}};
-  ui.style.display='none';
+    lvlConfig:curLvl,
+    spawnT:0.9,
+    spawnFxSpawned:false,
+    p:{
+      x:0,y:0,r:15,maxHp:maxHp,hp:maxHp,speed:spd,pickup:pick,
+      dmg:dmg,cool:cool,proj:proj,pierce:EM.pierce,orbs:0,orbA:0,chain:0,vamp:0,
+      cd:0,chainCd:0,inv:1.2,got:{},facing:1,frame:0,animT:0,aimA:.35,recoil:0
+    }
+  };
+  save.gamesPlayed=(save.gamesPlayed||0)+1;persist();
+  showScreen('game');
 }
+
+function resumeGame(){
+  closeModal('modal-pause');
+  if(G)G.pause=false;
+}
+
+function quitToMenu(){
+  document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.remove('open'));
+  G=null;
+  showScreen('menu');
+}
+
+document.getElementById('btn-game-pause').onclick=()=>{
+  if(!G)return;
+  G.pause=true;
+  openModal('modal-pause');
+};
+
 function spawn(){
   if(G.enemies.length>=CONFIG.waves.maxEnemies)return;
   let tot=0;const list=[];
-  for(const k in CONFIG.enemies){const c=CONFIG.enemies[k];if(G.t>=c.from){list.push(c);tot+=c.weight}}
+  for(const k in CONFIG.enemies){
+    const c=CONFIG.enemies[k];
+    if(G.t>=c.from){list.push(c);tot+=c.weight}
+  }
   let r=Math.random()*tot,c=list[0];
   for(const q of list){if((r-=q.weight)<0){c=q;break}}
-  const a=Math.random()*6.283,d=Math.max(W,H)*.6+20,m=1+CONFIG.waves.hpPerMin*G.t/60;
-  G.enemies.push({x:G.p.x+Math.cos(a)*d,y:G.p.y+Math.sin(a)*d,hp:c.hp*m,c:c,oh:0,fl:0,dead:false});
+  const a=Math.random()*6.283,d=Math.max(W,H)*.6+20;
+  const m=(1+CONFIG.waves.hpPerMin*G.t/60)*G.lvlConfig.multHp;
+  G.enemies.push({
+    x:G.p.x+Math.cos(a)*d,y:G.p.y+Math.sin(a)*d,
+    hp:c.hp*m,c:c,oh:0,fl:0,dead:false,frame:0,animT:Math.random()*8,facing:1
+  });
 }
+
 function nearest(x,y,maxD,used){
   let b=null,bd=maxD*maxD;
-  for(const e of G.enemies){if(e.dead||(used&&used.includes(e)))continue;const d=(e.x-x)**2+(e.y-y)**2;if(d<bd){bd=d;b=e}}
+  for(const e of G.enemies){
+    if(e.dead||(used&&used.includes(e)))continue;
+    const d=(e.x-x)**2+(e.y-y)**2;
+    if(d<bd){bd=d;b=e}
+  }
   return b;
 }
+
 function hurt(e,d){
   if(e.dead)return;
   e.hp-=d;e.fl=.08;
+  if(opt('dmg')&&G.fx.length<260)G.fx.push({type:'dmg',x:e.x+(Math.random()-.5)*14,y:e.y-22,vx:(Math.random()-.5)*30,vy:-55,l:.55,txt:Math.round(d)});
   if(e.hp<=0){
-    e.dead=true;G.kills++;G.gems.push({x:e.x,y:e.y,v:e.c.xp,mag:false});
+    e.dead=true;G.kills++;
+    const gemVal=Math.round(e.c.xp*G.lvlConfig.multGold);
+    G.gems.push({x:e.x,y:e.y,v:gemVal,mag:false});
     const p=G.p;if(p.vamp)p.hp=Math.min(p.maxHp,p.hp+p.vamp);
     for(let i=0;i<5;i++)G.fx.push({x:e.x,y:e.y,vx:(Math.random()-.5)*180,vy:(Math.random()-.5)*180,l:.4,col:e.c.color});
   }
 }
+
+const AB_ICON=[[/снар/i,'🔫'],[/перезар|скорострел/i,'⚡'],[/урон|сил/i,'💥'],[/пробив/i,'🎯'],[/бег|скорост/i,'👟'],[/магнит|радиус/i,'🧲'],[/щит|огн/i,'🔥'],[/молни/i,'🌩️'],[/вампир/i,'🩸'],[/здоров|тел/i,'❤️']];
+function abIcon(n){for(const[r,i]of AB_ICON)if(r.test(n))return i;return '✨'}
+function triggerLevelUp(){
+  Sfx.play('levelup');
+  G.pause=true;
+  const pool=ABILITIES.filter(a=>(G.p.got[a.name]||0)<(a.max||99)),ch=[];
+  while(ch.length<3&&pool.length)ch.push(pool.splice(Math.random()*pool.length|0,1)[0]);
+  const boxEl=document.getElementById('levelup-cards-box');
+  boxEl.innerHTML=ch.map((a,i)=>`
+    <button class="ability-btn" data-i="${i}">
+      <span class="ab-ico">${abIcon(a.name)}</span>
+      <span class="ab-txt"><span class="ability-name">${a.name}</span><span class="ability-desc">${a.desc}</span></span>
+    </button>
+  `).join('');
+  document.querySelector('#modal-levelup .modal-title').innerHTML='<span>⭐</span> УРОВЕНЬ '+G.lvl+': ВЫБЕРИТЕ УЛУЧШЕНИЕ';
+  openModal('modal-levelup');
+  boxEl.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    Sfx.play('click');
+    const a=ch[b.dataset.i];a.apply(G.p);G.p.got[a.name]=(G.p.got[a.name]||0)+1;
+    closeModal('modal-levelup');
+    G.pause=false;
+  });
+}
+
+function die(){
+  G.run=false;
+  const earned=Math.floor((G.kills*.5+G.t/6)*G.lvlConfig.multGold);
+  G.banked=earned;
+  save.gold+=earned;
+  save.totalGoldEarned=(save.totalGoldEarned||0)+earned;
+  save.totalKills=(save.totalKills||0)+G.kills;
+  if(G.t>(save.bestTime||0))save.bestTime=Math.floor(G.t);
+  persist();
+
+  const loot=G.lootDone||(G.lootDone=rollLoot());persist();
+  document.getElementById('go-loot').innerHTML=loot.map(id=>{const it=ITEMS[id];return `<div class="loot-chip" style="--rc:${RAR[it.r][1]}"><span>${it.ic}</span><b>${it.n}</b></div>`}).join('');
+  document.getElementById('go-time').textContent=fmt(G.t);
+  document.getElementById('go-kills').textContent=G.kills;
+  document.getElementById('go-gold').textContent=earned;
+  const xpG=Math.round(G.kills+G.t/3)-(G.xpGiven||0);G.xpGiven=(G.xpGiven||0)+xpG;G.upd=(G.upd||0)+gainAccXp(xpG);
+  document.getElementById('go-xp').innerHTML='+'+G.xpGiven+' XP'+(G.upd?' · <b>'+T('LEVEL UP! New upgrades available','НОВЫЙ УРОВЕНЬ! Доступны улучшения')+'</b>':'');
+
+  const rv=document.getElementById('btn-go-revive');
+  const x2=document.getElementById('btn-go-x2');
+  rv.style.display=G.revived?'none':'block';
+  x2.style.display=G.doubled?'none':'block';
+
+  rv.onclick=()=>Platform.rewarded(ok=>{
+    if(!ok)return;
+    save.gold-=G.banked;G.banked=0;G.doubled=false;persist();
+    G.revived=true;G.p.hp=G.p.maxHp*.5;G.p.inv=2;
+    G.enemies=G.enemies.filter(e=>(e.x-G.p.x)**2+(e.y-G.p.y)**2>250*250);
+    G.run=true;closeModal('modal-gameover');
+  });
+  x2.onclick=()=>Platform.rewarded(ok=>{
+    if(!ok)return;
+    save.gold+=G.banked;save.totalGoldEarned+=G.banked;G.banked*=2;G.doubled=true;persist();
+    document.getElementById('go-gold').textContent=G.banked;
+    x2.style.display='none';
+  });
+
+  openModal('modal-gameover');
+}
+
 function update(dt){
-  const g=G,p=g.p;g.t+=dt;
-  const[mx,my]=moveVec();p.x+=mx*p.speed*dt;p.y+=my*p.speed*dt;
+  const g=G,p=g.p;
+  g.t+=dt;
+  if(g.spawnT>0)g.spawnT=Math.max(0,g.spawnT-dt);
   if(p.inv>0)p.inv-=dt;
 
-  // волны
+  const isAirborne = g.spawnT>0 && (1 - g.spawnT/0.9) < 0.52;
+  const [mx,my]=isAirborne ? [0,0] : moveVec();
+  const moving=mx!==0||my!==0;
+  p.x+=mx*p.speed*dt;
+  p.y+=my*p.speed*dt;
+
+  if(moving){
+    p.animT=(p.animT||0)+dt*10;
+    p.frame=Math.floor(p.animT)%8;
+  }else{
+    p.animT=0;p.frame=0;
+  }
+
+  const t=nearest(p.x,p.y,CONFIG.weapon.range);
+  if(t){
+    p.aimA=Math.atan2(t.y-p.y,t.x-p.x);
+    p.facing=t.x>=p.x?1:-1;
+  }else{
+    if(moving&&mx!==0)p.facing=mx>0?1:-1;
+    p.aimA=p.facing>0?.35:Math.PI-.35;
+  }
+  if(p.recoil>0)p.recoil=Math.max(0,p.recoil-dt*20);
+
   g.spawn-=dt;
   const iv=Math.max(CONFIG.waves.minInterval,CONFIG.waves.interval*Math.pow(CONFIG.waves.decayPerMin,g.t/60));
   const n=1+Math.floor(g.t/90);
   while(g.spawn<=0){for(let i=0;i<n;i++)spawn();g.spawn+=iv}
 
-  // враги
   for(const e of g.enemies){
     const dx=p.x-e.x,dy=p.y-e.y,d=Math.hypot(dx,dy)||1;
-    e.x+=dx/d*e.c.speed*dt;e.y+=dy/d*e.c.speed*dt;
+    e.x+=dx/d*e.c.speed*g.lvlConfig.multSpeed*dt;
+    e.y+=dy/d*e.c.speed*g.lvlConfig.multSpeed*dt;
+    e.facing=dx>=0?1:-1;
+    const animRate=e.c===CONFIG.enemies.hound?12:7;
+    e.animT=(e.animT||0)+dt*animRate;
+    e.frame=Math.floor(e.animT)%8;
     if(e.fl>0)e.fl-=dt;if(e.oh>0)e.oh-=dt;
     if(d<p.r+e.c.r&&p.inv<=0){p.hp-=e.c.damage;p.inv=.4}
   }
 
-  // автострельба
   p.cd-=dt;
   if(p.cd<=0){
-    const t=nearest(p.x,p.y,CONFIG.weapon.range);
     if(t){
-      const a0=Math.atan2(t.y-p.y,t.x-p.x),sp=CONFIG.weapon.speed;
+      p.facing=t.x>=p.x?1:-1;
+      p.aimA=Math.atan2(t.y-p.y,t.x-p.x);
+      p.recoil=4.2;
+      Sfx.play('shoot');
+      const a0=p.aimA,sp=CONFIG.weapon.speed;
       for(let i=0;i<p.proj;i++){
-        const a=a0+(i-(p.proj-1)/2)*.2;
-        g.shots.push({x:p.x,y:p.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,l:1.2,dmg:p.dmg,pr:p.pierce,hit:[]});
+        const a=a0+(i-(p.proj-1)/2)*.14;
+        const barrelDist=34;
+        const bx=p.x+(p.facing>0?-4:4)+Math.cos(a)*barrelDist;
+        const by=p.y-12+Math.sin(a)*barrelDist;
+        g.shots.push({x:bx,y:by,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,l:0.8,dmg:p.dmg,pr:p.pierce,hit:[]});
+        g.fx.push({type:'muzzle',x:bx,y:by,angle:a,l:0.07,maxL:0.07});
       }
       p.cd=p.cool;
     }else p.cd=.1;
@@ -146,31 +1766,43 @@ function update(dt){
     let rm=s.l<=0;
     if(!rm)for(const e of g.enemies){
       if(e.dead||s.hit.includes(e))continue;
-      const r=e.c.r+4;
-      if((e.x-s.x)**2+(e.y-s.y)**2<r*r){hurt(e,s.dmg);s.hit.push(e);if(s.pr--<=0){rm=true;break}}
+      const r=e.c.r+5;
+      if((e.x-s.x)**2+(e.y-s.y)**2<r*r){
+        hurt(e,s.dmg);
+        s.hit.push(e);
+        const hitAngle=Math.atan2(s.vy,s.vx)+Math.PI;
+        for(let spk=0;spk<3;spk++){
+          const spkA=hitAngle+(Math.random()-0.5)*1.2;
+          const spkSpd=90+Math.random()*150;
+          g.fx.push({
+            x:s.x,y:s.y,
+            vx:Math.cos(spkA)*spkSpd,vy:Math.sin(spkA)*spkSpd,
+            col:Math.random()>0.35?'#fef08a':'#f97316',
+            l:0.12+Math.random()*0.08
+          });
+        }
+        if(s.pr--<=0){rm=true;break}
+      }
     }
     if(rm){g.shots[i]=g.shots[g.shots.length-1];g.shots.pop()}
   }
 
-  // огненный щит
   if(p.orbs){
     p.orbA+=dt*3;
     for(let k=0;k<p.orbs;k++){
-      const a=p.orbA+k*6.283/p.orbs,ox=p.x+Math.cos(a)*60,oy=p.y+Math.sin(a)*60;
+      const a=p.orbA+k*6.283/p.orbs,ox=p.x+Math.cos(a)*75,oy=p.y+Math.sin(a)*75;
       for(const e of g.enemies){
         if(e.dead||e.oh>0)continue;
-        const r=e.c.r+7;
+        const r=e.c.r+8;
         if((e.x-ox)**2+(e.y-oy)**2<r*r){hurt(e,p.dmg*.7);e.oh=.35}
       }
     }
   }
 
-  // цепная молния
   if(p.chain){
     p.chainCd-=dt;
     if(p.chainCd<=0){
-      p.chainCd=2.2;
-      let cur={x:p.x,y:p.y};const used=[];
+      p.chainCd=2.2;let cur={x:p.x,y:p.y};const used=[];
       for(let j=0;j<2+p.chain*2;j++){
         const e=nearest(cur.x,cur.y,j?160:300,used);if(!e)break;
         used.push(e);hurt(e,p.dmg*1.5);
@@ -180,109 +1812,560 @@ function update(dt){
     }
   }
 
-  // кристаллы опыта
   for(let i=g.gems.length-1;i>=0;i--){
     const m=g.gems[i],dx=p.x-m.x,dy=p.y-m.y,d=Math.hypot(dx,dy)||1;
     if(d<p.pickup)m.mag=true;
-    if(m.mag){m.x+=dx/d*340*dt;m.y+=dy/d*340*dt}
-    if(d<p.r+6){g.xp+=m.v;g.gems[i]=g.gems[g.gems.length-1];g.gems.pop()}
+    if(m.mag){m.x+=dx/d*360*dt;m.y+=dy/d*360*dt}
+    if(d<p.r+6){
+      Sfx.play('gem');
+      g.xp+=m.v;g.gems[i]=g.gems[g.gems.length-1];g.gems.pop();
+    }
   }
 
-  // чистка мёртвых и эффекты
   for(let i=g.enemies.length-1;i>=0;i--)if(g.enemies[i].dead){g.enemies[i]=g.enemies[g.enemies.length-1];g.enemies.pop()}
   for(let i=g.fx.length-1;i>=0;i--){
     const f=g.fx[i];f.l-=dt;
-    if(!f.ln){f.x+=f.vx*dt;f.y+=f.vy*dt}
+    if(f.type!=='muzzle'&&!f.ln){f.x+=f.vx*dt;f.y+=f.vy*dt}
     if(f.l<=0){g.fx[i]=g.fx[g.fx.length-1];g.fx.pop()}
   }
 
-  if(g.xp>=g.need){g.xp-=g.need;g.lvl++;g.need=Math.ceil(g.need*CONFIG.level.growth)+1;levelUp()}
+  document.getElementById('hud-xp-fill').style.width=(Math.min(1,g.xp/g.need)*100)+'%';
+  document.getElementById('hud-lvl').textContent=g.lvl;
+  document.getElementById('hud-timer').textContent=fmt(g.t);
+  document.getElementById('hud-kills').textContent=g.kills;
+
+  if(g.xp>=g.need){g.xp-=g.need;g.lvl++;g.need=Math.ceil(g.need*CONFIG.level.growth)+1;triggerLevelUp()}
   if(p.hp<=0)die();
 }
 
-// ===== окна =====
-function fmt(t){t|=0;return(t/60|0)+':'+String(t%60).padStart(2,'0')}
-function levelUp(){
-  G.pause=true;
-  const pool=ABILITIES.filter(a=>(G.p.got[a.name]||0)<(a.max||99)),ch=[];
-  while(ch.length<3&&pool.length)ch.push(pool.splice(Math.random()*pool.length|0,1)[0]);
-  ui.innerHTML='<h2>Уровень '+G.lvl+'</h2><p>Выберите способность</p>'+
-    ch.map((a,i)=>'<button data-i="'+i+'">'+a.name+'<br><small>'+a.desc+'</small></button>').join('');
-  ui.style.display='flex';
-  ui.querySelectorAll('button').forEach(b=>b.onclick=()=>{
-    const a=ch[b.dataset.i];a.apply(G.p);G.p.got[a.name]=(G.p.got[a.name]||0)+1;
-    ui.style.display='none';G.pause=false;
+function circle(x,y,r,col){cx.fillStyle=col;cx.beginPath();cx.arc(x,y,r,0,6.283);cx.fill()}
+
+// ===== ПРОФЕССИОНАЛЬНАЯ ОТРИСОВКА ЛОББИ =====
+function drawLobby(now){
+  const t=now/1000;
+  const lvl=LEVELS[selectedLvlIdx]||LEVELS[0];
+
+  // 1. Плавный кроссфейд перехода между фонами уровней
+  if(lvlTransition<1){
+    lvlTransition=Math.min(1,lvlTransition+0.06);
+  }
+
+  // Базовый резервный градиент на случай предзагрузки
+  const skyGrad=cx.createLinearGradient(0,0,0,H);
+  skyGrad.addColorStop(0,lvl.bgColor);
+  skyGrad.addColorStop(0.55,'#0a101d');
+  skyGrad.addColorStop(1,'#05080e');
+  cx.fillStyle=skyGrad;
+  cx.fillRect(0,0,W,H);
+
+  // Отрисовка арт-фона главы с пропорциональным заполнением (Cover mode)
+  function drawCoverBg(img, alpha){
+    if(!img||!img.complete||!img.naturalWidth)return;
+    const iw=img.naturalWidth,ih=img.naturalHeight;
+    const scale=Math.max(W/iw,H/ih);
+    const dw=iw*scale,dh=ih*scale;
+    const dx=(W-dw)/2,dy=(H-dh)/2;
+    if(alpha<1)cx.globalAlpha=Math.max(0,Math.min(1,alpha));
+    cx.drawImage(img,dx,dy,dw,dh);
+    if(alpha<1)cx.globalAlpha=1;
+  }
+
+  if(lvlTransition<1&&prevLvlIdx!==selectedLvlIdx){
+    drawCoverBg(bgLvlImages[prevLvlIdx],1);
+    drawCoverBg(bgLvlImages[selectedLvlIdx],lvlTransition);
+  }else{
+    drawCoverBg(bgLvlImages[selectedLvlIdx],1);
+  }
+
+  // 2. Атмосферные градиенты-виньетки (для идеального контраста карточек и кнопок)
+  const topVignette=cx.createLinearGradient(0,0,0,180);
+  topVignette.addColorStop(0,'rgba(4,6,12,0.72)');
+  topVignette.addColorStop(0.6,'rgba(4,6,12,0.3)');
+  topVignette.addColorStop(1,'transparent');
+  cx.fillStyle=topVignette;
+  cx.fillRect(0,0,W,180);
+
+  const botVignette=cx.createLinearGradient(0,H*0.48,0,H);
+  botVignette.addColorStop(0,'transparent');
+  botVignette.addColorStop(0.55,'rgba(5,8,14,0.35)');
+  botVignette.addColorStop(1,'rgba(3,5,10,0.88)');
+  cx.fillStyle=botVignette;
+  cx.fillRect(0,H*0.48,W,H*0.52);
+
+  const heroCx=W/2;
+  const heroCy=H*0.51;
+  const pedY=heroCy+72;
+
+  // 3. Объемный луч прожектора (Volumetric Spotlight Cone) сверху на героя
+  cx.save();
+  const spotCone=cx.createLinearGradient(0,25,0,pedY+20);
+  spotCone.addColorStop(0,lvl.pedColor+'30');
+  spotCone.addColorStop(0.55,lvl.pedColor+'12');
+  spotCone.addColorStop(1,'transparent');
+  cx.fillStyle=spotCone;
+  cx.beginPath();
+  cx.moveTo(heroCx,25);
+  cx.lineTo(heroCx+145,pedY+20);
+  cx.lineTo(heroCx-145,pedY+20);
+  cx.closePath();
+  cx.fill();
+  cx.restore();
+
+  // 4. Парящие искры и эмберы, тематические для выбранной главы
+  const emberCols=lvl.emberCols||['rgba(249,115,22,0.7)','rgba(251,146,60,0.5)','rgba(56,189,248,0.4)'];
+  menuParticles.forEach(p=>{
+    p.y-=p.speed*0.016;
+    p.x+=Math.sin(t*2.2+p.speed)*0.35;
+    if(p.y<0){p.y=H+12;p.x=Math.random()*W}
+    const cIdx=Math.floor(p.seed*emberCols.length);
+    cx.fillStyle=emberCols[cIdx]||emberCols[0];
+    cx.fillRect(p.x,p.y,p.size,p.size);
   });
-}
-function die(){
-  G.run=false;
-  G.gold=Math.floor(G.kills*.5+G.t/6);
-  G.banked=G.gold;save.gold+=G.gold;persist();
-  showOver();
-}
-function showOver(){
-  const g=G;
-  ui.innerHTML='<h2>Вы погибли</h2><p>Время '+fmt(g.t)+', убийств '+g.kills+', уровень '+g.lvl+'<br>Золото за забег: <b>'+g.banked+'</b></p>'+
-    (!g.revived?'<button id="rv">Воскреснуть (реклама)</button>':'')+
-    (!g.doubled?'<button id="x2" class="alt">Золото ×2 (реклама)</button>':'')+
-    '<button id="mn">В меню</button>';
-  ui.style.display='flex';
-  const rv=document.getElementById('rv'),x2=document.getElementById('x2');
-  if(rv)rv.onclick=()=>Platform.rewarded(ok=>{
-    if(!ok)return;
-    save.gold-=g.banked;g.banked=0;g.doubled=false;persist();
-    g.revived=true;g.p.hp=g.p.maxHp*.5;g.p.inv=2;
-    g.enemies=g.enemies.filter(e=>(e.x-g.p.x)**2+(e.y-g.p.y)**2>250*250);
-    g.run=true;ui.style.display='none';
-  });
-  if(x2)x2.onclick=()=>Platform.rewarded(ok=>{
-    if(!ok)return;
-    save.gold+=g.banked;g.banked*=2;g.doubled=true;persist();showOver();
-  });
-  document.getElementById('mn').onclick=()=>{Platform.interstitial();G=null;showMenu()};
-}
-function cost(base,lv){return Math.floor(base*Math.pow(CONFIG.meta.costGrowth,lv))}
-function showMenu(){
-  const ch=cost(CONFIG.meta.hpCost,save.hpLv),cp=cost(CONFIG.meta.pickCost,save.pickLv);
-  ui.innerHTML='<h1>Survivors</h1><p>Золото: <b>'+save.gold+'</b></p>'+
-    '<button id="pl">Играть</button>'+
-    '<button id="bh" class="alt" '+(save.gold<ch?'disabled':'')+'>+10% здоровья, ур. '+save.hpLv+'<br><small>Цена: '+ch+'</small></button>'+
-    '<button id="bp" class="alt" '+(save.gold<cp?'disabled':'')+'>+15% радиус сбора, ур. '+save.pickLv+'<br><small>Цена: '+cp+'</small></button>'+
-    '<small>ПК: WASD или стрелки. Телефон: двигайте пальцем по экрану.</small>';
-  ui.style.display='flex';
-  document.getElementById('pl').onclick=start;
-  document.getElementById('bh').onclick=()=>{save.gold-=ch;save.hpLv++;persist();showMenu()};
-  document.getElementById('bp').onclick=()=>{save.gold-=cp;save.pickLv++;persist();showMenu()};
+
+  // 6. 3D Высокотехнологичный постамент и персонаж
+  if(currentScreen==='menu'||currentScreen==='start'){
+    cx.save();
+    const pulse=0.5+0.5*Math.sin(t*2.8);
+
+    // Мягкая внешняя тень
+    cx.fillStyle='rgba(0,0,0,0.7)';
+    cx.beginPath();
+    cx.ellipse(heroCx,pedY+10,88,24,0,0,6.283);
+    cx.fill();
+
+    // 3D Металлическая грань пьедестала (толщина 10px)
+    for(let r=9;r>=0;r--){
+      const f=r/9;
+      cx.fillStyle=`rgb(${18+f*10},${24+f*12},${36+f*16})`;
+      cx.beginPath();
+      cx.ellipse(heroCx,pedY-12+r,82,16+r*0.3,0,0,6.283);
+      cx.fill();
+    }
+
+    // Верхняя грань платформы
+    cx.fillStyle='#121826';
+    cx.beginPath();
+    cx.ellipse(heroCx,pedY-12,80,16,0,0,6.283);
+    cx.fill();
+    cx.lineWidth=2;
+    cx.strokeStyle='rgba(255,255,255,0.15)';
+    cx.stroke();
+
+    // Внешнее неоновое лазерное кольцо
+    cx.lineWidth=3;
+    cx.strokeStyle=lvl.pedColor+Math.floor((0.5+pulse*0.45)*255).toString(16).padStart(2,'0');
+    cx.beginPath();
+    cx.ellipse(heroCx,pedY-12,68,13,0,0,6.283);
+    cx.stroke();
+
+    // Внутреннее светящееся ядро
+    cx.fillStyle=lvl.pedColor+'33';
+    cx.beginPath();
+    cx.ellipse(heroCx,pedY-12,46,9,0,0,6.283);
+    cx.fill();
+    cx.restore();
+
+    // Персонаж с анимацией дыхания
+    if(heroImg.complete&&heroImg.naturalWidth>0){
+      cx.fillStyle='rgba(0,0,0,.38)';cx.beginPath();cx.ellipse(heroCx,heroCy+61,34,8,0,0,6.283);cx.fill();
+      cx.save();
+      const bobY=Math.sin(t*3.0)*2.6;
+      const breathScale=1+Math.sin(t*3.0)*0.012;
+      const hw=126,hh=172*breathScale;
+
+      cx.translate(heroCx,heroCy-17+bobY);
+
+      // Тело
+      cx.drawImage(heroImg,0,0,280,380,-hw/2,-hh/2,hw,hh);
+
+      // Руки с оружием
+      if(heroArmsImg.complete&&heroArmsImg.naturalWidth>0){
+        const scaleX=hw/280,scaleY=hh/380;
+        const sx=-4.7*(hw/60),sy=-12.1*(hh/82);
+
+        cx.save();
+        cx.translate(sx,sy);
+        const idleAngle=0.42+Math.sin(t*3.0)*0.025;
+        cx.rotate(idleAngle);
+
+        const aw=200*scaleX,ah=80*scaleY;
+        const px=15*scaleX,py=35*scaleY;
+        cx.drawImage(heroArmsImg,-px,-py,aw,ah);
+        cx.restore();
+      }
+      cx.restore();
+    }
+
+    // Тактический бейдж героя под пьедесталом
+    if(currentScreen==='menu'){
+      const curChar=CHARACTERS.find(c=>c.id===save.selectedChar)||CHARACTERS[0];
+      cx.save();
+      cx.font='800 11px Rajdhani,sans-serif';
+      cx.textAlign='center';
+      const badgeText='★ '+trText(curChar.name)+' • '+trText(curChar.title.toUpperCase())+' ★';
+      const tw=cx.measureText(badgeText).width;
+      
+      cx.fillStyle='rgba(14,20,32,0.85)';
+      cx.strokeStyle='rgba(255,255,255,0.12)';
+      cx.lineWidth=1;
+      cx.beginPath();
+      cx.roundRect(heroCx-tw/2-10,pedY+26,tw+20,20,10);
+      cx.fill();
+      cx.stroke();
+
+      cx.fillStyle='#f97316';
+      cx.fillText(badgeText,heroCx,pedY+40);
+      cx.restore();
+    }
+  }
 }
 
-// ===== отрисовка (потом заменится на спрайты) =====
-function circle(x,y,r,col){cx.fillStyle=col;cx.beginPath();cx.arc(x,y,r,0,6.283);cx.fill()}
-let fps=0;
-function draw(){
-  cx.fillStyle='#0b0d12';cx.fillRect(0,0,W,H);
-  if(!G)return;
-  const p=G.p,ox=W/2-p.x,oy=H/2-p.y,s=64;
-  cx.strokeStyle='#171b26';cx.lineWidth=1;cx.beginPath();
+
+// ===== ВИЗУАЛ ПОЛЯ БОЯ =====
+function hash(x,y){let h=(x*374761393+y*668265263)|0;h=Math.imul(h^(h>>>13),1274126177);return((h^(h>>>16))>>>0)/4294967295}
+function drawGround(ox,oy,lc){
+  const s=64,x0=Math.floor(-ox/s)-1,y0=Math.floor(-oy/s)-1,nx=Math.ceil(W/s)+2,ny=Math.ceil(H/s)+2;
+  for(let j=0;j<ny;j++)for(let i=0;i<nx;i++){
+    const gx=x0+i,gy=y0+j,r=hash(gx,gy),r2=hash(gy+91,gx-37),sx=gx*s+ox,sy=gy*s+oy;
+    if(r<.33){cx.fillStyle='rgba(255,255,255,.022)';cx.fillRect(sx,sy,s,s)}
+    else if(r>.8){cx.fillStyle='rgba(0,0,0,.2)';cx.fillRect(sx,sy,s,s)}
+    if(r2<.4){cx.fillStyle='rgba(0,0,0,.35)';cx.fillRect(sx+4+r2*110,sy+6+r*40,4,3);cx.fillStyle='rgba(255,255,255,.08)';cx.fillRect(sx+4+r2*110,sy+5+r*40,4,1)}
+    if(r2>.92){cx.strokeStyle='rgba(0,0,0,.4)';cx.lineWidth=1.5;cx.beginPath();cx.moveTo(sx+8,sy+10+r*30);cx.lineTo(sx+22,sy+20+r*20);cx.lineTo(sx+30,sy+17+r*20);cx.lineTo(sx+46,sy+34+r*10);cx.stroke()}
+  }
+  cx.strokeStyle=lc.gridColor;cx.globalAlpha=.45;cx.lineWidth=1;cx.beginPath();
   for(let x=((ox%s)+s)%s;x<W;x+=s){cx.moveTo(x,0);cx.lineTo(x,H)}
   for(let y=((oy%s)+s)%s;y<H;y+=s){cx.moveTo(0,y);cx.lineTo(W,y)}
-  cx.stroke();
-  cx.fillStyle='#38bdf8';for(const m of G.gems)cx.fillRect(m.x+ox-3,m.y+oy-3,6,6);
-  for(const e of G.enemies)circle(e.x+ox,e.y+oy,e.c.r,e.fl>0?'#fff':e.c.color);
-  cx.fillStyle='#fde047';for(const q of G.shots){cx.beginPath();cx.arc(q.x+ox,q.y+oy,4,0,6.283);cx.fill()}
-  for(let k=0;k<p.orbs;k++){const a=p.orbA+k*6.283/p.orbs;circle(W/2+Math.cos(a)*60,H/2+Math.sin(a)*60,7,'#fb923c')}
-  circle(W/2,H/2,p.r,p.inv>0&&((G.t*20)|0)%2?'#fff':'#f87171');
-  for(const f of G.fx){
-    if(f.ln){cx.strokeStyle='#a5f3fc';cx.lineWidth=3;cx.beginPath();cx.moveTo(f.x+ox,f.y+oy);cx.lineTo(f.x2+ox,f.y2+oy);cx.stroke()}
-    else{cx.fillStyle=f.col;cx.fillRect(f.x+ox-2,f.y+oy-2,4,4)}
+  cx.stroke();cx.globalAlpha=1;
+  const lg=cx.createRadialGradient(W/2,H/2,10,W/2,H/2,230);
+  lg.addColorStop(0,'rgba(255,205,150,.13)');lg.addColorStop(1,'rgba(255,205,150,0)');
+  cx.fillStyle=lg;cx.fillRect(0,0,W,H);
+}
+function drawGems(g,ox,oy){
+  const t=performance.now()/260;
+  for(const m of g.gems){
+    const x=m.x+ox,y=m.y+oy+Math.sin(t+m.x*.05)*1.5;
+    if(x<-12||x>W+12||y<-12||y>H+12)continue;
+    cx.globalAlpha=.22;cx.fillStyle='#38bdf8';cx.beginPath();cx.arc(x,y,9,0,6.283);cx.fill();cx.globalAlpha=1;
+    cx.fillStyle='#0284c7';cx.beginPath();cx.moveTo(x,y-6);cx.lineTo(x+4.5,y);cx.lineTo(x,y+6);cx.lineTo(x-4.5,y);cx.closePath();cx.fill();
+    cx.fillStyle='#7dd3fc';cx.beginPath();cx.moveTo(x,y-6);cx.lineTo(x+4.5,y);cx.lineTo(x,y);cx.closePath();cx.fill();
+    cx.fillStyle='#fff';cx.fillRect(x-1,y-3.5,1.5,1.5);
   }
-  // интерфейс
-  cx.fillStyle='#1f2937';cx.fillRect(0,0,W,10);
-  cx.fillStyle='#38bdf8';cx.fillRect(0,0,W*Math.min(1,G.xp/G.need),10);
-  cx.fillStyle='#450a0a';cx.fillRect(10,18,160,12);
-  cx.fillStyle='#ef4444';cx.fillRect(10,18,160*Math.max(0,p.hp/p.maxHp),12);
-  cx.fillStyle='#f3f4f6';cx.font='14px system-ui,sans-serif';
-  cx.fillText('Ур. '+G.lvl+'   '+fmt(G.t)+'   Убийств: '+G.kills,10,48);
-  cx.fillStyle='#6b7280';cx.fillText('FPS '+fps+'  врагов '+G.enemies.length,10,H-10);
+}
+function drawOrb(a){
+  for(let k=3;k>=1;k--){const b=a-k*.2;cx.globalAlpha=.32/k;cx.fillStyle='#fb923c';cx.beginPath();cx.arc(W/2+Math.cos(b)*75,H/2+Math.sin(b)*75,9-k*1.8,0,6.283);cx.fill()}
+  cx.globalAlpha=1;
+  const x=W/2+Math.cos(a)*75,y=H/2+Math.sin(a)*75,gr=cx.createRadialGradient(x,y,1,x,y,17);
+  gr.addColorStop(0,'rgba(255,240,170,1)');gr.addColorStop(.35,'rgba(251,146,60,.9)');gr.addColorStop(1,'rgba(220,38,38,0)');
+  cx.fillStyle=gr;cx.beginPath();cx.arc(x,y,17,0,6.283);cx.fill();
+  cx.fillStyle='#fff7d6';cx.beginPath();cx.arc(x,y,4,0,6.283);cx.fill();
+}
+function drawBolt(x1,y1,x2,y2,a){
+  const n=7,dx=x2-x1,dy=y2-y1,len=Math.hypot(dx,dy)||1,nx=-dy/len,ny=dx/len,fl=Math.floor(performance.now()/45),sd=Math.floor(x1+y1);
+  cx.lineCap='round';cx.lineJoin='round';
+  for(const[w,c]of[[8,'rgba(125,211,252,.22)'],[3,'#bae6fd'],[1.2,'#fff']]){
+    cx.strokeStyle=c;cx.lineWidth=w;cx.beginPath();cx.moveTo(x1,y1);
+    for(let i=1;i<n;i++){const t=i/n,o=(hash(i+fl,sd)-.5)*20*a;cx.lineTo(x1+dx*t+nx*o,y1+dy*t+ny*o)}
+    cx.lineTo(x2,y2);cx.stroke();
+  }
+}
+const _vg={};
+function vig(key,c1,inner){
+  let v=_vg[key];
+  if(!v||v.w!==W||v.h!==H){
+    const c=document.createElement('canvas');c.width=W;c.height=H;const q=c.getContext('2d'),r=Math.hypot(W,H)/2;
+    const g=q.createRadialGradient(W/2,H/2,r*inner,W/2,H/2,r);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,c1);
+    q.fillStyle=g;q.fillRect(0,0,W,H);v=_vg[key]={c:c,w:W,h:H};
+  }
+  return v.c;
+}
+
+function drawGame(){
+  const g=G,p=g.p,ox=W/2-p.x,oy=H/2-p.y,s=64;
+  cx.fillStyle=g.lvlConfig.bgColor;
+  cx.fillRect(0,0,W,H);
+
+  const shk=opt('shake')&&p.inv>.25?(p.inv-.25)*45:0;
+  cx.save();cx.translate((Math.random()-.5)*shk,(Math.random()-.5)*shk);
+  drawGround(ox,oy,g.lvlConfig);
+  drawGems(g,ox,oy);
+
+  for(const e of g.enemies){
+    if(e.c===CONFIG.enemies.zombie&&zombieImg.complete&&zombieImg.naturalWidth>0){
+      cx.fillStyle='rgba(0,0,0,.35)';
+      cx.beginPath();cx.ellipse(e.x+ox,e.y+oy+28,16,6,0,0,6.283);cx.fill();
+      cx.save();
+      cx.translate(e.x+ox,e.y+oy);
+      if(e.facing>0)cx.scale(-1,1);
+      if(e.fl>0)cx.filter='brightness(3)';
+      cx.drawImage(zombieImg,e.frame*280,0,280,380,-28,-42,56,76);
+      cx.restore();
+    }else if(e.c===CONFIG.enemies.hound&&houndImg.complete&&houndImg.naturalWidth>0){
+      cx.fillStyle='rgba(0,0,0,.38)';
+      cx.beginPath();cx.ellipse(e.x+ox,e.y+oy+16,22,7,0,0,6.283);cx.fill();
+      cx.save();
+      cx.translate(e.x+ox,e.y+oy);
+      if(e.facing>0)cx.scale(-1,1);
+      if(e.fl>0)cx.filter='brightness(3)';
+      const hw=64, hh=46;
+      cx.drawImage(houndImg,e.frame*420,0,420,300,-hw/2,-hh/2-2,hw,hh);
+      cx.restore();
+    }else{
+      circle(e.x+ox,e.y+oy,e.c.r,e.fl>0?'#fff':e.c.color);
+    }
+  }
+
+  // Отрисовка высокоскоростных пуль пистолета
+  for(const q of g.shots){
+    const qx=q.x+ox, qy=q.y+oy;
+    const ang=Math.atan2(q.vy,q.vx);
+    cx.save();
+    cx.translate(qx,qy);
+    cx.rotate(ang);
+
+    // 1. Огненный шлейф / трассер (Tracer streak)
+    const tracerGrad=cx.createLinearGradient(-34,0,0,0);
+    tracerGrad.addColorStop(0,'rgba(249,115,22,0)');
+    tracerGrad.addColorStop(0.35,'rgba(245,158,11,0.45)');
+    tracerGrad.addColorStop(0.85,'rgba(254,240,138,0.95)');
+    tracerGrad.addColorStop(1,'#ffffff');
+    cx.strokeStyle=tracerGrad;
+    cx.lineWidth=3.5;
+    cx.lineCap='round';
+    cx.beginPath();
+    cx.moveTo(-32,0);
+    cx.lineTo(0,0);
+    cx.stroke();
+
+    // 2. Мягкое свечение трассера
+    cx.strokeStyle='rgba(249,115,22,0.25)';
+    cx.lineWidth=8;
+    cx.beginPath();
+    cx.moveTo(-24,0);
+    cx.lineTo(2,0);
+    cx.stroke();
+
+    // 3. Радиальный ореол вокруг головки пули
+    const halo=cx.createRadialGradient(2,0,1,2,0,11);
+    halo.addColorStop(0,'rgba(255,255,255,0.75)');
+    halo.addColorStop(0.35,'rgba(250,204,21,0.4)');
+    halo.addColorStop(1,'rgba(249,115,22,0)');
+    cx.fillStyle=halo;
+    cx.beginPath();
+    cx.arc(2,0,11,0,6.283);
+    cx.fill();
+
+    // 4. Латунная пуля (пистолетный калибр 9мм)
+    cx.beginPath();
+    cx.moveTo(-8,-3);
+    cx.lineTo(0,-3);
+    cx.quadraticCurveTo(5,-2.8,8,0);
+    cx.quadraticCurveTo(5,2.8,0,3);
+    cx.lineTo(-8,3);
+    cx.closePath();
+
+    const brassGrad=cx.createLinearGradient(0,-3,0,3);
+    brassGrad.addColorStop(0,'#fef08a');
+    brassGrad.addColorStop(0.35,'#f59e0b');
+    brassGrad.addColorStop(0.8,'#d97706');
+    brassGrad.addColorStop(1,'#78350f');
+    cx.fillStyle=brassGrad;
+    cx.fill();
+
+    // Тёмный контур для резкости и видимости
+    cx.strokeStyle='#451a03';
+    cx.lineWidth=1;
+    cx.stroke();
+
+    // Поясок гильзы
+    cx.strokeStyle='rgba(120,53,15,0.85)';
+    cx.lineWidth=1;
+    cx.beginPath();
+    cx.moveTo(-4,-2.5);
+    cx.lineTo(-4,2.5);
+    cx.stroke();
+
+    // 5. Белый раскалённый кинетический блик
+    cx.fillStyle='#ffffff';
+    cx.beginPath();
+    cx.moveTo(-6,-1);
+    cx.lineTo(1,-1);
+    cx.lineTo(6.5,0);
+    cx.lineTo(1,1);
+    cx.lineTo(-6,1);
+    cx.closePath();
+    cx.fill();
+
+    cx.restore();
+  }
+
+  for(let k=0;k<p.orbs;k++){
+    const a=p.orbA+k*6.283/p.orbs;
+    drawOrb(a);
+  }
+
+  let heroDropY = 0;
+  let squashX = 1, squashY = 1;
+  let shadowScale = 1;
+
+  if(g.spawnT > 0){
+    const prog = Math.min(1, Math.max(0, 1 - g.spawnT / 0.9));
+
+    // 1. Орбитальный луч и маяк
+    if(prog < 0.62){
+      const beamAlpha = prog < 0.45 ? Math.min(1, prog * 3) : Math.max(0, (0.62 - prog) / 0.17);
+      cx.save();
+      const beamGrad = cx.createLinearGradient(W/2 - 28, 0, W/2 + 28, 0);
+      beamGrad.addColorStop(0, 'rgba(56,189,248,0)');
+      beamGrad.addColorStop(0.25, `rgba(56,189,248,${0.25 * beamAlpha})`);
+      beamGrad.addColorStop(0.5, `rgba(255,255,255,${0.85 * beamAlpha})`);
+      beamGrad.addColorStop(0.75, `rgba(56,189,248,${0.25 * beamAlpha})`);
+      beamGrad.addColorStop(1, 'rgba(56,189,248,0)');
+      cx.fillStyle = beamGrad;
+      cx.fillRect(W/2 - 28, 0, 56, H/2 + 32);
+
+      // Голографическое тактическое кольцо на земле
+      cx.strokeStyle = `rgba(56,189,248,${0.75 * beamAlpha})`;
+      cx.lineWidth = 1.8;
+      cx.beginPath();
+      cx.ellipse(W/2, H/2 + 32, 28, 11, 0, 0, 6.283);
+      cx.stroke();
+      cx.restore();
+    }
+
+    // 2. Падение героя с ускорением и сквош при ударе
+    if(prog < 0.52){
+      const dropK = prog / 0.52;
+      heroDropY = -240 * Math.pow(1 - dropK, 2);
+      shadowScale = 0.2 + 0.8 * dropK;
+    } else if(prog < 0.66){
+      const impactK = (prog - 0.52) / 0.14;
+      squashY = 0.72 + 0.28 * Math.sin(impactK * Math.PI * 0.5);
+      squashX = 1.25 - 0.25 * Math.sin(impactK * Math.PI * 0.5);
+      heroDropY = 0;
+      shadowScale = 1.2;
+    } else {
+      const springK = (prog - 0.66) / 0.34;
+      squashY = 1.0 + 0.08 * Math.sin(springK * Math.PI * 2) * (1 - springK);
+      squashX = 1.0 - 0.08 * Math.sin(springK * Math.PI * 2) * (1 - springK);
+      heroDropY = 0;
+      shadowScale = 1.0;
+    }
+
+    // 3. Ударная волна и частицы при приземлении
+    if(prog >= 0.52){
+      if(!g.spawnFxSpawned){
+        g.spawnFxSpawned = true;
+        Sfx.play('dash');
+        for(let i=0; i<16; i++){
+          const ang = i * (Math.PI * 2 / 16) + (Math.random() - 0.5) * 0.2;
+          const spd = 70 + Math.random() * 95;
+          g.fx.push({
+            x: p.x, y: p.y,
+            vx: Math.cos(ang) * spd,
+            vy: Math.sin(ang) * spd * 0.5,
+            col: Math.random() > 0.4 ? '#38bdf8' : '#f97316',
+            l: 0.35 + Math.random() * 0.25
+          });
+        }
+      }
+
+      const waveK = (prog - 0.52) / 0.48;
+      const waveRadius = 12 + waveK * 60;
+      const waveAlpha = Math.max(0, 1 - waveK);
+      cx.save();
+      cx.strokeStyle = `rgba(255, 255, 255, ${0.9 * waveAlpha})`;
+      cx.lineWidth = 2.5 * waveAlpha;
+      cx.beginPath();
+      cx.ellipse(W/2, H/2 + 32, waveRadius, waveRadius * 0.42, 0, 0, 6.283);
+      cx.stroke();
+
+      cx.strokeStyle = `rgba(249, 115, 22, ${0.75 * waveAlpha})`;
+      cx.lineWidth = 1.5 * waveAlpha;
+      cx.beginPath();
+      cx.ellipse(W/2, H/2 + 32, waveRadius * 0.78, waveRadius * 0.34, 0, 0, 6.283);
+      cx.stroke();
+      cx.restore();
+    }
+  }
+
+  // Тень под персонажем (масштабируется при падении)
+  cx.fillStyle='rgba(0,0,0,.38)';
+  cx.beginPath();
+  cx.ellipse(W/2, H/2 + 32, 20 * shadowScale, 8 * shadowScale, 0, 0, 6.283);
+  cx.fill();
+
+  // Мини-полоска здоровья над головой персонажа (появляется ТОЛЬКО при неполном HP, исчезает при полном)
+  if(p.hp < p.maxHp && heroDropY === 0){
+    const hpPct=Math.max(0,p.hp/p.maxHp);
+    const hpBarW=34,hpBarH=4,hpBarX=W/2-hpBarW/2,hpBarY=H/2-56;
+    cx.fillStyle='rgba(6,10,18,0.75)';
+    cx.beginPath();cx.roundRect(hpBarX-1,hpBarY-1,hpBarW+2,hpBarH+2,2);cx.fill();
+    cx.fillStyle=hpPct>0.5?'#22c55e':(hpPct>0.25?'#f59e0b':'#ef4444');
+    cx.beginPath();cx.roundRect(hpBarX,hpBarY,hpBarW*hpPct,hpBarH,1.5);cx.fill();
+  }
+
+  const isBlink=p.inv>0&&((g.t*20)|0)%2;
+  if(heroImg.complete&&heroImg.naturalWidth>0){
+    cx.save();
+    cx.translate(W/2, H/2 + heroDropY);
+    if(p.facing<0)cx.scale(-1,1);
+    cx.scale(squashX, squashY);
+    if(isBlink)cx.globalAlpha=.4;
+    cx.drawImage(heroImg,p.frame*280,0,280,380,-30,-46,60,82);
+
+    if(heroArmsImg.complete&&heroArmsImg.naturalWidth>0){
+      const sx=-4.7,sy=-12.1;
+      cx.save();
+      cx.translate(sx,sy);
+      const aimAngleLocal=p.facing>0?p.aimA:Math.atan2(Math.sin(p.aimA),-Math.cos(p.aimA));
+      cx.rotate(aimAngleLocal);
+      if(p.recoil>0)cx.translate(-p.recoil,0);
+      const aw=200*(60/280),ah=80*(82/380),px=15*(60/280),py=35*(82/380);
+      cx.drawImage(heroArmsImg,-px,-py,aw,ah);
+      if(p.recoil>1.5){
+        const mx=38.5,my=-3.2;
+        cx.fillStyle='#fde047';cx.beginPath();cx.arc(mx,my,4,0,6.283);cx.fill();
+        cx.fillStyle='#fff';cx.beginPath();cx.arc(mx,my,2,0,6.283);cx.fill();
+      }
+      cx.restore();
+    }
+    cx.restore();
+  }else{
+    circle(W/2,H/2 + heroDropY,p.r,isBlink?'#fff':'#f87171');
+  }
+
+  for(const f of g.fx){
+    if(f.type==='muzzle'){
+      cx.save();
+      cx.translate(f.x+ox,f.y+oy);
+      cx.rotate(f.angle);
+      const alpha=Math.max(0,f.l/f.maxL);
+      cx.globalAlpha=alpha;
+      // Вспышка выстрела из ствола пистолета
+      cx.fillStyle='#ffffff';
+      cx.beginPath();
+      cx.moveTo(0,-3);cx.lineTo(15,0);cx.lineTo(0,3);cx.lineTo(2,0);
+      cx.closePath();cx.fill();
+      cx.fillStyle='rgba(251,146,60,0.75)';
+      cx.beginPath();cx.arc(5,0,9,0,6.283);cx.fill();
+      cx.restore();
+    }else if(f.ln){
+      drawBolt(f.x+ox,f.y+oy,f.x2+ox,f.y2+oy,Math.min(1,f.l/.1));
+    }else if(f.type==='dmg'){
+      cx.globalAlpha=Math.min(1,f.l/.25);cx.font='800 15px Rajdhani,sans-serif';cx.textAlign='center';
+      cx.lineWidth=3;cx.strokeStyle='rgba(0,0,0,.85)';cx.strokeText(f.txt,f.x+ox,f.y+oy);
+      cx.fillStyle='#fde68a';cx.fillText(f.txt,f.x+ox,f.y+oy);cx.globalAlpha=1;cx.textAlign='left';
+    }else{
+      const al=Math.min(1,f.l/.2),z=2+al*2;
+      cx.globalAlpha=al;cx.fillStyle=f.col;cx.fillRect(f.x+ox-z/2,f.y+oy-z/2,z,z);cx.globalAlpha=1;
+    }
+  }
+
+  cx.restore();
+  cx.drawImage(vig('dark','rgba(0,0,0,.7)',.42),0,0,W,H);
+  if(opt('shake')&&p.inv>0){cx.globalAlpha=Math.min(1,p.inv*2.2);cx.drawImage(vig('red','rgba(220,38,38,.75)',.3),0,0,W,H);cx.globalAlpha=1}
+  if(p.hp<p.maxHp*.3){cx.globalAlpha=.35+.25*Math.sin(performance.now()/180);cx.drawImage(vig('red','rgba(220,38,38,.75)',.3),0,0,W,H);cx.globalAlpha=1}
+
   if(joy.on){
     const dx=joy.x-joy.ox,dy=joy.y-joy.oy,d=Math.min(Math.hypot(dx,dy),60),a=Math.atan2(dy,dx);
     cx.strokeStyle='rgba(255,255,255,.35)';cx.lineWidth=2;cx.beginPath();cx.arc(joy.ox,joy.oy,60,0,6.283);cx.stroke();
@@ -290,14 +2373,22 @@ function draw(){
   }
 }
 
-let last=performance.now(),fc=0,ft=0;
+let last=performance.now();
 function loop(now){
-  const raw=(now-last)/1000;last=now;fc++;ft+=raw;
-  if(ft>=.5){fps=Math.round(fc/ft);fc=0;ft=0}
-  if(G&&G.run&&!G.pause)update(Math.min(raw,.05));
-  draw();requestAnimationFrame(loop);
+  const dt=Math.min((now-last)/1000,0.05);last=now;
+  if(G&&G.run&&!G.pause)update(dt);
+
+  if(G&&G.run){
+    drawGame();
+  }else{
+    drawLobby(now);
+  }
+  requestAnimationFrame(loop);
 }
-showMenu();requestAnimationFrame(loop);
+
+updateMenuUI();
+initI18n();
+requestAnimationFrame(loop);
 </script>
 </body>
 </html>
