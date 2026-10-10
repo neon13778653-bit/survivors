@@ -1730,7 +1730,9 @@ function update(dt){
   const n=1+Math.floor(g.t/90);
   while(g.spawn<=0){for(let i=0;i<n;i++)spawn();g.spawn+=iv}
 
+  // 1. Движение врагов к игроку
   for(const e of g.enemies){
+    if(e.dead)continue;
     const dx=p.x-e.x,dy=p.y-e.y,d=Math.hypot(dx,dy)||1;
     e.x+=dx/d*e.c.speed*g.lvlConfig.multSpeed*dt;
     e.y+=dy/d*e.c.speed*g.lvlConfig.multSpeed*dt;
@@ -1739,7 +1741,59 @@ function update(dt){
     e.animT=(e.animT||0)+dt*animRate;
     e.frame=Math.floor(e.animT)%8;
     if(e.fl>0)e.fl-=dt;if(e.oh>0)e.oh-=dt;
-    if(d<p.r+e.c.r&&p.inv<=0){p.hp-=e.c.damage;p.inv=.4}
+  }
+
+  // 2. Расталкивание врагов (предотвращает стакание толпы в одну точку)
+  if(g.enemies.length>1){
+    const cellSize=36,grid=new Map();
+    for(let i=0;i<g.enemies.length;i++){
+      const e=g.enemies[i];if(e.dead)continue;
+      const gx=Math.floor(e.x/cellSize),gy=Math.floor(e.y/cellSize);
+      const k=(gx<<16)^(gy&0xffff);
+      let list=grid.get(k);
+      if(!list){list=[];grid.set(k,list)}
+      list.push(e);
+    }
+    for(let i=0;i<g.enemies.length;i++){
+      const e1=g.enemies[i];if(e1.dead)continue;
+      const gx=Math.floor(e1.x/cellSize),gy=Math.floor(e1.y/cellSize);
+      for(let cx=gx-1;cx<=gx+1;cx++){
+        for(let cy=gy-1;cy<=gy+1;cy++){
+          const list=grid.get((cx<<16)^(cy&0xffff));
+          if(!list)continue;
+          for(let k=0;k<list.length;k++){
+            const e2=list[k];
+            if(e1===e2||e2.dead)continue;
+            let ddx=e1.x-e2.x,ddy=e1.y-e2.y;
+            const minDist=e1.c.r+e2.c.r;
+            const distSq=ddx*ddx+ddy*ddy;
+            if(distSq<minDist*minDist){
+              let dist=Math.sqrt(distSq);
+              if(dist<0.001){
+                ddx=(Math.random()-.5)||1;
+                ddy=(Math.random()-.5)||1;
+                dist=Math.hypot(ddx,ddy);
+              }
+              const push=(minDist-dist)*0.45;
+              const nx=ddx/dist,ny=ddy/dist;
+              e1.x+=nx*push;e1.y+=ny*push;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // 3. Твердое тело героя: враги не входят внутрь персонажа, а окружают его снаружи
+  for(const e of g.enemies){
+    if(e.dead)continue;
+    const dx=p.x-e.x,dy=p.y-e.y,d=Math.hypot(dx,dy)||1;
+    const minContact=p.r+e.c.r;
+    if(d<minContact){
+      e.x=p.x-(dx/d)*minContact;
+      e.y=p.y-(dy/d)*minContact;
+      if(p.inv<=0){p.hp-=e.c.damage;p.inv=.4}
+    }
   }
 
   p.cd-=dt;
