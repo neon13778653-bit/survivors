@@ -1,0 +1,10 @@
+# Temporary & scratch files
+scratch/
+scratch_*
+*.bak*
+*.log
+audit_pistols.html
+test_pet_*.png
+temp_edge_profile_*
+.DS_Store
+Thumbs.db
