@@ -11229,7 +11229,7 @@ function spawnBroodmotherBoss(){
     maxHp: maxHp,
     c: {
       r: 36,
-      speed: 58,
+      speed: 68,
       damage: 32,
       color: '#ea580c',
       xp: 180
@@ -11251,13 +11251,13 @@ function spawnBroodmotherBoss(){
     spitCd: 3.5,
     snareCd: 6.0,
     pullCd: 8.5,
-    jumpCd: 6.5,
+    jumpCd: 2.0,
     jumpStartX: 0,
     jumpStartY: 0,
     jumpTargetX: 0,
     jumpTargetY: 0,
     jumpY: 0,
-    jumpDur: 0.65,
+    jumpDur: 0.46,
     snareAngle: 0,
     enraged: false
   };
@@ -12480,7 +12480,7 @@ function update(dt){
       // Фаза Ярости (Enrage при HP < 50%)
       if(!e.enraged && e.hp <= e.maxHp * 0.5){
         e.enraged = true;
-        e.c.speed = 72; // Скорость в ярости возрастает до 72 (+24%)!
+        e.c.speed = 84; // Скорость в ярости возрастает до 84!
         g.shake = Math.max(g.shake, 0.65);
         showGameToast('🕷️ ' + T('BROODMOTHER IS ENRAGED! (+SPEED / -20% DMG TAKEN)', 'ПАУЧИХА-ПРАМАТЕРЬ ВПАДАЕТ В ЯРОСТЬ! (+СКОРОСТЬ / -20% УРОНА)'), '#ef4444', 3.5);
         Sfx.play('dash');
@@ -12526,33 +12526,40 @@ function update(dt){
       }
 
       // Перезарядка способностей Паучихи-праматери
+      // Кулдаун прыжка тикает постоянно, а если игрок оторвался далеко (d > 140), перезарядка ускоряется
+      if(e.action !== 'jump_crouch' && e.action !== 'jump_airborne'){
+        const farBoost = (d > 140) ? 1.4 : 1.0;
+        e.jumpCd = (e.jumpCd !== undefined ? e.jumpCd : 3.5) - dt * farBoost;
+      }
       if(e.action === 'idle'){
         e.snareCd = (e.snareCd !== undefined ? e.snareCd : 6.0) - dt;
         e.pullCd = (e.pullCd !== undefined ? e.pullCd : 8.5) - dt;
         e.eggCd = (e.eggCd !== undefined ? e.eggCd : 5.5) - dt;
         e.spitCd = (e.spitCd !== undefined ? e.spitCd : 3.5) - dt;
-        e.jumpCd = (e.jumpCd !== undefined ? e.jumpCd : 6.5) - dt;
 
-        // 1. Оцепляющий снайперский плевок паутиной (Web Snare Spit) — оцепление на 1 сек
-        if(e.snareCd <= 0){
-          e.action = 'snare_prep';
-          e.actionT = 0.65;
-          e.snareAngle = Math.atan2(dy, dx);
-          e.facing = dx >= 0 ? 1 : -1;
-          continue;
-        }
-        // 2. Акробатический прыжок-раздавливание (Spider Leap Crush)
-        else if(e.jumpCd <= 0){
+        // 1. Акробатический прыжок-раздавливание (Spider Leap Crush)
+        // Высочайший приоритет прыжка: если готов jumpCd, паучиха моментально прыгает на цель!
+        if(e.jumpCd <= 0){
           e.action = 'jump_crouch';
-          e.actionT = e.enraged ? 0.45 : 0.60;
+          e.actionT = e.enraged ? 0.25 : 0.35;
           e.jumpPrepT = e.actionT;
           e.jumpStartX = e.x;
           e.jumpStartY = e.y;
-          const targetObj = { x: p.x, y: p.y };
+          const [mvx, mvy] = (typeof moveVec === 'function') ? moveVec() : [0, 0];
+          const leadDist = (mvx !== 0 || mvy !== 0) ? Math.min(65, (p.speed || 150) * 0.28) : 0;
+          const targetObj = { x: p.x + mvx * leadDist, y: p.y + mvy * leadDist };
           keepInsideBossArena(targetObj, g.bossArena, 50);
           e.jumpTargetX = targetObj.x;
           e.jumpTargetY = targetObj.y;
           e.facing = (e.jumpTargetX - e.x) >= 0 ? 1 : -1;
+          continue;
+        }
+        // 2. Оцепляющий снайперский плевок паутиной (Web Snare Spit) — оцепление на 1 сек
+        else if(e.snareCd <= 0){
+          e.action = 'snare_prep';
+          e.actionT = 0.65;
+          e.snareAngle = Math.atan2(dy, dx);
+          e.facing = dx >= 0 ? 1 : -1;
           continue;
         }
         // 3. Шёлковый гарпун / Притягивание нитью (Silk Grapple & Mandible Bite)
@@ -12711,6 +12718,13 @@ function update(dt){
         continue;
       }else if(e.action === 'jump_crouch'){
         e.actionT -= dt;
+        // Во время приседания продолжаем динамически отслеживать движение игрока с упреждением
+        const [mvx, mvy] = (typeof moveVec === 'function') ? moveVec() : [0, 0];
+        const leadDist = (mvx !== 0 || mvy !== 0) ? Math.min(65, (p.speed || 150) * 0.28) : 0;
+        const targetObj = { x: p.x + mvx * leadDist, y: p.y + mvy * leadDist };
+        keepInsideBossArena(targetObj, g.bossArena, 50);
+        e.jumpTargetX = targetObj.x;
+        e.jumpTargetY = targetObj.y;
         e.facing = (e.jumpTargetX - e.x) >= 0 ? 1 : -1;
         // Дрожь земли и искры паучьей энергии при подготовке прыжка
         if(Math.random() < 0.45){
@@ -12725,7 +12739,7 @@ function update(dt){
         }
         if(e.actionT <= 0){
           e.action = 'jump_airborne';
-          e.jumpDur = e.enraged ? 0.60 : 0.75;
+          e.jumpDur = e.enraged ? 0.36 : 0.46;
           e.actionT = e.jumpDur;
           e.jumpStartX = e.x;
           e.jumpStartY = e.y;
@@ -12734,13 +12748,13 @@ function update(dt){
         continue;
       }else if(e.action === 'jump_airborne'){
         e.actionT -= dt;
-        const dur = e.jumpDur || 0.75;
+        const dur = e.jumpDur || 0.46;
         const tProg = 1 - Math.max(0, e.actionT / dur);
         // Плавная параболическая траектория к цели
         e.x = e.jumpStartX + (e.jumpTargetX - e.jumpStartX) * tProg;
         e.y = e.jumpStartY + (e.jumpTargetY - e.jumpStartY) * tProg;
         e.jumpY = Math.sin(tProg * Math.PI) * 145;
-        e.animT = (e.animT || 0) + dt * 16;
+        e.animT = (e.animT || 0) + dt * 18;
         e.frame = Math.floor(e.animT) % 8;
         // Шлейф шёлковых нитей и ядовитых капель в полёте
         if(Math.random() < 0.75){
@@ -12759,7 +12773,7 @@ function update(dt){
           e.x = e.jumpTargetX;
           e.y = e.jumpTargetY;
           e.jumpY = 0;
-          e.jumpCd = e.enraged ? 4.5 : 6.5;
+          e.jumpCd = e.enraged ? 2.2 : 3.5;
 
           // Тактильный импакт
           Sfx.play('dash');
@@ -18753,10 +18767,10 @@ function drawBroodmotherBoss(e, ox, oy){
     // Сужающееся кольцо таймера удара (countdown ring)
     let shrinkFrac = 0.5;
     if(e.action === 'jump_crouch'){
-      const dur = e.jumpPrepT || 0.6;
+      const dur = e.jumpPrepT || 0.35;
       shrinkFrac = 0.5 + 0.5 * Math.max(0, Math.min(1, e.actionT / dur));
     } else if(e.action === 'jump_airborne'){
-      const dur = e.jumpDur || 0.75;
+      const dur = e.jumpDur || 0.46;
       shrinkFrac = 0.5 * Math.max(0, Math.min(1, e.actionT / dur));
     }
     const currentR = Math.max(8, r * shrinkFrac);
