@@ -3138,7 +3138,7 @@ const Sfx={
 // ===== УРОВНИ И ГЕРОИ =====
 const LEVELS=[
   {
-    id:1,badge:'★ ГЛАВА 1 ★',badgeEn:'★ CHAPTER 1 ★',name:'ЗАБРОШЕННЫЙ ГОРОД',nameEn:'ABANDONED CITY',sub:'Зомби, Крысы и Мутанты • 30 волн',
+    id:1,badge:'★ ГЛАВА 1 ★',badgeEn:'★ CHAPTER 1 ★',name:'ЗАБРОШЕННЫЙ ГОРОД',nameEn:'ABANDONED CITY',sub:'Зомби, Крысы и Хирург-Мясник • 30 волн',subEn:'Zombies, Rats & The Flesh Butcher • 30 Waves',
     diffText:'НОРМАЛЬНО',diffTextEn:'NORMAL',diffColor:'#4ade80',
     bgColor:'#080d16',gridColor:'#182338',pedColor:'#f97316',
     multHp:1.0,multSpeed:1.0,multGold:1.0,multXp:1.0,
@@ -9530,7 +9530,11 @@ function hurt(e,d){
         if(Math.random() < 0.50){
           spawnLootDrop(rollGearId(3), e.x, e.y);
         }
-        showGameToast('🥩 '+T('FLESH BUTCHER EXECUTED! Weapon Dropped! +3 LEVEL-UPS!','ХИРУРГ-МЯСНИК УНИЧТОЖЕН! Выпало оружие! +3 УРОВНЯ!'),'#ef4444',4.0);
+        showGameToast('🥩 '+T('FLESH BUTCHER EXECUTED! Weapon Dropped! +3 LEVEL-UPS!','ХИРУРГ-МЯСНИК УНИЧТОЖЕН! Выпало редкое оружие! +3 УРОВНЯ!'),'#ef4444',4.5);
+        const maxW = G.lvlConfig?.maxWaves || 30;
+        if(G.wave >= maxW){
+          G.waveProgressT = maxW * (CONFIG.waves.waveDuration || 15);
+        }
       } else if(e.bossId === 'mimic'){
         dropPurpleCrystals(e.x, e.y, 30, 2);
         dropCoins(e.x, e.y, 65, Math.max(1, Math.round(3.5 * (G.lvlConfig?.multGold || 1))));
@@ -11448,7 +11452,7 @@ function spawnButcherBoss(){
   const bx = p.x + dx;
   const by = p.y + dy;
 
-  const maxHp = Math.round(2800 * (g.lvlConfig?.multHp || 1));
+  const maxHp = Math.round(3400 * (g.lvlConfig?.multHp || 1));
   const boss = {
     isBoss: true,
     bossId: 'butcher',
@@ -11708,8 +11712,7 @@ function update(dt){
     if(curLvlId === 1){
       if(g.wave === 10) spawnGravediggerBoss();
       else if(g.wave === 20) spawnRatKingBoss();
-      else if(g.wave === 25) spawnButcherBoss();
-      else if(g.wave === 30) spawnAbominationBoss();
+      else if(g.wave === 30) spawnButcherBoss();
     }else if(curLvlId === 2){
       // 2 локация (40 волн): волна 10 — Паучиха-праматерь, волна 20 — Древень-мутант, волна 30 — Токсичный слизень, волна 40 — Великий Мимик
       if(g.wave === 10) spawnBroodmotherBoss();
