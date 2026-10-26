@@ -6718,24 +6718,24 @@ const ITEMS={
   m_astral:{s:'weapon',r:5,n:'Астральный посох «Сверхновая»',img:'img/weapons/weapon_astral_staff.webp',ic:'🌌',d:'Запускает сингулярности, детонирующие ослепительной сверхновой.',dmg:86,fireRate:'1.05 /сек',range:'335 м',speed:520,aoe:145,special:'supernova',combatStats:true,color:'#c084fc',kind:'magic',m:{}},
 
   // === ЩИТЫ (1★ - 5★) — ДОБАВЛЯЮТ ПОЛОСКУ ПРОЧНОСТИ ПОВЕРХ ЗДОРОВЬЯ ===
-  sh_buckler: {s:'shield',r:1,n:'Барьерный щит',img:'img/shields/shield_buckler_icon.webp',ic:'🛡️',d:'Тактический барьерный щит. Проецирует силовое поле на +50 к прочности щита (зарядка 1/сек вне боя). Без доп. бонусов.',shield:50,shieldRegen:1,m:{shield:50,shieldRegen:1}},
-  sh_riot:    {s:'shield',r:2,n:'Штурмовой щит',img:'img/shields/shield_riot_icon.webp',ic:'🛡️',d:'Усиленный баллистический щит. Добавляет +200 к прочности щита (зарядка 3/сек) и +6% к поглощению урона.',shield:200,shieldRegen:3,m:{shield:200,shieldRegen:3,armor:.06}},
-  sh_plasma:  {s:'shield',r:3,n:'Плазменный экран',img:'img/shields/shield_plasma_icon.webp',ic:'🛡️',d:'Генератор силового кинетического поля. Добавляет +400 к прочности щита (зарядка 5/сек), +12% к поглощению урона и +8% скорости бега.',shield:400,shieldRegen:5,m:{shield:400,shieldRegen:5,armor:.12,spd:.08}},
-  sh_titan:   {s:'shield',r:4,n:'Титановый бастион',img:'img/shields/shield_titan_icon.webp',ic:'🛡️',d:'Тяжёлый генератор купола. Добавляет +700 к прочности щита (зарядка 8/сек), +18% к поглощению урона, +20% к здоровью и +10% скорости бега.',shield:700,shieldRegen:8,m:{shield:700,shieldRegen:8,armor:.18,hp:.2,spd:.1}},
-  sh_aegis:   {s:'shield',r:5,n:'Эгида Предтеч',img:'img/shields/shield_aegis_icon.webp',ic:'🛡️',d:'Реликтовый гипер-щит. Добавляет +1000 к прочности щита (зарядка 10/сек), +25% к поглощению урона, +35% к здоровью, +15% скорости бега и +30% к радиусу сбора.',shield:1000,shieldRegen:10,m:{shield:1000,shieldRegen:10,armor:.25,hp:.35,spd:.15,pick:.3}},
+  sh_buckler: {s:'shield',r:1,n:'Барьерный щит',img:'img/shields/shield_buckler_icon.webp',ic:'🛡️',d:'Тактический барьерный щит. Проецирует силовое поле на +35 к прочности щита (зарядка 1/сек вне боя). Без доп. бонусов.',shield:35,shieldRegen:1,m:{shield:35,shieldRegen:1}},
+  sh_riot:    {s:'shield',r:2,n:'Штурмовой щит',img:'img/shields/shield_riot_icon.webp',ic:'🛡️',d:'Усиленный баллистический щит. Добавляет +65 к прочности щита (зарядка 1.8/сек) и +5% к поглощению урона.',shield:65,shieldRegen:1.8,m:{shield:65,shieldRegen:1.8,armor:.05}},
+  sh_plasma:  {s:'shield',r:3,n:'Плазменный экран',img:'img/shields/shield_plasma_icon.webp',ic:'🛡️',d:'Генератор силового кинетического поля. Добавляет +105 к прочности щита (зарядка 2.5/сек), +8% к поглощению урона и +6% скорости бега.',shield:105,shieldRegen:2.5,m:{shield:105,shieldRegen:2.5,armor:.08,spd:.06}},
+  sh_titan:   {s:'shield',r:4,n:'Титановый бастион',img:'img/shields/shield_titan_icon.webp',ic:'🛡️',d:'Тяжёлый генератор купола. Добавляет +150 к прочности щита (зарядка 3.5/сек), +12% к поглощению урона, +15% к здоровью и +8% скорости бега.',shield:150,shieldRegen:3.5,m:{shield:150,shieldRegen:3.5,armor:.12,hp:.15,spd:.08}},
+  sh_aegis:   {s:'shield',r:5,n:'Эгида Предтеч',img:'img/shields/shield_aegis_icon.webp',ic:'🛡️',d:'Реликтовый гипер-щит. Добавляет +200 к прочности щита (зарядка 4.5/сек), +16% к поглощению урона, +25% к здоровью, +10% скорости бега и +20% к радиусу сбора.',shield:200,shieldRegen:4.5,m:{shield:200,shieldRegen:4.5,armor:.16,hp:.25,spd:.10,pick:.2}},
   // Совместимость со старыми сохранениями (броня превращается в щиты)
-  a_vest:   {s:'shield',r:1,n:'Барьерный щит',img:'img/shields/shield_buckler_icon.webp',ic:'🛡️',d:'Тактический барьерный щит. Проецирует силовое поле на +50 к прочности щита. Без доп. бонусов.',shield:50,shieldRegen:1,m:{shield:50,shieldRegen:1}},
-  a_kevlar: {s:'shield',r:2,n:'Штурмовой щит',img:'img/shields/shield_riot_icon.webp',ic:'🛡️',d:'Усиленный баллистический щит. Добавляет +200 к прочности щита и +6% к поглощению урона.',shield:200,shieldRegen:3,m:{shield:200,shieldRegen:3,armor:.06}},
-  a_nano:   {s:'shield',r:3,n:'Плазменный экран',img:'img/shields/shield_plasma_icon.webp',ic:'🛡️',d:'Генератор кинетического поля. Добавляет +400 к прочности щита, +12% к поглощению урона и +8% скорости бега.',shield:400,shieldRegen:5,m:{shield:400,shieldRegen:5,armor:.12,spd:.08}},
-  a_exo:    {s:'shield',r:4,n:'Титановый бастион',img:'img/shields/shield_titan_icon.webp',ic:'🛡️',d:'Тяжёлый энерго-барьер. Добавляет +700 к прочности щита, +18% к поглощению урона, +20% к здоровью и +10% скорости бега.',shield:700,shieldRegen:8,m:{shield:700,shieldRegen:8,armor:.18,hp:.2,spd:.1}},
-  a_aegis:  {s:'shield',r:5,n:'Эгида Предтеч',img:'img/shields/shield_aegis_icon.webp',ic:'🛡️',d:'Реликтовый гипер-щит. Добавляет +1000 к прочности щита, +25% к поглощению урона, +35% к здоровью, +15% скорости бега и +30% к радиусу сбора.',shield:1000,shieldRegen:10,m:{shield:1000,shieldRegen:10,armor:.25,hp:.35,spd:.15,pick:.3}},
+  a_vest:   {s:'shield',r:1,n:'Барьерный щит',img:'img/shields/shield_buckler_icon.webp',ic:'🛡️',d:'Тактический барьерный щит. Проецирует силовое поле на +35 к прочности щита. Без доп. бонусов.',shield:35,shieldRegen:1,m:{shield:35,shieldRegen:1}},
+  a_kevlar: {s:'shield',r:2,n:'Штурмовой щит',img:'img/shields/shield_riot_icon.webp',ic:'🛡️',d:'Усиленный баллистический щит. Добавляет +65 к прочности щита и +5% к поглощению урона.',shield:65,shieldRegen:1.8,m:{shield:65,shieldRegen:1.8,armor:.05}},
+  a_nano:   {s:'shield',r:3,n:'Плазменный экран',img:'img/shields/shield_plasma_icon.webp',ic:'🛡️',d:'Генератор кинетического поля. Добавляет +105 к прочности щита, +8% к поглощению урона и +6% скорости бега.',shield:105,shieldRegen:2.5,m:{shield:105,shieldRegen:2.5,armor:.08,spd:.06}},
+  a_exo:    {s:'shield',r:4,n:'Титановый бастион',img:'img/shields/shield_titan_icon.webp',ic:'🛡️',d:'Тяжёлый энерго-барьер. Добавляет +150 к прочности щита, +12% к поглощению урона, +15% к здоровью и +8% скорости бега.',shield:150,shieldRegen:3.5,m:{shield:150,shieldRegen:3.5,armor:.12,hp:.15,spd:.08}},
+  a_aegis:  {s:'shield',r:5,n:'Эгида Предтеч',img:'img/shields/shield_aegis_icon.webp',ic:'🛡️',d:'Реликтовый гипер-щит. Добавляет +200 к прочности щита, +16% к поглощению урона, +25% к здоровью, +10% скорости бега и +20% к радиусу сбора.',shield:200,shieldRegen:4.5,m:{shield:200,shieldRegen:4.5,armor:.16,hp:.25,spd:.10,pick:.2}},
 
   // === ПИТОМЦЫ (1★ - 5★) — КЛАССИЧЕСКИЕ КОМПАНЬОНЫ С АНИМАЦИЕЙ ХОДЬБЫ ===
   pet_slime:   {s:'pet',r:1,n:'Слизень-малыш',img:'img/pets/pet_slime_icon.webp',sprite:'img/monsters/monster_slime.webp',sheet:'img/monsters/monster_slime_sheet.webp',frameW:260,frameH:220,frames:8,animRate:7,spriteW:44,spriteH:37,ic:'🟢',active:'Каскадная кислотная бомба + Сбор',d:'Ручной токсичный слизень. Бросает навесную кислотную бомбу, которая взрывается лужей кислоты и разлетается на 2 мини-капли, а также собирает кристаллы опыта в радиусе 140.',petType:'slime',m:{}},
   pet_bat:     {s:'pet',r:2,n:'Ручной нетопырь',img:'img/pets/pet_bat_icon.webp',sprite:'img/monsters/monster_bat.webp',sheet:'img/monsters/monster_bat_sheet.webp',frameW:280,frameH:200,frames:8,animRate:9,flying:true,spriteW:46,spriteH:33,ic:'🦇',active:'Налёт и цепной эхо-резонанс',d:'Пустошная летучая мышь. Совершает стремительный налёт и запускает цепной ультразвуковой резонанс до 4 врагов с отталкиванием и замедлением, даёт +10% к скорости бега.',petType:'bat',m:{spd:.1}},
   pet_mimic:   {s:'pet',r:3,n:'Карманный мимик',img:'img/pets/pet_mimic_icon.webp',sprite:'img/monsters/monster_mimic.webp',sheet:'img/monsters/monster_mimic_sheet.webp',frameW:260,frameH:240,frames:8,animRate:9,spriteW:42,spriteH:40,ic:'📦',active:'Зубастый кусь (монеты 🪙)',d:'Одомашненный зубастый сундучок. Совершает стремительный кусь челюстями, выбивая из врагов золотые монеты, даёт +20% к сбору и +8% скорости бега.',petType:'mimic',m:{pick:.2,spd:.08}},
   pet_gargoyle:{s:'pet',r:4,n:'Страж-гаргулья',img:'img/pets/pet_gargoyle_icon.webp',sprite:'img/monsters/monster_gargoyle.webp',sheet:'img/monsters/monster_gargoyle_sheet.webp',frameW:240,frameH:240,frames:8,animRate:8,flying:true,spriteW:42,spriteH:44,ic:'🗿',active:'Пикирующий таран и шипы',d:'Каменный крылатый защитник. Пикирует прямо на врагов, обрушивая кольцо обсидиановых шипов с мощным уроном и окаменением, даёт +20% к здоровью, +10% к броне и +12% к перезарядке.',petType:'gargoyle',m:{hp:.2,armor:.1,cool:.88}},
-  pet_treant:  {s:'pet',r:5,n:'Древень-хранитель',img:'img/pets/pet_treant_icon.webp',sprite:'img/monsters/monster_treant.webp',sheet:'img/monsters/monster_treant_sheet.webp',frameW:300,frameH:320,frames:8,animRate:6,spriteW:50,spriteH:54,ic:'🌲',active:'Подземный пронзающий капкан корней',d:'Древний лесной гигант. Пускает под землёй корни к 3–5 врагам, пронзает их и сковывает в недвижимом капкане на 2 сек (100+ урона/сек), исцеляя здоровье и щит хозяина (+5% HP и +6% щита). Даёт +35% к HP, +15% к броне, +25% к сбору и +15% к скорости.',petType:'treant',m:{hp:.35,armor:.15,pick:.25,spd:.15}},
+  pet_treant:  {s:'pet',r:5,n:'Древень-хранитель',img:'img/pets/pet_treant_icon.webp',sprite:'img/monsters/monster_treant.webp',sheet:'img/monsters/monster_treant_sheet.webp',frameW:300,frameH:320,frames:8,animRate:6,spriteW:50,spriteH:54,ic:'🌲',active:'Подземный пронзающий капкан корней',d:'Древний лесной гигант. Пускает под землёй корни к 3–5 врагам, пронзает их и сковывает в недвижимом капкане на 2 сек (100+ урона/сек), исцеляя здоровье и щит хозяина (+5% HP и +4% щита). Даёт +35% к HP, +15% к броне, +25% к сбору и +15% к скорости.',petType:'treant',m:{hp:.35,armor:.15,pick:.25,spd:.15}},
   // Совместимость со старыми сохранениями
   pet_drone: {s:'pet',r:1,n:'Слизень-малыш',img:'img/pets/pet_slime_icon.webp',sprite:'img/monsters/monster_slime.webp',sheet:'img/monsters/monster_slime_sheet.webp',frameW:260,frameH:220,frames:8,animRate:7,spriteW:38,spriteH:32,ic:'🟢',active:'Каскадная кислотная бомба + Сбор',d:'Ручной токсичный слизень. Бросает каскадную кислотную бомбу и собирает кристаллы.',petType:'slime',m:{}},
   pet_dog:   {s:'pet',r:2,n:'Ручной нетопырь',img:'img/pets/pet_bat_icon.webp',sprite:'img/monsters/monster_bat.webp',sheet:'img/monsters/monster_bat_sheet.webp',frameW:280,frameH:200,frames:8,animRate:9,flying:true,spriteW:40,spriteH:28,ic:'🦇',active:'Налёт и цепной эхо-резонанс',d:'Пустошная летучая мышь. Налетает на врагов и бьёт цепным ультразвуковым резонансом.',petType:'bat',m:{spd:.1}},
@@ -6768,21 +6768,21 @@ const ITEMS={
 
   // 2★ (Необычные)
   art_plate:      {s:'artifact',r:2,n:'Кевларовая пластина',img:'img/artifacts/art_plate_icon.webp',ic:'🛡️',d:'Бронеэлемент гасит кинетическую энергию осколков и пуль.',m:{armor:.10,hp:.15}},
-  art_battery:    {s:'artifact',r:2,n:'Ионный аккумулятор',img:'img/artifacts/art_battery_icon.webp',ic:'🔋',d:'Компактный накопитель питает генератор защитного энергополя.',m:{shield:75,shieldRegen:.5}},
+  art_battery:    {s:'artifact',r:2,n:'Ионный аккумулятор',img:'img/artifacts/art_battery_icon.webp',ic:'🔋',d:'Компактный накопитель питает генератор защитного энергополя.',m:{shield:25,shieldRegen:.4}},
   art_gloves:     {s:'artifact',r:2,n:'Тактические перчатки',img:'img/artifacts/art_gloves_icon.webp',ic:'🧤',d:'Ухватистые эргономичные перчатки ускоряют перезарядку и наводку.',m:{cool:.90,critChance:.06}},
 
   // 3★ (Редкие)
   art_stim:       {s:'artifact',r:3,n:'Боевой стимулятор',img:'img/artifacts/art_stim_icon.webp',ic:'💉',d:'Инъекция адреналина кратно ускоряет реакцию и силу бойца.',m:{spd:.14,dmg:.15,cool:.90}},
   art_ammo_box:   {s:'artifact',r:3,n:'Бронебойная обойма',img:'img/artifacts/art_ammo_box_icon.webp',ic:'📦',d:'Патроны с сердечником из вольфрама прошивают тела врагов насквозь.',m:{dmg:.18,pierce:1}},
-  art_generator:  {s:'artifact',r:3,n:'Плазменный стабилизатор',img:'img/artifacts/art_generator_icon.webp',ic:'⚛️',d:'Микрореактор обеспечивает непрерывную подпитку щита и дополнительную стойкость.',m:{shield:130,shieldRegen:1.0,armor:.08}},
+  art_generator:  {s:'artifact',r:3,n:'Плазменный стабилизатор',img:'img/artifacts/art_generator_icon.webp',ic:'⚛️',d:'Микрореактор обеспечивает непрерывную подпитку щита и дополнительную стойкость.',m:{shield:45,shieldRegen:.8,armor:.06}},
   // 4★ (Эпические)
   art_skull:      {s:'artifact',r:4,n:'Амулет Жнеца',img:'img/artifacts/art_skull_icon.webp',ic:'💀',d:'Зловещий костяной талисман жаждет крови, даруя ярость и восстановление сил.',m:{dmg:.28,regen:1.5,critChance:.12}},
   art_overdrive:  {s:'artifact',r:4,n:'Модуль «Овердрайв»',img:'img/artifacts/art_overdrive_icon.webp',ic:'⚡',d:'Сверхпроводящий чип разгоняет автоматику оружия до предельных частот.',m:{cool:.78,spd:.15,dmg:.20}},
-  art_nanites:    {s:'artifact',r:4,n:'Наноматрица плоти',img:'img/artifacts/art_nanites_icon.webp',ic:'🧬',d:'Микроскопические боты непрерывно латают ткани и укрепляют щит носителя.',m:{hp:.35,regen:1.2,shield:180,armor:.12}},
+  art_nanites:    {s:'artifact',r:4,n:'Наноматрица плоти',img:'img/artifacts/art_nanites_icon.webp',ic:'🧬',d:'Микроскопические боты непрерывно латают ткани и укрепляют щит носителя.',m:{hp:.25,regen:1.0,shield:65,armor:.08}},
   // 5★ (Легендарные)
   art_singularity:{s:'artifact',r:5,n:'Ядро Сингулярности',img:'img/artifacts/art_singularity_icon.webp',ic:'🌌',d:'Гравитационный микро-разлом стягивает всю материю и пронзает плоть полчищ.',m:{dmg:.40,pick:.75,pierce:2}},
   art_phoenix:    {s:'artifact',r:5,n:'Перо Феникса',img:'img/artifacts/art_phoenix_icon.webp',ic:'🪶',d:'Огненная реликвия наделяет владельца невероятной живучестью и мощнейшей регенерацией.',m:{hp:.55,regen:3.5,armor:.18}},
-  art_crown:      {s:'artifact',r:5,n:'Корона Повелителя',img:'img/artifacts/art_crown_icon.webp',ic:'👑',d:'Древняя регалия абсолютной власти, поднимающая все боевые параметры до максимума.',m:{dmg:.35,cool:.76,spd:.18,shield:220,critChance:.15}},
+  art_crown:      {s:'artifact',r:5,n:'Корона Повелителя',img:'img/artifacts/art_crown_icon.webp',ic:'👑',d:'Древняя регалия абсолютной власти, поднимающая все боевые параметры до максимума.',m:{dmg:.35,cool:.76,spd:.18,shield:85,critChance:.15}},
 };
 // Миграции старых и дублирующих ID предметов в актуальные канонические ключи
 const LEGACY_ITEM_MIGRATIONS = {
@@ -8821,7 +8821,8 @@ function damagePlayer(dmgVal,bypassInvulnerability=false,bypassShield=false){
     }
 
     if(p.shield <= 0){
-      // Щит истощен / сломан
+      // Щит истощен / сломан — задержка до перезагрузки разбитого щита 5.5 сек
+      p.shieldCooldown = 5.5;
       Sfx.play('dash');
       for(let a=0; a<6.28; a+=0.4){
         G.fx.push({
@@ -8832,7 +8833,7 @@ function damagePlayer(dmgVal,bypassInvulnerability=false,bypassShield=false){
       }
     }
   } else if(!bypassShield){
-    p.shieldCooldown = 3.5;
+    p.shieldCooldown = 5.5;
   }
 
   if(remainingDmg > 0){
@@ -15368,8 +15369,8 @@ function update(dt){
           }
           const healVal=Math.max(2,Math.round(p.maxHp*0.05));
           p.hp=Math.min(p.maxHp,p.hp+healVal);
-          if(p.maxShield>0&&p.shield<p.maxShield){
-            p.shield=Math.min(p.maxShield,p.shield+Math.max(2,Math.round(p.maxShield*0.06)));
+          if(p.maxShield>0&&p.shield>0&&p.shield<p.maxShield){
+            p.shield=Math.min(p.maxShield,p.shield+Math.max(2,Math.round(p.maxShield*0.04)));
           }
           if(opt('dmg'))g.fx.push({type:'dmg',x:p.x,y:p.y-34,vx:0,vy:-40,l:.65,txt:'+'+healVal+' HP 💚',col:'#4ade80'});
           for(let k=0;k<8;k++)g.fx.push({x:p.x+(Math.random()-.5)*22,y:p.y+(Math.random()-.5)*22,vx:(Math.random()-.5)*45,vy:-35-Math.random()*25,col:'#4ade80',l:.40});
