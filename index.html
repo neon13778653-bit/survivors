@@ -9433,6 +9433,10 @@ function hurt(e,d){
         G.bossWarning = null;
         const gameHudEl = document.getElementById('screen-game');
         if(gameHudEl) gameHudEl.classList.remove('boss-hud-active', 'boss-warning-active');
+        const nameEl = document.getElementById('hud-boss-name');
+        if(nameEl) nameEl.textContent = '';
+        const curEl = document.getElementById('hud-boss-hp-cur');
+        if(curEl) curEl.textContent = '';
       }
       for(const en of G.enemies){
         if(en.isMinion && !en.dead){
@@ -10960,6 +10964,31 @@ function keepInsideBossArena(actor,arena,padding=0){
   actor.x=Math.max(arena.x+padding,Math.min(arena.x+edge,actor.x));
   actor.y=Math.max(arena.y+padding,Math.min(arena.y+edge,actor.y));
 }
+function syncBossHUD(b){
+  if(!b) return;
+  const wrapEl = document.getElementById('hud-boss-wrap');
+  if(wrapEl){
+    wrapEl.classList.toggle('is-enraged', !!b.enraged);
+    wrapEl.classList.toggle('is-hit', (b.fl || 0) > 0);
+  }
+  const nameEl = document.getElementById('hud-boss-name');
+  if(nameEl){
+    let nm = T(b.nameEn, b.name);
+    if(b.spawnState === 'emerging') nm += ' [' + T('SUMMONING...', 'ПРИЗЫВ...') + ']';
+    else if(b.enraged) nm += ' [' + T('ENRAGED: -20% DMG', 'ЯРОСТЬ: -20% УРОНА') + ']';
+    if(nameEl.textContent !== nm) nameEl.textContent = nm;
+  }
+  const curEl = document.getElementById('hud-boss-hp-cur');
+  if(curEl){
+    const hpTxt = Math.ceil(Math.max(0, b.hp || 0)) + ' / ' + Math.ceil(b.maxHp || 1000);
+    if(curEl.textContent !== hpTxt) curEl.textContent = hpTxt;
+  }
+  const pct = Math.max(0, Math.min(1, (b.hp || 0) / (b.maxHp || 1000))), pctStr = (pct * 100).toFixed(1) + '%';
+  const fillEl = document.getElementById('hud-boss-fill');
+  if(fillEl && fillEl.style.width !== pctStr) fillEl.style.width = pctStr;
+  const trailEl = document.getElementById('hud-boss-trail');
+  if(trailEl && trailEl.style.width !== pctStr) trailEl.style.width = pctStr;
+}
 
 function spawnGravediggerBoss(){
   if(!G || !G.run) return;
@@ -11023,6 +11052,7 @@ function spawnGravediggerBoss(){
   boss.spawnY = boss.y;
   g.enemies.push(boss);
   g.activeBoss = boss;
+  syncBossHUD(boss);
 
   // Тревожный вжух при старте призыва
   Sfx.play('dash');
@@ -11104,6 +11134,7 @@ function spawnRatKingBoss(){
   boss.spawnY = boss.y;
   g.enemies.push(boss);
   g.activeBoss = boss;
+  syncBossHUD(boss);
 
   // Тревожный вжух при старте призыва
   Sfx.play('dash');
@@ -11181,6 +11212,7 @@ function spawnAbominationBoss(){
   boss.spawnY = boss.y;
   g.enemies.push(boss);
   g.activeBoss = boss;
+  syncBossHUD(boss);
 
   // Тревожный вжух при старте призыва
   Sfx.play('dash');
@@ -11267,6 +11299,7 @@ function spawnBroodmotherBoss(){
   boss.spawnY = boss.y;
   g.enemies.push(boss);
   g.activeBoss = boss;
+  syncBossHUD(boss);
 
   Sfx.play('dash');
 
@@ -11343,6 +11376,7 @@ function spawnTreantBoss(){
   boss.spawnY = boss.y;
   g.enemies.push(boss);
   g.activeBoss = boss;
+  syncBossHUD(boss);
 
   Sfx.play('dash');
 
@@ -11424,6 +11458,7 @@ function spawnSlimeBoss(){
   boss.spawnY = boss.y;
   g.enemies.push(boss);
   g.activeBoss = boss;
+  syncBossHUD(boss);
 
   Sfx.play('dash');
 
@@ -11500,6 +11535,7 @@ function spawnButcherBoss(){
   boss.spawnY = boss.y;
   g.enemies.push(boss);
   g.activeBoss = boss;
+  syncBossHUD(boss);
 
   Sfx.play('dash');
 
@@ -11580,6 +11616,7 @@ function spawnMimicBoss(){
   boss.spawnY = boss.y;
   g.enemies.push(boss);
   g.activeBoss = boss;
+  syncBossHUD(boss);
 
   Sfx.play('levelup');
 
@@ -17826,7 +17863,9 @@ function drawBossTelegraphRings(e, ex, gy){
     abomination: { rgb: '168,85,247' },
     broodmother: { rgb: '249,115,22' },
     treant:      { rgb: '34,197,94' },
-    toxic_slime: { rgb: '34,197,94' }
+    toxic_slime: { rgb: '34,197,94' },
+    butcher:     { rgb: '220,38,38' },
+    mimic:       { rgb: '245,158,11' }
   };
   const th = themes[e.bossId] || themes.gravedigger;
   const padR = (e.c && e.c.r ? e.c.r * 1.32 : 46);
@@ -17867,7 +17906,9 @@ function drawBossSpawnPad(e, ex, gy, prog){
     abomination: { acc: '#a855f7', rgb: '168,85,247', base: '46,16,71' },
     broodmother: { acc: '#ea580c', rgb: '234,88,12',  base: '58,22,6' },
     treant:      { acc: '#22c55e', rgb: '34,197,94',  base: '10,46,20' },
-    toxic_slime: { acc: '#22c55e', rgb: '34,197,94',  base: '6,38,15' }
+    toxic_slime: { acc: '#22c55e', rgb: '34,197,94',  base: '6,38,15' },
+    butcher:     { acc: '#dc2626', rgb: '220,38,38', base: '69,10,10' },
+    mimic:       { acc: '#f59e0b', rgb: '245,158,11', base: '66,42,10' }
   };
   const th = themes[e.bossId] || themes.gravedigger;
   const inK = Math.min(1, prog / 0.16);
@@ -20434,12 +20475,25 @@ function drawSlimeBoss(e, ox, oy){
 
 
 function drawButcherEmergence(e, ex, ey, gy){
-  const progress = 1 - Math.max(0, e.spawnT / (e.emergeMaxT || 2.0));
-  cx.save();
-  cx.fillStyle = 'rgba(0,0,0,0.55)';
-  cx.beginPath(); cx.ellipse(ex, gy, 46 * Math.min(1, progress * 1.5), 16 * Math.min(1, progress * 1.5), 0, 0, 6.283); cx.fill();
+  const emergeMax = e.emergeMaxT || 2.0;
+  const prog = Math.min(1, Math.max(0, 1 - (e.spawnT / emergeMax)));
+  const tele = e.spawnT > emergeMax;
 
-  const dropY = (1 - Math.min(1, progress * 1.2)) * -220;
+  const tk = Math.min(1, Math.max(0, 1 - (e.spawnT - emergeMax) / (e.emergeDelay || 0.8)));
+  const padProg = tele ? Math.min(0.6, tk * 4) : (prog < 0.74 ? 0.6 : 0.6 + (prog - 0.74) / 0.26 * 0.4);
+  drawBossSpawnPad(e, ex, gy, padProg);
+  if(tele){
+    drawBossTelegraphRings(e, ex, gy);
+    return;
+  }
+
+  cx.save();
+  const shadowW = Math.max(2, 46 * Math.min(1, prog * 1.5));
+  const shadowH = Math.max(1, 16 * Math.min(1, prog * 1.5));
+  cx.fillStyle = 'rgba(0,0,0,0.55)';
+  cx.beginPath(); cx.ellipse(ex, gy, shadowW, shadowH, 0, 0, 6.283); cx.fill();
+
+  const dropY = (1 - Math.min(1, prog * 1.2)) * -220;
   cx.translate(ex, ey + dropY);
   if(e.facing > 0) cx.scale(-1, 1);
   const bImg = monsterSpriteImgs['img/monsters/boss_butcher.webp'] || bossButcherImg;
@@ -20447,10 +20501,10 @@ function drawButcherEmergence(e, ex, ey, gy){
   if(bImg && bImg.complete && bImg.naturalWidth > 0){
     cx.drawImage(bImg, -bw / 2, -bh / 2 - 8, bw, bh);
   } else {
-    circle(0, 0, e.c.r, '#ef4444');
+    circle(0, 0, (e.c && e.c.r) || 36, '#ef4444');
   }
 
-  if(progress > 0.85 && !e.emergeSlamDone){
+  if(prog > 0.85 && !e.emergeSlamDone){
     e.emergeSlamDone = true;
     G.shake = Math.max(G.shake, 0.55);
     Sfx.play('hit');
@@ -20547,12 +20601,23 @@ function drawButcherBoss(e, ox, oy){
 }
 
 function drawMimicEmergence(e, ex, ey, gy){
-  const progress = 1 - Math.max(0, e.spawnT / (e.emergeMaxT || 2.2));
+  const emergeMax = e.emergeMaxT || 2.2;
+  const prog = Math.min(1, Math.max(0, 1 - (e.spawnT / emergeMax)));
+  const tele = e.spawnT > emergeMax;
+
+  const tk = Math.min(1, Math.max(0, 1 - (e.spawnT - emergeMax) / (e.emergeDelay || 0.8)));
+  const padProg = tele ? Math.min(0.6, tk * 4) : (prog < 0.74 ? 0.6 : 0.6 + (prog - 0.74) / 0.26 * 0.4);
+  drawBossSpawnPad(e, ex, gy, padProg);
+  if(tele){
+    drawBossTelegraphRings(e, ex, gy);
+    return;
+  }
+
   cx.save();
   cx.fillStyle = 'rgba(0,0,0,0.52)';
   cx.beginPath(); cx.ellipse(ex, gy, 52, 18, 0, 0, 6.283); cx.fill();
 
-  if(progress < 0.55){
+  if(prog < 0.55){
     const sImg = monsterSheetImgs['img/monsters/monster_mimic_sheet.webp'];
     const mw = 138, mh = 126;
     const bGrad = cx.createLinearGradient(ex, gy, ex, ey - 180);
@@ -20572,11 +20637,11 @@ function drawMimicEmergence(e, ex, ey, gy){
     if(e.facing > 0) cx.scale(-1, 1);
     const sImg = monsterSheetImgs['img/monsters/monster_mimic_sheet.webp'];
     const mw = 138, mh = 126;
-    const roarFrame = Math.min(7, Math.floor((progress - 0.55) * 16));
+    const roarFrame = Math.min(7, Math.floor((prog - 0.55) * 16));
     if(sImg && sImg.complete && sImg.naturalWidth > 0){
       cx.drawImage(sImg, roarFrame * 260, 0, 260, 240, -mw / 2, -mh / 2, mw, mh);
     }
-    if(!e.emergeSlamDone && progress > 0.8){
+    if(!e.emergeSlamDone && prog > 0.8){
       e.emergeSlamDone = true;
       G.shake = Math.max(G.shake, 0.6);
       Sfx.play('hit');
@@ -24029,29 +24094,8 @@ function drawGame(){
   drawBossWarningBanner(g);
 
   // Синхронизация чистого DOM ХП-бара босса в HUD
-  if(g.activeBoss&&!g.activeBoss.dead){
-    const b=g.activeBoss,pct=Math.max(0,Math.min(1,b.hp/b.maxHp)),pctStr=(pct*100).toFixed(1)+'%';
-    const wrapEl=document.getElementById('hud-boss-wrap');
-    if(wrapEl){
-      wrapEl.classList.toggle('is-enraged',!!b.enraged);
-      wrapEl.classList.toggle('is-hit',b.fl>0);
-    }
-    const nameEl=document.getElementById('hud-boss-name');
-    if(nameEl){
-      let nm=T(b.nameEn,b.name);
-      if(b.spawnState==='emerging')nm+=' ['+T('SUMMONING...','ПРИЗЫВ...')+']';
-      else if(b.enraged)nm+=' ['+T('ENRAGED: -20% DMG','ЯРОСТЬ: -20% УРОНА')+']';
-      if(nameEl.textContent!==nm)nameEl.textContent=nm;
-    }
-    const curEl=document.getElementById('hud-boss-hp-cur');
-    if(curEl){
-      const hpTxt=Math.ceil(Math.max(0,b.hp))+' / '+Math.ceil(b.maxHp);
-      if(curEl.textContent!==hpTxt)curEl.textContent=hpTxt;
-    }
-    const fillEl=document.getElementById('hud-boss-fill');
-    if(fillEl&&fillEl.style.width!==pctStr)fillEl.style.width=pctStr;
-    const trailEl=document.getElementById('hud-boss-trail');
-    if(trailEl&&trailEl.style.width!==pctStr)trailEl.style.width=pctStr;
+  if(g.activeBoss && !g.activeBoss.dead){
+    syncBossHUD(g.activeBoss);
   }
 
   if(joy.on){
@@ -24066,26 +24110,30 @@ function loop(now){
   let rawDt=(now-last)/1000;last=now;
   if(rawDt>0.15)rawDt=0.15;
 
-  if(G&&G.run&&!G.pause){
-    if(rawDt>0.033){
-      const steps=Math.min(4,Math.ceil(rawDt/0.025));
-      const subDt=rawDt/steps;
-      for(let s=0;s<steps;s++){
-        update(subDt);
+  try {
+    if(G&&G.run&&!G.pause){
+      if(rawDt>0.033){
+        const steps=Math.min(4,Math.ceil(rawDt/0.025));
+        const subDt=rawDt/steps;
+        for(let s=0;s<steps;s++){
+          update(subDt);
+        }
+      }else{
+        update(rawDt);
       }
-    }else{
-      update(rawDt);
     }
-  }
 
-  if(G&&G.run){
-    drawGame();
-  }else{
-    drawLobby(now);
-    const invEl=document.getElementById('modal-inventory');
-    if(invEl&&invEl.classList.contains('open'))drawInvHero(now);
-    const charEl=document.getElementById('modal-characters');
-    if(charEl&&charEl.classList.contains('open'))drawShowcaseHero(now);
+    if(G&&G.run){
+      drawGame();
+    }else{
+      drawLobby(now);
+      const invEl=document.getElementById('modal-inventory');
+      if(invEl&&invEl.classList.contains('open'))drawInvHero(now);
+      const charEl=document.getElementById('modal-characters');
+      if(charEl&&charEl.classList.contains('open'))drawShowcaseHero(now);
+    }
+  } catch(loopErr) {
+    console.error('Animation frame error:', loopErr);
   }
   requestAnimationFrame(loop);
 }
