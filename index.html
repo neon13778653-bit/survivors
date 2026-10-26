@@ -5572,7 +5572,7 @@ for(const enemyDef of Object.values(CONFIG.enemies)){
   }
 }
 ['img/monsters/monster_slime.webp','img/monsters/monster_bat.webp','img/monsters/monster_mimic.webp','img/monsters/monster_gargoyle.webp','img/monsters/monster_treant.webp',
- 'img/monsters/monster_mushroom.webp','img/monsters/monster_spiderling.webp','img/monsters/monster_rat.webp','img/monsters/monster_ghoul.webp','img/monsters/monster_abomination.webp',
+ 'img/monsters/monster_mushroom.webp','img/monsters/monster_spiderling.webp','img/monsters/monster_rat.webp','img/monsters/monster_ghoul.webp','img/monsters/monster_abomination.webp','img/monsters/boss_butcher.webp',
  'img/pets/pet_scarab_icon.webp','img/pets/pet_scout_icon.webp','img/pets/pet_golem_icon.webp','img/pets/pet_voidray_icon.webp',
  'img/pets/pet_mushroom_icon.webp','img/pets/pet_spider_icon.webp','img/pets/pet_rat_icon.webp','img/pets/pet_ghoul_icon.webp',
  'img/pets/pet_scarab_sprite.webp','img/pets/pet_scout_sprite.webp','img/pets/pet_golem_sprite.webp','img/pets/pet_voidray_sprite.webp'].forEach(s=>{
@@ -5595,6 +5595,7 @@ const bossGravediggerDigImg=new Image();bossGravediggerDigImg.src='img/monsters/
 const bossGravediggerRoarImg=new Image();bossGravediggerRoarImg.src='img/monsters/boss_gravedigger_roar.webp';
 const bossSlimeImg=new Image();bossSlimeImg.src='img/monsters/monster_slime.webp';
 const bossSlimeSheetImg=new Image();bossSlimeSheetImg.src='img/monsters/monster_slime_sheet.webp';
+const bossButcherImg=new Image();bossButcherImg.src='img/monsters/boss_butcher.webp';
 
 // Частицы
 const menuParticles=Array.from({length:36},()=>({
@@ -9422,7 +9423,7 @@ function hurt(e,d){
     }
     let kXp = 1;
     if(e.isBoss){
-      kXp = e.bossId === 'abomination' ? 350 : (e.bossId === 'toxic_slime' ? 320 : (e.bossId === 'treant' ? 280 : (e.bossId === 'rat_king' ? 220 : (e.bossId === 'broodmother' ? 180 : 150))));
+      kXp = e.bossId === 'abomination' ? 350 : (e.bossId === 'mimic' ? 340 : (e.bossId === 'toxic_slime' ? 320 : (e.bossId === 'butcher' ? 300 : (e.bossId === 'treant' ? 280 : (e.bossId === 'rat_king' ? 220 : (e.bossId === 'broodmother' ? 180 : 150))))));
       G.bossesDefeated=(G.bossesDefeated||0)+1;
       e.phaseGuardT = 0;
       if(G.activeBoss===e)G.activeBoss=null;
@@ -9519,6 +9520,33 @@ function hurt(e,d){
           spawnLootDrop(rollGearId(3), e.x, e.y);
         }
         showGameToast('🧪 '+T('TOXIC SLIME DISSOLVED! Weapon Dropped! +3 LEVEL-UPS!','ТОКСИЧНЫЙ СЛИЗЕНЬ РАСТВОРЕН! Выпало оружие! +3 УРОВНЯ!'),'#ef4444',4.0);
+      } else if(e.bossId === 'butcher'){
+        dropPurpleCrystals(e.x, e.y, 22, 1);
+        dropCoins(e.x, e.y, 35, Math.max(1, Math.round(2 * (G.lvlConfig?.multGold || 1))));
+        G.gems.push({ x: e.x, y: e.y, v: 300, type: 'xp', isBoss: true, bossLevels: 3, mag: false });
+        const buRoll = Math.random();
+        const buTier = buRoll < 0.45 ? 3 : (buRoll < 0.85 ? 4 : 5);
+        spawnLootDrop(rollWeaponId(buTier), e.x, e.y);
+        if(Math.random() < 0.50){
+          spawnLootDrop(rollGearId(3), e.x, e.y);
+        }
+        showGameToast('🥩 '+T('FLESH BUTCHER EXECUTED! Weapon Dropped! +3 LEVEL-UPS!','ХИРУРГ-МЯСНИК УНИЧТОЖЕН! Выпало оружие! +3 УРОВНЯ!'),'#ef4444',4.0);
+      } else if(e.bossId === 'mimic'){
+        dropPurpleCrystals(e.x, e.y, 30, 2);
+        dropCoins(e.x, e.y, 65, Math.max(1, Math.round(3.5 * (G.lvlConfig?.multGold || 1))));
+        G.gems.push({ x: e.x, y: e.y, v: 300, type: 'xp', isBoss: true, bossLevels: 3, mag: false });
+        const miRoll = Math.random();
+        const miTier = miRoll < 0.35 ? 4 : 5;
+        spawnLootDrop(rollWeaponId(miTier), e.x, e.y);
+        if(Math.random() < 0.70){
+          const mGearTier = Math.random() < 0.40 ? 5 : 4;
+          spawnLootDrop(rollGearId(mGearTier), e.x, e.y);
+        }
+        showGameToast('📦 '+T('ANCIENT MIMIC SLAIN! Hoard Unlocked! +3 LEVEL-UPS!','ВЕЛИКИЙ МИМИК ПОВЕРЖЕН! Сокровищница открыта! +3 УРОВНЯ!'),'#f59e0b',4.5);
+        const maxW = G.lvlConfig?.maxWaves || 40;
+        if(G.wave >= maxW){
+          G.waveProgressT = maxW * (CONFIG.waves.waveDuration || 15);
+        }
       } else {
         dropPurpleCrystals(e.x, e.y, 12, 1);
         dropCoins(e.x, e.y, 18, Math.max(1, Math.round(2 * (G.lvlConfig?.multGold || 1))));
@@ -11405,6 +11433,162 @@ function spawnSlimeBoss(){
 }
 window.spawnSlimeBoss = spawnSlimeBoss;
 
+function spawnButcherBoss(){
+  if(!G || !G.run) return;
+  const g = G, p = g.p;
+  if(g.enemies.some(e => e.isBoss && e.bossId === 'butcher' && !e.dead)) return;
+
+  prepareBossArena(g);
+  const ang = Math.random() * 6.283;
+  const dist = 110 + Math.random() * 30;
+  const maxDx = Math.max(70, W * 0.35 - 30);
+  const maxDy = Math.max(80, H * 0.28 - 30);
+  const dx = Math.max(-maxDx, Math.min(maxDx, Math.cos(ang) * dist));
+  const dy = Math.max(-maxDy, Math.min(maxDy, Math.sin(ang) * dist));
+  const bx = p.x + dx;
+  const by = p.y + dy;
+
+  const maxHp = Math.round(2800 * (g.lvlConfig?.multHp || 1));
+  const boss = {
+    isBoss: true,
+    bossId: 'butcher',
+    name: 'ХИРУРГ-МЯСНИК',
+    nameEn: 'THE FLESH BUTCHER',
+    title: 'ПАЛАЧ МЕРТВОГО КВАРТАЛА',
+    titleEn: 'DEAD QUARTER EXECUTIONER',
+    x: bx,
+    y: by,
+    spawnX: bx,
+    spawnY: by,
+    hp: maxHp,
+    maxHp: maxHp,
+    c: {
+      r: 36,
+      speed: 54,
+      damage: 36,
+      color: '#dc2626',
+      xp: 260
+    },
+    fl: 0,
+    oh: 0,
+    dead: false,
+    facing: bx < p.x ? 1 : -1,
+    animT: 0,
+    frame: 0,
+    spawnState: 'emerging',
+    spawnT: 2.8,
+    emergeMaxT: 2.0,
+    emergeDelay: 0.8,
+    emergeSlamDone: false,
+    action: 'idle',
+    actionT: 0,
+    hookCd: 4.5,
+    spinCd: 7.5,
+    trailCd: 0.3,
+    hookTargetX: 0,
+    hookTargetY: 0,
+    enraged: false
+  };
+
+  keepInsideBossArena(boss, g.bossArena, (boss.c?.r || 36) + 10);
+  boss.spawnX = boss.x;
+  boss.spawnY = boss.y;
+  g.enemies.push(boss);
+  g.activeBoss = boss;
+
+  Sfx.play('dash');
+
+  g.bossWarning = {
+    t: 1.0,
+    maxT: 1.0,
+    name: boss.name,
+    nameEn: boss.nameEn,
+    title: boss.title,
+    titleEn: boss.titleEn
+  };
+}
+window.spawnButcherBoss = spawnButcherBoss;
+
+function spawnMimicBoss(){
+  if(!G || !G.run) return;
+  const g = G, p = g.p;
+  if(g.enemies.some(e => e.isBoss && e.bossId === 'mimic' && !e.dead)) return;
+
+  prepareBossArena(g);
+  const ang = Math.random() * 6.283;
+  const dist = 110 + Math.random() * 30;
+  const maxDx = Math.max(70, W * 0.35 - 30);
+  const maxDy = Math.max(80, H * 0.28 - 30);
+  const dx = Math.max(-maxDx, Math.min(maxDx, Math.cos(ang) * dist));
+  const dy = Math.max(-maxDy, Math.min(maxDy, Math.sin(ang) * dist));
+  const bx = p.x + dx;
+  const by = p.y + dy;
+
+  const maxHp = Math.round(3800 * (g.lvlConfig?.multHp || 1));
+  const boss = {
+    isBoss: true,
+    bossId: 'mimic',
+    name: 'ВЕЛИКИЙ МИМИК',
+    nameEn: 'THE ANCIENT MIMIC',
+    title: 'ПОЖИРАТЕЛЬ СОКРОВИЩ',
+    titleEn: 'HOARD DEVOURER',
+    x: bx,
+    y: by,
+    spawnX: bx,
+    spawnY: by,
+    hp: maxHp,
+    maxHp: maxHp,
+    c: {
+      r: 40,
+      speed: 48,
+      damage: 40,
+      color: '#d97706',
+      xp: 320
+    },
+    fl: 0,
+    oh: 0,
+    dead: false,
+    facing: bx < p.x ? 1 : -1,
+    animT: 0,
+    frame: 0,
+    spawnState: 'emerging',
+    spawnT: 3.2,
+    emergeMaxT: 2.2,
+    emergeDelay: 1.0,
+    emergeSlamDone: false,
+    action: 'idle',
+    actionT: 0,
+    vortexCd: 6.5,
+    coinCd: 4.5,
+    slamCd: 8.5,
+    jumpStartX: 0,
+    jumpStartY: 0,
+    jumpTargetX: 0,
+    jumpTargetY: 0,
+    jumpY: 0,
+    jumpDur: 0.75,
+    enraged: false
+  };
+
+  keepInsideBossArena(boss, g.bossArena, (boss.c?.r || 40) + 10);
+  boss.spawnX = boss.x;
+  boss.spawnY = boss.y;
+  g.enemies.push(boss);
+  g.activeBoss = boss;
+
+  Sfx.play('levelup');
+
+  g.bossWarning = {
+    t: 1.0,
+    maxT: 1.0,
+    name: boss.name,
+    nameEn: boss.nameEn,
+    title: boss.title,
+    titleEn: boss.titleEn
+  };
+}
+window.spawnMimicBoss = spawnMimicBoss;
+
 function update(dt){
   const g=G,p=g.p;
   g.t+=dt;
@@ -11524,19 +11708,21 @@ function update(dt){
     if(curLvlId === 1){
       if(g.wave === 10) spawnGravediggerBoss();
       else if(g.wave === 20) spawnRatKingBoss();
+      else if(g.wave === 25) spawnButcherBoss();
       else if(g.wave === 30) spawnAbominationBoss();
     }else if(curLvlId === 2){
-      // 2 локация (40 волн): волна 10 — Паучиха-праматерь, волна 20 — Древень-мутант, волна 30 — Токсичный слизень, волна 40 — Мутант-аберрация
+      // 2 локация (40 волн): волна 10 — Паучиха-праматерь, волна 20 — Древень-мутант, волна 30 — Токсичный слизень, волна 40 — Великий Мимик
       if(g.wave === 10) spawnBroodmotherBoss();
       else if(g.wave === 20) spawnTreantBoss();
       else if(g.wave === 30) spawnSlimeBoss();
-      else if(g.wave === 40) spawnAbominationBoss();
+      else if(g.wave === 40) spawnMimicBoss();
     }else if(curLvlId === 3){
       // 3 локация (Полигон 50 волн)
       if(g.wave === 10) spawnBroodmotherBoss();
       else if(g.wave === 20) spawnTreantBoss();
-      else if(g.wave === 30) spawnSlimeBoss();
-      else if(g.wave === 40) spawnRatKingBoss();
+      else if(g.wave === 28) spawnButcherBoss();
+      else if(g.wave === 35) spawnSlimeBoss();
+      else if(g.wave === 42) spawnMimicBoss();
       else if(g.wave === 50) spawnAbominationBoss();
     }
   }
@@ -13530,6 +13716,353 @@ function update(dt){
       }
       continue;
     }
+
+    if(e.isBoss && e.bossId === 'butcher'){
+      if(e.fl > 0) e.fl -= dt;
+      if(e.oh > 0) e.oh -= dt;
+      if(e.phaseGuardT > 0) e.phaseGuardT -= dt;
+
+      // 1. Появление Мясника
+      if(e.spawnState === 'emerging'){
+        e.spawnT -= dt;
+        if(e.spawnT <= 0){
+          e.spawnState = 'active';
+          e.spawnT = 0;
+          e.action = 'idle';
+          e.actionT = 0;
+        }
+        continue;
+      }
+
+      const dx = p.x - e.x, dy = p.y - e.y, d = Math.hypot(dx, dy) || 1;
+
+      // 2. Проверка порога Ярости при HP <= 40%
+      if(!e.enraged && e.hp <= e.maxHp * 0.4){
+        e.enraged = true;
+        g.shake = Math.max(g.shake, 0.55);
+        showGameToast('⚠️ ' + T('THE BUTCHER IS ENRAGED! (+SPEED / RAPID HOOK)', 'ХИРУРГ-МЯСНИК В ЯРОСТИ! (+СКОРОСТЬ / БЫСТРЫЙ КРЮК)'), '#ef4444', 3.2);
+        for(let k = 0; k < 40; k++){
+          g.fx.push({
+            x: e.x + (Math.random() - 0.5) * 40,
+            y: e.y + (Math.random() - 0.5) * 40,
+            vx: (Math.random() - 0.5) * 150,
+            vy: -30 - Math.random() * 60,
+            col: Math.random() > 0.5 ? '#dc2626' : '#ea580c',
+            r: 3 + Math.random() * 2,
+            l: 0.55
+          });
+        }
+        Sfx.play('hit');
+      }
+
+      // 3. Токсичный след адреналина при движении
+      e.trailCd = (e.trailCd !== undefined ? e.trailCd : 0.3) - dt;
+      if(e.trailCd <= 0){
+        e.trailCd = e.enraged ? 0.2 : 0.3;
+        g.bossShockwaves.push({
+          x: e.x + (Math.random() - 0.5) * 16,
+          y: e.y + 20 + (Math.random() - 0.5) * 10,
+          vx: 0, vy: 0,
+          l: e.enraged ? 5.5 : 4.0,
+          maxL: e.enraged ? 5.5 : 4.0,
+          dmg: e.enraged ? 5 : 4,
+          type: 'butcher_trail',
+          col: '#dc2626'
+        });
+      }
+
+      // Кулдауны способностей
+      e.hookCd = (e.hookCd !== undefined ? e.hookCd : 4.5) - dt;
+      e.spinCd = (e.spinCd !== undefined ? e.spinCd : 7.5) - dt;
+
+      // 4. Способность: Вихрь тесака (Cleaver Whirlwind)
+      if(e.action === 'idle' && e.spinCd <= 0 && d < 180){
+        e.action = 'spin_prep';
+        e.actionT = 0.5;
+        e.spinCd = e.enraged ? 5.5 : 7.5;
+        continue;
+      }
+      if(e.action === 'spin_prep'){
+        e.actionT -= dt;
+        if(e.actionT <= 0){
+          e.action = 'spin_active';
+          e.actionT = 2.4;
+          Sfx.play('dash');
+        }
+        continue;
+      }
+      if(e.action === 'spin_active'){
+        e.actionT -= dt;
+        const spinSpd = (e.enraged ? 105 : 85) * g.lvlConfig.multSpeed;
+        e.x += (dx / d) * spinSpd * dt;
+        e.y += (dy / d) * spinSpd * dt;
+        e.facing = dx >= 0 ? 1 : -1;
+        e.animT = (e.animT || 0) + dt * 18;
+        if(d < 52 && p.inv <= 0){
+          damagePlayer(Math.round(28 * (g.lvlConfig?.multHp || 1)), true);
+          Sfx.play('hit');
+        }
+        if(Math.random() < 0.6){
+          const spA = Math.random() * 6.283;
+          g.fx.push({
+            x: e.x + Math.cos(spA) * 35,
+            y: e.y + Math.sin(spA) * 35,
+            vx: Math.cos(spA) * 90,
+            vy: Math.sin(spA) * 90,
+            col: Math.random() > 0.4 ? '#ef4444' : '#fbbf24',
+            l: 0.3
+          });
+        }
+        if(e.actionT <= 0){
+          e.action = 'idle';
+        }
+        continue;
+      }
+
+      // 5. Способность: Мясницкий крюк (Meat Hook)
+      if(e.action === 'idle' && e.hookCd <= 0 && d > 80 && d < 280){
+        e.action = 'hook_windup';
+        e.actionT = 0.55;
+        e.hookCd = e.enraged ? 3.2 : 5.0;
+        e.hookTargetX = p.x;
+        e.hookTargetY = p.y;
+        continue;
+      }
+      if(e.action === 'hook_windup'){
+        e.actionT -= dt;
+        e.facing = dx >= 0 ? 1 : -1;
+        e.hookTargetX = p.x;
+        e.hookTargetY = p.y;
+        if(e.actionT <= 0){
+          e.action = 'hook_fired';
+          e.actionT = 0.6;
+          Sfx.play('dash');
+          const hAng = Math.atan2(e.hookTargetY - e.y, e.hookTargetX - e.x);
+          const hSpeed = 380;
+          g.bossShockwaves.push({
+            x: e.x,
+            y: e.y,
+            srcX: e.x,
+            srcY: e.y,
+            vx: Math.cos(hAng) * hSpeed,
+            vy: Math.sin(hAng) * hSpeed,
+            angle: hAng,
+            l: 0.6,
+            maxL: 0.6,
+            dmg: 24,
+            type: 'butcher_hook',
+            col: '#ef4444'
+          });
+        }
+        continue;
+      }
+      if(e.action === 'hook_fired'){
+        e.actionT -= dt;
+        if(e.actionT <= 0){
+          e.action = 'idle';
+        }
+        continue;
+      }
+
+      // Обычное передвижение Мясника к игроку
+      if(e.action === 'idle'){
+        const bSpd = (e.enraged ? 74 : 54) * g.lvlConfig.multSpeed;
+        e.x += (dx / d) * bSpd * dt;
+        e.y += (dy / d) * bSpd * dt;
+        e.facing = dx >= 0 ? 1 : -1;
+        e.animT = (e.animT || 0) + dt * 6;
+      }
+      continue;
+    }
+
+    if(e.isBoss && e.bossId === 'mimic'){
+      if(e.fl > 0) e.fl -= dt;
+      if(e.oh > 0) e.oh -= dt;
+      if(e.phaseGuardT > 0) e.phaseGuardT -= dt;
+
+      // 1. Появление Великого Мимика
+      if(e.spawnState === 'emerging'){
+        e.spawnT -= dt;
+        if(e.spawnT <= 0){
+          e.spawnState = 'active';
+          e.spawnT = 0;
+          e.action = 'idle';
+          e.actionT = 0;
+        }
+        continue;
+      }
+
+      const dx = p.x - e.x, dy = p.y - e.y, d = Math.hypot(dx, dy) || 1;
+
+      // 2. Проверка порога Ярости при HP <= 40%
+      if(!e.enraged && e.hp <= e.maxHp * 0.4){
+        e.enraged = true;
+        g.shake = Math.max(g.shake, 0.6);
+        showGameToast('⚠️ ' + T('THE ANCIENT MIMIC IS ENRAGED! (+SPEED / VORTEX FRENZY)', 'ВЕЛИКИЙ МИМИК В ЯРОСТИ! (+СКОРОСТЬ / БЕШЕНАЯ ВОРОНКА)'), '#f59e0b', 3.2);
+        for(let k = 0; k < 45; k++){
+          g.fx.push({
+            x: e.x + (Math.random() - 0.5) * 45,
+            y: e.y + (Math.random() - 0.5) * 45,
+            vx: (Math.random() - 0.5) * 160,
+            vy: -30 - Math.random() * 60,
+            col: Math.random() > 0.4 ? '#facc15' : '#c084fc',
+            r: 3 + Math.random() * 2,
+            l: 0.6
+          });
+        }
+        Sfx.play('hit');
+      }
+
+      // Кулдауны способностей
+      e.vortexCd = (e.vortexCd !== undefined ? e.vortexCd : 6.5) - dt;
+      e.coinCd = (e.coinCd !== undefined ? e.coinCd : 4.5) - dt;
+      e.slamCd = (e.slamCd !== undefined ? e.slamCd : 8.5) - dt;
+
+      // 3. Способность: Прыжок-хлопок / Двойной укус (Greed Slam)
+      if(e.action === 'idle' && e.slamCd <= 0){
+        e.action = 'slam_prep';
+        e.actionT = 0.55;
+        e.slamCd = e.enraged ? 6.0 : 8.5;
+        e.jumpStartX = e.x;
+        e.jumpStartY = e.y;
+        e.jumpTargetX = p.x;
+        e.jumpTargetY = p.y;
+        continue;
+      }
+      if(e.action === 'slam_prep'){
+        e.actionT -= dt;
+        if(e.actionT <= 0){
+          e.action = 'slam_air';
+          e.actionT = 0.65;
+          e.jumpDur = 0.65;
+          Sfx.play('dash');
+        }
+        continue;
+      }
+      if(e.action === 'slam_air'){
+        e.actionT -= dt;
+        const progress = 1 - Math.max(0, e.actionT / e.jumpDur);
+        e.x = e.jumpStartX + (e.jumpTargetX - e.jumpStartX) * progress;
+        e.y = e.jumpStartY + (e.jumpTargetY - e.jumpStartY) * progress;
+        e.jumpY = -Math.sin(progress * Math.PI) * 75;
+        if(e.actionT <= 0){
+          e.action = 'idle';
+          e.jumpY = 0;
+          g.shake = Math.max(g.shake, 0.45);
+          Sfx.play('hit');
+          const waveCount = 8;
+          for(let w = 0; w < waveCount; w++){
+            const wAng = (w / waveCount) * 6.283;
+            g.bossShockwaves.push({
+              x: e.x,
+              y: e.y + 10,
+              vx: Math.cos(wAng) * 160,
+              vy: Math.sin(wAng) * 160,
+              angle: wAng,
+              l: 0.8,
+              maxL: 0.8,
+              dmg: 20,
+              type: 'mimic_shockwave',
+              col: '#fbbf24'
+            });
+          }
+        }
+        continue;
+      }
+
+      // 4. Способность: Гравитационная воронка (Vortex Inhale)
+      if(e.action === 'idle' && e.vortexCd <= 0 && d < 260){
+        e.action = 'vortex_prep';
+        e.actionT = 0.5;
+        e.vortexCd = e.enraged ? 5.0 : 7.0;
+        continue;
+      }
+      if(e.action === 'vortex_prep'){
+        e.actionT -= dt;
+        e.facing = dx >= 0 ? 1 : -1;
+        if(e.actionT <= 0){
+          e.action = 'vortex_active';
+          e.actionT = 2.2;
+          Sfx.play('dash');
+        }
+        continue;
+      }
+      if(e.action === 'vortex_active'){
+        e.actionT -= dt;
+        e.facing = dx >= 0 ? 1 : -1;
+        const pullA = Math.atan2(e.y - p.y, e.x - p.x);
+        const pullDist = Math.hypot(e.x - p.x, e.y - p.y);
+        if(pullDist > 40){
+          const pullForce = (1 - Math.min(1, pullDist / 260)) * (e.enraged ? 160 : 125) * dt;
+          p.x += Math.cos(pullA) * pullForce;
+          p.y += Math.sin(pullA) * pullForce;
+        } else if(p.inv <= 0){
+          damagePlayer(Math.round(32 * (g.lvlConfig?.multHp || 1)), true);
+          Sfx.play('hit');
+        }
+        if(Math.random() < 0.75){
+          const pAng = Math.random() * 6.283;
+          const pDist = 60 + Math.random() * 90;
+          g.fx.push({
+            x: e.x + Math.cos(pAng) * pDist,
+            y: e.y + Math.sin(pAng) * pDist,
+            vx: -Math.cos(pAng) * 110,
+            vy: -Math.sin(pAng) * 110,
+            col: Math.random() > 0.4 ? '#facc15' : '#c084fc',
+            l: 0.35
+          });
+        }
+        if(e.actionT <= 0){
+          e.action = 'idle';
+        }
+        continue;
+      }
+
+      // 5. Способность: Взрывные дублоны (Cursed Coin Toss)
+      if(e.action === 'idle' && e.coinCd <= 0){
+        e.action = 'coin_prep';
+        e.actionT = 0.4;
+        e.coinCd = e.enraged ? 3.5 : 5.0;
+        continue;
+      }
+      if(e.action === 'coin_prep'){
+        e.actionT -= dt;
+        if(e.actionT <= 0){
+          e.action = 'idle';
+          Sfx.play('gem');
+          const numCoins = e.enraged ? 7 : 5;
+          const baseAng = Math.atan2(dy, dx);
+          for(let c = 0; c < numCoins; c++){
+            const cAng = baseAng + (c - (numCoins - 1) / 2) * 0.28;
+            const cSpd = 120 + Math.random() * 60;
+            g.bossShockwaves.push({
+              x: e.x,
+              y: e.y,
+              vx: Math.cos(cAng) * cSpd,
+              vy: Math.sin(cAng) * cSpd,
+              l: 1.8,
+              maxL: 1.8,
+              armed: false,
+              dmg: 18,
+              type: 'mimic_coin_bomb',
+              col: '#facc15'
+            });
+          }
+        }
+        continue;
+      }
+
+      // Обычное передвижение Мимика к игроку
+      if(e.action === 'idle'){
+        const bSpd = (e.enraged ? 72 : 48) * g.lvlConfig.multSpeed;
+        e.x += (dx / d) * bSpd * dt;
+        e.y += (dy / d) * bSpd * dt;
+        e.facing = dx >= 0 ? 1 : -1;
+        e.animT = (e.animT || 0) + dt * (e.enraged ? 10 : 7.5);
+        e.frame = Math.floor(e.animT) % 8;
+      }
+      continue;
+    }
     const dx=p.x-e.x,dy=p.y-e.y,d=Math.hypot(dx,dy)||1;
     // Автоматическое вылупление кокона паука по таймеру
     if(e.c === CONFIG.enemies.spider_egg && !e.dead){
@@ -13968,6 +14501,36 @@ function update(dt){
             g.fx.push({ x: p.x, y: p.y, vx: (Math.random() - 0.5) * 70, vy: -15 - Math.random() * 25, col: '#94a3b8', r: 2, l: 0.3 });
           }
           Sfx.play('hit');
+        } else if(sw.type === 'butcher_hook'){
+          const bBoss = g.enemies.find(en => en.isBoss && en.bossId === 'butcher' && !en.dead);
+          if(bBoss){
+            const dragA = Math.atan2(bBoss.y - p.y, bBoss.x - p.x);
+            p.x += Math.cos(dragA) * 65;
+            p.y += Math.sin(dragA) * 65;
+            p.webStunT = 0.55;
+            showGameToast('🥩 ' + T('HOOKED BY THE BUTCHER!', 'ЗАХВАЧЕН КРЮКОМ МЯСНИКА!'), '#ef4444', 2.0);
+            for(let k = 0; k < 12; k++){
+              g.fx.push({x: p.x, y: p.y, vx: (Math.random() - 0.5) * 80, vy: -20 - Math.random() * 30, col: '#dc2626', l: 0.35});
+            }
+          }
+          sw.l = 0;
+        } else if(sw.type === 'butcher_trail'){
+          p.poisonT = Math.max(p.poisonT || 0, 2.0);
+          p.poisonDps = Math.max(p.poisonDps || 0, 4);
+          p.poisonSlow = Math.min(p.poisonSlow || 1, 0.78);
+        } else if(sw.type === 'mimic_coin_bomb'){
+          for(let k = 0; k < 10; k++){
+            g.fx.push({x: p.x, y: p.y, vx: (Math.random() - 0.5) * 100, vy: (Math.random() - 0.5) * 100, col: '#facc15', l: 0.35});
+          }
+          sw.l = 0;
+        } else if(sw.type === 'mimic_shockwave'){
+          const pushA = Math.atan2(p.y - sw.y, p.x - sw.x);
+          p.x += Math.cos(pushA) * 45;
+          p.y += Math.sin(pushA) * 45;
+          for(let k = 0; k < 8; k++){
+            g.fx.push({x: p.x, y: p.y, vx: (Math.random() - 0.5) * 80, vy: -20 - Math.random() * 30, col: '#fbbf24', l: 0.35});
+          }
+          sw.l = 0;
         }
         const dmg=Math.max(1,Math.round(sw.dmg*(p.armor?Math.max(0.2,1-p.armor):1)));
         damagePlayer(dmg);
@@ -17113,6 +17676,89 @@ function drawBossShockwaves(g, ox, oy){
       // Яркий желтый блик
       cx.fillStyle = '#ffffff';
       cx.beginPath(); cx.arc(3, -2, 2.5, 0, 6.283); cx.fill();
+    } else if(sw.type === 'butcher_hook'){
+      const bBoss = g.enemies.find(en => en.isBoss && en.bossId === 'butcher');
+      const originX = (bBoss ? bBoss.x : sw.srcX) + ox;
+      const originY = (bBoss ? bBoss.y : sw.srcY) + oy;
+
+      cx.strokeStyle = `rgba(148, 163, 184, ${0.85 * swAlpha})`;
+      cx.lineWidth = 3.0;
+      cx.beginPath();
+      cx.moveTo(originX, originY);
+      cx.lineTo(sx, sy);
+      cx.stroke();
+
+      cx.strokeStyle = `rgba(239, 68, 68, ${0.75 * swAlpha})`;
+      cx.lineWidth = 1.4;
+      cx.beginPath();
+      cx.moveTo(originX, originY);
+      cx.lineTo(sx, sy);
+      cx.stroke();
+
+      cx.save();
+      cx.translate(sx, sy);
+      cx.rotate(sw.angle);
+      cx.fillStyle = '#e2e8f0';
+      cx.strokeStyle = '#475569';
+      cx.lineWidth = 1.5;
+      cx.beginPath();
+      cx.moveTo(12, 0);
+      cx.lineTo(-6, -9);
+      cx.lineTo(-2, -3);
+      cx.lineTo(-12, -3);
+      cx.lineTo(-12, 3);
+      cx.lineTo(-2, 3);
+      cx.lineTo(-6, 9);
+      cx.closePath();
+      cx.fill();
+      cx.stroke();
+
+      cx.fillStyle = '#dc2626';
+      cx.beginPath(); cx.arc(10, 0, 2.5, 0, 6.283); cx.fill();
+      cx.restore();
+    } else if(sw.type === 'butcher_trail'){
+      const pPulse = 0.85 + 0.15 * Math.sin(performance.now() * 0.009);
+      const radG = cx.createRadialGradient(sx, sy, 2, sx, sy, 22);
+      radG.addColorStop(0, `rgba(239, 68, 68, ${0.75 * swAlpha})`);
+      radG.addColorStop(0.5, `rgba(185, 28, 28, ${0.5 * swAlpha})`);
+      radG.addColorStop(1, 'rgba(0,0,0,0)');
+      cx.fillStyle = radG;
+      cx.beginPath();
+      cx.ellipse(sx, sy, 22 * pPulse, 10 * pPulse, 0, 0, 6.283);
+      cx.fill();
+    } else if(sw.type === 'mimic_coin_bomb'){
+      const isDetonating = sw.l < 0.5;
+      const coinPulse = 0.85 + 0.15 * Math.sin(performance.now() * 0.02);
+      cx.save();
+      cx.translate(sx, sy);
+      if(isDetonating){
+        cx.strokeStyle = 'rgba(239, 68, 68, 0.75)';
+        cx.lineWidth = 1.5;
+        cx.setLineDash([4, 4]);
+        cx.beginPath(); cx.arc(0, 0, 32 * (1 - sw.l / 0.5), 0, 6.283); cx.stroke();
+      }
+      cx.fillStyle = isDetonating ? '#ef4444' : '#fbbf24';
+      cx.strokeStyle = isDetonating ? '#991b1b' : '#78350f';
+      cx.lineWidth = 1.2;
+      cx.beginPath(); cx.arc(0, 0, 6 * coinPulse, 0, 6.283); cx.fill(); cx.stroke();
+      cx.fillStyle = '#ffffff';
+      cx.beginPath(); cx.arc(-1.5, -1.5, 1.5, 0, 6.283); cx.fill();
+      cx.restore();
+    } else if(sw.type === 'mimic_shockwave'){
+      cx.save();
+      cx.translate(sx, sy);
+      cx.rotate(sw.angle);
+      cx.fillStyle = `rgba(251, 191, 36, ${0.9 * swAlpha})`;
+      cx.strokeStyle = `rgba(180, 83, 9, ${0.85 * swAlpha})`;
+      cx.lineWidth = 1.2;
+      cx.beginPath();
+      cx.moveTo(10, 0);
+      cx.lineTo(-6, -6);
+      cx.lineTo(-2, 0);
+      cx.lineTo(-6, 6);
+      cx.closePath();
+      cx.fill(); cx.stroke();
+      cx.restore();
     } else {
       cx.translate(sx, sy);
       cx.rotate(sw.angle);
@@ -19783,6 +20429,245 @@ function drawSlimeBoss(e, ox, oy){
 }
 
 
+function drawButcherEmergence(e, ex, ey, gy){
+  const progress = 1 - Math.max(0, e.spawnT / (e.emergeMaxT || 2.0));
+  cx.save();
+  cx.fillStyle = 'rgba(0,0,0,0.55)';
+  cx.beginPath(); cx.ellipse(ex, gy, 46 * Math.min(1, progress * 1.5), 16 * Math.min(1, progress * 1.5), 0, 0, 6.283); cx.fill();
+
+  const dropY = (1 - Math.min(1, progress * 1.2)) * -220;
+  cx.translate(ex, ey + dropY);
+  if(e.facing > 0) cx.scale(-1, 1);
+  const bImg = monsterSpriteImgs['img/monsters/boss_butcher.webp'] || bossButcherImg;
+  const bw = 124, bh = 124;
+  if(bImg && bImg.complete && bImg.naturalWidth > 0){
+    cx.drawImage(bImg, -bw / 2, -bh / 2 - 8, bw, bh);
+  } else {
+    circle(0, 0, e.c.r, '#ef4444');
+  }
+
+  if(progress > 0.85 && !e.emergeSlamDone){
+    e.emergeSlamDone = true;
+    G.shake = Math.max(G.shake, 0.55);
+    Sfx.play('hit');
+    for(let k = 0; k < 25; k++){
+      G.fx.push({
+        x: e.x + (Math.random() - 0.5) * 40,
+        y: e.y + 20,
+        vx: (Math.random() - 0.5) * 140,
+        vy: -20 - Math.random() * 50,
+        col: Math.random() > 0.5 ? '#ef4444' : '#78350f',
+        l: 0.45
+      });
+    }
+  }
+  cx.restore();
+}
+
+function drawButcherBoss(e, ox, oy){
+  const ex = e.x + ox, ey = e.y + oy;
+  const gy = (e.spawnY !== undefined ? e.spawnY : e.y) + oy + 26;
+
+  if(e.spawnState === 'emerging'){
+    drawButcherEmergence(e, ex, ey, gy);
+    return;
+  }
+
+  if(e.action === 'hook_windup'){
+    cx.save();
+    const pulse = 0.75 + 0.25 * Math.sin(performance.now() * 0.02);
+    cx.strokeStyle = `rgba(239, 68, 68, ${0.85 * pulse})`;
+    cx.lineWidth = 2.0;
+    cx.setLineDash([6, 4]);
+    cx.beginPath();
+    cx.moveTo(ex, ey);
+    cx.lineTo(e.hookTargetX + ox, e.hookTargetY + oy);
+    cx.stroke();
+    cx.restore();
+  }
+
+  if(e.action === 'spin_prep'){
+    cx.save();
+    const pulse = 0.7 + 0.3 * Math.sin(performance.now() * 0.025);
+    cx.fillStyle = `rgba(239, 68, 68, ${0.22 * pulse})`;
+    cx.strokeStyle = `rgba(220, 38, 38, ${0.85 * pulse})`;
+    cx.lineWidth = 2.4;
+    cx.beginPath();
+    cx.arc(ex, ey, 60, 0, 6.283);
+    cx.fill(); cx.stroke();
+    cx.restore();
+  }
+
+  cx.save();
+  const auraPulse = 0.65 + 0.25 * Math.sin(performance.now() / 140);
+  const aura = cx.createRadialGradient(ex, ey + 18, 12, ex, ey + 18, 54);
+  aura.addColorStop(0, `rgba(239, 68, 68, ${0.42 * auraPulse})`);
+  aura.addColorStop(0.7, `rgba(153, 27, 27, ${0.18 * auraPulse})`);
+  aura.addColorStop(1, 'rgba(0,0,0,0)');
+  cx.fillStyle = aura;
+  cx.beginPath(); cx.ellipse(ex, ey + 18, 54, 22, 0, 0, 6.283); cx.fill();
+
+  cx.fillStyle = 'rgba(0,0,0,0.54)';
+  cx.beginPath(); cx.ellipse(ex, gy, 44, 15, 0, 0, 6.283); cx.fill();
+
+  cx.translate(ex, ey);
+  if(e.facing > 0) cx.scale(-1, 1);
+  if(e.action === 'spin_active'){
+    cx.rotate(e.animT);
+  }
+
+  if(e.fl > 0) cx.filter = 'brightness(3)';
+  else if(e.enraged) cx.filter = 'drop-shadow(0 0 14px rgba(239, 68, 68, 0.95)) contrast(1.3) saturate(1.4)';
+  else cx.filter = 'drop-shadow(0 0 8px rgba(220, 38, 38, 0.6))';
+
+  const bImg = monsterSpriteImgs['img/monsters/boss_butcher.webp'] || bossButcherImg;
+  const bw = 124, bh = 124;
+  if(bImg && bImg.complete && bImg.naturalWidth > 0){
+    cx.drawImage(bImg, -bw / 2, -bh / 2 - 8, bw, bh);
+  } else {
+    circle(0, 0, e.c.r, e.fl > 0 ? '#fff' : '#ef4444');
+  }
+  cx.filter = 'none';
+
+  const eyeX = -12, eyeY = -34;
+  const eyePulse = 0.85 + 0.15 * Math.sin(performance.now() / 70);
+  cx.fillStyle = `rgba(239, 68, 68, ${0.98 * eyePulse})`;
+  cx.shadowColor = '#ef4444';
+  cx.shadowBlur = 8;
+  cx.beginPath(); cx.arc(eyeX, eyeY, 4.0, 0, 6.283); cx.fill();
+  cx.fillStyle = '#ffffff';
+  cx.beginPath(); cx.arc(eyeX, eyeY, 1.6, 0, 6.283); cx.fill();
+  cx.shadowBlur = 0;
+
+  cx.restore();
+}
+
+function drawMimicEmergence(e, ex, ey, gy){
+  const progress = 1 - Math.max(0, e.spawnT / (e.emergeMaxT || 2.2));
+  cx.save();
+  cx.fillStyle = 'rgba(0,0,0,0.52)';
+  cx.beginPath(); cx.ellipse(ex, gy, 52, 18, 0, 0, 6.283); cx.fill();
+
+  if(progress < 0.55){
+    const sImg = monsterSheetImgs['img/monsters/monster_mimic_sheet.webp'];
+    const mw = 138, mh = 126;
+    const bGrad = cx.createLinearGradient(ex, gy, ex, ey - 180);
+    bGrad.addColorStop(0, 'rgba(251, 191, 36, 0.45)');
+    bGrad.addColorStop(1, 'rgba(251, 191, 36, 0)');
+    cx.fillStyle = bGrad;
+    cx.fillRect(ex - 22, ey - 180, 44, 180 + (gy - ey));
+
+    cx.translate(ex, ey);
+    if(sImg && sImg.complete && sImg.naturalWidth > 0){
+      cx.drawImage(sImg, 0, 0, 260, 240, -mw / 2, -mh / 2, mw, mh);
+    }
+  } else {
+    const shakeX = (Math.random() - 0.5) * 6;
+    const shakeY = (Math.random() - 0.5) * 6;
+    cx.translate(ex + shakeX, ey + shakeY);
+    if(e.facing > 0) cx.scale(-1, 1);
+    const sImg = monsterSheetImgs['img/monsters/monster_mimic_sheet.webp'];
+    const mw = 138, mh = 126;
+    const roarFrame = Math.min(7, Math.floor((progress - 0.55) * 16));
+    if(sImg && sImg.complete && sImg.naturalWidth > 0){
+      cx.drawImage(sImg, roarFrame * 260, 0, 260, 240, -mw / 2, -mh / 2, mw, mh);
+    }
+    if(!e.emergeSlamDone && progress > 0.8){
+      e.emergeSlamDone = true;
+      G.shake = Math.max(G.shake, 0.6);
+      Sfx.play('hit');
+      for(let k = 0; k < 30; k++){
+        G.fx.push({
+          x: e.x + (Math.random() - 0.5) * 45,
+          y: e.y + 15,
+          vx: (Math.random() - 0.5) * 160,
+          vy: -20 - Math.random() * 60,
+          col: Math.random() > 0.5 ? '#facc15' : '#a855f7',
+          l: 0.5
+        });
+      }
+    }
+  }
+  cx.restore();
+}
+
+function drawMimicBoss(e, ox, oy){
+  const ex = e.x + ox, ey = e.y + oy;
+  const gy = (e.spawnY !== undefined ? e.spawnY : e.y) + oy + 26;
+
+  if(e.spawnState === 'emerging'){
+    drawMimicEmergence(e, ex, ey, gy);
+    return;
+  }
+
+  if(e.action === 'slam_prep' || e.action === 'slam_air'){
+    const tx = (e.jumpTargetX !== undefined ? e.jumpTargetX : e.x) + ox;
+    const ty = (e.jumpTargetY !== undefined ? e.jumpTargetY : e.y) + oy;
+    cx.save();
+    const tPulse = 0.8 + 0.2 * Math.sin(performance.now() * 0.02);
+    const tR = 90;
+    cx.fillStyle = `rgba(251, 191, 36, ${0.22 * tPulse})`;
+    cx.beginPath(); cx.ellipse(tx, ty + 10, tR, tR * 0.45, 0, 0, 6.283); cx.fill();
+    cx.strokeStyle = `rgba(245, 158, 11, ${0.85 * tPulse})`;
+    cx.lineWidth = 2.4;
+    cx.stroke();
+    cx.restore();
+  }
+
+  if(e.action === 'vortex_active'){
+    cx.save();
+    const vPulse = 0.85 + 0.15 * Math.sin(performance.now() * 0.03);
+    const vAura = cx.createRadialGradient(ex, ey, 10, ex, ey, 140);
+    vAura.addColorStop(0, `rgba(168, 85, 247, ${0.45 * vPulse})`);
+    vAura.addColorStop(0.6, `rgba(251, 191, 36, ${0.2 * vPulse})`);
+    vAura.addColorStop(1, 'rgba(0,0,0,0)');
+    cx.fillStyle = vAura;
+    cx.beginPath(); cx.arc(ex, ey, 140, 0, 6.283); cx.fill();
+    cx.restore();
+  }
+
+  const isAir = (e.action === 'slam_air');
+  const shadowScale = isAir ? 0.55 : 1.0;
+  cx.save();
+  cx.fillStyle = 'rgba(0,0,0,0.52)';
+  cx.beginPath();
+  cx.ellipse(ex, gy, 52 * shadowScale, 18 * shadowScale, 0, 0, 6.283);
+  cx.fill();
+  cx.restore();
+
+  cx.save();
+  const jumpOffY = e.jumpY || 0;
+  cx.translate(ex, ey + jumpOffY);
+  if(e.facing > 0) cx.scale(-1, 1);
+
+  if(e.fl > 0) cx.filter = 'brightness(3)';
+  else if(e.enraged) cx.filter = 'drop-shadow(0 0 16px rgba(245, 158, 11, 0.95)) contrast(1.3) saturate(1.5)';
+  else cx.filter = 'drop-shadow(0 0 9px rgba(245, 158, 11, 0.65))';
+
+  const sImg = monsterSheetImgs['img/monsters/monster_mimic_sheet.webp'];
+  const mw = 138, mh = 126;
+  if(sImg && sImg.complete && sImg.naturalWidth > 0){
+    cx.imageSmoothingEnabled = false;
+    cx.drawImage(sImg, (e.frame || 0) * 260, 0, 260, 240, -mw / 2, -mh / 2 - 4, mw, mh);
+  } else {
+    circle(0, 0, e.c.r, e.fl > 0 ? '#fff' : '#f59e0b');
+  }
+  cx.filter = 'none';
+
+  const eyePulse = 0.85 + 0.15 * Math.sin(performance.now() / 80);
+  cx.fillStyle = `rgba(168, 85, 247, ${0.95 * eyePulse})`;
+  cx.shadowColor = '#c084fc';
+  cx.shadowBlur = 8;
+  cx.beginPath(); cx.arc(-14, -8, 4.0, 0, 6.283); cx.fill();
+  cx.beginPath(); cx.arc(14, -8, 4.0, 0, 6.283); cx.fill();
+  cx.fillStyle = '#ffffff';
+  cx.beginPath(); cx.arc(-14, -8, 1.5, 0, 6.283); cx.fill();
+  cx.beginPath(); cx.arc(14, -8, 1.5, 0, 6.283); cx.fill();
+  cx.shadowBlur = 0;
+
+  cx.restore();
+}
+
 function drawAnimatedMonster(cx, e, sprite, sw, sh, ox, oy){
   const t = e.animT || 0;
   const sp = e.c.sprite;
@@ -20213,6 +21098,10 @@ function drawGame(){
         drawTreantBoss(e,ox,oy);
       }else if(e.bossId==='toxic_slime'){
         drawSlimeBoss(e,ox,oy);
+      }else if(e.bossId==='butcher'){
+        drawButcherBoss(e,ox,oy);
+      }else if(e.bossId==='mimic'){
+        drawMimicBoss(e,ox,oy);
       }else{
         cx.save();
         const auraPulse=0.6+0.2*Math.sin(g.t*6);
