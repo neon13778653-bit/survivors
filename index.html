@@ -13759,7 +13759,8 @@ function update(dt){
                 ddy=(Math.random()-.5)||1;
                 dist=Math.hypot(ddx,ddy);
               }
-              const push=(minDist-dist)*0.45;
+              const pushRate = Math.min(1.0, 27 * dt);
+              const push=(minDist-dist)*pushRate;
               const nx=ddx/dist,ny=ddy/dist;
               e1.x+=nx*push;e1.y+=ny*push;
             }
@@ -23133,8 +23134,20 @@ function drawGame(){
 
 let last=performance.now();
 function loop(now){
-  const dt=Math.min((now-last)/1000,0.05);last=now;
-  if(G&&G.run&&!G.pause)update(dt);
+  let rawDt=(now-last)/1000;last=now;
+  if(rawDt>0.15)rawDt=0.15;
+
+  if(G&&G.run&&!G.pause){
+    if(rawDt>0.033){
+      const steps=Math.min(4,Math.ceil(rawDt/0.025));
+      const subDt=rawDt/steps;
+      for(let s=0;s<steps;s++){
+        update(subDt);
+      }
+    }else{
+      update(rawDt);
+    }
+  }
 
   if(G&&G.run){
     drawGame();
