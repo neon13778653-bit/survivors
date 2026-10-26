@@ -8,3 +8,5 @@ test_pet_*.png
 temp_edge_profile_*
 .DS_Store
 Thumbs.db
+
+_png_backup/
