@@ -11838,7 +11838,8 @@ function update(dt){
               hp: 24, maxHp: 24,
               c: { r: 13, speed: 70, damage: 8, color: '#84cc16', xp: 2 },
               fl: 0, oh: 0, dead: false, facing: 1, animT: 0, frame: 0,
-              isMinion: true
+              isMinion: true,
+              minionType: 'zombie'
             });
             for(let j = 0; j < 10; j++){
               g.fx.push({
@@ -12088,7 +12089,7 @@ function update(dt){
           e.action = 'idle';
           e.summonCd = e.enraged ? 6.5 : 8.8;
           Sfx.play('dash');
-          for(let k = 0; k < 4; k++){
+          for(let k = 0; k < (e.enraged ? 5 : 4); k++){
             const ca = (k / 4) * 6.283 + Math.random() * 0.5;
             const cx = e.x + Math.cos(ca) * 44;
             const cy = e.y + Math.sin(ca) * 44;
@@ -12098,7 +12099,8 @@ function update(dt){
               hp: 18, maxHp: 18,
               c: { ...ratCfg, speed: 90, damage: 7, color: '#84cc16', xp: 2 },
               fl: 0, oh: 0, dead: false, facing: 1, animT: 0, frame: 0,
-              isMinion: true
+              isMinion: true,
+              minionType: 'rat'
             });
             for(let j = 0; j < 8; j++){
               g.fx.push({
@@ -20263,7 +20265,25 @@ function drawGame(){
           circle(0, 0, e.c?.r || 14, e.fl > 0 ? '#fff' : '#22c55e');
         }
         cx.restore();
+      }else if(e.minionType === 'rat' || (e.c && e.c.sheet === 'img/monsters/monster_rat_sheet.webp')){
+        const rImg = monsterSheetImgs['img/monsters/monster_rat_sheet.webp'];
+        const rw = e.c?.spriteW || 52, rh = e.c?.spriteH || 36;
+        cx.save();
+        cx.fillStyle = 'rgba(0,0,0,.34)';
+        cx.beginPath(); cx.ellipse(e.x + ox, e.y + oy + 14, 16, 5.5, 0, 0, 6.283); cx.fill();
+        cx.translate(e.x + ox, e.y + oy);
+        if(e.facing > 0) cx.scale(-1, 1);
+        if(e.fl > 0) cx.filter = 'brightness(3)';
+        else cx.filter = 'drop-shadow(0 0 5px rgba(132,204,22,0.65))';
+        if(rImg && rImg.complete && rImg.naturalWidth > 0){
+          cx.imageSmoothingEnabled = false;
+          cx.drawImage(rImg, (e.frame || 0) * 280, 0, 280, 200, -rw / 2, -rh / 2 - 2, rw, rh);
+        } else {
+          circle(0, 0, e.c?.r || 11, e.fl > 0 ? '#fff' : '#84cc16');
+        }
+        cx.restore();
       }else{
+        // Зомби-миньоны Могильщика (Gravedigger necromancer minions)
         cx.fillStyle='rgba(0,0,0,.32)';
         cx.beginPath();cx.ellipse(e.x+ox,e.y+oy+22,13,5,0,0,6.283);cx.fill();
         cx.save();
