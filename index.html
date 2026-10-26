@@ -9011,7 +9011,8 @@ function testSkipWaves(count=5){
   if(nextBossWave)target=nextBossWave;
   if(target<=current)return;
   const waveDuration=CONFIG.waves.waveDuration||15;
-  g.waveProgressT=target>=maxWaves?maxWaves*waveDuration:(target-1)*waveDuration+.01;
+  g.waveProgressT=(target-1)*waveDuration+0.01;
+  showGameToast('⏩ '+T('WARPED TO WAVE '+target+'!','ПЕРЕХОД К ВОЛНЕ '+target+'!'),'#38bdf8',2.0);
 }
 function testSkipBoss(){
   if(!G || !G.run || G.pause) return;
@@ -11747,7 +11748,7 @@ function update(dt){
   }
 
   // Победа при выживании всех волн локации (30 для лок. 1, 40 для лок. 2, 50 для лок. 3) и поражении босса
-  if(g.wave>=maxWaves && (g.waveProgressT||0) >= maxWaves*waveDuration && !hasActiveBoss){
+  if(g.wave>=maxWaves && (g.waveProgressT||0) >= maxWaves*waveDuration && !hasActiveBossNow){
     die(true);
     return;
   }
