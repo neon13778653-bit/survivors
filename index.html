@@ -8273,9 +8273,18 @@ addEventListener('keydown',e=>{
 });
 addEventListener('keyup',e=>keys[e.code]=0);
 const joy={on:false,id:-1,ox:0,oy:0,x:0,y:0};
+let cachedCvRect=null;
+function getCvRect(){
+  if(!cachedCvRect) cachedCvRect=cv.getBoundingClientRect();
+  return cachedCvRect;
+}
+window.addEventListener('resize',()=>{ cachedCvRect=null; });
+window.addEventListener('scroll',()=>{ cachedCvRect=null; },{passive:true});
+
 cv.addEventListener('pointerdown',e=>{
   if(currentScreen!=='game'||!G)return;
-  const rect=cv.getBoundingClientRect();
+  cachedCvRect=cv.getBoundingClientRect();
+  const rect=cachedCvRect;
   const cxCoord=e.clientX-rect.left,cyCoord=e.clientY-rect.top;
 
   // 1. Сначала проверяем клик по интерактивным объектам (ящики, аирдропы)
@@ -8301,12 +8310,12 @@ cv.addEventListener('pointerdown',e=>{
 });
 cv.addEventListener('pointermove',e=>{
   if(joy.on&&e.pointerId===joy.id){
-    const rect=cv.getBoundingClientRect();
+    const rect=getCvRect();
     joy.x=e.clientX-rect.left;joy.y=e.clientY-rect.top;
   }
 });
 const joyEnd=e=>{
-  const rect=cv.getBoundingClientRect();
+  const rect=getCvRect();
   const cxCoord=e.clientX-rect.left,cyCoord=e.clientY-rect.top;
 
   // Если отпущен НЕ джойстик, а второй палец:
@@ -13763,9 +13772,11 @@ function update(dt){
   // 3. Твердое тело героя: враги не входят внутрь персонажа, а окружают его снаружи
   for(const e of g.enemies){
     if(e.dead||(e.isBoss&&e.spawnState==='emerging'))continue;
-    const dx=p.x-e.x,dy=p.y-e.y,d=Math.hypot(dx,dy)||1;
+    const dx=p.x-e.x,dy=p.y-e.y;
     const minContact=p.r+e.c.r;
-    if(d<minContact){
+    const distSq=dx*dx+dy*dy;
+    if(distSq<minContact*minContact){
+      const d=Math.sqrt(distSq)||1;
       e.x=p.x-(dx/d)*minContact;
       e.y=p.y-(dy/d)*minContact;
       if(p.inv<=0){
@@ -15524,7 +15535,11 @@ function update(dt){
   }
 
   for(let i=g.gems.length-1;i>=0;i--){
-    const m=g.gems[i],dx=p.x-m.x,dy=p.y-m.y,d=Math.hypot(dx,dy)||1;
+    const m=g.gems[i],dx=p.x-m.x,dy=p.y-m.y;
+    const distSq=dx*dx+dy*dy;
+    const pickupRad=p.pickup;
+    if(distSq<pickupRad*pickupRad)m.mag=true;
+    const d=Math.sqrt(distSq)||1;
 
     // Динамический разлёт монет и кристаллов при выпадении
     if(m.vx || m.vy){
@@ -15995,24 +16010,107 @@ function drawLobby(now){
 }
 
 
-// ===== ВИЗУАЛ ПОЛЯ БОЯ =====
+// ===== ВИЗУАЛ ПОЛЯ БОЯ (ВЫСОКООПТИМИЗИРОВАННЫЙ КЭШ ТЕКСТУР) =====
 function hash(x,y){let h=(x*374761393+y*668265263)|0;h=Math.imul(h^(h>>>13),1274126177);return((h^(h>>>16))>>>0)/4294967295}
-function drawGround(ox,oy,lc){
-  const s=64,x0=Math.floor(-ox/s)-1,y0=Math.floor(-oy/s)-1,nx=Math.ceil(W/s)+2,ny=Math.ceil(H/s)+2;
-  for(let j=0;j<ny;j++)for(let i=0;i<nx;i++){
-    const gx=x0+i,gy=y0+j,r=hash(gx,gy),r2=hash(gy+91,gx-37),sx=gx*s+ox,sy=gy*s+oy;
-    if(r<.33){cx.fillStyle='rgba(255,255,255,.022)';cx.fillRect(sx,sy,s,s)}
-    else if(r>.8){cx.fillStyle='rgba(0,0,0,.05)';cx.fillRect(sx,sy,s,s)}
-    if(r2<.4){cx.fillStyle='rgba(0,0,0,.35)';cx.fillRect(sx+4+r2*110,sy+6+r*40,4,3);cx.fillStyle='rgba(255,255,255,.08)';cx.fillRect(sx+4+r2*110,sy+5+r*40,4,1)}
-    if(r2>.92){cx.strokeStyle='rgba(0,0,0,.4)';cx.lineWidth=1.5;cx.beginPath();cx.moveTo(sx+8,sy+10+r*30);cx.lineTo(sx+22,sy+20+r*20);cx.lineTo(sx+30,sy+17+r*20);cx.lineTo(sx+46,sy+34+r*10);cx.stroke()}
+
+const _groundPatternCache = {};
+let _cachedVignette = null, _cachedVignetteW = 0, _cachedVignetteH = 0;
+
+function getGroundPattern(lc){
+  const key = (lc && lc.id) || 1;
+  if(_groundPatternCache[key]) return _groundPatternCache[key];
+
+  if(typeof document === 'undefined') return null;
+  const off = document.createElement('canvas');
+  const size = 512;
+  off.width = size;
+  off.height = size;
+  const octx = off.getContext('2d');
+  const s = 64;
+
+  octx.fillStyle = lc.bgColor || '#111827';
+  octx.fillRect(0, 0, size, size);
+
+  for(let j = 0; j < 8; j++){
+    for(let i = 0; i < 8; i++){
+      const gx = i, gy = j;
+      const r = hash(gx + key * 31, gy + key * 17);
+      const r2 = hash(gy + 91 + key * 13, gx - 37 + key * 29);
+      const sx = gx * s, sy = gy * s;
+      if(r < 0.33){
+        octx.fillStyle = 'rgba(255,255,255,.022)';
+        octx.fillRect(sx, sy, s, s);
+      }else if(r > 0.8){
+        octx.fillStyle = 'rgba(0,0,0,.05)';
+        octx.fillRect(sx, sy, s, s);
+      }
+      if(r2 < 0.4){
+        octx.fillStyle = 'rgba(0,0,0,.35)';
+        octx.fillRect(sx + 4 + (r2 * 110) % 56, sy + 6 + (r * 40) % 52, 4, 3);
+        octx.fillStyle = 'rgba(255,255,255,.08)';
+        octx.fillRect(sx + 4 + (r2 * 110) % 56, sy + 5 + (r * 40) % 52, 4, 1);
+      }
+      if(r2 > 0.92){
+        octx.strokeStyle = 'rgba(0,0,0,.4)';
+        octx.lineWidth = 1.5;
+        octx.beginPath();
+        octx.moveTo(sx + 8, sy + 10 + (r * 30) % 40);
+        octx.lineTo(sx + 22, sy + 20 + (r * 20) % 36);
+        octx.lineTo(sx + 30, sy + 17 + (r * 20) % 36);
+        octx.lineTo(sx + 46, sy + 34 + (r * 10) % 24);
+        octx.stroke();
+      }
+    }
   }
-  cx.strokeStyle=lc.gridColor;cx.globalAlpha=.45;cx.lineWidth=1;cx.beginPath();
-  for(let x=((ox%s)+s)%s;x<W;x+=s){cx.moveTo(x,0);cx.lineTo(x,H)}
-  for(let y=((oy%s)+s)%s;y<H;y+=s){cx.moveTo(0,y);cx.lineTo(W,y)}
-  cx.stroke();cx.globalAlpha=1;
-  const lg=cx.createRadialGradient(W/2,H/2,10,W/2,H/2,230);
-  lg.addColorStop(0,'rgba(255,205,150,.13)');lg.addColorStop(1,'rgba(255,205,150,0)');
-  cx.fillStyle=lg;cx.fillRect(0,0,W,H);
+
+  octx.strokeStyle = lc.gridColor || 'rgba(255,255,255,.08)';
+  octx.globalAlpha = 0.45;
+  octx.lineWidth = 1;
+  octx.beginPath();
+  for(let x = 0; x <= size; x += s){
+    octx.moveTo(x, 0); octx.lineTo(x, size);
+  }
+  for(let y = 0; y <= size; y += s){
+    octx.moveTo(0, y); octx.lineTo(size, y);
+  }
+  octx.stroke();
+  octx.globalAlpha = 1;
+
+  try {
+    const pat = cx.createPattern(off, 'repeat');
+    _groundPatternCache[key] = pat;
+    return pat;
+  } catch(e) {
+    return null;
+  }
+}
+
+function drawGround(ox, oy, lc){
+  const pat = getGroundPattern(lc);
+  const s = 512;
+  const shiftX = ((ox % s) + s) % s;
+  const shiftY = ((oy % s) + s) % s;
+
+  if(pat){
+    cx.save();
+    cx.translate(shiftX, shiftY);
+    cx.fillStyle = pat;
+    cx.fillRect(-s, -s, W + s * 2, H + s * 2);
+    cx.restore();
+  } else {
+    cx.fillStyle = lc.bgColor || '#111827';
+    cx.fillRect(0, 0, W, H);
+  }
+
+  if(!_cachedVignette || _cachedVignetteW !== W || _cachedVignetteH !== H){
+    _cachedVignetteW = W; _cachedVignetteH = H;
+    const lg = cx.createRadialGradient(W/2, H/2, 10, W/2, H/2, 230);
+    lg.addColorStop(0, 'rgba(255,205,150,.13)');
+    lg.addColorStop(1, 'rgba(255,205,150,0)');
+    _cachedVignette = lg;
+  }
+  cx.fillStyle = _cachedVignette;
+  cx.fillRect(0, 0, W, H);
 }
 function drawGems(g,ox,oy){
   const t=performance.now()/260;
@@ -20080,6 +20178,9 @@ function drawGame(){
   }
 
   for(const e of g.enemies){
+    const ex=e.x+ox, ey=e.y+oy;
+    const er=(e.c && (e.c.spriteW || e.c.r || 32)) || 32;
+    if(!e.isBoss && (ex < -er - 50 || ex > W + er + 50 || ey < -er - 50 || ey > H + er + 50)) continue;
     if(e.isBoss){
       if(e.bossId==='gravedigger'){
         drawGravediggerBoss(e,ox,oy);
@@ -20287,6 +20388,7 @@ function drawGame(){
   // Отрисовка высокоскоростных пуль пистолета и лазеров
   for(const q of g.shots){
     const qx=q.x+ox, qy=q.y+oy;
+    if(qx < -60 || qx > W + 60 || qy < -60 || qy > H + 60) continue;
     const ang=Math.atan2(q.vy,q.vx);
     cx.save();
     cx.translate(qx,qy);
@@ -21468,6 +21570,8 @@ function drawGame(){
   }
 
   for(const f of g.fx){
+    const fx=f.x+ox, fy=f.y+oy;
+    if(fx < -80 || fx > W + 80 || fy < -80 || fy > H + 80) continue;
     if(f.type==='magicCast'){
       const alpha=Math.max(0,f.l/f.maxL);
       const progress=1-alpha;
@@ -23041,7 +23145,9 @@ function loop(now){
     const charEl=document.getElementById('modal-characters');
     if(charEl&&charEl.classList.contains('open'))drawShowcaseHero(now);
   }
-  
+  requestAnimationFrame(loop);
+}
+
 // ===== МОБИЛЬНЫЙ ПРЕЛОАДЕР И ЖЕСТЫ (PRELOADER & GESTURE LOCK) =====
 function preloadGameAssets() {
   const criticalAssets = [
@@ -23133,11 +23239,8 @@ if (window.visualViewport) {
 }
 window.addEventListener('orientationchange', () => { setTimeout(resize, 150); });
 
-// Запуск прелоадера
+// Запуск прелоадера (выполняется ОДИН раз при старте игры)
 preloadGameAssets();
-
-requestAnimationFrame(loop);
-}
 
 updateMenuUI();
 initI18n();
