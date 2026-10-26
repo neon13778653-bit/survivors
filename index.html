@@ -177,10 +177,26 @@ button:disabled{opacity:.35;cursor:default;transform:none}
 .lvl-badge{
   font-family:'Rajdhani',sans-serif;font-weight:800;font-size:11px;
   letter-spacing:1.5px;color:#f97316;text-transform:uppercase;
+  text-shadow:0 1px 3px #000, 0 0 8px rgba(0,0,0,0.9);
 }
 .lvl-diff-tag{
-  font-size:10px;font-weight:800;padding:1px 6px;border-radius:6px;
-  background:rgba(74,222,128,0.15);color:#4ade80;border:1px solid rgba(74,222,128,0.3);
+  font-family:'Rajdhani',sans-serif;
+  font-size:10.5px;
+  font-weight:900;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  padding:2px 8px;
+  border-radius:7px;
+  background:rgba(8,12,22,0.92);
+  border:1.5px solid var(--diff-col,#4ade80);
+  color:var(--diff-col,#4ade80);
+  box-shadow:0 3px 8px rgba(0,0,0,0.85), 0 0 8px color-mix(in srgb,var(--diff-col,#4ade80) 35%,transparent);
+  text-shadow:0 1px 2px #000, 0 0 4px rgba(0,0,0,0.95);
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  white-space:nowrap;
+  line-height:1.2;
 }
 .lvl-name-wrap{position:relative;z-index:5;margin:1px 0;text-align:center}
 .lvl-name-wrap::before{
@@ -3122,8 +3138,8 @@ const Sfx={
 // ===== УРОВНИ И ГЕРОИ =====
 const LEVELS=[
   {
-    id:1,badge:'★ ГЛАВА 1 ★',name:'ЗАБРОШЕННЫЙ ГОРОД',sub:'Зомби, Крысы и Мутанты • 30 волн',
-    diffText:'НОРМАЛЬНО',diffColor:'#4ade80',
+    id:1,badge:'★ ГЛАВА 1 ★',badgeEn:'★ CHAPTER 1 ★',name:'ЗАБРОШЕННЫЙ ГОРОД',nameEn:'ABANDONED CITY',sub:'Зомби, Крысы и Мутанты • 30 волн',
+    diffText:'НОРМАЛЬНО',diffTextEn:'NORMAL',diffColor:'#4ade80',
     bgColor:'#080d16',gridColor:'#182338',pedColor:'#f97316',
     multHp:1.0,multSpeed:1.0,multGold:1.0,multXp:1.0,
     maxWaves:30,
@@ -3132,8 +3148,8 @@ const LEVELS=[
     emberCols:['rgba(249,115,22,0.7)','rgba(251,146,60,0.5)','rgba(56,189,248,0.4)']
   },
   {
-    id:2,badge:'★ ГЛАВА 2 ★',name:'КЛАДБИЩЕ МУТАНТОВ',sub:'Скелеты, Паучата и Летучие мыши • 40 волн',
-    diffText:'СЛОЖНО',diffColor:'#facc15',
+    id:2,badge:'★ ГЛАВА 2 ★',badgeEn:'★ CHAPTER 2 ★',name:'КЛАДБИЩЕ МУТАНТОВ',nameEn:'MUTANT GRAVEYARD',sub:'Скелеты, Паучата и Летучие мыши • 40 волн',
+    diffText:'СЛОЖНО',diffTextEn:'HARD',diffColor:'#fb923c',
     bgColor:'#100a18',gridColor:'#2e1938',pedColor:'#a855f7',
     multHp:1.3,multSpeed:1.15,multGold:1.5,multXp:2.0,
     maxWaves:40,
@@ -3142,8 +3158,8 @@ const LEVELS=[
     emberCols:['rgba(168,85,247,0.7)','rgba(192,132,252,0.55)','rgba(74,222,128,0.55)']
   },
   {
-    id:3,badge:'★ ПОЛИГОН ТЕСТОВ ★',name:'ПОЛИГОН: 13 ТИПОВ МОНСТРОВ',sub:'Все 13 мутантов • 50 волн',
-    diffText:'ТЕСТ',diffColor:'#38bdf8',
+    id:3,badge:'★ ПОЛИГОН ТЕСТОВ ★',badgeEn:'★ WEAPON TEST RANGE ★',name:'ПОЛИГОН: 13 ТИПОВ МОНСТРОВ',nameEn:'TEST RANGE: 13 MONSTERS',sub:'Все 13 мутантов • 50 волн',
+    diffText:'ТЕСТ',diffTextEn:'TEST',diffColor:'#38bdf8',
     bgColor:'#140808',gridColor:'#361616',pedColor:'#38bdf8',
     multHp:1.0,multSpeed:1.0,multGold:2.0,multXp:3.0,
     maxWaves:50,
@@ -5661,7 +5677,7 @@ function starIco(){
 
 function lvlCardBgSvg(lvlId){
   if(lvlId===2){
-    return `<svg viewBox="0 0 260 100" preserveAspectRatio="none"><defs><linearGradient id="c2Sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#080314"/><stop offset="30%" stop-color="#1e0638"/><stop offset="60%" stop-color="#4c0d75"/><stop offset="85%" stop-color="#7e22ce"/><stop offset="100%" stop-color="#3b0764"/></linearGradient><radialGradient id="c2MoonGlow" cx="78%" cy="30%" r="50%"><stop offset="0%" stop-color="#f3e8ff"/><stop offset="25%" stop-color="#c084fc" stop-opacity="0.85"/><stop offset="55%" stop-color="#a855f7" stop-opacity="0.4"/><stop offset="100%" stop-color="transparent"/></radialGradient><linearGradient id="toxicFog" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="transparent"/><stop offset="60%" stop-color="rgba(34,197,94,0.18)"/><stop offset="100%" stop-color="rgba(16,185,129,0.45)"/></linearGradient></defs><rect width="260" height="100" fill="url(#c2Sky)"/><rect width="260" height="100" fill="url(#c2MoonGlow)"/><circle cx="204" cy="28" r="15" fill="#f8fafc"/><circle cx="204" cy="28" r="24" fill="#e9d5ff" opacity="0.35"/><circle cx="199" cy="25" r="2.8" fill="#cbd5e1" opacity="0.7"/><circle cx="207" cy="32" r="3.2" fill="#cbd5e1" opacity="0.6"/><circle cx="209" cy="23" r="1.8" fill="#cbd5e1" opacity="0.6"/><path d="M0 64 Q45 54 100 62 Q155 70 210 58 Q240 54 260 60 L260 100 L0 100 Z" fill="#20083b" opacity="0.8"/><path d="M14 88 Q18 66 14 48 Q10 38 4 32 M14 52 Q22 44 30 40 M14 63 Q8 56 2 54 M20 46 Q22 36 28 32" stroke="#0a0316" stroke-width="2.8" fill="none" stroke-linecap="round"/><path d="M246 88 Q242 64 248 46 Q254 36 258 30 M247 50 Q238 42 230 40 M246 60 Q254 54 258 52 M238 42 Q234 34 230 30" stroke="#0a0316" stroke-width="2.8" fill="none" stroke-linecap="round"/><line x1="48" y1="80" x2="48" y2="58" stroke="#0c041c" stroke-width="2.6"/><line x1="42" y1="65" x2="54" y2="65" stroke="#0c041c" stroke-width="2.4"/><path d="M64 82 L64 66 A6 6 0 0 1 76 66 L76 82 Z" fill="#0c041c"/><line x1="108" y1="84" x2="113" y2="60" stroke="#0c041c" stroke-width="2.6"/><line x1="104" y1="68" x2="117" y2="65" stroke="#0c041c" stroke-width="2.4"/><path d="M142 84 L142 68 A6 6 0 0 1 154 68 L154 84 Z" fill="#0c041c"/><line x1="178" y1="82" x2="178" y2="56" stroke="#0c041c" stroke-width="2.6"/><line x1="172" y1="64" x2="184" y2="64" stroke="#0c041c" stroke-width="2.4"/><circle cx="178" cy="64" r="4.2" fill="none" stroke="#0c041c" stroke-width="1.3"/><path d="M84 86 Q92 70 96 64 M93 86 Q101 68 105 62 M102 86 Q110 69 114 64" stroke="#e9d5ff" stroke-width="2.4" fill="none" opacity="0.75" stroke-linecap="round"/><circle cx="32" cy="54" r="1.6" fill="#4ade80" opacity="0.95"/><circle cx="72" cy="50" r="1.3" fill="#c084fc" opacity="0.95"/><circle cx="125" cy="56" r="1.5" fill="#4ade80" opacity="0.9"/><circle cx="162" cy="48" r="1.3" fill="#a855f7" opacity="0.9"/><circle cx="218" cy="62" r="1.6" fill="#4ade80" opacity="0.95"/><circle cx="228" cy="48" r="1.2" fill="#86efac" opacity="0.9"/><path d="M0 84 Q40 77 90 82 Q140 87 190 81 Q230 78 260 83 L260 100 L0 100 Z" fill="#07020f"/><rect y="54" width="260" height="46" fill="url(#toxicFog)"/></svg>`;
+    return `<svg viewBox="0 0 260 100" preserveAspectRatio="none"><defs><linearGradient id="c2Sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#080314"/><stop offset="30%" stop-color="#1e0638"/><stop offset="60%" stop-color="#4c0d75"/><stop offset="85%" stop-color="#7e22ce"/><stop offset="100%" stop-color="#3b0764"/></linearGradient><radialGradient id="c2MoonGlow" cx="78%" cy="30%" r="50%"><stop offset="0%" stop-color="#f3e8ff"/><stop offset="25%" stop-color="#c084fc" stop-opacity="0.85"/><stop offset="55%" stop-color="#a855f7" stop-opacity="0.4"/><stop offset="100%" stop-color="transparent"/></radialGradient><linearGradient id="toxicFog" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="transparent"/><stop offset="60%" stop-color="rgba(34,197,94,0.18)"/><stop offset="100%" stop-color="rgba(16,185,129,0.45)"/></linearGradient></defs><rect width="260" height="100" fill="url(#c2Sky)"/><rect width="260" height="100" fill="url(#c2MoonGlow)"/><circle cx="188" cy="38" r="14" fill="#f8fafc"/><circle cx="188" cy="38" r="22" fill="#e9d5ff" opacity="0.32"/><circle cx="183" cy="35" r="2.6" fill="#cbd5e1" opacity="0.7"/><circle cx="191" cy="42" r="3.0" fill="#cbd5e1" opacity="0.6"/><circle cx="193" cy="33" r="1.6" fill="#cbd5e1" opacity="0.6"/><path d="M0 64 Q45 54 100 62 Q155 70 210 58 Q240 54 260 60 L260 100 L0 100 Z" fill="#20083b" opacity="0.8"/><path d="M14 88 Q18 66 14 48 Q10 38 4 32 M14 52 Q22 44 30 40 M14 63 Q8 56 2 54 M20 46 Q22 36 28 32" stroke="#0a0316" stroke-width="2.8" fill="none" stroke-linecap="round"/><path d="M246 88 Q242 64 248 46 Q254 36 258 30 M247 50 Q238 42 230 40 M246 60 Q254 54 258 52 M238 42 Q234 34 230 30" stroke="#0a0316" stroke-width="2.8" fill="none" stroke-linecap="round"/><line x1="48" y1="80" x2="48" y2="58" stroke="#0c041c" stroke-width="2.6"/><line x1="42" y1="65" x2="54" y2="65" stroke="#0c041c" stroke-width="2.4"/><path d="M64 82 L64 66 A6 6 0 0 1 76 66 L76 82 Z" fill="#0c041c"/><line x1="108" y1="84" x2="113" y2="60" stroke="#0c041c" stroke-width="2.6"/><line x1="104" y1="68" x2="117" y2="65" stroke="#0c041c" stroke-width="2.4"/><path d="M142 84 L142 68 A6 6 0 0 1 154 68 L154 84 Z" fill="#0c041c"/><line x1="178" y1="82" x2="178" y2="56" stroke="#0c041c" stroke-width="2.6"/><line x1="172" y1="64" x2="184" y2="64" stroke="#0c041c" stroke-width="2.4"/><circle cx="178" cy="64" r="4.2" fill="none" stroke="#0c041c" stroke-width="1.3"/><path d="M84 86 Q92 70 96 64 M93 86 Q101 68 105 62 M102 86 Q110 69 114 64" stroke="#e9d5ff" stroke-width="2.4" fill="none" opacity="0.75" stroke-linecap="round"/><circle cx="32" cy="54" r="1.6" fill="#4ade80" opacity="0.95"/><circle cx="72" cy="50" r="1.3" fill="#c084fc" opacity="0.95"/><circle cx="125" cy="56" r="1.5" fill="#4ade80" opacity="0.9"/><circle cx="162" cy="48" r="1.3" fill="#a855f7" opacity="0.9"/><circle cx="218" cy="62" r="1.6" fill="#4ade80" opacity="0.95"/><circle cx="228" cy="48" r="1.2" fill="#86efac" opacity="0.9"/><path d="M0 84 Q40 77 90 82 Q140 87 190 81 Q230 78 260 83 L260 100 L0 100 Z" fill="#07020f"/><rect y="54" width="260" height="46" fill="url(#toxicFog)"/></svg>`;
   }else if(lvlId===3){
     return `<svg viewBox="0 0 260 100" preserveAspectRatio="none"><defs><linearGradient id="c3Dark" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0c0303"/><stop offset="30%" stop-color="#240707"/><stop offset="65%" stop-color="#500b0b"/><stop offset="100%" stop-color="#7a1010"/></linearGradient><radialGradient id="c3Reactor" cx="50%" cy="52%" r="58%"><stop offset="0%" stop-color="#f87171"/><stop offset="25%" stop-color="#ef4444" stop-opacity="0.8"/><stop offset="55%" stop-color="#991b1b" stop-opacity="0.35"/><stop offset="100%" stop-color="transparent"/></radialGradient><pattern id="c3Hazard" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="5" height="10" fill="#facc15"/><rect x="5" width="5" height="10" fill="#180404"/></pattern><linearGradient id="c3Steam" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="transparent"/><stop offset="100%" stop-color="rgba(239,68,68,0.22)"/></linearGradient></defs><rect width="260" height="100" fill="url(#c3Dark)"/><rect width="260" height="100" fill="url(#c3Reactor)"/><circle cx="130" cy="52" r="45" fill="none" stroke="#2b0909" stroke-width="7" stroke-dasharray="16 7"/><circle cx="130" cy="52" r="38" fill="#160404" stroke="#991b1b" stroke-width="2.5"/><circle cx="130" cy="52" r="28" fill="#200505" stroke="#ef4444" stroke-width="2.2" opacity="0.95"/><circle cx="130" cy="52" r="18" fill="#ef4444" opacity="0.6"/><circle cx="130" cy="52" r="9" fill="#fca5a5" opacity="0.9"/><circle cx="130" cy="52" r="4" fill="#ffffff"/><line x1="88" y1="52" x2="110" y2="52" stroke="#ef4444" stroke-width="1.8" opacity="0.85"/><line x1="150" y1="52" x2="172" y2="52" stroke="#ef4444" stroke-width="1.8" opacity="0.85"/><line x1="130" y1="10" x2="130" y2="32" stroke="#ef4444" stroke-width="1.8" opacity="0.85"/><line x1="130" y1="72" x2="130" y2="94" stroke="#ef4444" stroke-width="1.8" opacity="0.85"/><rect x="0" y="0" width="24" height="100" fill="#120303"/><rect x="22" y="0" width="3" height="100" fill="#3f0a0a"/><rect x="236" y="0" width="24" height="100" fill="#120303"/><rect x="235" y="0" width="3" height="100" fill="#3f0a0a"/><rect x="3" y="66" width="18" height="28" fill="url(#c3Hazard)" opacity="0.9"/><rect x="3" y="66" width="18" height="28" fill="none" stroke="#eab308" stroke-width="1"/><rect x="239" y="66" width="18" height="28" fill="url(#c3Hazard)" opacity="0.9"/><rect x="239" y="66" width="18" height="28" fill="none" stroke="#eab308" stroke-width="1"/><circle cx="12" cy="18" r="2.2" fill="#22c55e" opacity="0.95"/><circle cx="12" cy="26" r="2.2" fill="#eab308" opacity="0.95"/><circle cx="12" cy="34" r="2.2" fill="#ef4444" opacity="0.95"/><circle cx="248" cy="18" r="2.2" fill="#22c55e" opacity="0.95"/><circle cx="248" cy="26" r="2.2" fill="#eab308" opacity="0.95"/><circle cx="248" cy="34" r="2.2" fill="#ef4444" opacity="0.95"/><line x1="24" y1="12" x2="236" y2="12" stroke="#330808" stroke-width="4"/><line x1="24" y1="18" x2="236" y2="18" stroke="#220505" stroke-width="2.5"/><path d="M30 12 Q75 26 120 12" stroke="#0e0202" stroke-width="2" fill="none"/><path d="M140 12 Q185 28 230 12" stroke="#0e0202" stroke-width="2" fill="none"/><circle cx="36" cy="12" r="5" fill="#ef4444" opacity="0.9"/><circle cx="36" cy="12" r="2" fill="#fff"/><circle cx="224" cy="12" r="5" fill="#ef4444" opacity="0.9"/><circle cx="224" cy="12" r="2" fill="#fff"/><rect y="86" width="260" height="14" fill="#0d0202"/><line x1="0" y1="86" x2="260" y2="86" stroke="#ef4444" stroke-width="1.2" opacity="0.7"/><rect y="60" width="260" height="40" fill="url(#c3Steam)"/></svg>`;
   }
@@ -5700,8 +5716,8 @@ function updateMenuUI(){
       </div>
       <div class="lvl-top-accent" style="background:linear-gradient(90deg,transparent,${lvl.pedColor},transparent)"></div>
       <div class="lvl-header-row">
-        <span class="lvl-badge" style="color:${lvl.pedColor}">${lvl.badge}</span>
-        <span class="lvl-diff-tag" style="color:${lvl.diffColor}">${T(lvl.diffText,lvl.diffText)}</span>
+        <span class="lvl-badge" style="color:${lvl.pedColor}">${T(lvl.badgeEn||lvl.badge,lvl.badge)}</span>
+        <span class="lvl-diff-tag" style="--diff-col:${lvl.diffColor};color:${lvl.diffColor};border-color:${lvl.diffColor}">${T(lvl.diffTextEn||lvl.diffText,lvl.diffText)}</span>
       </div>
       <div class="lvl-name-wrap">
         <div class="lvl-name">${T(lvl.nameEn||lvl.name,lvl.name)}</div>
@@ -5722,8 +5738,8 @@ function updateMenuUI(){
       </div>
       <div class="lvl-top-accent" style="background:linear-gradient(90deg,transparent,#ef4444,transparent)"></div>
       <div class="lvl-header-row">
-        <span class="lvl-badge" style="color:#ef4444">${lvl.badge}</span>
-        <span class="lvl-diff-tag" style="color:#f87171;background:rgba(239,68,68,0.18);border-color:rgba(239,68,68,0.4)">🔒 ${T('LOCKED','ЗАКРЫТО')}</span>
+        <span class="lvl-badge" style="color:#ef4444">${T(lvl.badgeEn||lvl.badge,lvl.badge)}</span>
+        <span class="lvl-diff-tag" style="--diff-col:#f87171;color:#f87171;border-color:rgba(239,68,68,0.5);background:rgba(20,8,12,0.94)">🔒 ${T('LOCKED','ЗАКРЫТО')}</span>
       </div>
       <div class="lvl-name-wrap">
         <div class="lvl-name">${T(lvl.nameEn||lvl.name,lvl.name)}</div>
