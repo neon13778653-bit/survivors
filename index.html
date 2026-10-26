@@ -8787,15 +8787,18 @@ function damagePlayer(dmgVal,bypassInvulnerability=false,bypassShield=false){
   if(!G || !G.p || (!bypassInvulnerability&&G.p.inv > 0)) return;
   if(window.Platform&&Platform.haptic)Platform.haptic(dmgVal > 18 ? "heavy" : "medium");
   const p = G.p;
-  const isPolygon = G.lvlConfig && G.lvlConfig.id === 3;
   let remainingDmg = dmgVal;
 
+  p.combatTimer = 4.0;
+
   if(!bypassShield && p.shield > 0){
-    p.shieldCooldown = 3.5;
+    p.shieldCooldown = 4.5;
     p.shieldHitT = 0.55; // Запуск визуальной вспышки силового барьера при поглощении урона
-    const absorb = Math.min(p.shield, remainingDmg);
+    // Силовой щит берет на себя до 70% кинетического урона, а 30% пробивает остаточным импульсом здоровье
+    const desiredAbsorb = Math.max(1, Math.round(dmgVal * 0.70));
+    const absorb = Math.min(p.shield, desiredAbsorb);
     p.shield -= absorb;
-    remainingDmg -= absorb;
+    remainingDmg = Math.max(0, dmgVal - absorb);
 
     // Сияющие искры кинетического щита
     for(let k=0; k<7; k++){
@@ -8821,8 +8824,8 @@ function damagePlayer(dmgVal,bypassInvulnerability=false,bypassShield=false){
     }
 
     if(p.shield <= 0){
-      // Щит истощен / сломан — задержка до перезагрузки разбитого щита 5.5 сек
-      p.shieldCooldown = 5.5;
+      // Щит истощен / сломан — задержка до перезагрузки разбитого щита 6.0 сек
+      p.shieldCooldown = 6.0;
       Sfx.play('dash');
       for(let a=0; a<6.28; a+=0.4){
         G.fx.push({
@@ -8833,16 +8836,16 @@ function damagePlayer(dmgVal,bypassInvulnerability=false,bypassShield=false){
       }
     }
   } else if(!bypassShield){
-    p.shieldCooldown = 5.5;
+    p.shieldCooldown = 6.0;
   }
 
   if(remainingDmg > 0){
-    p.hp = isPolygon ? Math.max(1, p.hp - remainingDmg) : p.hp - remainingDmg;
+    p.hp = p.hp - remainingDmg;
     if(opt('dmg')){
       G.fx.push({
         type: 'dmg',
         x: p.x,
-        y: p.y - 30,
+        y: p.y - 28,
         vx: 0, vy: -50,
         l: 0.65,
         col: bypassShield ? '#4ade80' : '#ffffff',
@@ -8936,7 +8939,7 @@ function startGame(){
     ability:null,
     p:{
       x:0,y:0,r:15,maxHp:maxHp,hp:maxHp,speed:spd,pickup:pick,
-      maxShield:EM.maxShield||0,shield:EM.maxShield||0,shieldRegen:EM.shieldRegen||0,shieldCooldown:0,shieldHitT:0,
+      maxShield:EM.maxShield||0,shield:EM.maxShield||0,shieldRegen:EM.shieldRegen||0,shieldCooldown:0,shieldHitT:0,combatTimer:0,
       dmg:dmg,cool:cool,proj:proj,pierce:EM.pierce,orbs:0,orbA:0,chain:0,
       ricochet:0,shrapnel:0,critChance:(EM.critChance||0),critMult:2.0,leadstorm:0,leadstormActive:0,leadstormCd:6,
       laser_sight:0,explosive_ammo:0,hyperbeam:0,hyperbeamCount:0,orbital_strike:0,orbitalCd:3.8,
@@ -11447,6 +11450,7 @@ function update(dt){
   g.t+=dt;
   if(g.spawnT>0)g.spawnT=Math.max(0,g.spawnT-dt);
   if(p.inv>0)p.inv-=dt;
+  if(p.combatTimer>0)p.combatTimer=Math.max(0,p.combatTimer-dt);
   if(p.regen>0&&p.hp<p.maxHp)p.hp=Math.min(p.maxHp,p.hp+p.regen*dt);
   if(p.poisonT>0){
     p.poisonT=Math.max(0,p.poisonT-dt);p.poisonTick=(p.poisonTick??.5)-dt;
@@ -15864,7 +15868,7 @@ function update(dt){
               g.fx.push({type:'lifeStream',x:f.target.x,y:f.target.y,l:0.45,maxL:0.45,col:'#4ade80'});
               const siphonHp = Math.max(1, Math.round(p.maxHp * 0.025));
               p.hp = Math.min(p.maxHp, p.hp + siphonHp);
-              if(p.maxShield > 0 && p.shield < p.maxShield){
+              if(p.maxShield > 0 && p.shield > 0 && p.shield < p.maxShield){
                 p.shield = Math.min(p.maxShield, p.shield + Math.max(1, Math.round(p.maxShield * 0.03)));
               }
             }
@@ -21153,25 +21157,30 @@ function drawGame(){
   cx.fill();
 
   // Полоски прочности щита и здоровья над головой (ЩИТ СТРОГО СВЕРХУ ШКАЛЫ ЗДОРОВЬЯ)
-  if(heroDropY === 0 && (p.hp < p.maxHp || (p.maxShield > 0 && (p.shield < p.maxShield || p.shieldCooldown > 0)))){
-    const barW = 38, barX = W/2 - barW/2;
-    const hpBarH = 4.5, hpBarY = H/2 - 54;
+  const showBars = heroDropY === 0 && (
+    p.hp < p.maxHp ||
+    (p.maxShield > 0 && (p.shield < p.maxShield || p.shieldCooldown > 0)) ||
+    (p.combatTimer && p.combatTimer > 0)
+  );
+  if(showBars){
+    const barW = 46, barX = W/2 - barW/2;
+    const hpBarH = 5, hpBarY = H/2 - 54;
     const hpPct = Math.max(0, Math.min(1, p.hp / p.maxHp));
 
     // Нижняя полоска: ЗДОРОВЬЕ (HP)
-    cx.fillStyle = 'rgba(6, 10, 18, 0.85)';
-    cx.beginPath(); cx.roundRect(barX - 1, hpBarY - 1, barW + 2, hpBarH + 2, 2.5); cx.fill();
+    cx.fillStyle = 'rgba(6, 10, 18, 0.88)';
+    cx.beginPath(); cx.roundRect(barX - 1.5, hpBarY - 1.5, barW + 3, hpBarH + 3, 3); cx.fill();
     cx.fillStyle = hpPct > 0.5 ? '#22c55e' : (hpPct > 0.25 ? '#f59e0b' : '#ef4444');
-    cx.beginPath(); cx.roundRect(barX, hpBarY, barW * hpPct, hpBarH, 2); cx.fill();
+    cx.beginPath(); cx.roundRect(barX, hpBarY, Math.max(hpPct > 0 ? 2 : 0, barW * hpPct), hpBarH, 2.5); cx.fill();
 
     // Верхняя полоска ПОВЕРХ ЗДОРОВЬЯ: ПРОЧНОСТЬ ЩИТА (SHIELD)
     if(p.maxShield > 0){
       const shieldBarH = 4.5, shieldBarY = hpBarY - 6.5;
       const sPct = Math.max(0, Math.min(1, p.shield / p.maxShield));
 
-      cx.fillStyle = 'rgba(4, 14, 28, 0.9)';
-      cx.beginPath(); cx.roundRect(barX - 1, shieldBarY - 1, barW + 2, shieldBarH + 2, 2.5); cx.fill();
-      cx.strokeStyle = 'rgba(56, 189, 248, 0.5)';
+      cx.fillStyle = 'rgba(4, 14, 28, 0.92)';
+      cx.beginPath(); cx.roundRect(barX - 1.5, shieldBarY - 1.5, barW + 3, shieldBarH + 3, 3); cx.fill();
+      cx.strokeStyle = p.shield > 0 ? 'rgba(56, 189, 248, 0.65)' : 'rgba(239, 68, 68, 0.6)';
       cx.lineWidth = 0.8;
       cx.stroke();
 
@@ -21181,8 +21190,32 @@ function drawGame(){
         sGrad.addColorStop(0.5, '#38bdf8');
         sGrad.addColorStop(1, '#bae6fd');
         cx.fillStyle = sGrad;
-        cx.beginPath(); cx.roundRect(barX, shieldBarY, barW * sPct, shieldBarH, 2); cx.fill();
+        cx.beginPath(); cx.roundRect(barX, shieldBarY, Math.max(2, barW * sPct), shieldBarH, 2); cx.fill();
       }
+
+      // Цифровые индикаторы HP и щита над полосками
+      cx.save();
+      cx.font = '700 8.5px Rajdhani,sans-serif';
+      cx.textAlign = 'center';
+      cx.fillStyle = 'rgba(255, 255, 255, 0.92)';
+      cx.strokeStyle = 'rgba(0, 0, 0, 0.85)';
+      cx.lineWidth = 2.2;
+      const statTxt = `${Math.ceil(Math.max(0, p.hp))} HP • 🛡️ ${p.shield > 0 ? Math.ceil(p.shield) : '0'}`;
+      cx.strokeText(statTxt, W/2, shieldBarY - 3.5);
+      cx.fillText(statTxt, W/2, shieldBarY - 3.5);
+      cx.restore();
+    } else {
+      // Только здоровье
+      cx.save();
+      cx.font = '700 8.5px Rajdhani,sans-serif';
+      cx.textAlign = 'center';
+      cx.fillStyle = 'rgba(255, 255, 255, 0.92)';
+      cx.strokeStyle = 'rgba(0, 0, 0, 0.85)';
+      cx.lineWidth = 2.2;
+      const statTxt = `${Math.ceil(Math.max(0, p.hp))} / ${p.maxHp} HP`;
+      cx.strokeText(statTxt, W/2, hpBarY - 3.5);
+      cx.fillText(statTxt, W/2, hpBarY - 3.5);
+      cx.restore();
     }
   }
 
