@@ -7169,26 +7169,27 @@ function equipMods(){
     }
     const up=(save.itemUpgrades&&save.itemUpgrades[id])||{};
     if(it.s==='weapon'){
-      if(up.dmg)m.dmg+=(up.dmg*0.15);
-      if(up.rate)m.cool*=Math.pow(0.94,up.rate);
-      if(up.range)m.range=(m.range||0)+up.range*30;
+      // Сбалансированный урон: +3.5% за уровень (до +35% на 10 ур. вместо диких +150%)
+      if(up.dmg)m.dmg+=(up.dmg*0.035);
+      // Скорострельность: ~2.5% за уровень (~+28% на 10 ур. вместо удвоения)
+      if(up.rate)m.cool*=Math.pow(0.975,up.rate);
+      if(up.range)m.range=(m.range||0)+up.range*15;
     }else if(it.s==='shield'){
       const baseS=it.shield||50;
-      const baseR=it.shieldRegen||1;
-      const shieldPerLv=Math.max(5,Math.round(baseS*0.06));
-      const regenPerLv=Math.max(0.2,+(baseR*0.1).toFixed(1));
+      const shieldPerLv=Math.max(4,Math.round(baseS*0.05));
       if(up.shield)m.maxShield=(m.maxShield||0)+up.shield*shieldPerLv;
-      if(up.shieldRegen)m.shieldRegen=(m.shieldRegen||0)+up.shieldRegen*regenPerLv;
-      if(up.armor)m.armor=(m.armor||0)+up.armor*0.015;
-      if(up.hp)m.armor=(m.armor||0)+up.hp*0.015;
+      if(up.shieldRegen)m.shieldRegen=(m.shieldRegen||0)+up.shieldRegen*0.2;
+      if(up.armor)m.armor=(m.armor||0)+up.armor*0.01;
+      if(up.hp)m.armor=(m.armor||0)+up.hp*0.01;
     }else if(it.s==='pet'){
-      if(up.dmg)m.dmg+=up.dmg*0.10;
-      if(up.pick)m.pick+=up.pick*0.12;
-      if(up.cool)m.cool*=Math.pow(0.94,up.cool);
+      // Прокачка питомца усиливает питомца; герою дает умеренную синергию сбора
+      if(up.pick)m.pick+=up.pick*0.04;
+      // Убрано двойное наложение: урон и скорость атаки питомца применяются к самому питомцу
     }else if(it.s==='artifact'){
-      if(up.dmg)m.dmg+=up.dmg*0.10;
-      if(up.spd)m.spd+=up.spd*0.03;
-      if(up.pick)m.pick+=up.pick*0.15;
+      // Сбалансированные параметры артефактов: +2.5% силы, +1% скорости, +4% сбора
+      if(up.dmg)m.dmg+=up.dmg*0.025;
+      if(up.spd)m.spd+=up.spd*0.01;
+      if(up.pick)m.pick+=up.pick*0.04;
     }
   }
   return m;
@@ -7644,14 +7645,23 @@ document.getElementById('stat-up-list').onclick=e=>{
   save.gold-=cost;save[u.lv]=(save[u.lv]||0)+1;persist();Sfx.play('levelup');updateMenuUI();renderStats();
 };
 
+// ===== ПРОГРЕССИВНАЯ СТОИМОСТЬ И ПРОКАЧКА ЗА ФИОЛЕТОВЫЕ КРИСТАЛЛЫ =====
+const UPGRADE_CRYSTAL_COSTS = [5, 8, 12, 16, 22, 28, 35, 44, 54, 65];
+function getUpgradeCrystalCost(lv){
+  return UPGRADE_CRYSTAL_COSTS[Math.min(UPGRADE_CRYSTAL_COSTS.length - 1, Math.max(0, lv))] || 5;
+}
+
 // ===== ПРОКАЧКА ПИТОМЦЕВ ЗА КРИСТАЛЛЫ (общие itemUpgrades с Кузницей) =====
 let statsPetSel=null;
 function petUpgradeDefs(id){
   const up=(save.itemUpgrades&&save.itemUpgrades[id])||{};
+  const dmgLv = up.dmg || 0;
+  const coolLv = up.cool || 0;
+  const pickLv = up.pick || 0;
   return [
-    {key:'dmg', n:'Pet damage', ru:'Урон питомца', img:'img/ui/st_pet_dmg.webp', lv:up.dmg||0, max:10, step:8, cost:5+(up.dmg||0)*3},
-    {key:'cool',n:'Attack speed', ru:'Скорость атаки', img:'img/ui/st_pet_cool.webp', lv:up.cool||0, max:10, step:4, cost:5+(up.cool||0)*3},
-    {key:'pick',n:'Pickup radius', ru:'Радиус сбора', img:'img/ui/st_pet_pick.webp', lv:up.pick||0, max:10, step:12, cost:5+(up.pick||0)*3}
+    {key:'dmg', n:'Pet damage', ru:'Урон питомца', img:'img/ui/st_pet_dmg.webp', lv:dmgLv, max:10, step:5, cost:getUpgradeCrystalCost(dmgLv)},
+    {key:'cool',n:'Attack speed', ru:'Скорость атаки', img:'img/ui/st_pet_cool.webp', lv:coolLv, max:10, step:3, cost:getUpgradeCrystalCost(coolLv)},
+    {key:'pick',n:'Pickup radius', ru:'Радиус сбора', img:'img/ui/st_pet_pick.webp', lv:pickLv, max:10, step:4, cost:getUpgradeCrystalCost(pickLv)}
   ];
 }
 function renderPetUpgrades(){
@@ -7761,47 +7771,45 @@ function getItemUpgradeDefs(id){
     const curDmgLv=up.dmg||0;
     const curRateLv=up.rate||0;
     const curRangeLv=up.range||0;
-    const baseDmg=typeof it.dmg==='number'?it.dmg:10;
-    const curDmg=(baseDmg+curDmgLv*1.5).toFixed(1);
-    const nextDmg=(baseDmg+(curDmgLv+1)*1.5).toFixed(1);
-    const baseRate=parseFloat(it.fireRate)||1.4;
-    const curRate=(baseRate/Math.pow(0.95,curRateLv)).toFixed(2);
-    const nextRate=(baseRate/Math.pow(0.95,curRateLv+1)).toFixed(2);
+    const curDmgVal = '+' + (curDmgLv * 3.5).toFixed(1) + '%';
+    const nextDmgVal = '+' + ((curDmgLv + 1) * 3.5).toFixed(1) + '%';
+    const curRateVal = '+' + (curRateLv * 2.5).toFixed(1) + '%';
+    const nextRateVal = '+' + ((curRateLv + 1) * 2.5).toFixed(1) + '%';
     const baseRange=parseInt(it.range)||CONFIG.weapon.range;
-    const curRange=baseRange+curRangeLv*30;
-    const nextRange=baseRange+(curRangeLv+1)*30;
+    const curRange=baseRange+curRangeLv*15;
+    const nextRange=baseRange+(curRangeLv+1)*15;
     const rangeIco=`<span class="craft-stat-svg-ico" style="color:#38bdf8"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="12" r="2.8" fill="currentColor"/><path stroke="currentColor" stroke-width="2.2" stroke-linecap="round" d="M12 2v4m0 12v4M2 12h4m12 0h4"/></svg></span>`;
     return [
-      {key:'dmg',name:'Урон',nameEn:'Damage',ico:`<img src="img/ui/st_dmg.webp" class="craft-stat-img-ico" alt="Урон">`,curLv:curDmgLv,maxLv:10,curVal:curDmg,nextVal:nextDmg,cost:5+curDmgLv*3},
-      {key:'rate',name:'Скорострельность',nameEn:'Fire rate',ico:`<img src="img/ui/st_rate.webp" class="craft-stat-img-ico" alt="Скорострельность">`,curLv:curRateLv,maxLv:10,curVal:curRate+T(' /sec',' /сек'),nextVal:nextRate+T(' /sec',' /сек'),cost:5+curRateLv*3},
-      {key:'range',name:'Дальность',nameEn:'Range',ico:rangeIco,curLv:curRangeLv,maxLv:10,curVal:curRange+T(' m',' м'),nextVal:nextRange+T(' m',' м'),cost:5+curRangeLv*3}
+      {key:'dmg',name:'Урон',nameEn:'Damage',ico:`<img src="img/ui/st_dmg.webp" class="craft-stat-img-ico" alt="Урон">`,curLv:curDmgLv,maxLv:10,curVal:curDmgVal,nextVal:nextDmgVal,cost:getUpgradeCrystalCost(curDmgLv)},
+      {key:'rate',name:'Скорострельность',nameEn:'Fire rate',ico:`<img src="img/ui/st_rate.webp" class="craft-stat-img-ico" alt="Скорострельность">`,curLv:curRateLv,maxLv:10,curVal:curRateVal,nextVal:nextRateVal,cost:getUpgradeCrystalCost(curRateLv)},
+      {key:'range',name:'Дальность',nameEn:'Range',ico:rangeIco,curLv:curRangeLv,maxLv:10,curVal:curRange+T(' m',' м'),nextVal:nextRange+T(' m',' м'),cost:getUpgradeCrystalCost(curRangeLv)}
     ];
   }else if(it.s==='shield'){
     const curShieldLv=up.shield||0,curRegenLv=up.shieldRegen||0,curArmorLv=up.armor||up.hp||0;
     const baseShield=it.shield||50;
-    const shieldPerLv=Math.max(5,Math.round(baseShield*0.06));
+    const shieldPerLv=Math.max(4,Math.round(baseShield*0.05));
     const curShieldVal=baseShield+curShieldLv*shieldPerLv;
     const nextShieldVal=baseShield+(curShieldLv+1)*shieldPerLv;
     const baseRegen=it.shieldRegen||1;
-    const regenPerLv=Math.max(0.2,+(baseRegen*0.1).toFixed(1));
+    const regenPerLv=0.2;
     const curRegenVal=(baseRegen+curRegenLv*regenPerLv).toFixed(1);
     const nextRegenVal=(baseRegen+(curRegenLv+1)*regenPerLv).toFixed(1);
     const sIcoHtml=`<span class="inv-cat-ico craft-stat-svg-ico" style="color:#38bdf8">${EMPTY_SLOT_ICONS.shield}</span>`;
     const regenIco=`<span class="craft-stat-svg-ico" style="color:#facc15"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M13 2L3 14h8l-2 8 10-12h-8l2-8z"/></svg></span>`;
     const armorIco=`<img src="img/abilities/armor_titan.webp" class="craft-stat-img-ico" alt="Броня">`;
     return [
-      {key:'shield',name:'Прочность щита',nameEn:'Shield durability',ico:sIcoHtml,curLv:curShieldLv,maxLv:10,curVal:curShieldVal+' ед.',nextVal:nextShieldVal+' ед.',cost:5+curShieldLv*3},
-      {key:'shieldRegen',name:'Скорость зарядки',nameEn:'Recharge speed',ico:regenIco,curLv:curRegenLv,maxLv:10,curVal:curRegenVal+' /сек',nextVal:nextRegenVal+' /сек',cost:5+curRegenLv*3},
-      {key:'armor',name:'Поглощение урона',nameEn:'Damage reduction',ico:armorIco,curLv:curArmorLv,maxLv:10,curVal:'+'+(curArmorLv*1.5).toFixed(1)+'%',nextVal:'+'+((curArmorLv+1)*1.5).toFixed(1)+'%',cost:5+curArmorLv*3}
+      {key:'shield',name:'Прочность щита',nameEn:'Shield durability',ico:sIcoHtml,curLv:curShieldLv,maxLv:10,curVal:curShieldVal+' ед.',nextVal:nextShieldVal+' ед.',cost:getUpgradeCrystalCost(curShieldLv)},
+      {key:'shieldRegen',name:'Скорость зарядки',nameEn:'Recharge speed',ico:regenIco,curLv:curRegenLv,maxLv:10,curVal:curRegenVal+' /сек',nextVal:nextRegenVal+' /сек',cost:getUpgradeCrystalCost(curRegenLv)},
+      {key:'armor',name:'Поглощение урона',nameEn:'Damage reduction',ico:armorIco,curLv:curArmorLv,maxLv:10,curVal:'+'+(curArmorLv*1.0).toFixed(1)+'%',nextVal:'+'+((curArmorLv+1)*1.0).toFixed(1)+'%',cost:getUpgradeCrystalCost(curArmorLv)}
     ];
   }else{
-    // Прокачка питомцев удалена из Кузницы — она доступна в разделе СТАТЫ (renderPetUpgrades)
+    // Прокачка питомцев доступна в разделе СТАТЫ — здесь оружие/щиты/артефакты
     const curDmgLv=up.dmg||0,curSpdLv=up.spd||0,curPickLv=up.pick||0;
     const artIco=`<span class="inv-cat-ico craft-stat-svg-ico" style="color:#c084fc">${EMPTY_SLOT_ICONS.art1}</span>`;
     return [
-      {key:'dmg',name:'Сила артефакта',nameEn:'Artifact power',ico:artIco,curLv:curDmgLv,maxLv:10,curVal:'+'+(curDmgLv*10)+'%',nextVal:'+'+((curDmgLv+1)*10)+'%',cost:5+curDmgLv*3},
-      {key:'spd',name:'Скорость',nameEn:'Speed',ico:`<img src="img/ui/st_spd.webp" class="craft-stat-img-ico" alt="Скорость">`,curLv:curSpdLv,maxLv:10,curVal:'+'+(curSpdLv*3)+'%',nextVal:'+'+((curSpdLv+1)*3)+'%',cost:5+curSpdLv*3},
-      {key:'pick',name:'Магнетизм',nameEn:'Magnetism',ico:`<img src="img/ui/st_pick.webp" class="craft-stat-img-ico" alt="Магнетизм">`,curLv:curPickLv,maxLv:10,curVal:'+'+(curPickLv*15)+'%',nextVal:'+'+((curPickLv+1)*15)+'%',cost:5+curPickLv*3}
+      {key:'dmg',name:'Сила артефакта',nameEn:'Artifact power',ico:artIco,curLv:curDmgLv,maxLv:10,curVal:'+'+(curDmgLv*2.5).toFixed(1)+'%',nextVal:'+'+((curDmgLv+1)*2.5).toFixed(1)+'%',cost:getUpgradeCrystalCost(curDmgLv)},
+      {key:'spd',name:'Скорость',nameEn:'Speed',ico:`<img src="img/ui/st_spd.webp" class="craft-stat-img-ico" alt="Скорость">`,curLv:curSpdLv,maxLv:10,curVal:'+'+(curSpdLv*1.0).toFixed(1)+'%',nextVal:'+'+((curSpdLv+1)*1.0).toFixed(1)+'%',cost:getUpgradeCrystalCost(curSpdLv)},
+      {key:'pick',name:'Магнетизм',nameEn:'Magnetism',ico:`<img src="img/ui/st_pick.webp" class="craft-stat-img-ico" alt="Магнетизм">`,curLv:curPickLv,maxLv:10,curVal:'+'+(curPickLv*4)+'%',nextVal:'+'+((curPickLv+1)*4)+'%',cost:getUpgradeCrystalCost(curPickLv)}
     ];
   }
 }
@@ -9184,52 +9192,75 @@ function spawn(){
   const lvlId = (G.lvlConfig && G.lvlConfig.id) || 1;
   let list = [];
   if(lvlId === 2){
-    // Вторая локация (Кладбище мутантов, 40 волн)
-    if(curWave < 10){
-      // Начальные монстры: Скелет-воин, Паучонок, Пустотная мышь, Коконы пауков с волны 6
+    // Подсчет активных дальников и коконов на поле (лимиты против хаотичного спама яда)
+    const activeMushrooms = G.enemies.filter(e => !e.dead && e.c === CONFIG.enemies.mushroom).length;
+    const activeEggs = G.enemies.filter(e => !e.dead && e.c === CONFIG.enemies.spider_egg).length;
+    const activeGargoyles = G.enemies.filter(e => !e.dead && e.c === CONFIG.enemies.gargoyle).length;
+
+    // Вторая локация (Кладбище мутантов, 40 волн) — оптимизированные сбалансированные когорты
+    if(curWave < 6){
+      // Волны 1-5: Вход в склеп (Скелеты, Нетопыри)
       list = [
-        { c: CONFIG.enemies.skeleton, weight: 7 },
-        { c: CONFIG.enemies.spiderling, weight: 8 },
+        { c: CONFIG.enemies.skeleton, weight: 10 },
         { c: CONFIG.enemies.bat, weight: 5 }
       ];
-      if(curWave >= 6){
-        list.push({ c: CONFIG.enemies.spider_egg, weight: 5 });
-      }
+    } else if(curWave < 10){
+      // Волны 6-9: Паучье логово (Паучата, Скелеты, редкие коконы)
+      list = [
+        { c: CONFIG.enemies.skeleton, weight: 8 },
+        { c: CONFIG.enemies.spiderling, weight: 7 }
+      ];
+      if(activeEggs < 2) list.push({ c: CONFIG.enemies.spider_egg, weight: 3 });
+    } else if(curWave < 15){
+      // Волны 10-14: Глубины склепа (Скелеты, Гули, Нетопыри)
+      list = [
+        { c: CONFIG.enemies.skeleton, weight: 7 },
+        { c: CONFIG.enemies.ghoul, weight: 6 },
+        { c: CONFIG.enemies.bat, weight: 4 }
+      ];
     } else if(curWave < 20){
-      // Волны 10-19: пещерные пауки, коконы пауков, грибной мутант (дальник)
+      // Волны 15-19: Грибная чаща (Пауки, Скелеты, Гули, до 2 грибных стрелков)
       list = [
-        { c: CONFIG.enemies.skeleton, weight: 5 },
-        { c: CONFIG.enemies.spiderling, weight: 5 },
-        { c: CONFIG.enemies.bat, weight: 4 },
+        { c: CONFIG.enemies.skeleton, weight: 6 },
         { c: CONFIG.enemies.spider, weight: 5 },
-        { c: CONFIG.enemies.spider_egg, weight: 5 },
-        { c: CONFIG.enemies.mushroom, weight: 5 }
+        { c: CONFIG.enemies.ghoul, weight: 5 }
       ];
+      if(activeMushrooms < 3) list.push({ c: CONFIG.enemies.mushroom, weight: 3 });
+      if(activeEggs < 1) list.push({ c: CONFIG.enemies.spider_egg, weight: 2 });
+    } else if(curWave < 26){
+      // Волны 20-25: Каменные шпили (Гули, Слизни, Гаргульи)
+      list = [
+        { c: CONFIG.enemies.ghoul, weight: 7 },
+        { c: CONFIG.enemies.slime, weight: 5 },
+        { c: CONFIG.enemies.skeleton, weight: 4 }
+      ];
+      if(activeGargoyles < 3) list.push({ c: CONFIG.enemies.gargoyle, weight: 4 });
     } else if(curWave < 30){
-      // Волны 20-29: Пустошный гуль (быстрый ближник), Каменная гаргулья (дальняя атака), Грибной мутант (дальник), Мимик-сундук (опасный ближник), слизни, коконы, скелеты
+      // Волны 26-29: Элитный авангард (Гули, Мимики, Слизни)
       list = [
-        { c: CONFIG.enemies.skeleton, weight: 4 },
-        { c: CONFIG.enemies.spider, weight: 3 },
-        { c: CONFIG.enemies.spider_egg, weight: 4 },
-        { c: CONFIG.enemies.slime, weight: 4 },
-        { c: CONFIG.enemies.ghoul, weight: 6 },
-        { c: CONFIG.enemies.gargoyle, weight: 5 },
-        { c: CONFIG.enemies.mushroom, weight: 4 },
-        { c: CONFIG.enemies.mimic, weight: 2 }
+        { c: CONFIG.enemies.ghoul, weight: 7 },
+        { c: CONFIG.enemies.mimic, weight: 4 },
+        { c: CONFIG.enemies.slime, weight: 5 },
+        { c: CONFIG.enemies.spider, weight: 4 }
       ];
+      if(activeMushrooms < 2) list.push({ c: CONFIG.enemies.mushroom, weight: 2 });
+    } else if(curWave < 36){
+      // Волны 30-35: Цитадель аберраций (Аберрации, Гули, Гаргульи, Скелеты)
+      list = [
+        { c: CONFIG.enemies.abomination, weight: 5 },
+        { c: CONFIG.enemies.ghoul, weight: 6 },
+        { c: CONFIG.enemies.skeleton, weight: 4 }
+      ];
+      if(activeGargoyles < 3) list.push({ c: CONFIG.enemies.gargoyle, weight: 4 });
     } else {
-      // Волны 30-40: тяжелые гаргульи, свирепые гули, мимики-сундуки, грибные мутанты, аберрации, слизни, скелеты и пауки
+      // Волны 36-40: Некрополис (Финальные элитные монстры без перегрузки стрелками)
       list = [
-        { c: CONFIG.enemies.skeleton, weight: 3 },
-        { c: CONFIG.enemies.spider, weight: 3 },
-        { c: CONFIG.enemies.spider_egg, weight: 3 },
-        { c: CONFIG.enemies.slime, weight: 4 },
+        { c: CONFIG.enemies.abomination, weight: 5 },
         { c: CONFIG.enemies.ghoul, weight: 6 },
-        { c: CONFIG.enemies.gargoyle, weight: 6 },
-        { c: CONFIG.enemies.mushroom, weight: 4 },
-        { c: CONFIG.enemies.mimic, weight: 3 },
-        { c: CONFIG.enemies.abomination, weight: 3 }
+        { c: CONFIG.enemies.mimic, weight: 4 },
+        { c: CONFIG.enemies.slime, weight: 4 }
       ];
+      if(activeGargoyles < 3) list.push({ c: CONFIG.enemies.gargoyle, weight: 4 });
     }
   } else if(lvlId === 1){
     // Первая локация (Заброшенный город, 30 волн)
@@ -9404,22 +9435,7 @@ function hurt(e,d){
       });
     }
   }
-  // Пассивная контратака шипами коры Древня-мутанта
-  if(e.isBoss && e.bossId === 'treant' && Math.random() < 0.22 && G && G.bossShockwaves && G.p){
-    const sAng = Math.atan2(G.p.y - e.y, G.p.x - e.x) + (Math.random() - 0.5) * 0.45;
-    G.bossShockwaves.push({
-      x: e.x + Math.cos(sAng) * 24,
-      y: e.y + Math.sin(sAng) * 24,
-      vx: Math.cos(sAng) * 220,
-      vy: Math.sin(sAng) * 220,
-      angle: sAng,
-      l: 1.1,
-      maxL: 1.1,
-      dmg: 14,
-      col: '#15803d',
-      type: 'treant_seismic'
-    });
-  }
+  // Пассивная контратака шипами коры Древня-мутанта удалена во избежание спама снарядов от дробовика/пулемета
   e.hp-=d;e.fl=.08;
   if(opt('dmg')&&G.fx.length<260){
     const dmgSpawnY = e.y - ((e.c && e.c.r) ? Math.max(22, e.c.r + 10) : 26);
@@ -10519,11 +10535,34 @@ function triggerLevelUp(){
   const basePool = isMagicWep ? MAGIC_ABILITIES : FIREARM_ABILITIES;
   const wepSpecificPool = (WEAPON_ABILITIES[curWepId] || []).concat(basePool);
 
-  // 2. Стандартные способности до 5 звёзд, доступные для текущего ранга оружия!
+  // 2. Ограничение активных модификаторов: максимум 4 модификатора оружия и 3 навыка выживания!
+  // Это исключает нагромождение 10+ модификаторов на одном стволе, оптимизирует эффекты и балансирует билд.
+  const MAX_WEAPON_MODS = 4;
+  const MAX_DEFENSE_MODS = 3;
+
+  const activeWeaponAbils = new Set();
+  const activeDefenseAbils = new Set();
+  for(const k in G.p.got){
+    if(G.p.got[k] > 0){
+      const ab = wepSpecificPool.find(a => (a.id === k || a.name === k)) || ABILITIES.find(a => (a.id === k || a.name === k));
+      if(ab && ab.cat === 'defense') activeDefenseAbils.add(k);
+      else activeWeaponAbils.add(k);
+    }
+  }
+
+  // Стандартные способности до 5 звёзд, доступные для текущего ранга оружия и с учетом свободных слотов
   const regPool = wepSpecificPool.filter(a=>{
     const curLv = G.p.got[a.id||a.name] || 0;
     const req = a.reqStars || 1;
-    return curLv < (a.max || 5) && curWeaponStars >= req;
+    if(curLv >= (a.max || 5)) return false;
+    if(curWeaponStars < req) return false;
+    // Если способность новая (curLv === 0), проверяем наличие свободного слота
+    if(curLv === 0){
+      const isDef = (a.cat === 'defense');
+      if(isDef && activeDefenseAbils.size >= MAX_DEFENSE_MODS) return false;
+      if(!isDef && activeWeaponAbils.size >= MAX_WEAPON_MODS) return false;
+    }
+    return true;
   });
 
   // 3. Доступные эволюции для текущего класса оружия
@@ -10547,6 +10586,56 @@ function triggerLevelUp(){
   while(ch.length < 3 && pool.length){
     const idx = Math.floor(Math.random() * pool.length);
     ch.push(pool.splice(idx, 1)[0]);
+  }
+
+  // Если все выбранные слоты прокачаны до максимума — предлагаем боевые трофеи и исцеление
+  if(ch.length === 0){
+    const bonusCards = [
+      {
+        id: 'bonus_gold',
+        name: 'Золотой сундук',
+        nameEn: 'Gold Treasure',
+        cat: 'defense',
+        max: 99,
+        isBonus: true,
+        desc: 'Пополняет добычу на +120 золотых монет.',
+        descEn: 'Adds +120 Gold to your battle earnings.',
+        apply: p => {
+          G.coinsCollected = (G.coinsCollected || 0) + 120;
+          showGameToast('💰 +120 ' + T('GOLD!','ЗОЛОТА!'), '#facc15', 2.0);
+        }
+      },
+      {
+        id: 'bonus_heal',
+        name: 'Полевой паёк',
+        nameEn: 'Field Ration',
+        cat: 'defense',
+        max: 99,
+        isBonus: true,
+        desc: 'Мгновенно исцеляет +50% от максимального HP.',
+        descEn: 'Instantly restores +50% of maximum health.',
+        apply: p => {
+          const heal = Math.round(p.maxHp * 0.5);
+          p.hp = Math.min(p.maxHp, p.hp + heal);
+          showGameToast('❤️ +' + heal + ' HP!', '#22c55e', 2.0);
+        }
+      },
+      {
+        id: 'bonus_stim',
+        name: 'Адреналиновый укол',
+        nameEn: 'Adrenaline Shot',
+        cat: 'weapon',
+        max: 99,
+        isBonus: true,
+        desc: 'Увеличивает весь наносимый урон героя на +4%.',
+        descEn: 'Increases all hero damage by +4%.',
+        apply: p => {
+          p.dmg *= 1.04;
+          showGameToast('⚡ +4% ' + T('DAMAGE!','УРОНА!'), '#38bdf8', 2.0);
+        }
+      }
+    ];
+    for(const b of bonusCards) ch.push(b);
   }
 
   const curWep = ITEMS[save.equip?.weapon] || ITEMS.w_pistol;
@@ -11548,7 +11637,8 @@ function update(dt){
   if(p.regen>0&&p.hp<p.maxHp)p.hp=Math.min(p.maxHp,p.hp+p.regen*dt);
   if(p.poisonT>0){
     p.poisonT=Math.max(0,p.poisonT-dt);p.poisonTick=(p.poisonTick??.5)-dt;
-    if(p.poisonTick<=0){damagePlayer(Math.max(1,Math.round((p.poisonDps||1)*(p.armor?Math.max(.2,1-p.armor):1)*.5)),true,true);p.poisonTick=.5}
+    // Яд наносит урон, но силовой щит поглощает его до 70% (true, false)
+    if(p.poisonTick<=0){damagePlayer(Math.max(1,Math.round((p.poisonDps||1)*(p.armor?Math.max(.2,1-p.armor):1)*.5)),true,false);p.poisonTick=.5}
   }else{p.poisonDps=0;p.poisonSlow=1;p.poisonTick=.5}
 
   // Оцепление паутиной (Web Stun / Root на 1 секунду)
@@ -13031,10 +13121,10 @@ function update(dt){
 
       const dx = p.x - e.x, dy = p.y - e.y, d = Math.hypot(dx, dy) || 1;
 
-      // Фаза Ярости (Enrage при HP <= 50%) — получает +Скорость и 20% сопротивления урону
+      // Фаза Ярости (Enrage при HP <= 50%) — получает умеренную скорость и 20% сопротивления урону
       if(!e.enraged && e.hp <= e.maxHp * 0.5){
         e.enraged = true;
-        e.c.speed = 105; // Свирепая скорость в ярости (база 72)
+        e.c.speed = 82; // Сбалансированная скорость в ярости (база 62)
         g.shake = 0.8;
         Sfx.play('dash');
         showGameToast('🌲 ' + T('MUTANT TREANT IS ENRAGED! (+SPEED / -20% DMG TAKEN)', 'ДРЕВЕНЬ-МУТАНТ ВПАДАЕТ В ЯРОСТЬ! (+СКОРОСТЬ / -20% УРОНА)'), '#22c55e', 3.2);
@@ -13051,7 +13141,7 @@ function update(dt){
       }
 
       // Багрово-изумрудный шлейф мутации вокруг Древня
-      if(e.enraged && Math.random() < 0.5){
+      if(e.enraged && Math.random() < 0.35){
         g.fx.push({
           x: e.x + (Math.random() - 0.5) * 50,
           y: e.y + (Math.random() - 0.5) * 35,
@@ -13063,22 +13153,22 @@ function update(dt){
         });
       }
 
-      // В ярости: периодический выброс шипов во все 4 стороны каждые 1.8с
+      // В ярости: периодический выброс шипов во все 4 стороны каждые 3.5с (сбалансировано, не спамит)
       if(e.enraged){
-        e.thornT = (e.thornT || 1.8) - dt;
+        e.thornT = (e.thornT || 3.5) - dt;
         if(e.thornT <= 0){
-          e.thornT = 1.8;
+          e.thornT = 3.5;
           for(let ti = 0; ti < 4; ti++){
             const ta = ti * 1.5708 + 0.35;
             g.bossShockwaves.push({
               x: e.x + Math.cos(ta) * 24,
               y: e.y + Math.sin(ta) * 24,
-              vx: Math.cos(ta) * 230,
-              vy: Math.sin(ta) * 230,
+              vx: Math.cos(ta) * 170,
+              vy: Math.sin(ta) * 170,
               angle: ta,
-              l: 1.2,
-              maxL: 1.2,
-              dmg: 16,
+              l: 1.3,
+              maxL: 1.3,
+              dmg: 14,
               col: '#15803d',
               type: 'treant_seismic'
             });
@@ -13088,29 +13178,35 @@ function update(dt){
 
       // Перезарядка способностей Древня-мутанта
       if(e.action === 'idle'){
-        e.chargeCd = (e.chargeCd !== undefined ? e.chargeCd : 3.5) - dt;
-        e.rootCd = (e.rootCd !== undefined ? e.rootCd : 2.5) - dt;
-        e.slamCd = (e.slamCd !== undefined ? e.slamCd : 3.0) - dt;
-        e.sporeCd = (e.sporeCd !== undefined ? e.sporeCd : 2.0) - dt;
-        e.summonCd = (e.summonCd !== undefined ? e.summonCd : 6.0) - dt;
+        if(e.attackPause > 0){
+          e.attackPause -= dt;
+        }
+        e.chargeCd = (e.chargeCd !== undefined ? e.chargeCd : 4.5) - dt;
+        e.rootCd = (e.rootCd !== undefined ? e.rootCd : 3.5) - dt;
+        e.slamCd = (e.slamCd !== undefined ? e.slamCd : 4.0) - dt;
+        e.sporeCd = (e.sporeCd !== undefined ? e.sporeCd : 3.0) - dt;
+        e.summonCd = (e.summonCd !== undefined ? e.summonCd : 7.0) - dt;
+
+        // Во время паузы восстановления (+1.0-1.5с) босс только преследует игрока и не кастует новые атаки
+        const canCast = (e.attackPause || 0) <= 0;
 
         // 1. Древесный Сокрушительный Таран (Wood Trample Charge) — если герой на дистанции
-        if(e.chargeCd <= 0 && d > 120){
+        if(canCast && e.chargeCd <= 0 && d > 130){
           e.action = 'charge_prep';
-          e.actionT = e.enraged ? 0.30 : 0.42;
+          e.actionT = e.enraged ? 1.1 : 1.4; // Расширенный телеграф +1с (было 0.3-0.42с)
           e.chargeAng = Math.atan2(dy, dx);
-          e.chargeDist = Math.min(d + 90, 360);
+          e.chargeDist = Math.min(d + 80, 340);
           e.facing = dx >= 0 ? 1 : -1;
-          e.chargeCd = e.enraged ? 3.2 : 4.5;
+          e.chargeCd = e.enraged ? 5.2 : 6.8;
           Sfx.play('dash');
           continue;
         }
         // 2. Тройной выброс оскверненных корней (Multi-Root Eruption)
-        else if(e.rootCd <= 0){
+        else if(canCast && e.rootCd <= 0){
           e.action = 'root_cast';
-          e.actionT = e.enraged ? 0.38 : 0.52;
+          e.actionT = e.enraged ? 1.2 : 1.5; // Расширенный телеграф +1с (было 0.38-0.52с)
           const pMoveA = Math.atan2(dy, dx);
-          const lead = 55;
+          const lead = 50;
           e.rootTargets = [
             { x: p.x, y: p.y },
             { x: p.x + Math.cos(pMoveA + 0.65) * lead, y: p.y + Math.sin(pMoveA + 0.65) * lead },
@@ -13118,48 +13214,48 @@ function update(dt){
           ];
           e.rootRadius = 55;
           e.facing = dx >= 0 ? 1 : -1;
-          e.rootCd = e.enraged ? 2.5 : 3.6;
+          e.rootCd = e.enraged ? 4.8 : 6.2;
           continue;
         }
         // 3. Сейсмический сокрушительный удар (Seismic Wood Slam)
-        else if(e.slamCd <= 0 && d < 280){
+        else if(canCast && e.slamCd <= 0 && d < 260){
           e.action = 'slam_windup';
-          e.actionT = e.enraged ? 0.38 : 0.50;
+          e.actionT = e.enraged ? 1.2 : 1.5; // Расширенный телеграф +1с (было 0.38-0.50с)
           e.facing = dx >= 0 ? 1 : -1;
-          e.slamCd = e.enraged ? 2.8 : 4.0;
+          e.slamCd = e.enraged ? 5.0 : 6.5;
           continue;
         }
         // 4. Шквал ядовитых спор (Toxic Spore Barrage)
-        else if(e.sporeCd <= 0){
+        else if(canCast && e.sporeCd <= 0){
           e.action = 'spore_prep';
-          e.actionT = e.enraged ? 0.28 : 0.40;
+          e.actionT = e.enraged ? 1.1 : 1.4; // Расширенный телеграф +1с (было 0.28-0.40с)
           e.facing = dx >= 0 ? 1 : -1;
-          e.sporeCd = e.enraged ? 2.4 : 3.5;
+          e.sporeCd = e.enraged ? 4.2 : 5.8;
           continue;
         }
         // 5. Призыв спор-мутантов (Summon Creepers)
-        else if(e.summonCd <= 0){
+        else if(canCast && e.summonCd <= 0){
           e.action = 'summon_prep';
-          e.actionT = 0.35;
+          e.actionT = 1.4; // Расширенный телеграф +1с (было 0.35с)
           e.facing = dx >= 0 ? 1 : -1;
-          e.summonCd = e.enraged ? 5.5 : 7.5;
+          e.summonCd = e.enraged ? 8.5 : 12.0;
           continue;
         }
 
-        // Передвижение колосса к игроку (Быстрое и неотступное: 72 база, 105 в ярости)
-        const spd = e.enraged ? 105 : (e.c.speed || 72);
+        // Передвижение колосса к игроку (62 база, 82 в ярости — игрок может увернуться)
+        const spd = e.enraged ? 82 : (e.c.speed || 62);
         e.x += (dx / d) * spd * dt;
         e.y += (dy / d) * spd * dt;
         keepInsideBossArena(e, g.bossArena, (e.c.r || 46) + 12);
         e.facing = dx >= 0 ? 1 : -1;
 
-        const animRate = e.enraged ? 11 : 8.5;
+        const animRate = e.enraged ? 9.5 : 7.5;
         const oldAnimT = e.animT || 0;
         e.animT = oldAnimT + dt * animRate;
         e.frame = Math.floor(e.animT) % 8;
         // Тяжелые сотрясающие шаги
         if(Math.floor(oldAnimT) !== Math.floor(e.animT) && (e.frame === 1 || e.frame === 5)){
-          g.shake = Math.max(g.shake, e.enraged ? 0.25 : 0.16);
+          g.shake = Math.max(g.shake, e.enraged ? 0.20 : 0.14);
           Sfx.play('dash');
           for(let k = 0; k < 5; k++){
             g.fx.push({
@@ -13168,20 +13264,21 @@ function update(dt){
               vx: (Math.random() - 0.5) * 60,
               vy: -15 - Math.random() * 25,
               col: '#854d0e',
-              l: 0.32
+              l: 0.26
             });
           }
         }
 
-        // Контактный урон
-        if(d < (e.c.r || 46) + (p.r || 16) && p.inv <= 0){
+        // Контактный урон при касании колосса
+        const touchDist = (e.c.r || 46) + p.r;
+        if(d < touchDist && p.inv <= 0){
           const dmg = Math.max(1, Math.round(e.c.damage * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
           damagePlayer(dmg);
           p.x += (dx / d) * 36;
           p.y += (dy / d) * 36;
-          p.poisonT = Math.max(p.poisonT || 0, 3.0);
-          p.poisonDps = Math.max(p.poisonDps || 0, 6);
-          p.poisonSlow = Math.min(p.poisonSlow || 1, 0.70);
+          p.poisonT = Math.max(p.poisonT || 0, 2.0);
+          p.poisonDps = Math.max(p.poisonDps || 0, 2.5);
+          p.poisonSlow = Math.min(p.poisonSlow || 1, 0.85);
           showGameToast('💥 ' + T('SMASHED BY TREANT! -' + dmg + ' HP', 'СОКРУШЕН ДРЕВНЕМ! -' + dmg + ' HP'), '#22c55e', 2.0);
         }
       }
@@ -13189,8 +13286,8 @@ function update(dt){
       // Выполнение способности: 1. Подготовка к Сокрушительному Тарану
       if(e.action === 'charge_prep'){
         e.actionT -= dt;
-        g.shake = Math.max(g.shake, 0.18);
-        if(Math.random() < 0.6){
+        g.shake = Math.max(g.shake, 0.16);
+        if(Math.random() < 0.5){
           g.fx.push({
             x: e.x + (Math.random() - 0.5) * 50,
             y: e.y + 20 + (Math.random() - 0.5) * 15,
@@ -13202,8 +13299,8 @@ function update(dt){
         }
         if(e.actionT <= 0){
           e.action = 'charge_dash';
-          e.chargeDur = e.enraged ? 0.62 : 0.52;
-          const chargeSpd = e.enraged ? 390 : 330;
+          e.chargeDur = e.enraged ? 0.60 : 0.52;
+          const chargeSpd = e.enraged ? 300 : 260; // Снижена скорость тарана для честного уклонения
           e.chargeVx = Math.cos(e.chargeAng) * chargeSpd;
           e.chargeVy = Math.sin(e.chargeAng) * chargeSpd;
           Sfx.play('dash');
@@ -13217,7 +13314,7 @@ function update(dt){
         e.x += e.chargeVx * dt;
         e.y += e.chargeVy * dt;
         keepInsideBossArena(e, g.bossArena, 50);
-        g.shake = Math.max(g.shake, 0.26);
+        g.shake = Math.max(g.shake, 0.22);
 
         // Земляные искры и комья коры в шлейфе тарана
         for(let k = 0; k < 2; k++){
@@ -13234,18 +13331,19 @@ function update(dt){
         // Столкновение с героем во время тарана
         const distHero = Math.hypot(p.x - e.x, p.y - e.y);
         if(distHero < (e.c.r || 46) + p.r && p.inv <= 0){
-          const dmg = Math.max(1, Math.round(e.c.damage * 1.25 * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
+          const dmg = Math.max(1, Math.round(e.c.damage * 1.20 * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
           damagePlayer(dmg);
-          p.x += Math.cos(e.chargeAng) * 70;
-          p.y += Math.sin(e.chargeAng) * 70;
-          p.poisonT = Math.max(p.poisonT || 0, 2.5);
-          p.poisonDps = Math.max(p.poisonDps || 0, 5);
+          p.x += Math.cos(e.chargeAng) * 60;
+          p.y += Math.sin(e.chargeAng) * 60;
+          p.poisonT = Math.max(p.poisonT || 0, 2.0);
+          p.poisonDps = Math.max(p.poisonDps || 0, 2.5);
           showGameToast('💥 ' + T('TRAMPLED BY TREANT! -' + dmg + ' HP', 'РАСТОПТАН ДРЕВНЕМ! -' + dmg + ' HP'), '#22c55e', 2.0);
         }
 
         if(e.chargeDur <= 0){
           e.action = 'idle';
-          g.shake = 0.6;
+          e.attackPause = e.enraged ? 1.0 : 1.5; // Гарантированная передышка +1-1.5с
+          g.shake = 0.55;
           Sfx.play('explosion');
           g.bossCraters.push({
             x: e.x, y: e.y + 22,
@@ -13263,7 +13361,7 @@ function update(dt){
         if(e.rootTargets){
           for(let rti = 0; rti < e.rootTargets.length; rti++){
             const tgt = e.rootTargets[rti];
-            if(Math.random() < 0.45){
+            if(Math.random() < 0.35){
               g.fx.push({
                 x: tgt.x + (Math.random() - 0.5) * (e.rootRadius || 55),
                 y: tgt.y + (Math.random() - 0.5) * (e.rootRadius || 55) * 0.5,
@@ -13277,7 +13375,8 @@ function update(dt){
         }
         if(e.actionT <= 0){
           e.action = 'idle';
-          g.shake = Math.max(g.shake, 0.65);
+          e.attackPause = e.enraged ? 1.0 : 1.5; // Гарантированная передышка +1-1.5с
+          g.shake = Math.max(g.shake, 0.55);
           Sfx.play('explosion');
           if(e.rootTargets){
             for(let rti = 0; rti < e.rootTargets.length; rti++){
@@ -13289,34 +13388,34 @@ function update(dt){
                 type: 'frostRing',
                 l: 0.45, maxL: 0.45
               });
-              for(let k = 0; k < 18; k++){
+              for(let k = 0; k < 12; k++){
                 const ang = Math.random() * 6.283;
-                const spd = 40 + Math.random() * 110;
+                const spd = 40 + Math.random() * 80;
                 g.fx.push({
                   x: tgt.x, y: tgt.y,
                   vx: Math.cos(ang) * spd,
                   vy: Math.sin(ang) * spd,
                   col: Math.random() > 0.4 ? '#22c55e' : (Math.random() > 0.5 ? '#854d0e' : '#15803d'),
-                  l: 0.5
+                  l: 0.45
                 });
               }
               // Оставляет ядовитую лужу
               g.bossShockwaves.push({
                 x: tgt.x, y: tgt.y,
                 vx: 0, vy: 0,
-                l: 4.5, maxL: 4.5,
-                dmg: 8,
+                l: 3.5, maxL: 3.5,
+                dmg: 5,
                 type: 'puddle'
               });
               const distP = Math.hypot(p.x - tgt.x, p.y - tgt.y);
               if(distP < (e.rootRadius || 55) + (p.r || 16) && p.inv <= 0){
-                const dmg = Math.max(1, Math.round(e.c.damage * 0.85 * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
+                const dmg = Math.max(1, Math.round(e.c.damage * 0.75 * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
                 damagePlayer(dmg);
-                p.webStunT = Math.max(p.webStunT || 0, 1.2);
-                p.poisonT = Math.max(p.poisonT || 0, 3.2);
-                p.poisonDps = Math.max(p.poisonDps || 0, 6);
-                p.poisonSlow = Math.min(p.poisonSlow || 1, 0.65);
-                showGameToast('🌿 ' + T('ENTANGLED BY CORRUPTED ROOTS! (1.2s)', 'ОПУТАН ОСКВЕРНЕННЫМИ КОРНЯМИ! (1.2 сек)'), '#22c55e', 2.0);
+                p.webStunT = Math.max(p.webStunT || 0, 0.75); // Снижено оцепление с 1.2с до 0.75с
+                p.poisonT = Math.max(p.poisonT || 0, 2.0);
+                p.poisonDps = Math.max(p.poisonDps || 0, 2.5);
+                p.poisonSlow = Math.min(p.poisonSlow || 1, 0.85);
+                showGameToast('🌿 ' + T('ENTANGLED BY CORRUPTED ROOTS! (0.8s)', 'ОПУТАН ОСКВЕРНЕННЫМИ КОРНЯМИ! (0.8 сек)'), '#22c55e', 2.0);
               }
             }
           }
@@ -13327,8 +13426,8 @@ function update(dt){
       // Выполнение способности: 3. Сейсмический сокрушительный раскол
       if(e.action === 'slam_windup'){
         e.actionT -= dt;
-        g.shake = Math.max(g.shake, 0.20);
-        if(Math.random() < 0.6){
+        g.shake = Math.max(g.shake, 0.18);
+        if(Math.random() < 0.45){
           g.fx.push({
             x: e.x + (Math.random() - 0.5) * 55,
             y: e.y - 20 + (Math.random() - 0.5) * 35,
@@ -13340,46 +13439,47 @@ function update(dt){
         }
         if(e.actionT <= 0){
           e.action = 'idle';
-          g.shake = 0.95;
+          e.attackPause = e.enraged ? 1.0 : 1.5; // Гарантированная передышка +1-1.5с
+          g.shake = 0.8;
           Sfx.play('explosion');
-          g.bossFlash = 0.25;
+          g.bossFlash = 0.22;
           const slamY = e.y + 24;
           g.bossCraters.push({
             x: e.x, y: slamY,
-            w: 105, h: 48,
-            l: 25, maxL: 25,
+            w: 95, h: 44,
+            l: 22, maxL: 22,
             col: '#1c1917'
           });
           g.fx.push({
             x: e.x, y: slamY,
-            r: 18, maxR: 135,
+            r: 18, maxR: 120,
             col: '#15803d',
             type: 'frostRing',
-            l: 0.5, maxL: 0.5
+            l: 0.45, maxL: 0.45
           });
           const distEpicenter = Math.hypot(p.x - e.x, p.y - slamY);
-          if(distEpicenter < 105 && p.inv <= 0){
-            const dmg = Math.max(1, Math.round(e.c.damage * 1.35 * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
+          if(distEpicenter < 95 && p.inv <= 0){
+            const dmg = Math.max(1, Math.round(e.c.damage * 1.25 * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
             damagePlayer(dmg);
             const pushAng = Math.atan2(p.y - slamY, p.x - e.x);
-            p.x += Math.cos(pushAng) * 65;
-            p.y += Math.sin(pushAng) * 65;
+            p.x += Math.cos(pushAng) * 55;
+            p.y += Math.sin(pushAng) * 55;
             showGameToast('💥 ' + T('SEISMIC SLAM IMPACT! -' + dmg + ' HP', 'СЕЙСМИЧЕСКИЙ УДАР ДРЕВНЯ! -' + dmg + ' HP'), '#22c55e', 2.0);
           }
-          // 10 (14 в ярости) радиальных сейсмических волн
-          const numWaves = e.enraged ? 14 : 10;
+          // 8 (10 в ярости) радиальных сейсмических волн (снижена скорость волн с 260 до 175)
+          const numWaves = e.enraged ? 10 : 8;
           const step = (Math.PI * 2) / numWaves;
           for(let wi = 0; wi < numWaves; wi++){
             const wa = wi * step + (e.enraged ? 0.22 : 0);
             g.bossShockwaves.push({
               x: e.x + Math.cos(wa) * 34,
               y: slamY + Math.sin(wa) * 22,
-              vx: Math.cos(wa) * (e.enraged ? 260 : 210),
-              vy: Math.sin(wa) * (e.enraged ? 260 : 210),
+              vx: Math.cos(wa) * (e.enraged ? 185 : 160),
+              vy: Math.sin(wa) * (e.enraged ? 185 : 160),
               angle: wa,
-              l: 1.5,
-              maxL: 1.5,
-              dmg: 24,
+              l: 1.4,
+              maxL: 1.4,
+              dmg: 18,
               col: '#22c55e',
               type: 'treant_seismic'
             });
@@ -13391,7 +13491,7 @@ function update(dt){
       // Выполнение способности: 4. Шквал ядовитых спор
       if(e.action === 'spore_prep'){
         e.actionT -= dt;
-        if(Math.random() < 0.65){
+        if(Math.random() < 0.5){
           g.fx.push({
             x: e.x + (Math.random() - 0.5) * 48,
             y: e.y - 32 + (Math.random() - 0.5) * 22,
@@ -13403,21 +13503,22 @@ function update(dt){
         }
         if(e.actionT <= 0){
           e.action = 'idle';
+          e.attackPause = e.enraged ? 1.0 : 1.5; // Гарантированная передышка +1-1.5с
           Sfx.play('dash');
-          const numSpores = e.enraged ? 9 : 6;
+          const numSpores = e.enraged ? 6 : 4; // Снижено количество спор (было 6-9)
           const baseAng = Math.atan2(dy, dx);
-          const spread = 0.75;
+          const spread = 0.65;
           for(let si = 0; si < numSpores; si++){
             const sAng = numSpores === 1 ? baseAng : baseAng - spread / 2 + (si / (numSpores - 1)) * spread;
             g.bossShockwaves.push({
               x: e.x + Math.cos(sAng) * 30,
               y: e.y - 10 + Math.sin(sAng) * 30,
-              vx: Math.cos(sAng) * (e.enraged ? 260 : 225),
-              vy: Math.sin(sAng) * (e.enraged ? 260 : 225),
+              vx: Math.cos(sAng) * (e.enraged ? 185 : 165),
+              vy: Math.sin(sAng) * (e.enraged ? 185 : 165),
               angle: sAng,
-              l: 1.8,
-              maxL: 1.8,
-              dmg: 18,
+              l: 1.6,
+              maxL: 1.6,
+              dmg: 14,
               col: '#84cc16',
               type: 'treant_spore'
             });
@@ -13429,16 +13530,17 @@ function update(dt){
       // Выполнение способности: 5. Призыв спор-мутантов
       if(e.action === 'summon_prep'){
         e.actionT -= dt;
-        g.shake = Math.max(g.shake, 0.15);
+        g.shake = Math.max(g.shake, 0.14);
         if(e.actionT <= 0){
           e.action = 'idle';
+          e.attackPause = e.enraged ? 1.0 : 1.5; // Гарантированная передышка +1-1.5с
           Sfx.play('dash');
-          for(let k = 0; k < 3; k++){
-            const sa = (k / 3) * 6.283 + Math.random() * 0.4;
+          for(let k = 0; k < 2; k++){ // Призывает 2 споры вместо 3
+            const sa = (k / 2) * 6.283 + Math.random() * 0.4;
             g.enemies.push({
               x: e.x + Math.cos(sa) * 48,
               y: e.y + Math.sin(sa) * 48,
-              hp: (CONFIG.enemies.spiderling.hp || 14) * (e.enraged ? 2.0 : 1.5),
+              hp: (CONFIG.enemies.spiderling.hp || 14) * (e.enraged ? 1.5 : 1.2),
               c: CONFIG.enemies.spiderling,
               oh: 0, fl: 0, dead: false, frame: 0, animT: Math.random() * 8, facing: 1
             });
@@ -13954,9 +14056,9 @@ function update(dt){
         const isSpider = (e.c === CONFIG.enemies.spider || e.c === CONFIG.enemies.spiderling || e.bossId === 'broodmother' || e.c === CONFIG.enemies.broodmother);
         if(isSpider){
           const isBossSpider = (e.bossId === 'broodmother' || e.c === CONFIG.enemies.broodmother);
-          const pDur = isBossSpider ? 3.5 : (e.c === CONFIG.enemies.spiderling ? 2.0 : 2.8);
-          const pDps = isBossSpider ? 6 : (e.c === CONFIG.enemies.spiderling ? 2 : 4);
-          const pSlow = isBossSpider ? 0.65 : (e.c === CONFIG.enemies.spiderling ? 0.85 : 0.75);
+          const pDur = isBossSpider ? 2.5 : (e.c === CONFIG.enemies.spiderling ? 1.5 : 2.0);
+          const pDps = isBossSpider ? 3.5 : (e.c === CONFIG.enemies.spiderling ? 1.0 : 2.0);
+          const pSlow = isBossSpider ? 0.80 : (e.c === CONFIG.enemies.spiderling ? 0.92 : 0.85);
           p.poisonT = Math.max(p.poisonT || 0, pDur);
           p.poisonDps = Math.max(p.poisonDps || 0, pDps);
           p.poisonSlow = Math.min(p.poisonSlow || 1, pSlow);
@@ -14052,19 +14154,19 @@ function update(dt){
       const distHero=Math.hypot(p.x-sw.x,p.y-sw.y);
       if(distHero<p.r+16&&p.inv<=0){
         if(sw.type === 'puddle'){
-          p.poisonT = Math.max(p.poisonT || 0, 3.2);
-          p.poisonDps = Math.max(p.poisonDps || 0, 5);
-          p.poisonSlow = Math.min(p.poisonSlow || 1, 0.72);
+          p.poisonT = Math.max(p.poisonT || 0, 2.0);
+          p.poisonDps = Math.max(p.poisonDps || 0, 2.0);
+          p.poisonSlow = Math.min(p.poisonSlow || 1, 0.85);
         } else if(sw.type === 'web'){
-          p.poisonT = Math.max(p.poisonT || 0, 2.2);
-          p.poisonDps = Math.max(p.poisonDps || 0, 4);
-          p.poisonSlow = Math.min(p.poisonSlow || 1, 0.65);
+          p.poisonT = Math.max(p.poisonT || 0, 1.8);
+          p.poisonDps = Math.max(p.poisonDps || 0, 2.0);
+          p.poisonSlow = Math.min(p.poisonSlow || 1, 0.82);
         } else if(sw.type === 'web_snare'){
-          p.webStunT = 1.0; // ОЦЕПЛЕНИЕ НА 1 СЕКУНДУ ПО ЗАПРОСУ ИГРОКА!
-          p.poisonT = Math.max(p.poisonT || 0, 2.5);
-          p.poisonDps = Math.max(p.poisonDps || 0, 4);
-          p.poisonSlow = 0;
-          showGameToast('🕸️ ' + T('IMMOBILIZED BY WEB! (1.0s)', 'ОЦЕПЛЕНИЕ ПАУТИНОЙ! (1.0 сек)'), '#f59e0b', 2.0);
+          p.webStunT = 0.75; // Снижено оцепление до 0.75с
+          p.poisonT = Math.max(p.poisonT || 0, 2.0);
+          p.poisonDps = Math.max(p.poisonDps || 0, 2.0);
+          p.poisonSlow = Math.min(p.poisonSlow || 1, 0.85);
+          showGameToast('🕸️ ' + T('IMMOBILIZED BY WEB! (0.8s)', 'ОЦЕПЛЕНИЕ ПАУТИНОЙ! (0.8 сек)'), '#f59e0b', 2.0);
           Sfx.play('dash');
           for(let k = 0; k < 16; k++){
             g.fx.push({
@@ -14090,9 +14192,9 @@ function update(dt){
             });
           }
         } else if(sw.type === 'treant_spore' || sw.type === 'mushroom_spore'){
-          p.poisonT = Math.max(p.poisonT || 0, sw.type === 'mushroom_spore' ? 2.5 : 3.2);
-          p.poisonDps = Math.max(p.poisonDps || 0, sw.type === 'mushroom_spore' ? 4 : 6);
-          p.poisonSlow = Math.min(p.poisonSlow || 1, 0.7);
+          p.poisonT = Math.max(p.poisonT || 0, sw.type === 'mushroom_spore' ? 1.8 : 2.4);
+          p.poisonDps = Math.max(p.poisonDps || 0, sw.type === 'mushroom_spore' ? 2 : 3);
+          p.poisonSlow = Math.min(p.poisonSlow || 1, 0.85);
           showGameToast('☣️ ' + T('INFECTED BY TOXIC SPORES!', 'ЗАРАЖЕН ЯДОВИТЫМИ СПОРАМИ!'), '#84cc16', 1.8);
           for(let k = 0; k < 10; k++){
             g.fx.push({
@@ -14104,9 +14206,9 @@ function update(dt){
             });
           }
         } else if(sw.type === 'slime_glob'){
-          p.poisonT = Math.max(p.poisonT || 0, 3.0);
-          p.poisonDps = Math.max(p.poisonDps || 0, 5);
-          p.poisonSlow = Math.min(p.poisonSlow || 1, 0.70);
+          p.poisonT = Math.max(p.poisonT || 0, 2.0);
+          p.poisonDps = Math.max(p.poisonDps || 0, 2.5);
+          p.poisonSlow = Math.min(p.poisonSlow || 1, 0.85);
           showGameToast('☣️ ' + T('SPLASHED WITH ACID!', 'ОБЛИТ ЕДКОЙ СЛИЗЬЮ!'), '#22c55e', 1.6);
           g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 4.5, maxL: 4.5, dmg: 4, type: 'puddle', col: '#22c55e' });
           for(let k = 0; k < 12; k++){
@@ -15292,8 +15394,8 @@ function update(dt){
 
     if(pet.cd<=0){
       const petUp = (save && save.itemUpgrades && pet.id && save.itemUpgrades[pet.id]) || {};
-      const petDmgMult = 1 + (petUp.dmg || 0) * 0.08;
-      const petCoolMult = Math.max(0.55, 1 - (petUp.cool || 0) * 0.04);
+      const petDmgMult = 1 + (petUp.dmg || 0) * 0.05;
+      const petCoolMult = Math.max(0.65, 1 - (petUp.cool || 0) * 0.03);
       const petAtkDmg = p.dmg * petDmgMult;
 
       if(pet.type==='slime'||pet.type==='drone'){
