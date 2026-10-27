@@ -522,6 +522,7 @@ button:disabled{opacity:.35;cursor:default;transform:none}
   border:1.5px solid rgba(255,255,255,0.16);color:#e2e8f0;display:flex;align-items:center;
   justify-content:center;cursor:pointer;transition:all 0.15s;z-index:5;
   box-shadow:0 4px 14px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.15);
+  outline:none;-webkit-tap-highlight-color:transparent !important;user-select:none;-webkit-user-select:none;
 }
 .char-nav-btn:hover{
   background:linear-gradient(180deg,rgba(45,65,105,0.95),rgba(20,30,50,0.98));
@@ -529,6 +530,7 @@ button:disabled{opacity:.35;cursor:default;transform:none}
   box-shadow:0 0 14px rgba(56,189,248,0.35);
 }
 .char-nav-btn:active{transform:translateY(-50%) scale(0.96)}
+.char-nav-btn:focus, .char-nav-btn:focus-visible{outline:none;-webkit-tap-highlight-color:transparent !important}
 .char-nav-btn.prev{left:10px}
 .char-nav-btn.next{right:10px}
 
@@ -536,12 +538,12 @@ button:disabled{opacity:.35;cursor:default;transform:none}
 .char-showcase-name-row{display:flex;align-items:baseline;gap:6px}
 .char-showcase-name{font-family:'Russo One',sans-serif;font-size:19px;color:#fff;letter-spacing:0.5px;text-shadow:0 2px 8px rgba(0,0,0,0.8)}
 .char-showcase-title{font-size:12px;color:#38bdf8;font-weight:800;letter-spacing:0.5px}
-.char-showcase-status{margin:1px 0}
+.char-showcase-status{margin:1px 0;min-height:22px;height:22px;display:flex;align-items:center;justify-content:center}
 .char-status-badge{font-family:'Russo One',sans-serif;font-size:10.5px;padding:2px 9px;border-radius:7px;letter-spacing:0.6px;text-transform:uppercase}
 .char-status-badge.selected{background:rgba(56,189,248,0.18);border:1px solid #38bdf8;color:#38bdf8;box-shadow:0 0 12px rgba(56,189,248,0.35)}
 .char-status-badge.unlocked{background:rgba(34,197,94,0.18);border:1px solid #22c55e;color:#4ade80}
 .char-status-badge.locked{background:rgba(234,179,8,0.18);border:1px solid #eab308;color:#fde047}
-.char-showcase-desc{font-size:11.5px;color:#94a3b8;font-weight:600;max-width:94%;line-height:1.25}
+.char-showcase-desc{font-size:11.5px;color:#94a3b8;font-weight:600;max-width:94%;line-height:1.3;min-height:30px;height:30px;display:flex;align-items:center;justify-content:center;text-align:center;box-sizing:border-box}
 
 .char-avatar-row{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin:2px 0 1px}
 .char-avatar-item{
@@ -1565,7 +1567,8 @@ button:disabled{opacity:.35;cursor:default;transform:none}
 .dock-icon-box::before{display:none}
 #modal-inventory,#modal-stats,#modal-rewards,#modal-characters,#modal-craft{padding:0;background:#070a11}
 #modal-inventory .modal-window,#modal-stats .modal-window,#modal-rewards .modal-window,#modal-characters .modal-window,#modal-craft .modal-window{max-width:none;width:100%;height:100%;max-height:none;border-radius:0;border:0;border-top:2px solid var(--primary)}
-#modal-inventory .modal-body,#modal-stats .modal-body,#modal-rewards .modal-body,#modal-characters .modal-body,#modal-craft .modal-body{flex:1;overflow-y:auto;padding-bottom:24px}
+#modal-inventory .modal-body,#modal-stats .modal-body,#modal-rewards .modal-body,#modal-craft .modal-body{flex:1;overflow-y:auto;padding-bottom:24px}
+#modal-characters .modal-body{flex:1;overflow-y:auto;scrollbar-gutter:stable;padding-bottom:14px}
 #inv-tabs{display:flex;gap:6px;padding:4px;background:rgba(0,0,0,.45);border-radius:14px;margin-bottom:12px}
 #inv-tabs button{flex:1;height:40px;border-radius:10px;background:transparent;color:#94a3b8;font-size:13px;letter-spacing:1px}
 #inv-tabs button.on{background:linear-gradient(180deg,#fb923c,#c2410c);color:#fff;box-shadow:0 3px 0 #7c2d12,inset 0 1px 0 rgba(255,255,255,.4)}
@@ -5479,6 +5482,20 @@ function getHeroShoulder(charId){
   return HERO_SHOULDER_OFFSETS[cid] || HERO_SHOULDER_OFFSETS.john;
 }
 
+const HERO_ALIGN = {
+  john:   { dx: 0,   dy: 0,   scale: 1.0 },
+  marcus: { dx: 0,   dy: 0,   scale: 1.0 },
+  leon:   { dx: 0,   dy: 0,   scale: 1.0 },
+  viktor: { dx: -31, dy: 0,   scale: 1.0 },
+  rex:    { dx: -12, dy: 0,   scale: 1.0 },
+  kael:   { dx: -13, dy: -17, scale: 1.095 }
+};
+
+function getHeroAlign(charId){
+  const cid = charId || (save && save.selectedChar) || 'john';
+  return HERO_ALIGN[cid] || HERO_ALIGN.john;
+}
+
 const heroArmsImg = HERO_ARMS_IMGS.w_pistol;
 const zombieImg=new Image();zombieImg.src='img/monsters/zombie_sheet.webp';
 const zombieMutantImg=new Image();zombieMutantImg.src='img/monsters/zombie_mutant_sheet.webp';
@@ -7230,23 +7247,27 @@ function drawInvHero(now){
   c.clearRect(0,0,cv.width,cv.height);
   const t=(now||performance.now())/1000;
   const cw=cv.width,ch=cv.height;
-  const cx0=cw/2,cy0=ch-63;
+  const cx0=cw/2;
+  const shadowY=166;
 
-  c.fillStyle='rgba(0,0,0,0.5)';
-  c.beginPath();c.ellipse(cx0,cy0+42,26,8,0,0,6.283);c.fill();
+  c.fillStyle='rgba(0,0,0,0.52)';
+  c.beginPath();c.ellipse(cx0,shadowY,30,8,0,0,6.283);c.fill();
 
   const curChar=CHARACTERS.find(ch=>ch.id===save.selectedChar)||CHARACTERS[0];
   const charImg=getHeroImage(curChar.id);
 
   if(charImg.complete&&charImg.naturalWidth>0){
-    const bobY=Math.sin(t*3.0)*2.0;
+    const align=getHeroAlign(curChar.id);
+    const bobY=Math.sin(t*3.0)*2.2;
     const breathScale=1+Math.sin(t*3.0)*0.015;
-    const hw=72,hh=98*breathScale;
+    const hw=92*align.scale,hh=125*align.scale*breathScale;
+    const shiftX=align.dx*(hw/280),shiftY=align.dy*(hh/380);
+    const cy0=shadowY - 58;
 
     c.filter='none';
 
     c.save();
-    c.translate(cx0,cy0-8+bobY);
+    c.translate(cx0+shiftX,cy0+bobY+shiftY);
     c.drawImage(charImg,8*280,0,280,380,-hw/2,-hh/2,hw,hh);
 
     const curWepId = (save && save.equip && save.equip.weapon) ? save.equip.weapon : null;
@@ -8135,12 +8156,14 @@ function drawShowcaseHero(now){
   c.fill();
 
   if(charImg && charImg.complete && charImg.naturalWidth > 0){
+    const align = getHeroAlign(curChar.id);
     const bobY = Math.sin(t * 3.0) * 2.2;
     const breathScale = 1 + Math.sin(t * 3.0) * 0.015;
-    const hw = 92, hh = 125 * breathScale;
+    const hw = 92 * align.scale, hh = 125 * align.scale * breathScale;
+    const shiftX = align.dx * (hw / 280), shiftY = align.dy * (hh / 380);
 
     c.save();
-    c.translate(cx0, cy0 - 6 + bobY);
+    c.translate(cx0 + shiftX, cy0 - 6 + bobY + shiftY);
 
     if(!isUnlocked){
       c.filter = 'grayscale(1) brightness(0.6)';
@@ -8228,7 +8251,6 @@ function renderCharacters(){
         <div class="char-stage">
           <div class="char-stage-pedestal"></div>
           <canvas id="char-showcase-canvas" width="160" height="180"></canvas>
-          ${!isUnlocked ? `<div class="char-lock-banner"><svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor" style="vertical-align:-1px;margin-right:4px"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>${T('LOCKED · ' + c.cost + ' COINS','ЗАКРЫТ · ' + c.cost + ' 🪙')}</div>` : ''}
         </div>
 
         <button class="char-nav-btn next" onclick="navShowcaseChar(1)" title="${T('Next Hero','Следующий герой')}">
@@ -8245,7 +8267,7 @@ function renderCharacters(){
         <div class="char-showcase-status">
           ${isSelected ? `<span class="char-status-badge selected">★ ${T('CURRENT HERO','ТЕКУЩИЙ ВЫБОР')} ★</span>` : 
             (isUnlocked ? `<span class="char-status-badge unlocked">✓ ${T('AVAILABLE','РАЗБЛОКИРОВАН')}</span>` : 
-            `<span class="char-status-badge locked"><svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor" style="vertical-align:-1px;margin-right:4px"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>${T('COST: ' + c.cost + ' COINS', 'СТОИМОСТЬ: ' + c.cost + ' 🪙')}</span>`)}
+            `<span class="char-status-badge locked"><svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor" style="vertical-align:-1px;margin-right:4px"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>${T('LOCKED', 'ЗАКРЫТ')}</span>`)}
         </div>
         <div class="char-showcase-desc">${c.desc}</div>
       </div>
@@ -16246,11 +16268,13 @@ function drawLobby(now){
     if(charImg.complete&&charImg.naturalWidth>0){
       cx.fillStyle='rgba(0,0,0,.38)';cx.beginPath();cx.ellipse(heroCx,heroCy+61,34,8,0,0,6.283);cx.fill();
       cx.save();
+      const align = getHeroAlign(curChar.id);
       const bobY=Math.sin(t*3.0)*2.6;
       const breathScale=1+Math.sin(t*3.0)*0.012;
-      const hw=126,hh=172*breathScale;
+      const hw=126*align.scale,hh=172*align.scale*breathScale;
+      const shiftX=align.dx*(hw/280),shiftY=align.dy*(hh/380);
 
-      cx.translate(heroCx,heroCy-17+bobY);
+      cx.translate(heroCx+shiftX,heroCy-17+bobY+shiftY);
 
       cx.filter='none';
 
@@ -21491,9 +21515,11 @@ function drawGame(){
   const isBlink=p.inv>0&&((g.t*20)|0)%2;
   if(charImg.complete&&charImg.naturalWidth>0){
     cx.save();
-    cx.translate(W/2, H/2 + heroDropY);
+    const align = getHeroAlign(curCharId);
+    const shiftX = align.dx * (60 / 280), shiftY = align.dy * (82 / 380);
+    cx.translate(W/2 + (p.facing > 0 ? shiftX : -shiftX), H/2 + heroDropY + shiftY);
     if(p.facing<0)cx.scale(-1,1);
-    cx.scale(squashX, squashY);
+    cx.scale(squashX * align.scale, squashY * align.scale);
     if(isBlink)cx.globalAlpha=.4;
     cx.drawImage(charImg,p.frame*280,0,280,380,-30,-46,60,82);
 
