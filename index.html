@@ -3351,8 +3351,8 @@ const ABILITY_TR = {
   shrapnel_burst: {
     nameRu: "Картечные осколки",
     nameEn: 'Shrapnel Burst',
-    descEn: 'On hit, bullets split into sharp shrapnel fragments.',
-    getDescEn: lv => 'Fires ' + (2 + lv) + ' piercing shrapnel on impact (' + (28 + lv * 7) + '% damage each).'
+    descEn: 'On volley hit, bullets split into sharp shrapnel fragments.',
+    getDescEn: lv => 'Fires ' + (2 + lv) + ' shrapnel per volley (' + (28 + lv * 5) + '% damage each).'
   },
   nanite_repair: {
     nameRu: "Нано-медпак",
@@ -4033,8 +4033,8 @@ const FIREARM_ABILITIES = [
     cat: 'weapon',
     reqStars: 3,
     max: 5,
-    desc: 'При попадании пули раскалываются на 3 острых осколка.',
-    getDesc: lv => 'При ударе вылетает ' + (2 + lv) + ' осколков (' + (28 + lv * 5) + '% урона).',
+    desc: 'При попадании залпа пули раскалываются на 3 острых осколка.',
+    getDesc: lv => 'При ударе залпа вылетает ' + (2 + lv) + ' осколков (' + (28 + lv * 5) + '% урона).',
     apply: p => {
       p.shrapnel = (p.shrapnel || 0) + 1;
     }
@@ -8924,6 +8924,7 @@ function startGame(){
     t:0,wave:1,waveProgressT:0,run:true,pause:false,kills:0,lvl:1,xp:0,need:getLevelXpRequirement(1),spawn:0,
     enemies:[],shots:[],gems:[],fx:[],revived:false,banked:0,doubled:false,shake:0,
     coinsCollected:0,crystalsCollected:0,accXpKills:0,accXpWaves:0,xpGiven:0,upd:0,
+    shotVolleyCounter:0,volleyShrapnel:new Set(),volleyExplosive:new Set(),
     weaponRange:wepRange,weaponDef:wepItem,EM:EM,
     weaponStars:wepStars,
     weaponId:eqWepId,
@@ -9004,17 +9005,68 @@ function resumeGame(){
 function testSkipWaves(count=5){
   if(!G||!G.run||G.pause)return;
   const g=G;
-  if(g.enemies.some(e=>(e.isBoss||e.isMiniBoss)&&!e.dead))return;
   const lvl=g.lvlConfig?.id||1;
   const maxWaves=g.lvlConfig?.maxWaves||(lvl===1?30:(lvl===2?40:50));
   const current=Math.max(1,g.wave||1);
+  if(current>=maxWaves)return;
+
+  // Принудительно очищаем активного босса и арену при скипе волн
+  if(g.activeBoss){
+    g.activeBoss.dead=true;
+    g.activeBoss.hp=0;
+    g.activeBoss=null;
+  }
+  g.bossArena=null;
+  g.bossWarning=null;
+  for(const e of g.enemies){
+    if(e.isBoss||e.isMiniBoss){
+      e.dead=true;
+      e.hp=0;
+    }
+  }
+  const gameHudEl=document.getElementById('screen-game');
+  if(gameHudEl)gameHudEl.classList.remove('boss-hud-active','boss-warning-active');
+  const nameEl=document.getElementById('hud-boss-name');
+  if(nameEl)nameEl.textContent='';
+  const curEl=document.getElementById('hud-boss-hp-cur');
+  if(curEl)curEl.textContent='';
+
   let target=Math.min(maxWaves,current+Math.max(1,Math.floor(count)||1));
   const bossWaves=lvl===1?[10,20,30]:lvl===2?[10,20,30,40]:[10,20,30,40,50];
   const nextBossWave=bossWaves.find(w=>w>current&&w<=target);
   if(nextBossWave)target=nextBossWave;
-  if(target<=current)return;
+
+  // Очищаем экран вокруг персонажа
+  g.enemies=g.enemies.filter(e=>!e.dead&&Math.hypot(e.x-g.p.x,e.y-g.p.y)>350);
+
   const waveDuration=CONFIG.waves.waveDuration||15;
   g.waveProgressT=(target-1)*waveDuration+0.01;
+  g.wave=target;
+
+  const hwVal=document.getElementById('hud-wave-val');
+  if(hwVal)hwVal.textContent=g.wave;
+  if(g.wave>(save.maxWave||1)){save.maxWave=g.wave;persist()}
+  if(!save.maxWaveByLvl)save.maxWaveByLvl={};
+  if(g.wave>(save.maxWaveByLvl[lvl]||0)){save.maxWaveByLvl[lvl]=g.wave;persist()}
+
+  // Сразу спавним босса, если перешли на волну босса
+  if(lvl===1){
+    if(g.wave===10)spawnGravediggerBoss();
+    else if(g.wave===20)spawnRatKingBoss();
+    else if(g.wave===30)spawnAbominationBoss();
+  }else if(lvl===2){
+    if(g.wave===10)spawnBroodmotherBoss();
+    else if(g.wave===20)spawnTreantBoss();
+    else if(g.wave===30)spawnSlimeBoss();
+    else if(g.wave===40)spawnAbominationBoss();
+  }else if(lvl===3){
+    if(g.wave===10)spawnBroodmotherBoss();
+    else if(g.wave===20)spawnTreantBoss();
+    else if(g.wave===30)spawnSlimeBoss();
+    else if(g.wave===40)spawnRatKingBoss();
+    else if(g.wave===50)spawnAbominationBoss();
+  }
+
   showGameToast('⏩ '+T('WARPED TO WAVE '+target+'!','ПЕРЕХОД К ВОЛНЕ '+target+'!'),'#38bdf8',2.0);
 }
 function testSkipBoss(){
@@ -9030,13 +9082,23 @@ function testSkipBoss(){
       b.emergeT = 99;
       b.phaseGuardT = 0;
       b.immortal = false;
-      hurt(b, (b.hp || 1000) * 10 + 999999);
+      b.dead = true;
+      b.hp = 0;
+      hurt(b, 999999);
     });
+    g.activeBoss = null;
+    g.bossArena = null;
+    g.bossWarning = null;
+    const gameHudEl = document.getElementById('screen-game');
+    if(gameHudEl) gameHudEl.classList.remove('boss-hud-active', 'boss-warning-active');
+    const nameEl = document.getElementById('hud-boss-name');
+    if(nameEl) nameEl.textContent = '';
+    const curEl = document.getElementById('hud-boss-hp-cur');
+    if(curEl) curEl.textContent = '';
     showGameToast('💀 ' + T('BOSS DEFEATED / SKIPPED!', 'БОСС ПРОПУЩЕН / УБИТ!'), '#ef4444', 2.5);
     return;
   }
   const lvl = g.lvlConfig?.id || 1;
-  const maxWaves = g.lvlConfig?.maxWaves || (lvl === 1 ? 30 : (lvl === 2 ? 40 : 50));
   const current = Math.max(1, g.wave || 1);
   const bossWaves = lvl === 1 ? [10, 20, 30] : (lvl === 2 ? [10, 20, 30, 40] : [10, 20, 30, 40, 50]);
   const nextBossWave = bossWaves.find(w => w > current);
@@ -9044,9 +9106,7 @@ function testSkipBoss(){
     showGameToast('⚠️ ' + T('NO MORE BOSSES ON THIS MAP!', 'БОЛЬШЕ НЕТ БОССОВ НА ЭТОЙ КАРТЕ!'), '#f59e0b', 2.0);
     return;
   }
-  const waveDuration = CONFIG.waves.waveDuration || 15;
-  g.waveProgressT = (nextBossWave - 1) * waveDuration + 0.01;
-  showGameToast('⏩ ' + T('WARPED TO BOSS WAVE ' + nextBossWave + '!', 'ПЕРЕХОД К ВОЛНЕ БОССА ' + nextBossWave + '!'), '#ef4444', 2.5);
+  testSkipWaves(nextBossWave - current);
 }
 const skipWaveBtnEl = document.getElementById('btn-test-skip-wave');
 if(skipWaveBtnEl) skipWaveBtnEl.onclick = () => testSkipWaves(5);
@@ -10853,8 +10913,40 @@ function die(isVictory){
     rv.onclick = () => Platform.rewarded(ok => {
       if(!ok) return;
       save.gold -= G.banked; G.banked = 0; G.doubled = false; persist();
-      G.revived = true; G.p.hp = G.p.maxHp * .5; G.p.inv = 2;
-      G.enemies = G.enemies.filter(e => (e.x - G.p.x)**2 + (e.y - G.p.y)**2 > 250*250);
+      G.revived = true;
+      G.p.hp = G.p.maxHp * 0.5;
+      G.p.inv = 2.5;
+      if(G.p.maxShield > 0){
+        G.p.shield = G.p.maxShield * 0.5;
+        G.p.shieldCooldown = 0;
+      }
+
+      // Очищаем только обычных мобов вокруг, сохраняя БОССОВ
+      G.enemies = G.enemies.filter(e => e.isBoss || (e.x - G.p.x)**2 + (e.y - G.p.y)**2 > 250*250);
+
+      // Если босс был рядом — отодвигаем его на безопасное расстояние 200px и сбрасываем атаку в idle
+      if(G.activeBoss && !G.activeBoss.dead && !G.enemies.includes(G.activeBoss)){
+        G.enemies.push(G.activeBoss);
+      }
+      for(const e of G.enemies){
+        if(e.isBoss && !e.dead){
+          const bDist = Math.hypot(e.x - G.p.x, e.y - G.p.y) || 1;
+          if(bDist < 190){
+            const bAng = Math.atan2(e.y - G.p.y, e.x - G.p.x);
+            e.x = G.p.x + Math.cos(bAng) * 200;
+            e.y = G.p.y + Math.sin(bAng) * 200;
+          }
+          e.action = 'idle';
+          e.actionT = 0;
+          if(G.bossArena){
+            keepInsideBossArena(e, G.bossArena, (e.c?.r || 36) + 10);
+          }
+        }
+      }
+      if(G.bossArena){
+        keepInsideBossArena(G.p, G.bossArena, G.p.r + 6);
+      }
+
       G.run = true; closeModal('modal-gameover');
     });
   }
@@ -11451,6 +11543,8 @@ function update(dt){
   if(g.spawnT>0)g.spawnT=Math.max(0,g.spawnT-dt);
   if(p.inv>0)p.inv-=dt;
   if(p.combatTimer>0)p.combatTimer=Math.max(0,p.combatTimer-dt);
+  if(g.volleyShrapnel&&g.volleyShrapnel.size>200)g.volleyShrapnel.clear();
+  if(g.volleyExplosive&&g.volleyExplosive.size>200)g.volleyExplosive.clear();
   if(p.regen>0&&p.hp<p.maxHp)p.hp=Math.min(p.maxHp,p.hp+p.regen*dt);
   if(p.poisonT>0){
     p.poisonT=Math.max(0,p.poisonT-dt);p.poisonTick=(p.poisonTick??.5)-dt;
@@ -11582,7 +11676,7 @@ function update(dt){
     }
   }
 
-  const hasActiveBossNow=g.enemies.some(e=>(e.isBoss||e.isMiniBoss)&&!e.dead);
+  const hasActiveBossNow=g.enemies.some(e=>e.isBoss&&!e.dead);
   const gameHud=document.getElementById('screen-game');
   if(gameHud){
     const activeBoss=!!(g.activeBoss&&!g.activeBoss.dead);
@@ -14198,6 +14292,7 @@ function update(dt){
       const shotSpd = sp * (g.isLaserWeapon ? 1.4 : 1) * (1 + (p.laser_sight || 0) * 0.15) * (p.bulletSpdMult || 1);
       const shotSpread = (weaponDef.spread ?? .14) * (p.spreadMult || 1);
       const spreadStep = weaponDef.combatStats ? shotSpread / Math.max(1, p.proj - 1) : shotSpread;
+      const curVolleyId = ++g.shotVolleyCounter;
 
       for(let i=0;i<p.proj;i++){
         const a=shotAngleBase+(i-(p.proj-1)/2)*spreadStep;
@@ -14242,7 +14337,8 @@ function update(dt){
           explosiveEvolved:!!p.explosiveEvolved,
           ricochets:(p.ricochet||0)+(p.ricochetEvolved?4:0),
           shrapnel:p.shrapnel||0,
-          projCount:p.proj||1
+          projCount:p.proj||1,
+          volleyId:curVolleyId
         });
 
         if(isMagic){
@@ -14447,15 +14543,18 @@ function update(dt){
           }
         }
 
-        // Разрывные патроны (Explosive Ammo) — нормализованный AoE для дробовиков
+        // Разрывные патроны (Explosive Ammo) — 1 взрыв на залп (без х6 наложений от дробовика)
         if(s.explosive>0&&!s.isShard){
-          const pMult = Math.sqrt(s.projCount || 1);
-          const exRad = (35 + s.explosive * 8) * (p.aoeMult || 1) * (s.explosiveEvolved ? 1.35 : 1) / Math.pow(pMult, 0.35);
-          const exDmg = (s.dmg / pMult) * (s.explosiveEvolved ? 0.95 : (0.20 + s.explosive * 0.12));
-          g.fx.push({type:'blast',x:e.x,y:e.y,r:exRad,l:0.25,col:'#f97316'});
-          for(const oe of g.enemies){
-            if(oe!==e&&!oe.dead&&Math.hypot(oe.x-e.x,oe.y-e.y)<=exRad){
-              hurt(oe,exDmg);
+          const canProcEx = !s.volleyId || !g.volleyExplosive || !g.volleyExplosive.has(s.volleyId);
+          if(canProcEx){
+            if(s.volleyId && g.volleyExplosive) g.volleyExplosive.add(s.volleyId);
+            const exRad = (38 + s.explosive * 8) * (p.aoeMult || 1) * (s.explosiveEvolved ? 1.35 : 1);
+            const exDmg = (s.dmg * (s.projCount > 1 ? Math.min(2.0, 1 + s.projCount * 0.15) : 1)) * (s.explosiveEvolved ? 0.95 : (0.28 + s.explosive * 0.12));
+            g.fx.push({type:'blast',x:e.x,y:e.y,r:exRad,l:0.25,col:'#f97316'});
+            for(const oe of g.enemies){
+              if(oe!==e&&!oe.dead&&Math.hypot(oe.x-e.x,oe.y-e.y)<=exRad){
+                hurt(oe,exDmg);
+              }
             }
           }
         }
@@ -14549,24 +14648,28 @@ function update(dt){
           }
         }
 
-        // Шрапнельный разрыв (Shrapnel) — сбалансировано для дробовиков и одиночных стволов
+        // Шрапнельный разрыв (Shrapnel) — 1 разрыв на залп оружия (без x6 наложений от дробовика)
         if(s.shrapnel>0&&!s.isShard){
-          const pMult = Math.sqrt(s.projCount || 1);
-          const shardCount = Math.max(2, Math.round((2 + s.shrapnel) / pMult));
-          const shardDmg = (s.dmg / pMult) * (0.28 + s.shrapnel * 0.07);
-          for(let sh=0;sh<shardCount;sh++){
-            const shA=sh*(6.283/shardCount)+(Math.random()-0.5)*0.3;
-            g.shots.push({
-              x:e.x,y:e.y,
-              vx:Math.cos(shA)*CONFIG.weapon.speed*0.82,
-              vy:Math.sin(shA)*CONFIG.weapon.speed*0.82,
-              l:0.30,
-              dmg:shardDmg,
-              pr:0,
-              hit:[e],
-              isShard:true,
-              projCount:1
-            });
+          const canProcSh = !s.volleyId || !g.volleyShrapnel || !g.volleyShrapnel.has(s.volleyId);
+          if(canProcSh){
+            if(s.volleyId && g.volleyShrapnel) g.volleyShrapnel.add(s.volleyId);
+            const count = 2 + s.shrapnel;
+            const dmgPct = 0.28 + s.shrapnel * 0.05;
+            const shardDmg = Math.max(1, (s.dmg * (s.projCount > 1 ? Math.min(2.0, 1 + s.projCount * 0.15) : 1)) * dmgPct);
+            for(let sh=0;sh<count;sh++){
+              const shA=sh*(6.283/count)+(Math.random()-0.5)*0.3;
+              g.shots.push({
+                x:e.x,y:e.y,
+                vx:Math.cos(shA)*CONFIG.weapon.speed*0.82,
+                vy:Math.sin(shA)*CONFIG.weapon.speed*0.82,
+                l:0.30,
+                dmg:shardDmg,
+                pr:0,
+                hit:[e],
+                isShard:true,
+                projCount:1
+              });
+            }
           }
         }
 
