@@ -141,6 +141,11 @@ button:disabled{opacity:.35;cursor:default;transform:none}
   background:linear-gradient(135deg,rgba(24,32,50,0.9),rgba(14,19,30,0.95));
   border:1px solid rgba(255,255,255,0.12);font-size:15px;color:#fff;
   box-shadow:0 4px 12px rgba(0,0,0,0.4);
+  cursor:pointer;outline:none !important;-webkit-tap-highlight-color:transparent !important;
+  user-select:none;-webkit-user-select:none;
+}
+.tactical-icon-btn:focus, .tactical-icon-btn:focus-visible{
+  outline:none !important;box-shadow:0 4px 12px rgba(0,0,0,0.4) !important;
 }
 
 /* Селектор уровней (Chapter Card) */
@@ -171,7 +176,7 @@ button:disabled{opacity:.35;cursor:default;transform:none}
 }
 .lvl-card-art-overlay{
   position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(6,10,18,0.2) 0%,rgba(6,10,18,0.0) 38%,rgba(4,7,14,0.65) 100%);
+  background:linear-gradient(180deg,rgba(6,10,18,0.55) 0%,rgba(6,10,18,0.72) 48%,rgba(4,7,14,0.92) 100%);
   pointer-events:none;
 }
 .lvl-info-card.is-locked .lvl-card-art{
@@ -210,25 +215,28 @@ button:disabled{opacity:.35;cursor:default;transform:none}
   white-space:nowrap;
   line-height:1.2;
 }
-.lvl-name-wrap{position:relative;z-index:5;margin:1px 0;text-align:center}
+.lvl-name-wrap{position:relative;z-index:5;margin:2px 0;text-align:center}
 .lvl-name-wrap::before{
-  content:'';position:absolute;inset:-6px -12px;
-  background:radial-gradient(ellipse at center,rgba(4,7,14,0.65) 0%,rgba(4,7,14,0) 80%);
+  content:'';position:absolute;inset:-8px -16px;
+  background:radial-gradient(ellipse at center,rgba(6,10,18,0.85) 0%,rgba(6,10,18,0) 85%);
   z-index:-1;pointer-events:none;
 }
 .lvl-name{
-  font-family:'Russo One',sans-serif;font-size:15px;letter-spacing:.8px;
-  color:#fff;margin:0;text-shadow:0 2px 4px #000, 0 0 10px rgba(0,0,0,0.95), 0 0 18px rgba(0,0,0,0.85);
+  font-family:'Russo One',sans-serif;font-size:13.5px;letter-spacing:.6px;line-height:1.2;
+  color:#fff;margin:0;text-shadow:0 2px 4px #000, 0 0 12px rgba(0,0,0,0.95), 0 0 20px rgba(0,0,0,0.9);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-.lvl-footer-row{display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:nowrap;position:relative;z-index:5}
+.lvl-footer-row{display:flex;align-items:center;justify-content:center;gap:5px;flex-wrap:nowrap;position:relative;z-index:5}
 .lvl-info-pill{
-  font-size:9px;font-weight:700;color:#94a3b8;background:rgba(0,0,0,0.4);
-  padding:2px 5px;border-radius:7px;border:1px solid rgba(255,255,255,0.08);
-  display:inline-flex;align-items:center;gap:3px;white-space:nowrap;
+  font-size:9.5px;font-weight:800;color:#e2e8f0;background:rgba(8,12,22,0.92);
+  padding:2.5px 7px;border-radius:8px;border:1px solid rgba(255,255,255,0.16);
+  display:inline-flex;align-items:center;gap:4px;white-space:nowrap;
+  box-shadow:0 2px 8px rgba(0,0,0,0.7);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
 }
-.lvl-info-pill.gold{color:#facc15;border-color:rgba(250,204,21,0.35);background:rgba(250,204,21,0.12)}
-.lvl-info-pill.wave{color:#38bdf8;border-color:rgba(56,189,248,0.35);background:rgba(56,189,248,0.14)}
-.lvl-info-pill.xp{color:#c084fc;border-color:rgba(192,132,252,0.45);background:rgba(168,85,247,0.14)}
+.lvl-info-pill.gold{color:#facc15;border-color:rgba(250,204,21,0.5);background:rgba(24,18,8,0.94);text-shadow:0 1px 2px rgba(0,0,0,0.9)}
+.lvl-info-pill.xp{color:#d8b4fe;border-color:rgba(192,132,252,0.55);background:rgba(28,14,38,0.94);text-shadow:0 1px 2px rgba(0,0,0,0.9)}
+.lvl-info-pill.wave{color:#38bdf8;border-color:rgba(56,189,248,0.5);background:rgba(10,22,38,0.94);text-shadow:0 1px 2px rgba(0,0,0,0.9)}
 
 /* Иконка фиолетового кристалла (улучшение оружия) */
 .xp-gem-ico{
@@ -1600,17 +1608,17 @@ button:disabled{opacity:.35;cursor:default;transform:none}
 #inv-tab-eq{position:relative}
 .bag{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
 .bag-it{position:relative;isolation:isolate;overflow:hidden;aspect-ratio:1;border-radius:10px;background:radial-gradient(ellipse at 50% 30%,color-mix(in srgb,var(--rc) 19%,transparent),rgba(10,15,27,.97) 76%);border:1.5px solid color-mix(in srgb,var(--rc) 84%,#dbeafe);font-size:26px;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .12s,box-shadow .12s;outline:none;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--rc) 28%,transparent),inset 0 1px 0 rgba(255,255,255,.2),inset 0 -12px 22px rgba(0,0,0,.26)}
-.bag-it:before{content:"";position:absolute;inset:0 0 auto;height:38%;background:linear-gradient(180deg,rgba(255,255,255,.10),transparent);pointer-events:none;z-index:0}
-.bag-it:after{content:"";position:absolute;inset:3px;border-radius:6px;pointer-events:none;z-index:3;background:linear-gradient(var(--rc),var(--rc)) left top/11px 3px no-repeat,linear-gradient(var(--rc),var(--rc)) left top/3px 11px no-repeat,linear-gradient(var(--rc),var(--rc)) right top/11px 3px no-repeat,linear-gradient(var(--rc),var(--rc)) right top/3px 11px no-repeat,linear-gradient(var(--rc),var(--rc)) left bottom/11px 3px no-repeat,linear-gradient(var(--rc),var(--rc)) left bottom/3px 11px no-repeat,linear-gradient(var(--rc),var(--rc)) right bottom/11px 3px no-repeat,linear-gradient(var(--rc),var(--rc)) right bottom/3px 11px no-repeat;filter:drop-shadow(0 0 2px color-mix(in srgb,var(--rc) 65%,transparent));opacity:.9}
+.bag-it:before{content:"";position:absolute;inset:0 0 auto;height:44%;background:linear-gradient(180deg,rgba(6,10,18,0.85) 0%,rgba(6,10,18,0.4) 60%,transparent 100%);pointer-events:none;z-index:2}
+.bag-it:after{content:"";position:absolute;inset:3px;border-radius:6px;pointer-events:none;z-index:3;background:linear-gradient(var(--rc),var(--rc)) left top/11px 3px no-repeat,linear-gradient(var(--rc),var(--rc)) left top/3px 11px no-repeat,linear-gradient(var(--rc),var(--rc)) right top/11px 3px no-repeat,linear-gradient(var(--rc),var(--rc)) right top/3px 11px no-repeat,linear-gradient(var(--rc),var(--rc)) left bottom/11px 3px no-repeat,linear-gradient(var(--rc),var(--rc)) left bottom/3px 11px no-repeat,linear-gradient(var(--rc),var(--rc)) right bottom/11px 3px no-repeat,linear-gradient(var(--rc),var(--rc)) right bottom/3px 11px no-repeat;filter:drop-shadow(0 0 2px color-mix(in srgb,var(--rc) 65%,transparent));opacity:.55}
 .bag-it:hover{transform:translateY(-2px)}
 .bag-it.sel{box-shadow:0 0 0 2px #fff,0 0 14px var(--rc)}
-.bag-it .bag-img-ico{position:relative;z-index:1;width:84%;height:84%;object-fit:contain;image-rendering:pixelated;image-rendering:crisp-edges;filter:drop-shadow(0 3px 3px rgba(0,0,0,.78)) drop-shadow(0 0 4px color-mix(in srgb,var(--rc) 24%,transparent));}
+.bag-it .bag-img-ico{position:relative;z-index:1;width:72%;height:68%;margin-top:8px;object-fit:contain;image-rendering:pixelated;image-rendering:crisp-edges;filter:drop-shadow(0 3px 4px rgba(0,0,0,.82)) drop-shadow(0 0 4px color-mix(in srgb,var(--rc) 24%,transparent));}
 .inv-categories{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:8px 0 10px;width:100%}
 .inv-category{min-width:0;height:32px;padding:0 4px;border:1px solid rgba(148,163,184,.28);border-radius:9px;background:linear-gradient(180deg,rgba(35,46,70,.92),rgba(12,17,29,.96));color:#9eacc2;font:800 10px 'Rajdhani',sans-serif;letter-spacing:.45px;text-transform:uppercase;white-space:nowrap;cursor:pointer;transition:color .12s,border-color .12s,background .12s,box-shadow .12s;display:flex;align-items:center;justify-content:center;gap:4px}
 .inv-category.on{color:#fff;border-color:#fb923c;background:linear-gradient(180deg,rgba(124,45,18,.62),rgba(32,22,24,.96));box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 0 9px rgba(249,115,22,.24)}
-.bag-it .bag-stars{position:absolute;z-index:2;bottom:5px;left:50%;transform:translateX(-50%);display:flex;align-items:center;justify-content:center;gap:1px;pointer-events:none;white-space:nowrap;filter:drop-shadow(0 2px 2px rgba(0,0,0,.9))}
+.bag-it .bag-stars{position:absolute;z-index:10;bottom:4px;left:50%;transform:translateX(-50%);display:flex;align-items:center;justify-content:center;gap:1px;pointer-events:none;white-space:nowrap;filter:drop-shadow(0 2px 3px rgba(0,0,0,.95))}
 .bag-it .bag-stars i{font:normal 900 14px/1 'Rajdhani',sans-serif;color:color-mix(in srgb,var(--rc) 74%,#fff);text-shadow:0 0 5px color-mix(in srgb,var(--rc) 58%,transparent),0 1px 2px #080b12}
-.bag-it u{position:absolute;z-index:4;left:5px;top:5px;font:900 8.5px 'Rajdhani',sans-serif;text-decoration:none;background:linear-gradient(180deg,#4ade80,#16a34a);color:#052e16;padding:2px 5px;border-radius:4px;letter-spacing:.5px;box-shadow:0 1px 3px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.32)}
+.bag-it u{position:absolute;z-index:10;left:4px;top:4px;font:900 7.5px/1 'Rajdhani',sans-serif;text-decoration:none;background:linear-gradient(180deg,#22c55e,#15803d);color:#ffffff;padding:2px 4.5px;border-radius:4px;letter-spacing:.3px;border:1px solid rgba(255,255,255,0.3);box-shadow:0 2px 5px rgba(0,0,0,0.8),inset 0 1px 0 rgba(255,255,255,0.35);text-shadow:0 1px 2px rgba(0,0,0,0.8)}
 .bag-empty{grid-column:1/-1;color:#64748b;text-align:center;padding:22px 8px;font-size:12px;line-height:1.4}
 
 /* Компактное мини-меню возле предмета (без перекрытия инвентаря) */
@@ -1713,7 +1721,7 @@ button:disabled{opacity:.35;cursor:default;transform:none}
 .craft-up-btn:disabled{filter:grayscale(.9) brightness(.55);cursor:not-allowed;box-shadow:none}
 .craft-up-btn.is-max{background:#1e293b;border-color:rgba(34,197,94,0.3);color:#22c55e;cursor:default}
 
-.bag-upg-lv{position:absolute;top:4px;right:4px;padding:1px 4px;font-size:8.5px;font-weight:900;background:rgba(147,51,234,.9);color:#fff;border-radius:4px;border:1px solid rgba(255,255,255,.35);line-height:1;box-shadow:0 1px 4px rgba(0,0,0,.6)}
+.bag-upg-lv{position:absolute;z-index:10;top:4px;right:4px;padding:2px 4.5px;font-size:8px;font-weight:900;background:linear-gradient(180deg,#9333ea,#6b21a8);color:#ffffff;border-radius:4px;border:1px solid rgba(255,255,255,0.38);line-height:1;box-shadow:0 2px 5px rgba(0,0,0,0.8),inset 0 1px 0 rgba(255,255,255,0.35);text-shadow:0 1px 2px rgba(0,0,0,0.8)}
 .craft-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
 
 
@@ -2345,10 +2353,11 @@ button:disabled{opacity:.35;cursor:default;transform:none}
 #modal-inventory .inv-category.on{background:linear-gradient(180deg,#38241e,#211819);border-color:#ff7324;box-shadow:0 2px 8px rgba(255,115,36,.2),inset 0 1px 0 rgba(255,255,255,.08)}
 #modal-inventory .bag, #modal-craft .craft-grid{gap:8px;margin-bottom:12px}
 #modal-inventory .bag-it, #modal-craft .bag-it{aspect-ratio:.94;min-height:76px;border-radius:11px;background:radial-gradient(circle at 50% 34%,color-mix(in srgb,var(--rc) 20%,transparent),#111722 76%);border:1.5px solid color-mix(in srgb,var(--rc) 88%,#dbeafe);box-shadow:inset 0 0 16px rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.14)}
-#modal-inventory .bag-it:after, #modal-craft .bag-it:after{inset:4px;border-radius:6px;background:linear-gradient(var(--rc),var(--rc)) left top/10px 2px no-repeat,linear-gradient(var(--rc),var(--rc)) left top/2px 10px no-repeat,linear-gradient(var(--rc),var(--rc)) right top/10px 2px no-repeat,linear-gradient(var(--rc),var(--rc)) right top/2px 10px no-repeat,linear-gradient(var(--rc),var(--rc)) left bottom/10px 2px no-repeat,linear-gradient(var(--rc),var(--rc)) left bottom/2px 10px no-repeat,linear-gradient(var(--rc),var(--rc)) right bottom/10px 2px no-repeat,linear-gradient(var(--rc),var(--rc)) right bottom/2px 10px no-repeat}
-#modal-inventory .bag-it .bag-img-ico, #modal-craft .bag-it .bag-img-ico{width:88%;height:76%;filter:drop-shadow(0 3px 4px rgba(0,0,0,.78))}
-#modal-inventory .bag-it .bag-stars, #modal-craft .bag-it .bag-stars{bottom:5px}
+#modal-inventory .bag-it:after, #modal-craft .bag-it:after{inset:4px;border-radius:6px;opacity:.55;pointer-events:none;z-index:3;background:linear-gradient(var(--rc),var(--rc)) left top/10px 2px no-repeat,linear-gradient(var(--rc),var(--rc)) left top/2px 10px no-repeat,linear-gradient(var(--rc),var(--rc)) right top/10px 2px no-repeat,linear-gradient(var(--rc),var(--rc)) right top/2px 10px no-repeat,linear-gradient(var(--rc),var(--rc)) left bottom/10px 2px no-repeat,linear-gradient(var(--rc),var(--rc)) left bottom/2px 10px no-repeat,linear-gradient(var(--rc),var(--rc)) right bottom/10px 2px no-repeat,linear-gradient(var(--rc),var(--rc)) right bottom/2px 10px no-repeat}
+#modal-inventory .bag-it .bag-img-ico, #modal-craft .bag-it .bag-img-ico{width:72%;height:68%;margin-top:9px;filter:drop-shadow(0 3px 4px rgba(0,0,0,.82))}
+#modal-inventory .bag-it .bag-stars, #modal-craft .bag-it .bag-stars{bottom:4px;z-index:10}
 #modal-craft .bag-it.sel{box-shadow:0 0 0 2px #fff;border-color:#fff}
+.craft-ribbon .bag-it .bag-img-ico{width:70%;height:66%;margin-top:7px}
 @media(max-width:380px){#modal-inventory .modal-header,#modal-stats .modal-header{padding-inline:8px;gap:5px}#modal-inventory .modal-title,#modal-stats .modal-title{font-size:11px;letter-spacing:.02em}#modal-inventory .modal-title>span:first-child,#modal-stats .modal-title>span:first-child{width:29px;height:29px;margin-right:0}.inv-currency{min-width:48px;padding-inline:5px;font-size:11.5px}.inv-header-currencies{gap:3px}#modal-inventory .eq-col{width:76px}#modal-inventory .eq-showcase{gap:5px;padding:7px}}
 .char-card{flex-shrink:0}
 
@@ -3157,9 +3166,10 @@ const LEVELS=[
     id:1,badge:'★ ГЛАВА 1 ★',badgeEn:'★ CHAPTER 1 ★',name:'ЗАБРОШЕННЫЙ ГОРОД',nameEn:'ABANDONED CITY',sub:'Зомби, Крысы и Мутанты • 30 волн',subEn:'Zombies, Rats & Mutants • 30 Waves',
     diffText:'НОРМАЛЬНО',diffTextEn:'NORMAL',diffColor:'#4ade80',
     bgColor:'#080d16',gridColor:'#182338',pedColor:'#f97316',
-    multHp:1.0,multSpeed:1.0,multGold:1.0,multXp:1.0,
+    multHp:1.0,multSpeed:1.0,multGold:1.0,multXp:1.0,multCrystals:1.0,
     maxWaves:30,
     bonusText:'Золото ×1.0',bonusTextEn:'Gold ×1.0',
+    bonusCrystalsText:'Кристаллы ×1.0',bonusCrystalsTextEn:'Crystals ×1.0',
     reqLv:1,cost:0,
     emberCols:['rgba(249,115,22,0.7)','rgba(251,146,60,0.5)','rgba(56,189,248,0.4)']
   },
@@ -3167,19 +3177,21 @@ const LEVELS=[
     id:2,badge:'★ ГЛАВА 2 ★',badgeEn:'★ CHAPTER 2 ★',name:'КЛАДБИЩЕ МУТАНТОВ',nameEn:'MUTANT GRAVEYARD',sub:'Скелеты, Паучата и Летучие мыши • 40 волн',
     diffText:'СЛОЖНО',diffTextEn:'HARD',diffColor:'#fb923c',
     bgColor:'#100a18',gridColor:'#2e1938',pedColor:'#a855f7',
-    multHp:1.3,multSpeed:1.15,multGold:1.5,multXp:2.0,
+    multHp:1.3,multSpeed:1.15,multGold:1.5,multXp:1.5,multCrystals:1.2,
     maxWaves:40,
     bonusText:'Золото ×1.5',bonusTextEn:'Gold ×1.5',
+    bonusCrystalsText:'Кристаллы ×1.2',bonusCrystalsTextEn:'Crystals ×1.2',
     reqLv:2,cost:150,
     emberCols:['rgba(168,85,247,0.7)','rgba(192,132,252,0.55)','rgba(74,222,128,0.55)']
   },
   {
-    id:3,badge:'★ ПОЛИГОН ТЕСТОВ ★',badgeEn:'★ WEAPON TEST RANGE ★',name:'ПОЛИГОН: 13 ТИПОВ МОНСТРОВ',nameEn:'TEST RANGE: 13 MONSTERS',sub:'Все 13 мутантов • 50 волн',
+    id:3,badge:'★ РЕЖИМ ТЕСТА ★',badgeEn:'★ TEST MODE ★',name:'ПОЛИГОН ТЕСТОВ',nameEn:'WEAPON TEST RANGE',sub:'Все 13 мутантов • 50 волн',
     diffText:'ТЕСТ',diffTextEn:'TEST',diffColor:'#38bdf8',
     bgColor:'#140808',gridColor:'#361616',pedColor:'#38bdf8',
-    multHp:1.0,multSpeed:1.0,multGold:2.0,multXp:3.0,
+    multHp:1.0,multSpeed:1.0,multGold:2.0,multXp:1.5,multCrystals:1.5,
     maxWaves:50,
     bonusText:'Золото ×2.0',bonusTextEn:'Gold ×2.0',
+    bonusCrystalsText:'Кристаллы ×1.5',bonusCrystalsTextEn:'Crystals ×1.5',
     reqLv:1,cost:0,
     emberCols:['rgba(56,189,248,0.75)','rgba(168,85,247,0.5)','rgba(74,222,128,0.55)']
   }
@@ -5707,9 +5719,9 @@ function starIco(){
 
 function lvlCardBgSvg(lvlId){
   if(lvlId===2){
-    return `<svg viewBox="0 0 260 100" preserveAspectRatio="none"><defs><linearGradient id="c2Sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#080314"/><stop offset="30%" stop-color="#1e0638"/><stop offset="60%" stop-color="#4c0d75"/><stop offset="85%" stop-color="#7e22ce"/><stop offset="100%" stop-color="#3b0764"/></linearGradient><radialGradient id="c2MoonGlow" cx="78%" cy="30%" r="50%"><stop offset="0%" stop-color="#f3e8ff"/><stop offset="25%" stop-color="#c084fc" stop-opacity="0.85"/><stop offset="55%" stop-color="#a855f7" stop-opacity="0.4"/><stop offset="100%" stop-color="transparent"/></radialGradient><linearGradient id="toxicFog" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="transparent"/><stop offset="60%" stop-color="rgba(34,197,94,0.18)"/><stop offset="100%" stop-color="rgba(16,185,129,0.45)"/></linearGradient></defs><rect width="260" height="100" fill="url(#c2Sky)"/><rect width="260" height="100" fill="url(#c2MoonGlow)"/><circle cx="188" cy="38" r="14" fill="#f8fafc"/><circle cx="188" cy="38" r="22" fill="#e9d5ff" opacity="0.32"/><circle cx="183" cy="35" r="2.6" fill="#cbd5e1" opacity="0.7"/><circle cx="191" cy="42" r="3.0" fill="#cbd5e1" opacity="0.6"/><circle cx="193" cy="33" r="1.6" fill="#cbd5e1" opacity="0.6"/><path d="M0 64 Q45 54 100 62 Q155 70 210 58 Q240 54 260 60 L260 100 L0 100 Z" fill="#20083b" opacity="0.8"/><path d="M14 88 Q18 66 14 48 Q10 38 4 32 M14 52 Q22 44 30 40 M14 63 Q8 56 2 54 M20 46 Q22 36 28 32" stroke="#0a0316" stroke-width="2.8" fill="none" stroke-linecap="round"/><path d="M246 88 Q242 64 248 46 Q254 36 258 30 M247 50 Q238 42 230 40 M246 60 Q254 54 258 52 M238 42 Q234 34 230 30" stroke="#0a0316" stroke-width="2.8" fill="none" stroke-linecap="round"/><line x1="48" y1="80" x2="48" y2="58" stroke="#0c041c" stroke-width="2.6"/><line x1="42" y1="65" x2="54" y2="65" stroke="#0c041c" stroke-width="2.4"/><path d="M64 82 L64 66 A6 6 0 0 1 76 66 L76 82 Z" fill="#0c041c"/><line x1="108" y1="84" x2="113" y2="60" stroke="#0c041c" stroke-width="2.6"/><line x1="104" y1="68" x2="117" y2="65" stroke="#0c041c" stroke-width="2.4"/><path d="M142 84 L142 68 A6 6 0 0 1 154 68 L154 84 Z" fill="#0c041c"/><line x1="178" y1="82" x2="178" y2="56" stroke="#0c041c" stroke-width="2.6"/><line x1="172" y1="64" x2="184" y2="64" stroke="#0c041c" stroke-width="2.4"/><circle cx="178" cy="64" r="4.2" fill="none" stroke="#0c041c" stroke-width="1.3"/><path d="M84 86 Q92 70 96 64 M93 86 Q101 68 105 62 M102 86 Q110 69 114 64" stroke="#e9d5ff" stroke-width="2.4" fill="none" opacity="0.75" stroke-linecap="round"/><circle cx="32" cy="54" r="1.6" fill="#4ade80" opacity="0.95"/><circle cx="72" cy="50" r="1.3" fill="#c084fc" opacity="0.95"/><circle cx="125" cy="56" r="1.5" fill="#4ade80" opacity="0.9"/><circle cx="162" cy="48" r="1.3" fill="#a855f7" opacity="0.9"/><circle cx="218" cy="62" r="1.6" fill="#4ade80" opacity="0.95"/><circle cx="228" cy="48" r="1.2" fill="#86efac" opacity="0.9"/><path d="M0 84 Q40 77 90 82 Q140 87 190 81 Q230 78 260 83 L260 100 L0 100 Z" fill="#07020f"/><rect y="54" width="260" height="46" fill="url(#toxicFog)"/></svg>`;
+    return `<svg viewBox="0 0 260 100" preserveAspectRatio="none"><defs><linearGradient id="c2Sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#080314"/><stop offset="30%" stop-color="#1e0638"/><stop offset="60%" stop-color="#4c0d75"/><stop offset="85%" stop-color="#7e22ce"/><stop offset="100%" stop-color="#3b0764"/></linearGradient><radialGradient id="c2MoonGlow" cx="78%" cy="30%" r="50%"><stop offset="0%" stop-color="#f3e8ff"/><stop offset="25%" stop-color="#c084fc" stop-opacity="0.85"/><stop offset="55%" stop-color="#a855f7" stop-opacity="0.4"/><stop offset="100%" stop-color="transparent"/></radialGradient><linearGradient id="toxicFog" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="transparent"/><stop offset="60%" stop-color="rgba(34,197,94,0.18)"/><stop offset="100%" stop-color="rgba(16,185,129,0.45)"/></linearGradient></defs><rect width="260" height="100" fill="url(#c2Sky)"/><rect width="260" height="100" fill="url(#c2MoonGlow)"/><circle cx="188" cy="38" r="14" fill="#f8fafc"/><circle cx="188" cy="38" r="22" fill="#e9d5ff" opacity="0.32"/><circle cx="183" cy="35" r="2.6" fill="#cbd5e1" opacity="0.7"/><circle cx="191" cy="42" r="3.0" fill="#cbd5e1" opacity="0.6"/><circle cx="193" cy="33" r="1.6" fill="#cbd5e1" opacity="0.6"/><path d="M0 64 Q45 54 100 62 Q155 70 210 58 Q240 54 260 60 L260 100 L0 100 Z" fill="#20083b" opacity="0.8"/><path d="M14 88 Q18 66 14 48 Q10 38 4 32 M14 52 Q22 44 30 40 M14 63 Q8 56 2 54 M20 46 Q22 36 28 32" stroke="#0a0316" stroke-width="2.8" fill="none" stroke-linecap="round"/><path d="M246 88 Q242 64 248 46 Q254 36 258 30 M247 50 Q238 42 230 40 M246 60 Q254 54 258 52 M238 42 Q234 34 230 30" stroke="#0a0316" stroke-width="2.8" fill="none" stroke-linecap="round"/><line x1="48" y1="80" x2="48" y2="58" stroke="#0c041c" stroke-width="2.6"/><line x1="42" y1="65" x2="54" y2="65" stroke="#0c041c" stroke-width="2.4"/><path d="M64 82 L64 66 A6 6 0 0 1 76 66 L76 82 Z" fill="#0c041c"/><line x1="108" y1="84" x2="113" y2="60" stroke="#0c041c" stroke-width="2.6"/><line x1="104" y1="68" x2="117" y2="65" stroke="#0c041c" stroke-width="2.4"/><path d="M142 84 L142 68 A6 6 0 0 1 154 68 L154 84 Z" fill="#0c041c"/><line x1="178" y1="82" x2="178" y2="56" stroke="#0c041c" stroke-width="2.6"/><line x1="172" y1="64" x2="184" y2="64" stroke="#0c041c" stroke-width="2.4"/><circle cx="178" cy="64" r="4.2" fill="none" stroke="#0c041c" stroke-width="1.3"/><circle cx="32" cy="54" r="1.6" fill="#4ade80" opacity="0.95"/><circle cx="72" cy="50" r="1.3" fill="#c084fc" opacity="0.95"/><circle cx="125" cy="56" r="1.5" fill="#4ade80" opacity="0.9"/><circle cx="162" cy="48" r="1.3" fill="#a855f7" opacity="0.9"/><circle cx="218" cy="62" r="1.6" fill="#4ade80" opacity="0.95"/><circle cx="228" cy="48" r="1.2" fill="#86efac" opacity="0.9"/><path d="M0 84 Q40 77 90 82 Q140 87 190 81 Q230 78 260 83 L260 100 L0 100 Z" fill="#07020f"/><rect y="54" width="260" height="46" fill="url(#toxicFog)"/></svg>`;
   }else if(lvlId===3){
-    return `<svg viewBox="0 0 260 100" preserveAspectRatio="none"><defs><linearGradient id="c3Dark" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0c0303"/><stop offset="30%" stop-color="#240707"/><stop offset="65%" stop-color="#500b0b"/><stop offset="100%" stop-color="#7a1010"/></linearGradient><radialGradient id="c3Reactor" cx="50%" cy="52%" r="58%"><stop offset="0%" stop-color="#f87171"/><stop offset="25%" stop-color="#ef4444" stop-opacity="0.8"/><stop offset="55%" stop-color="#991b1b" stop-opacity="0.35"/><stop offset="100%" stop-color="transparent"/></radialGradient><pattern id="c3Hazard" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="5" height="10" fill="#facc15"/><rect x="5" width="5" height="10" fill="#180404"/></pattern><linearGradient id="c3Steam" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="transparent"/><stop offset="100%" stop-color="rgba(239,68,68,0.22)"/></linearGradient></defs><rect width="260" height="100" fill="url(#c3Dark)"/><rect width="260" height="100" fill="url(#c3Reactor)"/><circle cx="130" cy="52" r="45" fill="none" stroke="#2b0909" stroke-width="7" stroke-dasharray="16 7"/><circle cx="130" cy="52" r="38" fill="#160404" stroke="#991b1b" stroke-width="2.5"/><circle cx="130" cy="52" r="28" fill="#200505" stroke="#ef4444" stroke-width="2.2" opacity="0.95"/><circle cx="130" cy="52" r="18" fill="#ef4444" opacity="0.6"/><circle cx="130" cy="52" r="9" fill="#fca5a5" opacity="0.9"/><circle cx="130" cy="52" r="4" fill="#ffffff"/><line x1="88" y1="52" x2="110" y2="52" stroke="#ef4444" stroke-width="1.8" opacity="0.85"/><line x1="150" y1="52" x2="172" y2="52" stroke="#ef4444" stroke-width="1.8" opacity="0.85"/><line x1="130" y1="10" x2="130" y2="32" stroke="#ef4444" stroke-width="1.8" opacity="0.85"/><line x1="130" y1="72" x2="130" y2="94" stroke="#ef4444" stroke-width="1.8" opacity="0.85"/><rect x="0" y="0" width="24" height="100" fill="#120303"/><rect x="22" y="0" width="3" height="100" fill="#3f0a0a"/><rect x="236" y="0" width="24" height="100" fill="#120303"/><rect x="235" y="0" width="3" height="100" fill="#3f0a0a"/><rect x="3" y="66" width="18" height="28" fill="url(#c3Hazard)" opacity="0.9"/><rect x="3" y="66" width="18" height="28" fill="none" stroke="#eab308" stroke-width="1"/><rect x="239" y="66" width="18" height="28" fill="url(#c3Hazard)" opacity="0.9"/><rect x="239" y="66" width="18" height="28" fill="none" stroke="#eab308" stroke-width="1"/><circle cx="12" cy="18" r="2.2" fill="#22c55e" opacity="0.95"/><circle cx="12" cy="26" r="2.2" fill="#eab308" opacity="0.95"/><circle cx="12" cy="34" r="2.2" fill="#ef4444" opacity="0.95"/><circle cx="248" cy="18" r="2.2" fill="#22c55e" opacity="0.95"/><circle cx="248" cy="26" r="2.2" fill="#eab308" opacity="0.95"/><circle cx="248" cy="34" r="2.2" fill="#ef4444" opacity="0.95"/><line x1="24" y1="12" x2="236" y2="12" stroke="#330808" stroke-width="4"/><line x1="24" y1="18" x2="236" y2="18" stroke="#220505" stroke-width="2.5"/><path d="M30 12 Q75 26 120 12" stroke="#0e0202" stroke-width="2" fill="none"/><path d="M140 12 Q185 28 230 12" stroke="#0e0202" stroke-width="2" fill="none"/><circle cx="36" cy="12" r="5" fill="#ef4444" opacity="0.9"/><circle cx="36" cy="12" r="2" fill="#fff"/><circle cx="224" cy="12" r="5" fill="#ef4444" opacity="0.9"/><circle cx="224" cy="12" r="2" fill="#fff"/><rect y="86" width="260" height="14" fill="#0d0202"/><line x1="0" y1="86" x2="260" y2="86" stroke="#ef4444" stroke-width="1.2" opacity="0.7"/><rect y="60" width="260" height="40" fill="url(#c3Steam)"/></svg>`;
+    return `<svg viewBox="0 0 260 100" preserveAspectRatio="none"><defs><linearGradient id="c3Dark" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0c0303"/><stop offset="30%" stop-color="#240707"/><stop offset="65%" stop-color="#500b0b"/><stop offset="100%" stop-color="#7a1010"/></linearGradient><radialGradient id="c3Reactor" cx="50%" cy="50%" r="58%"><stop offset="0%" stop-color="#f87171" stop-opacity="0.45"/><stop offset="25%" stop-color="#ef4444" stop-opacity="0.25"/><stop offset="55%" stop-color="#991b1b" stop-opacity="0.12"/><stop offset="100%" stop-color="transparent"/></radialGradient><pattern id="c3Hazard" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="5" height="10" fill="#facc15"/><rect x="5" width="5" height="10" fill="#180404"/></pattern><linearGradient id="c3Steam" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="transparent"/><stop offset="100%" stop-color="rgba(239,68,68,0.22)"/></linearGradient></defs><rect width="260" height="100" fill="url(#c3Dark)"/><rect width="260" height="100" fill="url(#c3Reactor)"/><circle cx="130" cy="50" r="44" fill="none" stroke="#ef4444" stroke-width="2" stroke-dasharray="8 6" opacity="0.25"/><circle cx="130" cy="50" r="30" fill="none" stroke="#ef4444" stroke-width="1.5" opacity="0.20"/><circle cx="130" cy="50" r="14" fill="#ef4444" opacity="0.16"/><line x1="76" y1="50" x2="96" y2="50" stroke="#ef4444" stroke-width="1.5" opacity="0.28"/><line x1="164" y1="50" x2="184" y2="50" stroke="#ef4444" stroke-width="1.5" opacity="0.28"/><line x1="130" y1="10" x2="130" y2="22" stroke="#ef4444" stroke-width="1.5" opacity="0.28"/><line x1="130" y1="78" x2="130" y2="90" stroke="#ef4444" stroke-width="1.5" opacity="0.28"/><rect x="0" y="0" width="24" height="100" fill="#120303"/><rect x="22" y="0" width="3" height="100" fill="#3f0a0a"/><rect x="236" y="0" width="24" height="100" fill="#120303"/><rect x="235" y="0" width="3" height="100" fill="#3f0a0a"/><rect x="3" y="66" width="18" height="28" fill="url(#c3Hazard)" opacity="0.9"/><rect x="3" y="66" width="18" height="28" fill="none" stroke="#eab308" stroke-width="1"/><rect x="239" y="66" width="18" height="28" fill="url(#c3Hazard)" opacity="0.9"/><rect x="239" y="66" width="18" height="28" fill="none" stroke="#eab308" stroke-width="1"/><circle cx="12" cy="18" r="2.2" fill="#22c55e" opacity="0.95"/><circle cx="12" cy="26" r="2.2" fill="#eab308" opacity="0.95"/><circle cx="12" cy="34" r="2.2" fill="#ef4444" opacity="0.95"/><circle cx="248" cy="18" r="2.2" fill="#22c55e" opacity="0.95"/><circle cx="248" cy="26" r="2.2" fill="#eab308" opacity="0.95"/><circle cx="248" cy="34" r="2.2" fill="#ef4444" opacity="0.95"/><line x1="24" y1="12" x2="236" y2="12" stroke="#330808" stroke-width="4"/><line x1="24" y1="18" x2="236" y2="18" stroke="#220505" stroke-width="2.5"/><path d="M30 12 Q75 26 120 12" stroke="#0e0202" stroke-width="2" fill="none"/><path d="M140 12 Q185 28 230 12" stroke="#0e0202" stroke-width="2" fill="none"/><circle cx="36" cy="12" r="5" fill="#ef4444" opacity="0.9"/><circle cx="36" cy="12" r="2" fill="#fff"/><circle cx="224" cy="12" r="5" fill="#ef4444" opacity="0.9"/><circle cx="224" cy="12" r="2" fill="#fff"/><rect y="86" width="260" height="14" fill="#0d0202"/><line x1="0" y1="86" x2="260" y2="86" stroke="#ef4444" stroke-width="1.2" opacity="0.7"/><rect y="60" width="260" height="40" fill="url(#c3Steam)"/></svg>`;
   }
   return `<svg viewBox="0 0 260 100" preserveAspectRatio="none"><defs><linearGradient id="c1Sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#091124"/><stop offset="30%" stop-color="#2a0f35"/><stop offset="55%" stop-color="#6c2210"/><stop offset="78%" stop-color="#b43a0d"/><stop offset="94%" stop-color="#ea580c"/><stop offset="100%" stop-color="#f59e0b"/></linearGradient><radialGradient id="c1Sun" cx="68%" cy="56%" r="52%"><stop offset="0%" stop-color="#fef9c3"/><stop offset="20%" stop-color="#fde047"/><stop offset="42%" stop-color="#fb923c" stop-opacity="0.85"/><stop offset="70%" stop-color="#ea580c" stop-opacity="0.4"/><stop offset="100%" stop-color="transparent"/></radialGradient><linearGradient id="c1Haze" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="transparent"/><stop offset="100%" stop-color="rgba(245,158,11,0.2)"/></linearGradient></defs><rect width="260" height="100" fill="url(#c1Sky)"/><rect width="260" height="100" fill="url(#c1Sun)"/><circle cx="176" cy="52" r="16" fill="#fef08a" opacity="0.95"/><circle cx="176" cy="52" r="26" fill="#fb923c" opacity="0.38"/><circle cx="22" cy="12" r="0.8" fill="#fff" opacity="0.7"/><circle cx="65" cy="10" r="0.6" fill="#fde047" opacity="0.6"/><circle cx="118" cy="14" r="0.8" fill="#fff" opacity="0.8"/><circle cx="222" cy="10" r="0.6" fill="#fff" opacity="0.5"/><circle cx="248" cy="16" r="0.8" fill="#fed7aa" opacity="0.7"/><path d="M0 64 L10 64 L10 46 L18 46 L18 64 L28 64 L28 38 L32 38 L32 32 L34 32 L34 38 L42 38 L42 66 L58 66 L58 48 L68 48 L68 68 L88 68 L88 42 L94 42 L94 34 L96 34 L96 42 L106 42 L106 70 L128 70 L128 46 L138 46 L138 68 L154 68 L154 36 L160 36 L160 28 L162 28 L162 36 L172 36 L172 66 L188 66 L188 44 L200 44 L200 68 L216 68 L216 46 L222 46 L222 38 L224 38 L224 46 L232 46 L232 66 L260 66 L260 100 L0 100 Z" fill="#20102e" opacity="0.75"/><circle cx="33" cy="32" r="1.2" fill="#ef4444"/><circle cx="95" cy="34" r="1.2" fill="#ef4444"/><circle cx="161" cy="28" r="1.4" fill="#ef4444"/><circle cx="223" cy="38" r="1.2" fill="#ef4444"/><path d="M0 72 L8 72 L8 50 L16 50 L16 74 L26 74 L26 42 L30 38 L38 44 L38 74 L52 74 L52 50 L64 46 L64 76 L82 76 L82 44 L86 40 L94 40 L94 46 L104 52 L104 78 L122 78 L122 46 L134 42 L142 48 L142 78 L165 78 L165 40 L172 36 L180 42 L180 76 L195 76 L195 48 L208 44 L216 50 L216 78 L235 78 L235 42 L244 38 L252 44 L252 76 L260 76 L260 100 L0 100 Z" fill="#120a1e"/><rect x="10" y="56" width="2" height="2" fill="#fde047" opacity="0.9"/><rect x="14" y="62" width="2" height="2" fill="#f97316" opacity="0.9"/><rect x="30" y="50" width="2" height="2" fill="#fef08a" opacity="0.95"/><rect x="34" y="56" width="2" height="2" fill="#f97316" opacity="0.85"/><rect x="56" y="56" width="2" height="2" fill="#fde047" opacity="0.9"/><rect x="60" y="64" width="2" height="2" fill="#f97316" opacity="0.8"/><rect x="86" y="52" width="2" height="2" fill="#facc15" opacity="0.9"/><rect x="90" y="58" width="2" height="2" fill="#f97316" opacity="0.85"/><rect x="126" y="54" width="2" height="2" fill="#fde047" opacity="0.9"/><rect x="130" y="60" width="2" height="2" fill="#fb923c" opacity="0.95"/><rect x="170" y="48" width="2" height="2" fill="#fef08a" opacity="0.95"/><rect x="174" y="54" width="2" height="2" fill="#f97316" opacity="0.85"/><rect x="200" y="54" width="2" height="2" fill="#fde047" opacity="0.9"/><rect x="238" y="50" width="2" height="2" fill="#facc15" opacity="0.95"/><rect x="242" y="58" width="2" height="2" fill="#f97316" opacity="0.85"/><path d="M0 84 Q30 80 70 84 Q115 88 160 82 Q210 79 260 84 L260 100 L0 100 Z" fill="#08040d"/><line x1="22" y1="84" x2="19" y2="68" stroke="#08040d" stroke-width="2"/><line x1="19" y1="68" x2="25" y2="65" stroke="#08040d" stroke-width="1.6"/><circle cx="26" cy="65" r="1.5" fill="#fef08a" opacity="0.8"/><line x1="232" y1="84" x2="235" y2="68" stroke="#08040d" stroke-width="2"/><line x1="235" y1="68" x2="229" y2="66" stroke="#08040d" stroke-width="1.6"/><circle cx="228" cy="66" r="1.5" fill="#fef08a" opacity="0.8"/><rect width="260" height="100" fill="url(#c1Haze)"/></svg>`;
 }
@@ -5753,7 +5765,7 @@ function updateMenuUI(){
         <div class="lvl-name">${T(lvl.nameEn||lvl.name,lvl.name)}</div>
       </div>
       <div class="lvl-footer-row">
-        <span class="lvl-info-pill xp">${gemIco(11)} ${T('CRYSTALS ×','КРИСТАЛЛЫ ×')}${lvl.id}</span>
+        <span class="lvl-info-pill xp">${gemIco(11)} ${T(lvl.bonusCrystalsTextEn||('Crystals ×'+(lvl.multCrystals||1).toFixed(1)), lvl.bonusCrystalsText||('Кристаллы ×'+(lvl.multCrystals||1).toFixed(1)))}</span>
         <span class="lvl-info-pill gold">🪙 ${T(lvl.bonusTextEn || ('Gold ×' + (lvl.multGold||1).toFixed(1)), lvl.bonusText || ('Золото ×' + (lvl.multGold||1).toFixed(1)))}</span>
       </div>
     `;
@@ -7199,27 +7211,27 @@ function equipMods(){
     }
     const up=(save.itemUpgrades&&save.itemUpgrades[id])||{};
     if(it.s==='weapon'){
-      // Сбалансированный урон: +3.5% за уровень (до +35% на 10 ур. вместо диких +150%)
-      if(up.dmg)m.dmg+=(up.dmg*0.035);
-      // Скорострельность: ~2.5% за уровень (~+28% на 10 ур. вместо удвоения)
-      if(up.rate)m.cool*=Math.pow(0.975,up.rate);
-      if(up.range)m.range=(m.range||0)+up.range*15;
+      // Сбалансированный урон: +2.0% за уровень (до +20% на 10 ур.)
+      if(up.dmg)m.dmg+=(up.dmg*0.02);
+      // Скорострельность: ~1.5% за уровень (~+16% на 10 ур.)
+      if(up.rate)m.cool*=Math.pow(0.985,up.rate);
+      if(up.range)m.range=(m.range||0)+up.range*8;
     }else if(it.s==='shield'){
       const baseS=it.shield||50;
-      const shieldPerLv=Math.max(4,Math.round(baseS*0.05));
+      const shieldPerLv=Math.max(2,Math.round(baseS*0.03));
       if(up.shield)m.maxShield=(m.maxShield||0)+up.shield*shieldPerLv;
-      if(up.shieldRegen)m.shieldRegen=(m.shieldRegen||0)+up.shieldRegen*0.2;
-      if(up.armor)m.armor=(m.armor||0)+up.armor*0.01;
-      if(up.hp)m.armor=(m.armor||0)+up.hp*0.01;
+      if(up.shieldRegen)m.shieldRegen=(m.shieldRegen||0)+up.shieldRegen*0.1;
+      if(up.armor)m.armor=(m.armor||0)+up.armor*0.006;
+      if(up.hp)m.armor=(m.armor||0)+up.hp*0.006;
     }else if(it.s==='pet'){
       // Прокачка питомца усиливает питомца; герою дает умеренную синергию сбора
-      if(up.pick)m.pick+=up.pick*0.04;
+      if(up.pick)m.pick+=up.pick*0.02;
       // Убрано двойное наложение: урон и скорость атаки питомца применяются к самому питомцу
     }else if(it.s==='artifact'){
-      // Сбалансированные параметры артефактов: +2.5% силы, +1% скорости, +4% сбора
-      if(up.dmg)m.dmg+=up.dmg*0.025;
-      if(up.spd)m.spd+=up.spd*0.01;
-      if(up.pick)m.pick+=up.pick*0.04;
+      // Сбалансированные параметры артефактов: +1.2% силы, +0.5% скорости, +2% сбора
+      if(up.dmg)m.dmg+=up.dmg*0.012;
+      if(up.spd)m.spd+=up.spd*0.005;
+      if(up.pick)m.pick+=up.pick*0.02;
     }
   }
   return m;
@@ -7682,9 +7694,9 @@ document.getElementById('stat-up-list').onclick=e=>{
 };
 
 // ===== ПРОГРЕССИВНАЯ СТОИМОСТЬ И ПРОКАЧКА ЗА ФИОЛЕТОВЫЕ КРИСТАЛЛЫ =====
-const UPGRADE_CRYSTAL_COSTS = [5, 8, 12, 16, 22, 28, 35, 44, 54, 65];
+const UPGRADE_CRYSTAL_COSTS = [15, 25, 40, 60, 90, 130, 180, 240, 320, 420];
 function getUpgradeCrystalCost(lv){
-  return UPGRADE_CRYSTAL_COSTS[Math.min(UPGRADE_CRYSTAL_COSTS.length - 1, Math.max(0, lv))] || 5;
+  return UPGRADE_CRYSTAL_COSTS[Math.min(UPGRADE_CRYSTAL_COSTS.length - 1, Math.max(0, lv))] || 15;
 }
 
 // ===== ПРОКАЧКА ПИТОМЦЕВ ЗА КРИСТАЛЛЫ (общие itemUpgrades с Кузницей) =====
@@ -7695,9 +7707,9 @@ function petUpgradeDefs(id){
   const coolLv = up.cool || 0;
   const pickLv = up.pick || 0;
   return [
-    {key:'dmg', n:'Pet damage', ru:'Урон питомца', img:'img/ui/st_pet_dmg.webp', lv:dmgLv, max:10, step:5, cost:getUpgradeCrystalCost(dmgLv)},
-    {key:'cool',n:'Attack speed', ru:'Скорость атаки', img:'img/ui/st_pet_cool.webp', lv:coolLv, max:10, step:3, cost:getUpgradeCrystalCost(coolLv)},
-    {key:'pick',n:'Pickup radius', ru:'Радиус сбора', img:'img/ui/st_pet_pick.webp', lv:pickLv, max:10, step:4, cost:getUpgradeCrystalCost(pickLv)}
+    {key:'dmg', n:'Pet damage', ru:'Урон питомца', img:'img/ui/st_pet_dmg.webp', lv:dmgLv, max:10, step:3, cost:getUpgradeCrystalCost(dmgLv)},
+    {key:'cool',n:'Attack speed', ru:'Скорость атаки', img:'img/ui/st_pet_cool.webp', lv:coolLv, max:10, step:2, cost:getUpgradeCrystalCost(coolLv)},
+    {key:'pick',n:'Pickup radius', ru:'Радиус сбора', img:'img/ui/st_pet_pick.webp', lv:pickLv, max:10, step:2, cost:getUpgradeCrystalCost(pickLv)}
   ];
 }
 function renderPetUpgrades(){
@@ -7807,13 +7819,13 @@ function getItemUpgradeDefs(id){
     const curDmgLv=up.dmg||0;
     const curRateLv=up.rate||0;
     const curRangeLv=up.range||0;
-    const curDmgVal = '+' + (curDmgLv * 3.5).toFixed(1) + '%';
-    const nextDmgVal = '+' + ((curDmgLv + 1) * 3.5).toFixed(1) + '%';
-    const curRateVal = '+' + (curRateLv * 2.5).toFixed(1) + '%';
-    const nextRateVal = '+' + ((curRateLv + 1) * 2.5).toFixed(1) + '%';
+    const curDmgVal = '+' + (curDmgLv * 2.0).toFixed(1) + '%';
+    const nextDmgVal = '+' + ((curDmgLv + 1) * 2.0).toFixed(1) + '%';
+    const curRateVal = '+' + (curRateLv * 1.5).toFixed(1) + '%';
+    const nextRateVal = '+' + ((curRateLv + 1) * 1.5).toFixed(1) + '%';
     const baseRange=parseInt(it.range)||CONFIG.weapon.range;
-    const curRange=baseRange+curRangeLv*15;
-    const nextRange=baseRange+(curRangeLv+1)*15;
+    const curRange=baseRange+curRangeLv*8;
+    const nextRange=baseRange+(curRangeLv+1)*8;
     const rangeIco=`<span class="craft-stat-svg-ico" style="color:#38bdf8"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="12" r="2.8" fill="currentColor"/><path stroke="currentColor" stroke-width="2.2" stroke-linecap="round" d="M12 2v4m0 12v4M2 12h4m12 0h4"/></svg></span>`;
     return [
       {key:'dmg',name:'Урон',nameEn:'Damage',ico:`<img src="img/ui/st_dmg.webp" class="craft-stat-img-ico" alt="Урон">`,curLv:curDmgLv,maxLv:10,curVal:curDmgVal,nextVal:nextDmgVal,cost:getUpgradeCrystalCost(curDmgLv)},
@@ -7823,11 +7835,11 @@ function getItemUpgradeDefs(id){
   }else if(it.s==='shield'){
     const curShieldLv=up.shield||0,curRegenLv=up.shieldRegen||0,curArmorLv=up.armor||up.hp||0;
     const baseShield=it.shield||50;
-    const shieldPerLv=Math.max(4,Math.round(baseShield*0.05));
+    const shieldPerLv=Math.max(2,Math.round(baseShield*0.03));
     const curShieldVal=baseShield+curShieldLv*shieldPerLv;
     const nextShieldVal=baseShield+(curShieldLv+1)*shieldPerLv;
     const baseRegen=it.shieldRegen||1;
-    const regenPerLv=0.2;
+    const regenPerLv=0.1;
     const curRegenVal=(baseRegen+curRegenLv*regenPerLv).toFixed(1);
     const nextRegenVal=(baseRegen+(curRegenLv+1)*regenPerLv).toFixed(1);
     const sIcoHtml=`<span class="inv-cat-ico craft-stat-svg-ico" style="color:#38bdf8">${EMPTY_SLOT_ICONS.shield}</span>`;
@@ -7836,16 +7848,16 @@ function getItemUpgradeDefs(id){
     return [
       {key:'shield',name:'Прочность щита',nameEn:'Shield durability',ico:sIcoHtml,curLv:curShieldLv,maxLv:10,curVal:curShieldVal+' ед.',nextVal:nextShieldVal+' ед.',cost:getUpgradeCrystalCost(curShieldLv)},
       {key:'shieldRegen',name:'Скорость зарядки',nameEn:'Recharge speed',ico:regenIco,curLv:curRegenLv,maxLv:10,curVal:curRegenVal+' /сек',nextVal:nextRegenVal+' /сек',cost:getUpgradeCrystalCost(curRegenLv)},
-      {key:'armor',name:'Поглощение урона',nameEn:'Damage reduction',ico:armorIco,curLv:curArmorLv,maxLv:10,curVal:'+'+(curArmorLv*1.0).toFixed(1)+'%',nextVal:'+'+((curArmorLv+1)*1.0).toFixed(1)+'%',cost:getUpgradeCrystalCost(curArmorLv)}
+      {key:'armor',name:'Поглощение урона',nameEn:'Damage reduction',ico:armorIco,curLv:curArmorLv,maxLv:10,curVal:'+'+(curArmorLv*0.6).toFixed(1)+'%',nextVal:'+'+((curArmorLv+1)*0.6).toFixed(1)+'%',cost:getUpgradeCrystalCost(curArmorLv)}
     ];
   }else{
     // Прокачка питомцев доступна в разделе СТАТЫ — здесь оружие/щиты/артефакты
     const curDmgLv=up.dmg||0,curSpdLv=up.spd||0,curPickLv=up.pick||0;
     const artIco=`<span class="inv-cat-ico craft-stat-svg-ico" style="color:#c084fc">${EMPTY_SLOT_ICONS.art1}</span>`;
     return [
-      {key:'dmg',name:'Сила артефакта',nameEn:'Artifact power',ico:artIco,curLv:curDmgLv,maxLv:10,curVal:'+'+(curDmgLv*2.5).toFixed(1)+'%',nextVal:'+'+((curDmgLv+1)*2.5).toFixed(1)+'%',cost:getUpgradeCrystalCost(curDmgLv)},
-      {key:'spd',name:'Скорость',nameEn:'Speed',ico:`<img src="img/ui/st_spd.webp" class="craft-stat-img-ico" alt="Скорость">`,curLv:curSpdLv,maxLv:10,curVal:'+'+(curSpdLv*1.0).toFixed(1)+'%',nextVal:'+'+((curSpdLv+1)*1.0).toFixed(1)+'%',cost:getUpgradeCrystalCost(curSpdLv)},
-      {key:'pick',name:'Магнетизм',nameEn:'Magnetism',ico:`<img src="img/ui/st_pick.webp" class="craft-stat-img-ico" alt="Магнетизм">`,curLv:curPickLv,maxLv:10,curVal:'+'+(curPickLv*4)+'%',nextVal:'+'+((curPickLv+1)*4)+'%',cost:getUpgradeCrystalCost(curPickLv)}
+      {key:'dmg',name:'Сила артефакта',nameEn:'Artifact power',ico:artIco,curLv:curDmgLv,maxLv:10,curVal:'+'+(curDmgLv*1.2).toFixed(1)+'%',nextVal:'+'+((curDmgLv+1)*1.2).toFixed(1)+'%',cost:getUpgradeCrystalCost(curDmgLv)},
+      {key:'spd',name:'Скорость',nameEn:'Speed',ico:`<img src="img/ui/st_spd.webp" class="craft-stat-img-ico" alt="Скорость">`,curLv:curSpdLv,maxLv:10,curVal:'+'+(curSpdLv*0.5).toFixed(1)+'%',nextVal:'+'+((curSpdLv+1)*0.5).toFixed(1)+'%',cost:getUpgradeCrystalCost(curSpdLv)},
+      {key:'pick',name:'Магнетизм',nameEn:'Magnetism',ico:`<img src="img/ui/st_pick.webp" class="craft-stat-img-ico" alt="Магнетизм">`,curLv:curPickLv,maxLv:10,curVal:'+'+(curPickLv*2)+'%',nextVal:'+'+((curPickLv+1)*2)+'%',cost:getUpgradeCrystalCost(curPickLv)}
     ];
   }
 }
@@ -7930,7 +7942,7 @@ function renderCraft(){
   `;
 
   if(craftViewMode === 'catalog'){
-    h += `<div class="section-tag" style="margin:4px 0 8px;">${sectionTitle} · ${T('CATALOG','КАТАЛОГ')} (${invList.length})</div>`;
+    h += `<div class="section-tag" style="margin:4px 2px 8px;font-size:11.5px;">${sectionTitle} · ${T('CATALOG','КАТАЛОГ')} (${invList.length})</div>`;
     h += `<div class="craft-grid">`;
     invList.forEach(id=>{
       const it=ITEMS[id],rc=RAR[it.r];
@@ -8475,7 +8487,7 @@ function openCrate(c, idx){
     t: 0
   });
   // 3. Пару фиолетовых кристаллов
-  dropPurpleCrystals(c.x, c.y, 3, 1);
+  dropPurpleCrystals(c.x, c.y, 2, 1);
 
   if(idx !== undefined && G.crates[idx] === c){
     G.crates.splice(idx, 1);
@@ -8592,7 +8604,7 @@ function openAirdrop(a, idx){
   // 1. Гарантированные ресурсы: монеты и кристаллы
   const goldMult = G.lvlConfig?.multGold || 1;
   dropCoins(a.x, a.y, 6 + Math.floor(Math.random() * 6), Math.max(1, Math.round(2 * goldMult)));
-  dropPurpleCrystals(a.x, a.y, 6 + Math.floor(Math.random() * 5), 1);
+  dropPurpleCrystals(a.x, a.y, 2 + Math.floor(Math.random() * 3), 1);
 
   // 2. Полевая аптечка: восстанавливает 40 HP или щит
   if(G.p){
@@ -8642,7 +8654,7 @@ function openAirdrop(a, idx){
     showGameToast('📦 '+T('AIRDROP: Gear capsule dropped!','АИРДРОП: Сброшена капсула со снаряжением!'), gRc ? gRc.col : '#f59e0b', 3.2);
   } else {
     dropCoins(a.x, a.y, 14, Math.max(1, Math.round(3 * goldMult)));
-    dropPurpleCrystals(a.x, a.y, 10, 1);
+    dropPurpleCrystals(a.x, a.y, 5, 1);
     G.fx.push({
       type: 'popup_text',
       txt: T('JACKPOT! 💰', 'ДЖЕКПОТ! 💰'),
@@ -9567,7 +9579,7 @@ function hurt(e,d){
         G.fx.push({x:e.x,y:e.y,vx:(Math.random()-.5)*260,vy:(Math.random()-.5)*260,col:Math.random()>.3?'#a855f7':'#ef4444',l:.7});
       }
       if(e.bossId === 'abomination'){
-        dropPurpleCrystals(e.x, e.y, 25, 2);
+        dropPurpleCrystals(e.x, e.y, 16, 1);
         dropCoins(e.x, e.y, 45, Math.max(1, Math.round(3 * (G.lvlConfig?.multGold || 1))));
         // Особый массивный кристалл опыта босса (Tier 5)
         G.gems.push({ x: e.x, y: e.y, v: 300, type: 'xp', isBoss: true, bossLevels: 3, mag: false });
@@ -9585,7 +9597,7 @@ function hurt(e,d){
           G.waveProgressT = maxW * (CONFIG.waves.waveDuration || 15);
         }
       } else if(e.bossId === 'rat_king'){
-        dropPurpleCrystals(e.x, e.y, 20, 1);
+        dropPurpleCrystals(e.x, e.y, 10, 1);
         dropCoins(e.x, e.y, 35, Math.max(1, Math.round(2 * (G.lvlConfig?.multGold || 1))));
         // Особый массивный кристалл опыта босса (Tier 5)
         G.gems.push({ x: e.x, y: e.y, v: 300, type: 'xp', isBoss: true, bossLevels: 3, mag: false });
@@ -9599,7 +9611,7 @@ function hurt(e,d){
         }
         showGameToast('👑 '+T('RAT KING DETHRONED! Weapon Dropped! +3 LEVEL-UPS!','КОРОЛЬ КРЫС ПОВЕРЖЕН! Выпало оружие! +3 УРОВНЯ!'),'#ef4444',4.0);
       } else if(e.bossId === 'gravedigger'){
-        dropPurpleCrystals(e.x, e.y, 16, 1);
+        dropPurpleCrystals(e.x, e.y, 8, 1);
         dropCoins(e.x, e.y, 25, Math.max(1, Math.round(2 * (G.lvlConfig?.multGold || 1))));
         // Особый массивный кристалл опыта босса (Tier 5)
         G.gems.push({ x: e.x, y: e.y, v: 300, type: 'xp', isBoss: true, bossLevels: 3, mag: false });
@@ -9609,7 +9621,7 @@ function hurt(e,d){
         spawnLootDrop(rollWeaponId(gdTier), e.x, e.y);
         showGameToast('💀 '+T('ZOMBIE BOSS DEFEATED! Weapon Dropped! +3 LEVEL-UPS!','ЗОМБИ-БОСС УНИЧТОЖЕН! Выпало оружие! +3 УРОВНЯ!'),'#ef4444',4.0);
       } else if(e.bossId === 'broodmother'){
-        dropPurpleCrystals(e.x, e.y, 18, 1);
+        dropPurpleCrystals(e.x, e.y, 10, 1);
         dropCoins(e.x, e.y, 30, Math.max(1, Math.round(2 * (G.lvlConfig?.multGold || 1))));
         G.gems.push({ x: e.x, y: e.y, v: 300, type: 'xp', isBoss: true, bossLevels: 3, mag: false });
         const bmRoll = Math.random();
@@ -9620,7 +9632,7 @@ function hurt(e,d){
         }
         showGameToast('🕷️ '+T('BROODMOTHER SLAIN! Weapon Dropped! +3 LEVEL-UPS!','ПАУЧИХА-ПРАМАТЕРЬ УНИЧТОЖЕНА! Выпало оружие! +3 УРОВНЯ!'),'#ef4444',4.0);
       } else if(e.bossId === 'treant'){
-        dropPurpleCrystals(e.x, e.y, 22, 1);
+        dropPurpleCrystals(e.x, e.y, 12, 1);
         dropCoins(e.x, e.y, 35, Math.max(1, Math.round(2 * (G.lvlConfig?.multGold || 1))));
         G.gems.push({ x: e.x, y: e.y, v: 300, type: 'xp', isBoss: true, bossLevels: 3, mag: false });
         const trRoll = Math.random();
@@ -9631,7 +9643,7 @@ function hurt(e,d){
         }
         showGameToast('🌲 '+T('MUTANT TREANT FELLED! Weapon Dropped! +3 LEVEL-UPS!','ДРЕВЕНЬ-МУТАНТ ПОВЕРЖЕН! Выпало оружие! +3 УРОВНЯ!'),'#ef4444',4.0);
       } else if(e.bossId === 'toxic_slime'){
-        dropPurpleCrystals(e.x, e.y, 24, 1);
+        dropPurpleCrystals(e.x, e.y, 12, 1);
         dropCoins(e.x, e.y, 40, Math.max(1, Math.round(2.5 * (G.lvlConfig?.multGold || 1))));
         G.gems.push({ x: e.x, y: e.y, v: 300, type: 'xp', isBoss: true, bossLevels: 3, mag: false });
         const slRoll = Math.random();
@@ -9642,7 +9654,7 @@ function hurt(e,d){
         }
         showGameToast('🧪 '+T('TOXIC SLIME DISSOLVED! Weapon Dropped! +3 LEVEL-UPS!','ТОКСИЧНЫЙ СЛИЗЕНЬ РАСТВОРЕН! Выпало оружие! +3 УРОВНЯ!'),'#ef4444',4.0);
       } else {
-        dropPurpleCrystals(e.x, e.y, 12, 1);
+        dropPurpleCrystals(e.x, e.y, 8, 1);
         dropCoins(e.x, e.y, 18, Math.max(1, Math.round(2 * (G.lvlConfig?.multGold || 1))));
         // Особый массивный кристалл опыта босса (Tier 5)
         G.gems.push({ x: e.x, y: e.y, v: 300, type: 'xp', isBoss: true, bossLevels: 3, mag: false });
@@ -9662,7 +9674,7 @@ function hurt(e,d){
       for(let k=0;k<22;k++){
         G.fx.push({x:e.x,y:e.y,vx:(Math.random()-.5)*180,vy:(Math.random()-.5)*180,col:'#fb923c',l:.5});
       }
-      dropPurpleCrystals(e.x, e.y, 6, 1);
+      dropPurpleCrystals(e.x, e.y, 3, 1);
       dropMonsterRewards(e);
       // Кристалл опыта мини-босса (Tier 4/5)
       G.gems.push({ x: e.x, y: e.y, v: Math.round(40 * (G.lvlConfig?.multXp || 1)), type: 'xp', isBoss: false, mag: false });
@@ -10835,7 +10847,8 @@ function die(isVictory){
   save.totalKills=(save.totalKills||0)+G.kills;
   if(G.t>(save.bestTime||0))save.bestTime=Math.floor(G.t);
 
-  const earnedCrystals=Math.round((G.crystalsCollected||0)*(G.lvlConfig.multXp||1));
+  const curMultCrystals = G.lvlConfig?.multCrystals || 1.0;
+  const earnedCrystals = Math.round((G.crystalsCollected || 0) * curMultCrystals);
   save.gems=(save.gems||0)+earnedCrystals;
   save.totalGemsEarned=(save.totalGemsEarned||0)+earnedCrystals;
 
