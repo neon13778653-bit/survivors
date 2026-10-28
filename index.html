@@ -4209,10 +4209,10 @@ const FIREARM_ABILITIES = [
     reqStars: 4,
     max: 5,
     desc: 'Пули бьют цепным током по соседним мутантам (65% урона).',
-    getDesc: lv => 'Пули поражают цепным током +' + lv + ' соседних целей и бьют разрядом до ' + (CHAIN_TARGETS[Math.min(5, lv)] || 7) + ' врагов.',
+    getDesc: lv => 'Пули поражают цепным электро-разрядом +' + (1 + Math.floor(lv / 2)) + ' соседних целей (' + (20 + lv * 12) + '% урона), общий урон оружия +' + (lv * 8) + '%.',
     apply: p => {
       p.shock_rounds = (p.shock_rounds || 0) + 1;
-      p.chain = Math.min(5, (p.chain || 0) + 1);
+      p.dmg *= abStepMult(p, 'shock_rounds', lv => 8);
     }
   },
 
@@ -4999,7 +4999,6 @@ const WEAPON_ABILITIES = {
       getDesc: lv => 'Цепной разряд от пули по +' + (1 + lv) + ' врагам, урон Гаусса +' + (10 + lv * 6) + '%.',
       apply: p => {
         p.shock_rounds = (p.shock_rounds || 0) + 1;
-        p.chain = Math.min(5, (p.chain || 0) + 1);
         p.dmg *= abStepMult(p, 'wep_phantom_superconductor', lv => 10 + lv * 6);
       }
     },
@@ -5542,7 +5541,7 @@ function getHeroArmsImage(wepId, charId){
   if(!wepId || wepId === 'empty' || wepId === 'none') {
     return table.empty;
   }
-  const armAlias={w_rebel:'w_shotgun',w_python:'w_pistol',w_vector:'w_smg',w_jericho:'w_pistol',w_marauder:'w_smg',w_vepr_auto:'w_shotgun',w_nova:'w_plasma',w_aa12:'w_shotgun',w_phantom:'w_laser',m_rune:'w_plasma',m_bone:'w_plasma',m_frost:'w_plasma',m_storm:'w_laser',m_hellfire:'w_plasma',m_scepter:'w_laser',m_heaven:'w_laser',m_void:'empty',m_astral:'w_laser'};
+  const armAlias={w_rebel:'w_shotgun',w_python:'w_pistol',w_vector:'w_smg',w_jericho:'w_pistol',w_marauder:'w_smg',w_vepr_auto:'w_shotgun',w_nova:'w_plasma',w_aa12:'w_shotgun',w_phantom:'w_laser',m_rune:'empty',m_bone:'empty',m_frost:'empty',m_storm:'empty',m_hellfire:'empty',m_scepter:'empty',m_heaven:'empty',m_void:'empty',m_astral:'empty',m_grimoire:'empty'};
   return table[wepId] || table[armAlias[wepId]] || table.w_pistol;
 }
 
@@ -7249,11 +7248,16 @@ function ensureInv(){
     save.inv=save.inv.filter(id=>!id.startsWith('ab_'));
     save.inv=[...new Set(save.inv)];
   }
-  for(const k of ['shield','pet','art1','art2','art3']){
-    if(save.equip[k]&&(!ITEMS[save.equip[k]]||!save.inv.includes(save.equip[k])))save.equip[k]=null;
-  }
-  if(!save.equip.weapon||!ITEMS[save.equip.weapon]||!save.inv.includes(save.equip.weapon)){
+  if(!save.equip.weapon||!ITEMS[save.equip.weapon]||ITEMS[save.equip.weapon].s!=='weapon'||!save.inv.includes(save.equip.weapon)){
     save.equip.weapon='w_pistol';
+  }
+  for(const k of ['shield','pet','art1','art2','art3']){
+    if(save.equip[k]){
+      const expectedSlot = k.startsWith('art') ? 'artifact' : k;
+      if(!ITEMS[save.equip[k]]||ITEMS[save.equip[k]].s!==expectedSlot||!save.inv.includes(save.equip[k])){
+        save.equip[k]=null;
+      }
+    }
   }
 }
 ensureInv();
@@ -7619,13 +7623,21 @@ document.getElementById('inv-equip-root').onclick=e=>{
   }else if(b&&b.dataset.act==='eq'){
     const id=invSel.inspectId,it=ITEMS[id];
     if(!it)return;
-    const sl=invSel.slot||'weapon';
-    if(it.s==='artifact'){
+    let targetSlot = null;
+    if(it.s === 'artifact'){
+      targetSlot = (invSel.slot && ['art1','art2','art3'].includes(invSel.slot)) ? invSel.slot : (!save.equip.art1 ? 'art1' : (!save.equip.art2 ? 'art2' : 'art3'));
       if(save.equip.art1===id)save.equip.art1=null;
       if(save.equip.art2===id)save.equip.art2=null;
       if(save.equip.art3===id)save.equip.art3=null;
+    }else if(it.s === 'shield'){
+      targetSlot = 'shield';
+    }else if(it.s === 'pet'){
+      targetSlot = 'pet';
+    }else if(it.s === 'weapon'){
+      targetSlot = 'weapon';
     }
-    save.equip[sl]=id;
+    if(!targetSlot) return;
+    save.equip[targetSlot]=id;
     invSel.inspectId=null;
     invSel.inspectSlot=null;
     persist();
@@ -7644,17 +7656,25 @@ document.getElementById('inv-equip-root').ondblclick=e=>{
   if(!b)return;
   const id=b.dataset.item,it=ITEMS[id];
   if(!it)return;
-  const sl=invSel.slot||'weapon';
-  if(save.equip[sl]===id){
-    save.equip[sl]=null;
+  let targetSlot = null;
+  if(it.s === 'artifact'){
+    targetSlot = (invSel.slot && ['art1','art2','art3'].includes(invSel.slot)) ? invSel.slot : (!save.equip.art1 ? 'art1' : (!save.equip.art2 ? 'art2' : 'art3'));
+    if(save.equip.art1===id)save.equip.art1=null;
+    if(save.equip.art2===id)save.equip.art2=null;
+    if(save.equip.art3===id)save.equip.art3=null;
+  }else if(it.s === 'shield'){
+    targetSlot = 'shield';
+  }else if(it.s === 'pet'){
+    targetSlot = 'pet';
+  }else if(it.s === 'weapon'){
+    targetSlot = 'weapon';
+  }
+  if(!targetSlot) return;
+  if(save.equip[targetSlot]===id){
+    save.equip[targetSlot]=null;
     Sfx.play('click');
   }else{
-    if(it.s==='artifact'){
-      if(save.equip.art1===id)save.equip.art1=null;
-      if(save.equip.art2===id)save.equip.art2=null;
-      if(save.equip.art3===id)save.equip.art3=null;
-    }
-    save.equip[sl]=id;
+    save.equip[targetSlot]=id;
     Sfx.play('levelup');
   }
   invSel.inspectId=null;
@@ -10702,7 +10722,7 @@ function getAbilityIcon(id, isEvolved){
     ? (ABILITY_ICON_FILES[evoId] || ABILITY_ICON_FILES[id] || ABILITY_ICON_FILES[baseId])
     : (ABILITY_ICON_FILES[id] || ABILITY_ICON_FILES[baseId]);
   const vectorSvg = ABILITY_VECTOR_SVGS[id] || ABILITY_VECTOR_SVGS[baseId];
-  const curWepId = (save && save.equip && save.equip.weapon) || 'w_pistol';
+  const curWepId = (G && G.weaponId) || (save && save.equip && save.equip.weapon) || 'w_pistol';
   const allAbils = (WEAPON_ABILITIES[curWepId] || []).concat(ABILITIES).concat(EVOLUTIONS);
   const ab = allAbils.find(a => a.id === baseId || a.id === id);
   const boxType = (ab && ab.cat === 'magic') ? 'magic-box' : ((ab && ab.cat === 'defense') ? 'defense-box' : 'firearm-box');
@@ -10741,11 +10761,14 @@ function triggerLevelUp(){
 
   // 1. Уровень звёзд экипированного оружия игрока и тип (огнестрел или магия)
   const curWeaponStars = G.weaponStars || 1;
-  const curWepId = (save && save.equip && save.equip.weapon) || 'w_pistol';
+  const curWepId = (G && G.weaponId) || (save && save.equip && save.equip.weapon) || 'w_pistol';
   const equipWep = ITEMS[curWepId] || ITEMS.w_pistol;
   const isMagicWep = equipWep.kind === 'magic' || curWepId.startsWith('m_');
   const basePool = isMagicWep ? MAGIC_ABILITIES : FIREARM_ABILITIES;
-  const wepSpecificPool = (WEAPON_ABILITIES[curWepId] || []).concat(basePool);
+  const wepAbils = (WEAPON_ABILITIES[curWepId] || []).filter(a => {
+    return isMagicWep ? (a.cat === 'magic' || a.cat === 'defense') : (a.cat === 'weapon' || a.cat === 'defense');
+  });
+  const wepSpecificPool = wepAbils.concat(basePool);
 
   // 2. Ограничение активных модификаторов: максимум 4 модификатора оружия и 3 навыка выживания!
   // Это исключает нагромождение 10+ модификаторов на одном стволе, оптимизирует эффекты и балансирует билд.
@@ -10764,6 +10787,12 @@ function triggerLevelUp(){
 
   // Стандартные способности до 5 звёзд, доступные для текущего ранга оружия и с учетом свободных слотов
   const regPool = wepSpecificPool.filter(a=>{
+    // Строгий карантин: исключаем любые магические способности при огнестреле, и наоборот
+    if(isMagicWep && a.cat === 'weapon') return false;
+    if(!isMagicWep && a.cat === 'magic') return false;
+    if(!isMagicWep && (a.id.startsWith('m_') || a.id.startsWith('magic_') || a.id.startsWith('arcane_') || a.id.startsWith('astral_'))) return false;
+    if(isMagicWep && (a.id.startsWith('w_') || a.id.startsWith('tac_') || a.id.startsWith('fmj_') || a.id.startsWith('stopping_'))) return false;
+
     const curLv = G.p.got[a.id||a.name] || 0;
     const req = a.reqStars || 1;
     if(curLv >= (a.max || 5)) return false;
@@ -10780,6 +10809,8 @@ function triggerLevelUp(){
   // 3. Доступные эволюции для текущего класса оружия
   const curEvoList = isMagicWep ? MAGIC_EVOLUTIONS : FIREARM_EVOLUTIONS;
   const evoPool = curEvoList.filter(evo=>{
+    if(!isMagicWep && (evo.id.includes('magic') || evo.id.includes('arcane') || evo.id.includes('mana') || evo.id.includes('frost') || evo.id.includes('meteor') || evo.id.includes('thunder'))) return false;
+    if(isMagicWep && (evo.id.includes('leadstorm') || evo.id.includes('sniper') || evo.id.includes('explosive') || evo.id.includes('extra_projectile'))) return false;
     const baseLv = G.p.got[evo.baseId] || 0;
     const isAlreadyEvolved = G.p.evolved && (G.p.evolved[evo.id] || G.p.evolved[evo.baseId]);
     return baseLv >= 5 && !isAlreadyEvolved;
@@ -10800,8 +10831,8 @@ function triggerLevelUp(){
     ch.push(pool.splice(idx, 1)[0]);
   }
 
-  // Если все выбранные слоты прокачаны до максимума — предлагаем боевые трофеи и исцеление
-  if(ch.length === 0){
+  // Если доступных карт меньше 3 (или все слоты прокачаны) — предлагаем боевые трофеи и исцеление
+  if(ch.length < 3){
     const bonusCards = [
       {
         id: 'bonus_gold',
@@ -10836,7 +10867,7 @@ function triggerLevelUp(){
         id: 'bonus_stim',
         name: 'Адреналиновый укол',
         nameEn: 'Adrenaline Shot',
-        cat: 'weapon',
+        cat: isMagicWep ? 'magic' : 'weapon',
         max: 99,
         isBonus: true,
         desc: 'Увеличивает весь наносимый урон героя на +4%.',
@@ -10847,11 +10878,17 @@ function triggerLevelUp(){
         }
       }
     ];
-    for(const b of bonusCards) ch.push(b);
+    for(const b of bonusCards){
+      if(ch.length >= 3) break;
+      if(!ch.some(c => c.id === b.id)) ch.push(b);
+    }
   }
 
-  const curWep = ITEMS[save.equip?.weapon] || ITEMS.w_pistol;
+  const curWep = ITEMS[curWepId] || ITEMS.w_pistol;
   const wepStarsStr = '★'.repeat(curWeaponStars);
+  const wepTypeBadge = isMagicWep
+    ? `<span style="background:rgba(168,85,247,0.25);color:#c084fc;border:1px solid rgba(168,85,247,0.4);border-radius:4px;padding:1px 5px;font-size:10px;font-weight:800;letter-spacing:0.5px;margin-left:6px">${T('MAGIC','МАГИЯ')}</span>`
+    : `<span style="background:rgba(234,179,8,0.22);color:#fde047;border:1px solid rgba(234,179,8,0.4);border-radius:4px;padding:1px 5px;font-size:10px;font-weight:800;letter-spacing:0.5px;margin-left:6px">${T('FIREARMS','ОГНЕСТРЕЛ')}</span>`;
 
   // Если способности на переработке и пул пока пуст:
   if(ch.length === 0){
@@ -10877,6 +10914,7 @@ function triggerLevelUp(){
           <div class="lu-subline">
             ${T('WEAPON: ','ОРУЖИЕ: ')}<span style="color:#facc15;font-weight:700">${T(EN[curWep.n]||curWep.n,curWep.n)}</span>
             <span style="color:#facc15;letter-spacing:1px;margin-left:3px">${wepStarsStr}</span>
+            ${wepTypeBadge}
           </div>
         </div>
       </div>
@@ -10963,6 +11001,7 @@ openModal('modal-levelup');
         <div class="lu-subline">
           ${T('WEAPON: ','ОРУЖИЕ: ')}<span style="color:#facc15;font-weight:700">${T(EN[curWep.n]||curWep.n,curWep.n)}</span>
           <span style="color:#facc15;letter-spacing:1px;margin-left:3px">${wepStarsStr}</span>
+          ${wepTypeBadge}
           <span style="color:#94a3b8;font-size:10px;margin-left:5px">• ${T('TIER ' + curWeaponStars + ' SKILLS','НАВЫКИ ДО ' + curWeaponStars + '★')}</span>
         </div>
       </div>
