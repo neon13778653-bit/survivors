@@ -12839,13 +12839,12 @@ function update(dt){
         // Высочайший приоритет прыжка: если готов jumpCd, паучиха моментально прыгает на цель!
         if(e.jumpCd <= 0){
           e.action = 'jump_crouch';
-          e.actionT = e.enraged ? 0.25 : 0.35;
+          e.actionT = e.enraged ? 0.35 : 0.45;
           e.jumpPrepT = e.actionT;
           e.jumpStartX = e.x;
           e.jumpStartY = e.y;
-          const [mvx, mvy] = (typeof moveVec === 'function') ? moveVec() : [0, 0];
-          const leadDist = (mvx !== 0 || mvy !== 0) ? Math.min(65, (p.speed || 150) * 0.28) : 0;
-          const targetObj = { x: p.x + mvx * leadDist, y: p.y + mvy * leadDist };
+          // Точка приземления фиксируется один раз в начале прыжка, чтобы игрок мог среагировать и выбежать из круга
+          const targetObj = { x: p.x, y: p.y };
           keepInsideBossArena(targetObj, g.bossArena, 50);
           e.jumpTargetX = targetObj.x;
           e.jumpTargetY = targetObj.y;
@@ -13016,13 +13015,7 @@ function update(dt){
         continue;
       }else if(e.action === 'jump_crouch'){
         e.actionT -= dt;
-        // Во время приседания продолжаем динамически отслеживать движение игрока с упреждением
-        const [mvx, mvy] = (typeof moveVec === 'function') ? moveVec() : [0, 0];
-        const leadDist = (mvx !== 0 || mvy !== 0) ? Math.min(65, (p.speed || 150) * 0.28) : 0;
-        const targetObj = { x: p.x + mvx * leadDist, y: p.y + mvy * leadDist };
-        keepInsideBossArena(targetObj, g.bossArena, 50);
-        e.jumpTargetX = targetObj.x;
-        e.jumpTargetY = targetObj.y;
+        // Точка приземления зафиксирована на земле, НЕ следует за игроком
         e.facing = (e.jumpTargetX - e.x) >= 0 ? 1 : -1;
         // Дрожь земли и искры паучьей энергии при подготовке прыжка
         if(Math.random() < 0.45){
@@ -13777,9 +13770,7 @@ function update(dt){
       }
       if(e.action === 'slam_prep'){
         e.actionT -= dt;
-        // Наведение на игрока во время подготовки к прыжку
-        e.jumpTargetX = p.x + (p.vx || 0) * 0.25;
-        e.jumpTargetY = p.y + (p.vy || 0) * 0.25;
+        // Точка приземления зафиксирована на земле, НЕ следует за игроком
         if(e.actionT <= 0){
           e.action = 'slam_air';
           e.actionT = 0.42;
