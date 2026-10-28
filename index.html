@@ -13113,15 +13113,12 @@ function update(dt){
             });
           }
 
-          // AoE урон и отбрасывание игрока в зоне приземления (радиус 105px)
+          // AoE урон в зоне приземления (радиус 105px)
           const distP = Math.hypot(p.x - e.x, p.y - (e.y + 12));
           const impactR = 105;
           if(distP < impactR && p.inv <= 0){
             const dmg = Math.max(1, Math.round(e.c.damage * 1.35 * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
             damagePlayer(dmg);
-            const kbAng = Math.atan2(p.y - e.y, p.x - e.x);
-            p.x += Math.cos(kbAng) * 50;
-            p.y += Math.sin(kbAng) * 50;
             showGameToast('💥 ' + T('CRUSHED BY BROODMOTHER! -' + dmg + ' HP', 'РАЗДАВЛЕН ПАУЧИХОЙ! -' + dmg + ' HP'), '#ef4444', 2.0);
           }
 
@@ -13383,8 +13380,6 @@ function update(dt){
         if(d < touchDist && p.inv <= 0){
           const dmg = Math.max(1, Math.round(e.c.damage * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
           damagePlayer(dmg);
-          p.x += (dx / d) * 36;
-          p.y += (dy / d) * 36;
           p.poisonT = Math.max(p.poisonT || 0, 2.0);
           p.poisonDps = Math.max(p.poisonDps || 0, 2.5);
           p.poisonSlow = Math.min(p.poisonSlow || 1, 0.85);
@@ -13442,8 +13437,6 @@ function update(dt){
         if(distHero < (e.c.r || 46) + p.r && p.inv <= 0){
           const dmg = Math.max(1, Math.round(e.c.damage * 1.20 * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
           damagePlayer(dmg);
-          p.x += Math.cos(e.chargeAng) * 60;
-          p.y += Math.sin(e.chargeAng) * 60;
           p.poisonT = Math.max(p.poisonT || 0, 2.0);
           p.poisonDps = Math.max(p.poisonDps || 0, 2.5);
           showGameToast('💥 ' + T('TRAMPLED BY TREANT! -' + dmg + ' HP', 'РАСТОПТАН ДРЕВНЕМ! -' + dmg + ' HP'), '#22c55e', 2.0);
@@ -13570,9 +13563,6 @@ function update(dt){
           if(distEpicenter < 95 && p.inv <= 0){
             const dmg = Math.max(1, Math.round(e.c.damage * 1.25 * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
             damagePlayer(dmg);
-            const pushAng = Math.atan2(p.y - slamY, p.x - e.x);
-            p.x += Math.cos(pushAng) * 55;
-            p.y += Math.sin(pushAng) * 55;
             showGameToast('💥 ' + T('SEISMIC SLAM IMPACT! -' + dmg + ' HP', 'СЕЙСМИЧЕСКИЙ УДАР ДРЕВНЯ! -' + dmg + ' HP'), '#22c55e', 2.0);
           }
           // 8 (10 в ярости) радиальных сейсмических волн (снижена скорость волн с 260 до 175)
@@ -14376,9 +14366,6 @@ function update(dt){
             });
           }
         } else if(sw.type === 'treant_seismic'){
-          const pushA = Math.atan2(p.y - sw.y, p.x - sw.x);
-          p.x += Math.cos(pushA) * 38;
-          p.y += Math.sin(pushA) * 38;
           for(let k = 0; k < 8; k++){
             g.fx.push({
               x: p.x, y: p.y,
@@ -14419,9 +14406,6 @@ function update(dt){
         }
         const dmg=Math.max(1,Math.round(sw.dmg*(p.armor?Math.max(0.2,1-p.armor):1)));
         damagePlayer(dmg);
-        const pushA=Math.atan2(p.y-sw.y,p.x-sw.x);
-        p.x+=Math.cos(pushA)*26;
-        p.y+=Math.sin(pushA)*26;
         g.bossShockwaves.splice(i,1);
         continue;
       }
@@ -21596,30 +21580,6 @@ function drawGame(){
         cx.fillStyle = sGrad;
         cx.beginPath(); cx.roundRect(barX, shieldBarY, Math.max(2, barW * sPct), shieldBarH, 2); cx.fill();
       }
-
-      // Цифровые индикаторы HP и щита над полосками
-      cx.save();
-      cx.font = '700 8.5px Rajdhani,sans-serif';
-      cx.textAlign = 'center';
-      cx.fillStyle = 'rgba(255, 255, 255, 0.92)';
-      cx.strokeStyle = 'rgba(0, 0, 0, 0.85)';
-      cx.lineWidth = 2.2;
-      const statTxt = `${Math.ceil(Math.max(0, p.hp))} HP • 🛡️ ${p.shield > 0 ? Math.ceil(p.shield) : '0'}`;
-      cx.strokeText(statTxt, W/2, shieldBarY - 3.5);
-      cx.fillText(statTxt, W/2, shieldBarY - 3.5);
-      cx.restore();
-    } else {
-      // Только здоровье
-      cx.save();
-      cx.font = '700 8.5px Rajdhani,sans-serif';
-      cx.textAlign = 'center';
-      cx.fillStyle = 'rgba(255, 255, 255, 0.92)';
-      cx.strokeStyle = 'rgba(0, 0, 0, 0.85)';
-      cx.lineWidth = 2.2;
-      const statTxt = `${Math.ceil(Math.max(0, p.hp))} / ${p.maxHp} HP`;
-      cx.strokeText(statTxt, W/2, hpBarY - 3.5);
-      cx.fillText(statTxt, W/2, hpBarY - 3.5);
-      cx.restore();
     }
   }
 
