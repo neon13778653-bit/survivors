@@ -9063,7 +9063,7 @@ function startGame(){
     lvlConfig:curLvl,
     spawnT:0.9,
     spawnFxSpawned:false,
-    airdrops:[],lootDrops:[],crates:[],lastCrateWave:1,pickups:[],toasts:[],sessionLoot:[],
+    airdrops:[],lootDrops:[],crates:[],lastCrateWave:1,lastSurgeWave:0,pickups:[],toasts:[],sessionLoot:[],
     nextAirdropT:30+Math.random()*15,nextBossT:60,bossWave:1,activeBoss:null,
     bossArena:null,bossWarning:null,bossShockwaves:[],bossCraters:[],bossFlash:0,
     meteors:[],vortices:[],fireballs:[],firePatches:[],thunderStrikes:[],orbitalBeams:[],supernovas:[],
@@ -9116,6 +9116,20 @@ function startGame(){
         immortal: true
       });
     });
+  } else if(curLvl){
+    // Стартовый десант: 10 врагов на видимой границе арены для мгновенного экшена
+    const initCount = 10;
+    for(let i = 0; i < initCount; i++){
+      const ang = (i / initCount) * 6.283 + (Math.random() - 0.5) * 0.35;
+      const dist = 320 + Math.random() * 80;
+      let startEnemy = CONFIG.enemies.zombie;
+      if(curLvl.id === 2){
+        startEnemy = (i % 3 === 0) ? CONFIG.enemies.bat : CONFIG.enemies.skeleton;
+      } else {
+        startEnemy = (i % 4 === 0) ? CONFIG.enemies.hound : CONFIG.enemies.zombie;
+      }
+      spawn(startEnemy, ang, dist);
+    }
   }
   save.gamesPlayed=(save.gamesPlayed||0)+1;persist();
   showScreen('game');
@@ -9273,8 +9287,33 @@ document.getElementById('btn-game-pause').onclick=()=>{
   openModal('modal-pause');
 };
 
-function spawn(){
-  if(G.bossArena || G.enemies.some(e => e.isBoss && !e.dead)) return;
+function getEnemySpawnDistance(angle){
+  const halfW = (W || 1280) / 2;
+  const halfH = (H || 720) / 2;
+  const cos = Math.cos(angle), sin = Math.sin(angle);
+  const absCos = Math.abs(cos), absSin = Math.abs(sin);
+  const distW = absCos > 0.0001 ? (halfW / absCos) : 99999;
+  const distH = absSin > 0.0001 ? (halfH / absSin) : 99999;
+  const edgeDist = Math.min(distW, distH);
+  // Спавн в 55-80px за видимой границей экрана (входит в кадр за 1.2-1.5 сек вместо 15-20 сек)
+  return Math.max(300, Math.min(edgeDist + 65 + (Math.random() - 0.5) * 30, 950));
+}
+
+function spawnSquad(count = 3, baseAngle, enemyType){
+  if(!G || G.bossArena || G.enemies.some(e => e.isBoss && !e.dead)) return;
+  const isPolygon = G.lvlConfig && G.lvlConfig.id === 3;
+  if(isPolygon) return;
+  const ang = (baseAngle !== undefined) ? baseAngle : Math.random() * 6.283;
+  for(let i = 0; i < count; i++){
+    if(G.enemies.length >= (CONFIG.waves.maxEnemies || 150)) break;
+    const a = ang + (Math.random() - 0.5) * 0.40;
+    const d = getEnemySpawnDistance(a) + (Math.random() - 0.5) * 30;
+    spawn(enemyType, a, d);
+  }
+}
+
+function spawn(overrideConfig, customAngle, customDist){
+  if(!G || G.bossArena || G.enemies.some(e => e.isBoss && !e.dead)) return;
   if(G.enemies.length>=CONFIG.waves.maxEnemies)return;
   const curWave = G.wave || 1;
   const isPolygon = G.lvlConfig && G.lvlConfig.id === 3;
@@ -9312,118 +9351,131 @@ function spawn(){
     G.enemies.push(enPoly);
     return;
   }
-  const lvlId = (G.lvlConfig && G.lvlConfig.id) || 1;
-  let list = [];
-  if(lvlId === 2){
-    // Подсчет активных дальников и коконов на поле (лимиты против хаотичного спама яда)
-    const activeMushrooms = G.enemies.filter(e => !e.dead && e.c === CONFIG.enemies.mushroom).length;
-    const activeEggs = G.enemies.filter(e => !e.dead && e.c === CONFIG.enemies.spider_egg).length;
-    const activeGargoyles = G.enemies.filter(e => !e.dead && e.c === CONFIG.enemies.gargoyle).length;
+  let c = overrideConfig;
+  if(!c){
+    const lvlId = (G.lvlConfig && G.lvlConfig.id) || 1;
+    let list = [];
+    if(lvlId === 2){
+      // Подсчет активных дальников и коконов на поле (лимиты против хаотичного спама яда)
+      const activeMushrooms = G.enemies.filter(e => !e.dead && e.c === CONFIG.enemies.mushroom).length;
+      const activeEggs = G.enemies.filter(e => !e.dead && e.c === CONFIG.enemies.spider_egg).length;
+      const activeGargoyles = G.enemies.filter(e => !e.dead && e.c === CONFIG.enemies.gargoyle).length;
 
-    // Вторая локация (Кладбище мутантов, 40 волн) — оптимизированные сбалансированные когорты
-    if(curWave < 6){
-      // Волны 1-5: Вход в склеп (Скелеты, Нетопыри)
-      list = [
-        { c: CONFIG.enemies.skeleton, weight: 10 },
-        { c: CONFIG.enemies.bat, weight: 5 }
-      ];
-    } else if(curWave < 10){
-      // Волны 6-9: Паучье логово (Паучата, Скелеты, редкие коконы)
-      list = [
-        { c: CONFIG.enemies.skeleton, weight: 8 },
-        { c: CONFIG.enemies.spiderling, weight: 7 }
-      ];
-      if(activeEggs < 2) list.push({ c: CONFIG.enemies.spider_egg, weight: 3 });
-    } else if(curWave < 15){
-      // Волны 10-14: Глубины склепа (Скелеты, Гули, Нетопыри)
-      list = [
-        { c: CONFIG.enemies.skeleton, weight: 7 },
-        { c: CONFIG.enemies.ghoul, weight: 6 },
-        { c: CONFIG.enemies.bat, weight: 4 }
-      ];
-    } else if(curWave < 20){
-      // Волны 15-19: Грибная чаща (Пауки, Скелеты, Гули, до 2 грибных стрелков)
-      list = [
-        { c: CONFIG.enemies.skeleton, weight: 6 },
-        { c: CONFIG.enemies.spider, weight: 5 },
-        { c: CONFIG.enemies.ghoul, weight: 5 }
-      ];
-      if(activeMushrooms < 3) list.push({ c: CONFIG.enemies.mushroom, weight: 3 });
-      if(activeEggs < 1) list.push({ c: CONFIG.enemies.spider_egg, weight: 2 });
-    } else if(curWave < 26){
-      // Волны 20-25: Каменные шпили (Гули, Слизни, Гаргульи)
-      list = [
-        { c: CONFIG.enemies.ghoul, weight: 7 },
-        { c: CONFIG.enemies.slime, weight: 5 },
-        { c: CONFIG.enemies.skeleton, weight: 4 }
-      ];
-      if(activeGargoyles < 3) list.push({ c: CONFIG.enemies.gargoyle, weight: 4 });
-    } else if(curWave < 30){
-      // Волны 26-29: Элитный авангард (Гули, Мимики, Слизни)
-      list = [
-        { c: CONFIG.enemies.ghoul, weight: 7 },
-        { c: CONFIG.enemies.mimic, weight: 4 },
-        { c: CONFIG.enemies.slime, weight: 5 },
-        { c: CONFIG.enemies.spider, weight: 4 }
-      ];
-      if(activeMushrooms < 2) list.push({ c: CONFIG.enemies.mushroom, weight: 2 });
-    } else if(curWave < 36){
-      // Волны 30-35: Цитадель аберраций (Аберрации, Гули, Гаргульи, Скелеты)
-      list = [
-        { c: CONFIG.enemies.abomination, weight: 5 },
-        { c: CONFIG.enemies.ghoul, weight: 6 },
-        { c: CONFIG.enemies.skeleton, weight: 4 }
-      ];
-      if(activeGargoyles < 3) list.push({ c: CONFIG.enemies.gargoyle, weight: 4 });
+      // Вторая локация (Кладбище мутантов, 40 волн) — оптимизированные сбалансированные когорты
+      if(curWave < 6){
+        // Волны 1-5: Вход в склеп (Скелеты, Нетопыри)
+        list = [
+          { c: CONFIG.enemies.skeleton, weight: 10 },
+          { c: CONFIG.enemies.bat, weight: 5 }
+        ];
+      } else if(curWave < 10){
+        // Волны 6-9: Паучье логово (Паучата, Скелеты, редкие коконы)
+        list = [
+          { c: CONFIG.enemies.skeleton, weight: 8 },
+          { c: CONFIG.enemies.spiderling, weight: 7 }
+        ];
+        if(activeEggs < 2) list.push({ c: CONFIG.enemies.spider_egg, weight: 3 });
+      } else if(curWave < 15){
+        // Волны 10-14: Глубины склепа (Скелеты, Гули, Нетопыри)
+        list = [
+          { c: CONFIG.enemies.skeleton, weight: 7 },
+          { c: CONFIG.enemies.ghoul, weight: 6 },
+          { c: CONFIG.enemies.bat, weight: 4 }
+        ];
+      } else if(curWave < 20){
+        // Волны 15-19: Грибная чаща (Пауки, Скелеты, Гули, до 2 грибных стрелков)
+        list = [
+          { c: CONFIG.enemies.skeleton, weight: 6 },
+          { c: CONFIG.enemies.spider, weight: 5 },
+          { c: CONFIG.enemies.ghoul, weight: 5 }
+        ];
+        if(activeMushrooms < 3) list.push({ c: CONFIG.enemies.mushroom, weight: 3 });
+        if(activeEggs < 1) list.push({ c: CONFIG.enemies.spider_egg, weight: 2 });
+      } else if(curWave < 26){
+        // Волны 20-25: Каменные шпили (Гули, Слизни, Гаргульи)
+        list = [
+          { c: CONFIG.enemies.ghoul, weight: 7 },
+          { c: CONFIG.enemies.slime, weight: 5 },
+          { c: CONFIG.enemies.skeleton, weight: 4 }
+        ];
+        if(activeGargoyles < 3) list.push({ c: CONFIG.enemies.gargoyle, weight: 4 });
+      } else if(curWave < 30){
+        // Волны 26-29: Элитный авангард (Гули, Мимики, Слизни)
+        list = [
+          { c: CONFIG.enemies.ghoul, weight: 7 },
+          { c: CONFIG.enemies.mimic, weight: 4 },
+          { c: CONFIG.enemies.slime, weight: 5 },
+          { c: CONFIG.enemies.spider, weight: 4 }
+        ];
+        if(activeMushrooms < 2) list.push({ c: CONFIG.enemies.mushroom, weight: 2 });
+      } else if(curWave < 36){
+        // Волны 30-35: Цитадель аберраций (Аберрации, Гули, Гаргульи, Скелеты)
+        list = [
+          { c: CONFIG.enemies.abomination, weight: 5 },
+          { c: CONFIG.enemies.ghoul, weight: 6 },
+          { c: CONFIG.enemies.skeleton, weight: 4 }
+        ];
+        if(activeGargoyles < 3) list.push({ c: CONFIG.enemies.gargoyle, weight: 4 });
+      } else {
+        // Волны 36-40: Некрополис (Финальные элитные монстры без перегрузки стрелками)
+        list = [
+          { c: CONFIG.enemies.abomination, weight: 5 },
+          { c: CONFIG.enemies.ghoul, weight: 6 },
+          { c: CONFIG.enemies.mimic, weight: 4 },
+          { c: CONFIG.enemies.slime, weight: 4 }
+        ];
+        if(activeGargoyles < 3) list.push({ c: CONFIG.enemies.gargoyle, weight: 4 });
+      }
+    } else if(lvlId === 1){
+      // Первая локация (Заброшенный город, 30 волн)
+      if(curWave < 5){
+        list = [
+          { c: CONFIG.enemies.zombie, weight: 12 },
+          { c: CONFIG.enemies.hound, weight: 4 },
+          { c: CONFIG.enemies.rat, weight: 3 }
+        ];
+      } else if(curWave < 10){
+        list = [
+          { c: CONFIG.enemies.zombie, weight: 10 },
+          { c: CONFIG.enemies.hound, weight: 5 },
+          { c: CONFIG.enemies.rat, weight: 6 }
+        ];
+      } else if(curWave < 20){
+        list = [
+          { c: CONFIG.enemies.zombie, weight: 6 },
+          { c: CONFIG.enemies.zombie_mutant, weight: 7 },
+          { c: CONFIG.enemies.hound, weight: 5 },
+          { c: CONFIG.enemies.rat, weight: 5 }
+        ];
+      } else {
+        list = [
+          { c: CONFIG.enemies.zombie_mutant, weight: 8 },
+          { c: CONFIG.enemies.hound, weight: 4 },
+          { c: CONFIG.enemies.rat, weight: 5 },
+          { c: CONFIG.enemies.ghoul, weight: 5 }
+        ];
+      }
     } else {
-      // Волны 36-40: Некрополис (Финальные элитные монстры без перегрузки стрелками)
-      list = [
-        { c: CONFIG.enemies.abomination, weight: 5 },
-        { c: CONFIG.enemies.ghoul, weight: 6 },
-        { c: CONFIG.enemies.mimic, weight: 4 },
-        { c: CONFIG.enemies.slime, weight: 4 }
-      ];
-      if(activeGargoyles < 3) list.push({ c: CONFIG.enemies.gargoyle, weight: 4 });
+      for(const k in CONFIG.enemies){
+        const def = CONFIG.enemies[k];
+        if(def.fromWave !== undefined && curWave < def.fromWave) continue;
+        if(def.toWave !== undefined && curWave > def.toWave) continue;
+        list.push({ c: def, weight: def.weight });
+      }
     }
-  } else if(lvlId === 1){
-    // Первая локация (Заброшенный город, 30 волн)
-    if(curWave < 10){
-      list = [
-        { c: CONFIG.enemies.zombie, weight: 10 },
-        { c: CONFIG.enemies.hound, weight: 4 }
-      ];
-    } else if(curWave < 20){
-      list = [
-        { c: CONFIG.enemies.zombie, weight: 6 },
-        { c: CONFIG.enemies.zombie_mutant, weight: 6 },
-        { c: CONFIG.enemies.hound, weight: 4 },
-        { c: CONFIG.enemies.rat, weight: 5 }
-      ];
-    } else {
-      list = [
-        { c: CONFIG.enemies.zombie_mutant, weight: 8 },
-        { c: CONFIG.enemies.hound, weight: 4 },
-        { c: CONFIG.enemies.rat, weight: 5 },
-        { c: CONFIG.enemies.ghoul, weight: 4 }
-      ];
-    }
-  } else {
-    for(const k in CONFIG.enemies){
-      const c = CONFIG.enemies[k];
-      if(c.fromWave !== undefined && curWave < c.fromWave) continue;
-      if(c.toWave !== undefined && curWave > c.toWave) continue;
-      list.push({ c: c, weight: c.weight });
+    if(list.length === 0) list.push({ c: CONFIG.enemies.zombie, weight: 10 });
+    let tot = 0; for(const q of list) tot += q.weight;
+    let r = Math.random() * tot;
+    c = list[0].c;
+    for(const q of list){
+      if((r -= q.weight) < 0){ c = q.c; break; }
     }
   }
-  if(list.length === 0) list.push({ c: CONFIG.enemies.zombie, weight: 10 });
-  let tot = 0; for(const q of list) tot += q.weight;
-  let r = Math.random() * tot, c = list[0].c;
-  for(const q of list){
-    if((r -= q.weight) < 0){ c = q.c; break; }
-  }
-  const a = Math.random() * 6.283, d = Math.max(W, H) * .6 + 20;
+  const a = (customAngle !== undefined) ? customAngle : Math.random() * 6.283;
+  const d = (customDist !== undefined) ? customDist : getEnemySpawnDistance(a);
   const waveScale = 1 + ((G.wave || 1) - 1) * 0.025;
-  const m = (1 + CONFIG.waves.hpPerMin * G.t / 60) * G.lvlConfig.multHp * waveScale;
+  const multHp = (G.lvlConfig && G.lvlConfig.multHp) || 1;
+  const m = (1 + CONFIG.waves.hpPerMin * G.t / 60) * multHp * waveScale;
   const enObj = {
     x: G.p.x + Math.cos(a) * d,
     y: G.p.y + Math.sin(a) * d,
@@ -11811,34 +11863,73 @@ function update(dt){
     p.aimA=p.facing>0?idleA:Math.PI-idleA;
   }
 
-  g.spawn-=dt;
+  const curLvlId = g.lvlConfig ? g.lvlConfig.id : 1;
+  const isPolygon = curLvlId === 3;
+  const hasActiveBoss = g.enemies.some(e => e.isBoss && !e.dead);
   const curWaveNum = g.wave || 1;
-  let iv;
-  if(curWaveNum <= 3) iv = 1.15;
-  else if(curWaveNum <= 6) iv = 0.95;
-  else if(curWaveNum <= 10) iv = 0.80;
-  else iv = Math.max(0.28, 0.80 - (curWaveNum - 10) * 0.015);
 
-  const n = 1 + Math.floor(g.t / 240);
-  const earlyEnemyCap = curWaveNum <= 4 ? 30 : (curWaveNum <= 7 ? 45 : (curWaveNum <= 10 ? 60 : 120));
+  if(!isPolygon && !hasActiveBoss && !g.bossArena){
+    g.spawn -= dt;
 
-  while(g.spawn<=0){
-    if(g.enemies.length < earlyEnemyCap){
-      for(let i=0;i<n;i++) spawn();
+    // Динамический интервал между спавнами отрядов (быстрый темп с 1-й волны)
+    let iv;
+    if(curWaveNum <= 2) iv = 0.65;
+    else if(curWaveNum <= 5) iv = 0.50;
+    else if(curWaveNum <= 10) iv = 0.38;
+    else iv = Math.max(0.18, 0.38 - (curWaveNum - 10) * 0.008);
+
+    // Размер отряда (спавн кучными группами под сплэш/пробитие)
+    let squadSize = 2;
+    if(curWaveNum <= 2) squadSize = Math.random() < 0.6 ? 2 : 3;
+    else if(curWaveNum <= 5) squadSize = 3;
+    else if(curWaveNum <= 10) squadSize = 4;
+    else squadSize = Math.min(8, 4 + Math.floor((curWaveNum - 10) / 4));
+
+    // Целевая минимальная плотность (Anti-downtime): если игрок быстро вычистил карту, подкрепление приходит сразу
+    const targetDensity = curWaveNum <= 2 ? 14 : (curWaveNum <= 5 ? 24 : (curWaveNum <= 10 ? 40 : 65));
+    const enemyCap = curWaveNum <= 3 ? 40 : (curWaveNum <= 6 ? 65 : (curWaveNum <= 10 ? 95 : (CONFIG.waves.maxEnemies || 150)));
+
+    if(g.enemies.length < targetDensity && g.spawn > 0.16){
+      g.spawn = 0.16;
     }
-    g.spawn+=iv;
+
+    while(g.spawn <= 0){
+      if(g.enemies.length < enemyCap){
+        const baseAngle = Math.random() * 6.283;
+        spawnSquad(squadSize, baseAngle);
+      }
+      g.spawn += iv;
+    }
+
+    // Мини-наплыв орды (Horde Surge) в середине каждой волны (секунда 7.0–8.5 из 15)
+    const waveDuration = CONFIG.waves.waveDuration || 15;
+    const waveTime = (g.waveProgressT || 0) % waveDuration;
+    if(waveTime >= 7.0 && waveTime <= 8.5 && g.lastSurgeWave !== g.wave){
+      g.lastSurgeWave = g.wave;
+      const surgeCount = curWaveNum <= 3 ? 6 : (curWaveNum <= 8 ? 9 : 14);
+      const surgeAngle = Math.random() * 6.283;
+      let surgeEnemy = null;
+      if(curLvlId === 1){
+        surgeEnemy = curWaveNum < 4 ? CONFIG.enemies.hound : (curWaveNum < 12 ? CONFIG.enemies.rat : CONFIG.enemies.zombie_mutant);
+      } else if(curLvlId === 2){
+        surgeEnemy = curWaveNum < 6 ? CONFIG.enemies.spiderling : (curWaveNum < 15 ? CONFIG.enemies.bat : CONFIG.enemies.ghoul);
+      }
+      spawnSquad(surgeCount, surgeAngle, surgeEnemy);
+      Sfx.play('dash');
+      if(curWaveNum >= 2){
+        showGameToast('⚠️ ' + T('HORDE SURGE!', 'НАПЛЫВ ОРДЫ!'), '#ef4444', 2.0);
+      }
+    }
   }
 
   // 50-волновая система выживания (по 15 сек на волну, итого 750 сек = 12.5 мин)
   // Система выживания по волнам (по 15 сек на волну; таймер замирает во время битвы с боссом)
-  const curLvlId=g.lvlConfig?g.lvlConfig.id:1;
-  const maxWaves=g.lvlConfig?.maxWaves||(curLvlId===1?30:(curLvlId===2?40:50));
-  const hasActiveBoss = g.enemies.some(e => e.isBoss && !e.dead);
+  const maxWaves = g.lvlConfig?.maxWaves || (curLvlId === 1 ? 30 : (curLvlId === 2 ? 40 : 50));
   if(!hasActiveBoss){
     g.waveProgressT = (g.waveProgressT || 0) + dt;
   }
-  const waveDuration=CONFIG.waves.waveDuration||15;
-  const curWave=Math.min(maxWaves,1+Math.floor((g.waveProgressT||0)/waveDuration));
+  const waveDuration = CONFIG.waves.waveDuration || 15;
+  const curWave = Math.min(maxWaves, 1 + Math.floor((g.waveProgressT || 0) / waveDuration));
   if(curWave!==g.wave){
     const completedWaves=Math.max(0,curWave-g.wave);
     g.wave=curWave;
