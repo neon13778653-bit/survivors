@@ -9610,7 +9610,7 @@ function hurt(e,d){
     }
     let kXp = 1;
     if(e.isBoss){
-      kXp = e.bossId === 'abomination' ? 350 : (e.bossId === 'treant' ? 340 : (e.bossId === 'toxic_slime' ? 300 : (e.bossId === 'rat_king' ? 220 : (e.bossId === 'broodmother' ? 180 : 150))));
+      kXp = e.bossId === 'abomination' ? 450 : (e.bossId === 'treant' ? 340 : (e.bossId === 'toxic_slime' ? 300 : (e.bossId === 'rat_king' ? 220 : (e.bossId === 'broodmother' ? 180 : 150))));
       G.bossesDefeated=(G.bossesDefeated||0)+1;
       e.phaseGuardT = 0;
       if(G.activeBoss===e)G.activeBoss=null;
@@ -9637,8 +9637,8 @@ function hurt(e,d){
         G.fx.push({x:e.x,y:e.y,vx:(Math.random()-.5)*260,vy:(Math.random()-.5)*260,col:Math.random()>.3?'#a855f7':'#ef4444',l:.7});
       }
       if(e.bossId === 'abomination'){
-        dropPurpleCrystals(e.x, e.y, 16, 1);
-        dropCoins(e.x, e.y, 45, Math.max(1, Math.round(3 * (G.lvlConfig?.multGold || 1))));
+        dropPurpleCrystals(e.x, e.y, 18, 1);
+        dropCoins(e.x, e.y, 55, Math.max(1, Math.round(3 * (G.lvlConfig?.multGold || 1))));
         // Особый массивный кристалл опыта босса (Tier 5)
         G.gems.push({ x: e.x, y: e.y, v: 300, type: 'xp', isBoss: true, bossLevels: 3, mag: false });
         // 100% Гарантированный дроп мощного оружия (4★ или 5★)
@@ -11428,7 +11428,7 @@ function spawnAbominationBoss(){
   const bx = p.x + dx;
   const by = p.y + dy;
 
-  const maxHp = Math.round(3400 * (g.lvlConfig?.multHp || 1));
+  const maxHp = Math.round(9200 * (g.lvlConfig?.multHp || 1));
   const boss = {
     isBoss: true,
     bossId: 'abomination',
@@ -11443,11 +11443,11 @@ function spawnAbominationBoss(){
     hp: maxHp,
     maxHp: maxHp,
     c: {
-      r: 44,
-      speed: 42, // +5% (было 40)
-      damage: 49, // +6.5% (было 46)
+      r: 48,
+      speed: 74,
+      damage: 65,
       color: '#a855f7',
-      xp: 350
+      xp: 450
     },
     fl: 0,
     oh: 0,
@@ -11462,13 +11462,20 @@ function spawnAbominationBoss(){
     emergeSlamDone: false,
     action: 'idle',
     actionT: 0,
-    slamCd: 3.8, // было 4.2
-    spitCd: 5.8, // было 6.5
+    slamCd: 3.5,
+    chargeCd: 6.0,
+    spitCd: 4.8,
+    riftCd: 7.2,
+    novaCd: 3.5,
+    chargeAng: 0,
+    chargeDist: 0,
+    chargeMaxDist: 340,
+    rifts: [],
     slamAngle: 0,
     enraged: false
   };
 
-  keepInsideBossArena(boss, g.bossArena, (boss.c?.r || 36) + 10);
+  keepInsideBossArena(boss, g.bossArena, 72);
   boss.spawnX = boss.x;
   boss.spawnY = boss.y;
   g.enemies.push(boss);
@@ -12564,26 +12571,26 @@ function update(dt){
       // Фаза Ярости (Enrage при HP < 50%)
       if(!e.enraged && e.hp <= e.maxHp * 0.5){
         e.enraged = true;
-        e.c.speed = 64; // +10% скорости в ярости (было 58, база 42)
-        showGameToast('💀 ' + T('ABOMINATION IS ENRAGED! (+ATTACK / -20% DMG TAKEN)', 'МУТАНТ ВПАДАЕТ В ЯРОСТЬ! (+АТАКА / -20% УРОНА)'), '#ef4444', 3.2);
+        e.c.speed = 95; // Быстрая поступь титана в ярости (база 74)
+        showGameToast('💀 ' + T('ABOMINATION IS ENRAGED! (+SPEED / -20% DMG TAKEN)', 'МУТАНТ ВПАДАЕТ В ЯРОСТЬ! (+СКОРОСТЬ / -20% УРОНА)'), '#ef4444', 3.2);
         Sfx.play('dash');
-        for(let k = 0; k < 30; k++){
+        for(let k = 0; k < 35; k++){
           g.fx.push({
-            x: e.x + (Math.random() - 0.5) * 32,
-            y: e.y + (Math.random() - 0.5) * 32,
-            vx: (Math.random() - 0.5) * 180,
-            vy: -70 - Math.random() * 90,
+            x: e.x + (Math.random() - 0.5) * 36,
+            y: e.y + (Math.random() - 0.5) * 36,
+            vx: (Math.random() - 0.5) * 200,
+            vy: -75 - Math.random() * 95,
             col: Math.random() > 0.4 ? '#a855f7' : '#ef4444',
-            l: 0.65
+            l: 0.70
           });
         }
       }
 
       if(e.enraged && Math.random() < 0.45){
         g.fx.push({
-          x: e.x + (Math.random() - 0.5) * 24,
+          x: e.x + (Math.random() - 0.5) * 28,
           y: e.y - 12 + (Math.random() - 0.5) * 16,
-          vx: (Math.random() - 0.5) * 30,
+          vx: (Math.random() - 0.5) * 35,
           vy: -40 - Math.random() * 30,
           col: 'rgba(168, 85, 247, 0.7)',
           l: 0.45,
@@ -12591,70 +12598,199 @@ function update(dt){
         });
       }
 
-      // Перезарядка способностей
+      // Обновление разломов Бездны (Abyssal Rifts)
+      if(e.rifts && e.rifts.length > 0){
+        for(let ri = e.rifts.length - 1; ri >= 0; ri--){
+          const rf = e.rifts[ri];
+          rf.t -= dt;
+          if(rf.t > 0 && Math.random() < 0.4){
+            const a = Math.random() * 6.283;
+            const dist = Math.random() * rf.r;
+            g.fx.push({
+              x: rf.x + Math.cos(a) * dist,
+              y: rf.y + Math.sin(a) * dist,
+              vx: (Math.random() - 0.5) * 20,
+              vy: -20 - Math.random() * 30,
+              col: Math.random() > 0.5 ? '#a855f7' : '#c084fc',
+              l: 0.3
+            });
+          }
+          if(rf.t <= 0){
+            Sfx.play('hit');
+            g.shake = Math.max(g.shake, 0.45);
+            for(let k = 0; k < 22; k++){
+              const a = (k / 22) * 6.283;
+              const spd = 40 + Math.random() * 110;
+              g.fx.push({
+                x: rf.x, y: rf.y,
+                vx: Math.cos(a) * spd,
+                vy: -80 - Math.random() * 120,
+                col: Math.random() > 0.4 ? '#a855f7' : '#f3e8ff',
+                r: 2.5 + Math.random() * 2,
+                l: 0.55
+              });
+            }
+            if(Math.hypot(p.x - rf.x, p.y - rf.y) < rf.r + p.r && p.inv <= 0){
+              const dmg = Math.max(1, Math.round(36 * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
+              damagePlayer(dmg);
+              showGameToast('⚡ ' + T('VOID GEYSER ERUPTION!', 'РАЗЛОМ БЕЗДНЫ!'), '#a855f7', 1.5);
+            }
+            g.bossShockwaves.push({
+              x: rf.x, y: rf.y,
+              vx: 0, vy: 0,
+              angle: 0,
+              l: 2.8, maxL: 2.8,
+              dmg: 8,
+              col: '#a855f7',
+              type: 'abom_puddle'
+            });
+            e.rifts.splice(ri, 1);
+          }
+        }
+      }
+
+      // Импульс Сверхновой Бездны в ярости (Abyssal Nova Pulse)
+      if(e.enraged){
+        e.novaCd = (e.novaCd || 3.5) - dt;
+        if(e.novaCd <= 0){
+          e.novaCd = 3.6;
+          Sfx.play('dash');
+          const startAng = performance.now() * 0.002;
+          for(let k = 0; k < 8; k++){
+            const na = startAng + (k / 8) * 6.28318;
+            g.bossShockwaves.push({
+              x: e.x + Math.cos(na) * 26,
+              y: e.y + Math.sin(na) * 26,
+              vx: Math.cos(na) * 210,
+              vy: Math.sin(na) * 210,
+              angle: na,
+              l: 1.4,
+              maxL: 1.4,
+              dmg: 22,
+              col: '#c084fc',
+              type: 'abom_nova'
+            });
+          }
+          if(g.enemies.filter(en => !en.dead).length < 7 && Math.random() < 0.65){
+            const minAng = Math.random() * 6.283;
+            const minion = {
+              x: e.x + Math.cos(minAng) * 45,
+              y: e.y + Math.sin(minAng) * 45,
+              hp: Math.round(95 * (g.lvlConfig?.multHp || 1)),
+              maxHp: Math.round(95 * (g.lvlConfig?.multHp || 1)),
+              c: { r: 16, speed: 75, damage: 18, color: '#a855f7', xp: 5 },
+              dead: false,
+              fl: 0,
+              isMinion: true
+            };
+            keepInsideBossArena(minion, g.bossArena, 30);
+            g.enemies.push(minion);
+          }
+        }
+      }
+
+      // Перезарядка способностей и выбор действий
       if(e.action === 'idle'){
         e.slamCd -= dt;
+        e.chargeCd -= dt;
         e.spitCd -= dt;
-        if(e.slamCd <= 0){
+        e.riftCd -= dt;
+
+        if(e.slamCd <= 0 && d < 170){
           e.action = 'slam_windup';
-          e.actionT = 0.85;
+          e.actionT = 0.70;
           e.slamAngle = Math.atan2(p.y - e.y, p.x - e.x);
+          e.facing = dx >= 0 ? 1 : -1;
+          continue;
+        }else if(e.chargeCd <= 0 && d > 140){
+          e.action = 'charge_prep';
+          e.actionT = 0.85;
+          e.chargeAng = Math.atan2(p.y - e.y, p.x - e.x);
+          e.chargeDist = 0;
+          e.chargeMaxDist = Math.min(400, d + 70);
+          e.facing = dx >= 0 ? 1 : -1;
+          Sfx.play('dash');
+          continue;
+        }else if(e.riftCd <= 0){
+          e.action = 'rift_prep';
+          e.actionT = 0.75;
           e.facing = dx >= 0 ? 1 : -1;
           continue;
         }else if(e.spitCd <= 0){
           e.action = 'spit_prep';
-          e.actionT = 0.75;
+          e.actionT = 0.65;
+          e.facing = dx >= 0 ? 1 : -1;
+          continue;
+        }else if(e.slamCd <= 0){
+          e.action = 'slam_windup';
+          e.actionT = 0.70;
+          e.slamAngle = Math.atan2(p.y - e.y, p.x - e.x);
           e.facing = dx >= 0 ? 1 : -1;
           continue;
         }else{
-          // Тяжёлый неторопливый шаг
-          e.x += dx / d * e.c.speed * g.lvlConfig.multSpeed * dt;
-          e.y += dy / d * e.c.speed * g.lvlConfig.multSpeed * dt;
+          // Поступь Титана
+          const spd = (e.enraged ? 95 : 74) * (g.lvlConfig.multSpeed || 1);
+          e.x += (dx / d) * spd * dt;
+          e.y += (dy / d) * spd * dt;
+          keepInsideBossArena(e, g.bossArena, 72); // Гарантированно держим внутри арены!
           e.facing = dx >= 0 ? 1 : -1;
-          e.animT = (e.animT || 0) + dt * (e.enraged ? 9 : 6.8);
+          e.animT = (e.animT || 0) + dt * (e.enraged ? 9.5 : 7.2);
           e.frame = Math.floor(e.animT) % 8;
         }
       }else if(e.action === 'slam_windup'){
         e.actionT -= dt;
         e.facing = (p.x - e.x) >= 0 ? 1 : -1;
-        if(Math.random() < 0.5){
+        keepInsideBossArena(e, g.bossArena, 72);
+        if(Math.random() < 0.6){
           g.fx.push({
-            x: e.x + (Math.random() - 0.5) * 30,
-            y: e.y + 18,
-            vx: (Math.random() - 0.5) * 60,
-            vy: -30 - Math.random() * 40,
-            col: '#a855f7',
+            x: e.x + (e.facing > 0 ? 25 : -25) + (Math.random() - 0.5) * 20,
+            y: e.y + 12 + (Math.random() - 0.5) * 16,
+            vx: (Math.random() - 0.5) * 40,
+            vy: -25 - Math.random() * 35,
+            col: Math.random() > 0.4 ? '#a855f7' : '#f3e8ff',
             l: 0.35
           });
         }
         if(e.actionT <= 0){
           e.action = 'slam_smash';
           e.actionT = 0.35;
-          Sfx.play('dash');
-          // 4 фиолетовые ударные волны в стороны
-          const baseAng = Math.atan2(p.y - e.y, p.x - e.x);
-          for(const angOff of [-0.45, -0.15, 0.15, 0.45]){
+          Sfx.play('anvil');
+          g.shake = 0.7;
+          // 5-7 фиолетовых серповидных лезвий Бездны
+          const baseAng = e.slamAngle;
+          const bladeOffsets = e.enraged ? [-0.52, -0.34, -0.17, 0, 0.17, 0.34, 0.52] : [-0.46, -0.23, 0, 0.23, 0.46];
+          for(const angOff of bladeOffsets){
             const sa = baseAng + angOff;
             g.bossShockwaves.push({
-              x: e.x + Math.cos(sa) * 30,
-              y: e.y + Math.sin(sa) * 30,
-              vx: Math.cos(sa) * 275,
-              vy: Math.sin(sa) * 275,
+              x: e.x + Math.cos(sa) * 32,
+              y: e.y + Math.sin(sa) * 32,
+              vx: Math.cos(sa) * 310,
+              vy: Math.sin(sa) * 310,
               angle: sa,
-              l: 0.95,
-              maxL: 0.95,
-              dmg: 30,
+              l: 1.1,
+              maxL: 1.1,
+              dmg: 32,
               col: '#a855f7',
               type: 'abomination'
             });
           }
-          for(let k = 0; k < 28; k++){
+          // Рубящий мили-удар клешней
+          let dAng = Math.atan2(p.y - e.y, p.x - e.x) - baseAng;
+          while(dAng > Math.PI) dAng -= 2 * Math.PI;
+          while(dAng < -Math.PI) dAng += 2 * Math.PI;
+          if(d < 85 && Math.abs(dAng) < 0.85 && p.inv <= 0){
+            damagePlayer(Math.max(1, Math.round(45 * (p.armor ? Math.max(0.2, 1 - p.armor) : 1))));
+            showGameToast('💥 ' + T('CLEAVED BY TITAN CLAW!', 'РАССЕКАЮЩИЙ УДАР КЛЕШНИ!'), '#ef4444', 1.8);
+          }
+          for(let k = 0; k < 30; k++){
+            const sa = Math.random() * 6.283;
+            const spd = 60 + Math.random() * 180;
             g.fx.push({
-              x: e.x + (Math.random() - 0.5) * 36,
-              y: e.y + 18 + (Math.random() - 0.5) * 16,
-              vx: (Math.random() - 0.5) * 180,
-              vy: (Math.random() - 0.5) * 180,
-              col: Math.random() > 0.4 ? '#a855f7' : '#ef4444',
+              x: e.x + Math.cos(baseAng) * 26,
+              y: e.y + 16 + Math.sin(baseAng) * 26,
+              vx: Math.cos(sa) * spd,
+              vy: Math.sin(sa) * spd,
+              col: Math.random() > 0.4 ? '#a855f7' : (Math.random() > 0.5 ? '#c084fc' : '#e879f9'),
               l: 0.55
             });
           }
@@ -12662,34 +12798,134 @@ function update(dt){
         continue;
       }else if(e.action === 'slam_smash'){
         e.actionT -= dt;
+        keepInsideBossArena(e, g.bossArena, 72);
         if(e.actionT <= 0){
           e.action = 'idle';
-          e.slamCd = e.enraged ? 2.5 : 4.0;
+          e.slamCd = e.enraged ? 2.8 : 3.8;
+        }
+        continue;
+      }else if(e.action === 'charge_prep'){
+        e.actionT -= dt;
+        keepInsideBossArena(e, g.bossArena, 72);
+        if(e.actionT > 0.25){
+          e.chargeAng = Math.atan2(p.y - e.y, p.x - e.x);
+          e.facing = (p.x - e.x) >= 0 ? 1 : -1;
+        }
+        g.shake = Math.max(g.shake, 0.2);
+        if(Math.random() < 0.6){
+          g.fx.push({
+            x: e.x + (Math.random() - 0.5) * 36,
+            y: e.y + 24,
+            vx: (Math.random() - 0.5) * 80,
+            vy: -20 - Math.random() * 40,
+            col: '#ef4444',
+            l: 0.35
+          });
+        }
+        if(e.actionT <= 0){
+          e.action = 'charge_rush';
+          e.actionT = 0.85;
+          e.chargeDist = 0;
+          Sfx.play('dash');
+        }
+        continue;
+      }else if(e.action === 'charge_rush'){
+        e.actionT -= dt;
+        const rushSpeed = e.enraged ? 420 : 360;
+        const stepDist = rushSpeed * dt;
+        e.chargeDist += stepDist;
+        e.x += Math.cos(e.chargeAng) * stepDist;
+        e.y += Math.sin(e.chargeAng) * stepDist;
+        keepInsideBossArena(e, g.bossArena, 72);
+        g.shake = Math.max(g.shake, 0.35);
+
+        for(let k = 0; k < 2; k++){
+          g.fx.push({
+            x: e.x + (Math.random() - 0.5) * 30,
+            y: e.y + 18 + (Math.random() - 0.5) * 12,
+            vx: -Math.cos(e.chargeAng) * 80 + (Math.random() - 0.5) * 40,
+            vy: -Math.sin(e.chargeAng) * 80 - Math.random() * 30,
+            col: Math.random() > 0.5 ? '#a855f7' : '#7c3aed',
+            l: 0.4
+          });
+        }
+
+        if(Math.hypot(p.x - e.x, p.y - e.y) < e.c.r + p.r + 10 && p.inv <= 0){
+          damagePlayer(Math.max(1, Math.round(45 * (p.armor ? Math.max(0.2, 1 - p.armor) : 1))));
+          showGameToast('💥 ' + T('TRAMPLED BY TITAN RUSH!', 'РАЗДАВЛЕН ТАРАНОМ ТИТАНА!'), '#ef4444', 1.8);
+          Sfx.play('hit');
+        }
+
+        if(e.chargeDist >= e.chargeMaxDist || e.actionT <= 0){
+          e.action = 'charge_recover';
+          e.actionT = 0.35;
+          Sfx.play('anvil');
+          g.shake = 0.6;
+        }
+        continue;
+      }else if(e.action === 'charge_recover'){
+        e.actionT -= dt;
+        keepInsideBossArena(e, g.bossArena, 72);
+        if(e.actionT <= 0){
+          e.action = 'idle';
+          e.chargeCd = e.enraged ? 4.8 : 6.5;
         }
         continue;
       }else if(e.action === 'spit_prep'){
         e.actionT -= dt;
         e.facing = (p.x - e.x) >= 0 ? 1 : -1;
+        keepInsideBossArena(e, g.bossArena, 72);
+        if(Math.random() < 0.6){
+          g.fx.push({
+            x: e.x + (e.facing > 0 ? 18 : -18) + (Math.random() - 0.5) * 14,
+            y: e.y - 28 + (Math.random() - 0.5) * 14,
+            vx: (Math.random() - 0.5) * 30,
+            vy: -15 - Math.random() * 25,
+            col: '#c084fc',
+            l: 0.3
+          });
+        }
         if(e.actionT <= 0){
           e.action = 'idle';
-          e.spitCd = e.enraged ? 3.8 : 5.5;
+          e.spitCd = e.enraged ? 3.8 : 5.2;
           Sfx.play('dash');
-          // Залп мутагенной кислоты (3 снаряда)
           const baseAng = Math.atan2(p.y - e.y, p.x - e.x);
-          for(let k = -1; k <= 1; k++){
-            const sa = baseAng + k * 0.28;
+          const globOffsets = [-0.36, -0.18, 0, 0.18, 0.36];
+          for(const off of globOffsets){
+            const sa = baseAng + off;
             g.bossShockwaves.push({
-              x: e.x + Math.cos(sa) * 24,
-              y: e.y - 10 + Math.sin(sa) * 24,
-              vx: Math.cos(sa) * 240,
-              vy: Math.sin(sa) * 240,
+              x: e.x + Math.cos(sa) * 22,
+              y: e.y - 12 + Math.sin(sa) * 22,
+              vx: Math.cos(sa) * 260,
+              vy: Math.sin(sa) * 260,
               angle: sa,
               l: 1.1,
               maxL: 1.1,
-              dmg: 22,
-              col: '#c084fc',
-              type: 'acid'
+              dmg: 24,
+              col: '#a855f7',
+              type: 'abom_glob'
             });
+          }
+        }
+        continue;
+      }else if(e.action === 'rift_prep'){
+        e.actionT -= dt;
+        e.facing = (p.x - e.x) >= 0 ? 1 : -1;
+        keepInsideBossArena(e, g.bossArena, 72);
+        if(e.actionT <= 0){
+          e.action = 'idle';
+          e.riftCd = e.enraged ? 5.2 : 7.0;
+          Sfx.play('dash');
+          e.rifts = e.rifts || [];
+          e.rifts.push({ x: p.x, y: p.y, r: 44, t: 0.9, maxT: 0.9 });
+          for(const angOff of [1.6, -1.6]){
+            const rfAng = Math.random() * 6.283;
+            const rfDist = 65 + Math.random() * 45;
+            const rx = p.x + Math.cos(rfAng + angOff) * rfDist;
+            const ry = p.y + Math.sin(rfAng + angOff) * rfDist;
+            const riftPt = { x: rx, y: ry, r: 40, t: 1.05, maxT: 1.05 };
+            keepInsideBossArena(riftPt, g.bossArena, 50);
+            e.rifts.push(riftPt);
           }
         }
         continue;
@@ -14326,7 +14562,9 @@ function update(dt){
         const pCol = sw.type === 'treant_seismic' ? (Math.random() > 0.4 ? '#22c55e' : '#854d0e') :
                      ((sw.type === 'treant_spore' || sw.type === 'mushroom_spore') ? (Math.random() > 0.4 ? '#84cc16' : '#a3e635') :
                      (sw.type === 'web_snare' ? (Math.random() > 0.4 ? '#f59e0b' : '#ffffff') :
-                     (sw.type === 'web' ? (Math.random() > 0.4 ? '#ffffff' : (Math.random() > 0.5 ? '#f97316' : '#a3e635')) : '#92400e')));
+                     (sw.type === 'web' ? (Math.random() > 0.4 ? '#ffffff' : (Math.random() > 0.5 ? '#f97316' : '#a3e635')) :
+                     ((sw.type === 'abomination' || sw.type === 'abom_nova') ? (Math.random() > 0.4 ? '#a855f7' : '#c084fc') :
+                     ((sw.type === 'abom_glob' || sw.type === 'abom_puddle' || sw.type === 'acid') ? (Math.random() > 0.5 ? '#9333ea' : '#c084fc') : '#92400e')))));
         g.fx.push({
           x:sw.x+(Math.random()-.5)*10,
           y:sw.y+(Math.random()-.5)*10,
@@ -14342,6 +14580,30 @@ function update(dt){
           p.poisonT = Math.max(p.poisonT || 0, 2.0);
           p.poisonDps = Math.max(p.poisonDps || 0, 2.0);
           p.poisonSlow = Math.min(p.poisonSlow || 1, 0.85);
+        } else if(sw.type === 'abom_puddle'){
+          p.poisonT = Math.max(p.poisonT || 0, 2.4);
+          p.poisonDps = Math.max(p.poisonDps || 0, 3.0);
+          p.poisonSlow = Math.min(p.poisonSlow || 1, 0.80);
+          showGameToast('☣️ ' + T('DRENCHED IN MUTAGEN!', 'ОБЛИТ МУТАГЕНОМ БЕЗДНЫ!'), '#a855f7', 1.6);
+        } else if(sw.type === 'abom_glob'){
+          p.poisonT = Math.max(p.poisonT || 0, 2.2);
+          p.poisonDps = Math.max(p.poisonDps || 0, 3.0);
+          p.poisonSlow = Math.min(p.poisonSlow || 1, 0.80);
+          showGameToast('☣️ ' + T('MUTAGENIC BILE SPLASH!', 'ВСПЛЕСК МУТАГЕННОЙ ЖЕЛЧИ!'), '#a855f7', 1.6);
+          g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 4.0, maxL: 4.0, dmg: 5, type: 'abom_puddle', col: '#a855f7' });
+          for(let k = 0; k < 12; k++){
+            g.fx.push({ x: p.x, y: p.y, vx: (Math.random() - 0.5) * 80, vy: -15 - Math.random() * 25, col: '#a855f7', r: 2.5, l: 0.35 });
+          }
+        } else if(sw.type === 'abomination'){
+          for(let k = 0; k < 10; k++){
+            g.fx.push({ x: p.x, y: p.y, vx: (Math.random() - 0.5) * 90, vy: -20 - Math.random() * 30, col: Math.random() > 0.4 ? '#a855f7' : '#f3e8ff', l: 0.35 });
+          }
+          Sfx.play('hit');
+        } else if(sw.type === 'abom_nova'){
+          for(let k = 0; k < 8; k++){
+            g.fx.push({ x: p.x, y: p.y, vx: (Math.random() - 0.5) * 75, vy: -15 - Math.random() * 25, col: '#c084fc', l: 0.3 });
+          }
+          Sfx.play('hit');
         } else if(sw.type === 'web'){
           p.poisonT = Math.max(p.poisonT || 0, 1.8);
           p.poisonDps = Math.max(p.poisonDps || 0, 2.0);
@@ -14410,6 +14672,8 @@ function update(dt){
       if(sw.l<=0){
         if(sw.type === 'slime_glob'){
           g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 4.5, maxL: 4.5, dmg: 4, type: 'puddle', col: '#22c55e' });
+        } else if(sw.type === 'abom_glob'){
+          g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 4.0, maxL: 4.0, dmg: 5, type: 'abom_puddle', col: '#a855f7' });
         }
         g.bossShockwaves.splice(i,1);
       }
@@ -17256,13 +17520,20 @@ function drawBossShockwaves(g, ox, oy){
     cx.save();
     const swAlpha = Math.max(0, Math.min(1, sw.l / sw.maxL));
     cx.globalAlpha = swAlpha;
-    if(sw.type === 'puddle'){
+    if(sw.type === 'puddle' || sw.type === 'abom_puddle'){
+      const isPurple = sw.type === 'abom_puddle' || sw.col === '#a855f7';
       // Органическая токсичная кислотная лужа с пузырьками
       const pPulse = 0.85 + 0.15 * Math.sin(performance.now() * 0.008);
       const radG = cx.createRadialGradient(sx, sy, 2, sx, sy, 24);
-      radG.addColorStop(0, `rgba(163, 230, 53, ${0.75 * swAlpha})`);
-      radG.addColorStop(0.55, `rgba(132, 204, 22, ${0.5 * swAlpha})`);
-      radG.addColorStop(0.85, `rgba(77, 124, 15, ${0.28 * swAlpha})`);
+      if(isPurple){
+        radG.addColorStop(0, `rgba(192, 132, 252, ${0.8 * swAlpha})`);
+        radG.addColorStop(0.55, `rgba(168, 85, 247, ${0.55 * swAlpha})`);
+        radG.addColorStop(0.85, `rgba(88, 28, 135, ${0.3 * swAlpha})`);
+      } else {
+        radG.addColorStop(0, `rgba(163, 230, 53, ${0.75 * swAlpha})`);
+        radG.addColorStop(0.55, `rgba(132, 204, 22, ${0.5 * swAlpha})`);
+        radG.addColorStop(0.85, `rgba(77, 124, 15, ${0.28 * swAlpha})`);
+      }
       radG.addColorStop(1, 'rgba(0,0,0,0)');
       cx.fillStyle = radG;
       cx.beginPath();
@@ -17270,7 +17541,7 @@ function drawBossShockwaves(g, ox, oy){
       cx.fill();
 
       // Неровные капли по краям лужи
-      cx.fillStyle = `rgba(190, 242, 100, ${0.65 * swAlpha})`;
+      cx.fillStyle = isPurple ? `rgba(216, 180, 254, ${0.7 * swAlpha})` : `rgba(190, 242, 100, ${0.65 * swAlpha})`;
       cx.beginPath();
       cx.ellipse(sx - 10, sy + 3, 7, 4, 0.2, 0, 6.283);
       cx.ellipse(sx + 11, sy - 2, 8, 4.5, -0.3, 0, 6.283);
@@ -17281,7 +17552,7 @@ function drawBossShockwaves(g, ox, oy){
       const bPhase = (performance.now() * 0.005 + sx * 0.05) % 6.283;
       const bRad = 1.2 + Math.sin(bPhase) * 1.0;
       if(bRad > 0.4){
-        cx.fillStyle = `rgba(247, 254, 231, ${0.85 * swAlpha})`;
+        cx.fillStyle = isPurple ? `rgba(250, 245, 255, ${0.9 * swAlpha})` : `rgba(247, 254, 231, ${0.85 * swAlpha})`;
         cx.beginPath(); cx.arc(sx - 4, sy - 2, bRad, 0, 6.283); cx.fill();
         cx.beginPath(); cx.arc(sx + 7, sy + 1, Math.max(0.6, bRad * 0.7), 0, 6.283); cx.fill();
       }
@@ -17554,6 +17825,98 @@ function drawBossShockwaves(g, ox, oy){
       // Яркий желтый блик
       cx.fillStyle = '#ffffff';
       cx.beginPath(); cx.arc(3, -2, 2.5, 0, 6.283); cx.fill();
+    } else if(sw.type === 'abomination'){
+      // Искрящееся серповидное лезвие плазмы Бездны (Void Plasma Blade)
+      cx.translate(sx, sy);
+      cx.rotate(sw.angle);
+      const pulse = 0.9 + 0.1 * Math.sin(performance.now() * 0.03);
+
+      // 1. Внешнее фиолетовое свечение
+      const bGrad = cx.createRadialGradient(4, 0, 2, 0, 0, 28);
+      bGrad.addColorStop(0, `rgba(243, 232, 255, ${0.95 * swAlpha})`);
+      bGrad.addColorStop(0.3, `rgba(192, 132, 252, ${0.85 * swAlpha})`);
+      bGrad.addColorStop(0.7, `rgba(168, 85, 247, ${0.45 * swAlpha})`);
+      bGrad.addColorStop(1, 'rgba(0,0,0,0)');
+      cx.fillStyle = bGrad;
+      cx.beginPath(); cx.arc(0, 0, 26 * pulse, 0, 6.283); cx.fill();
+
+      // 2. Серповидная дуга лезвия
+      cx.fillStyle = `rgba(192, 132, 252, ${0.95 * swAlpha})`;
+      cx.beginPath();
+      cx.moveTo(18, 0);
+      cx.quadraticCurveTo(0, -18, -14, -14);
+      cx.quadraticCurveTo(-4, 0, -14, 14);
+      cx.quadraticCurveTo(0, 18, 18, 0);
+      cx.closePath();
+      cx.fill();
+
+      // 3. Бело-фиолетовая горячая режущая кромка
+      cx.strokeStyle = '#ffffff';
+      cx.lineWidth = 2.2;
+      cx.beginPath();
+      cx.moveTo(18, 0);
+      cx.quadraticCurveTo(2, -12, -10, -12);
+      cx.stroke();
+      cx.beginPath();
+      cx.moveTo(18, 0);
+      cx.quadraticCurveTo(2, 12, -10, 12);
+      cx.stroke();
+
+      // 4. Плазменные молнии на кромке
+      if(Math.random() < 0.5){
+        cx.strokeStyle = '#e879f9';
+        cx.lineWidth = 1.4;
+        cx.beginPath();
+        cx.moveTo(-6, -8);
+        cx.lineTo(-14, -4);
+        cx.lineTo(-20, -7);
+        cx.stroke();
+      }
+    } else if(sw.type === 'abom_glob' || sw.type === 'acid'){
+      // Летящий едкий сгусток мутагенной плазмы
+      cx.translate(sx, sy);
+      cx.rotate(sw.angle || 0);
+      const pulse = 0.88 + 0.12 * Math.sin(performance.now() * 0.025);
+      const r = 12 * pulse;
+
+      // Внешнее свечение
+      const gGrad = cx.createRadialGradient(0, 0, 2, 0, 0, r * 1.6);
+      gGrad.addColorStop(0, `rgba(250, 232, 255, ${0.95 * swAlpha})`);
+      gGrad.addColorStop(0.4, `rgba(192, 132, 252, ${0.85 * swAlpha})`);
+      gGrad.addColorStop(0.8, `rgba(109, 40, 217, ${0.45 * swAlpha})`);
+      gGrad.addColorStop(1, 'rgba(0,0,0,0)');
+      cx.fillStyle = gGrad;
+      cx.beginPath(); cx.arc(0, 0, r * 1.6, 0, 6.283); cx.fill();
+
+      // Ядро
+      cx.fillStyle = `rgba(168, 85, 247, ${0.95 * swAlpha})`;
+      cx.beginPath();
+      cx.ellipse(2, 0, r, r * 0.72, 0, 0, 6.283);
+      cx.fill();
+
+      // Хвост
+      cx.beginPath();
+      cx.moveTo(-r * 0.6, -r * 0.4);
+      cx.quadraticCurveTo(-r * 1.8, 0, -r * 0.6, r * 0.4);
+      cx.closePath();
+      cx.fill();
+
+      // Белый блик
+      cx.fillStyle = '#ffffff';
+      cx.beginPath(); cx.arc(3, -2, 2.2, 0, 6.283); cx.fill();
+    } else if(sw.type === 'abom_nova'){
+      // Сфера Бездны Сверхновой
+      cx.translate(sx, sy);
+      cx.rotate((sw.angle || 0) + performance.now() * 0.005);
+      const pulse = 0.9 + 0.1 * Math.sin(performance.now() * 0.02);
+      const r = 10 * pulse;
+      const nGrad = cx.createRadialGradient(0, 0, 1, 0, 0, r * 1.8);
+      nGrad.addColorStop(0, '#ffffff');
+      nGrad.addColorStop(0.35, '#c084fc');
+      nGrad.addColorStop(0.7, '#7c3aed');
+      nGrad.addColorStop(1, 'rgba(0,0,0,0)');
+      cx.fillStyle = nGrad;
+      cx.beginPath(); cx.arc(0, 0, r * 1.8, 0, 6.283); cx.fill();
     } else {
       cx.translate(sx, sy);
       cx.rotate(sw.angle);
@@ -17579,10 +17942,10 @@ function drawBossShockwaves(g, ox, oy){
   }
 }
 
-function drawCraterFrontLip(ex, gy, cw, ch){
+function drawCraterFrontLip(ex, gy, cw, ch, lipCol='#ef4444', soilCol='#291205'){
   cx.save();
   // Вывернутый земляной бруствер по передней кромке ямы
-  cx.fillStyle = '#291205';
+  cx.fillStyle = soilCol;
   cx.beginPath();
   cx.ellipse(ex, gy + 3, cw * 0.95, ch * 0.5, 0, 0, Math.PI);
   cx.fill();
@@ -17594,9 +17957,9 @@ function drawCraterFrontLip(ex, gy, cw, ch){
   cx.beginPath(); cx.arc(ex - 6, gy + 6, 3.5, 0, 6.283); cx.fill();
   cx.beginPath(); cx.arc(ex + 38, gy + 3, 3.5, 0, 6.283); cx.fill();
 
-  // Огненное свечение по кромке разлома (перспективный эллипс)
-  cx.strokeStyle = '#ef4444';
-  cx.lineWidth = 1.6;
+  // Свечение по кромке разлома (перспективный эллипс)
+  cx.strokeStyle = lipCol;
+  cx.lineWidth = 1.8;
   cx.beginPath();
   cx.ellipse(ex, gy + 3, cw * 0.9, ch * 0.5, 0, 0.1, Math.PI - 0.1);
   cx.stroke();
@@ -18815,12 +19178,12 @@ function drawAbominationBoss(e, ox, oy){
     return;
   }
 
-  // 1. Телеграф удара клешней
+  // 1. Телеграфы способностей
   if(e.action === 'slam_windup'){
     cx.save();
     const sa = e.slamAngle;
     const pulse = 0.7 + 0.3 * Math.sin(performance.now() / 80);
-    const radius = 135;
+    const radius = 140;
     cx.fillStyle = `rgba(168, 85, 247, ${0.28 * pulse})`;
     cx.strokeStyle = `rgba(192, 132, 252, ${0.85 * pulse})`;
     cx.lineWidth = 2.4;
@@ -18830,6 +19193,103 @@ function drawAbominationBoss(e, ox, oy){
     cx.closePath();
     cx.fill();
     cx.stroke();
+    cx.restore();
+  } else if(e.action === 'charge_prep'){
+    cx.save();
+    const cLen = e.chargeMaxDist || 340;
+    const cAng = e.chargeAng !== undefined ? e.chargeAng : Math.atan2(G.p.y - e.y, G.p.x - e.x);
+    cx.translate(ex, ey + 18);
+    cx.rotate(cAng);
+    const pulse = 0.85 + 0.15 * Math.sin(performance.now() * 0.02);
+
+    const runGrad = cx.createLinearGradient(0, 0, cLen, 0);
+    runGrad.addColorStop(0, `rgba(168, 85, 247, ${0.45 * pulse})`);
+    runGrad.addColorStop(0.7, `rgba(239, 68, 68, ${0.35 * pulse})`);
+    runGrad.addColorStop(1, 'rgba(239, 68, 68, 0)');
+    cx.fillStyle = runGrad;
+    cx.fillRect(0, -32, cLen, 64);
+
+    cx.strokeStyle = `rgba(239, 68, 68, ${0.9 * pulse})`;
+    cx.lineWidth = 2.4;
+    cx.beginPath();
+    cx.moveTo(0, -32); cx.lineTo(cLen, -32);
+    cx.moveTo(0, 32); cx.lineTo(cLen, 32);
+    cx.stroke();
+
+    const arrowStep = 55;
+    const offset = (performance.now() * 0.14) % arrowStep;
+    cx.fillStyle = `rgba(255, 255, 255, ${0.75 * pulse})`;
+    for(let ax = offset + 20; ax < cLen - 20; ax += arrowStep){
+      cx.beginPath();
+      cx.moveTo(ax, -16);
+      cx.lineTo(ax + 16, 0);
+      cx.lineTo(ax, 16);
+      cx.lineTo(ax - 6, 16);
+      cx.lineTo(ax + 10, 0);
+      cx.lineTo(ax - 6, -16);
+      cx.closePath();
+      cx.fill();
+    }
+    cx.restore();
+  } else if(e.action === 'spit_prep'){
+    cx.save();
+    const baseAng = Math.atan2(G.p.y - e.y, G.p.x - e.x);
+    const pulse = 0.75 + 0.25 * Math.sin(performance.now() * 0.02);
+    cx.strokeStyle = `rgba(192, 132, 252, ${0.65 * pulse})`;
+    cx.lineWidth = 1.6;
+    cx.setLineDash([8, 6]);
+    for(const off of [-0.36, -0.18, 0, 0.18, 0.36]){
+      const sa = baseAng + off;
+      cx.beginPath();
+      cx.moveTo(ex, ey - 10);
+      cx.lineTo(ex + Math.cos(sa) * 160, ey - 10 + Math.sin(sa) * 160);
+      cx.stroke();
+    }
+    cx.setLineDash([]);
+    cx.restore();
+  }
+
+  // Отрисовка разломов Бездны на земле (Abyssal Rifts)
+  if(e.rifts && e.rifts.length > 0){
+    for(const rf of e.rifts){
+      const rx = rf.x + ox, ry = rf.y + oy;
+      const rk = 1 - Math.max(0, rf.t / rf.maxT);
+      const pulse = 0.8 + 0.2 * Math.sin(performance.now() * 0.02);
+      cx.save();
+      const rGrad = cx.createRadialGradient(rx, ry, 2, rx, ry, rf.r);
+      rGrad.addColorStop(0, `rgba(243, 232, 255, ${0.85 * rk})`);
+      rGrad.addColorStop(0.4, `rgba(168, 85, 247, ${0.6 * rk})`);
+      rGrad.addColorStop(0.8, `rgba(88, 28, 135, ${0.35 * rk})`);
+      rGrad.addColorStop(1, 'rgba(0,0,0,0)');
+      cx.fillStyle = rGrad;
+      cx.beginPath(); cx.arc(rx, ry, rf.r * pulse, 0, 6.283); cx.fill();
+
+      cx.strokeStyle = `rgba(192, 132, 252, ${0.95 * pulse})`;
+      cx.lineWidth = 2.4;
+      cx.beginPath();
+      cx.arc(rx, ry, rf.r * (1.6 - 0.6 * rk), 0, 6.283);
+      cx.stroke();
+
+      cx.strokeStyle = `rgba(255, 255, 255, ${0.8 * rk})`;
+      cx.lineWidth = 1.4;
+      cx.beginPath();
+      cx.moveTo(rx - rf.r * 0.6, ry); cx.lineTo(rx + rf.r * 0.6, ry);
+      cx.moveTo(rx, ry - rf.r * 0.6); cx.lineTo(rx, ry + rf.r * 0.6);
+      cx.stroke();
+      cx.restore();
+    }
+  }
+
+  // Скоростной шлейф во время тарана
+  if(e.action === 'charge_rush'){
+    cx.save();
+    const rushBackX = ex - Math.cos(e.chargeAng || 0) * 26;
+    const rushBackY = ey - Math.sin(e.chargeAng || 0) * 26;
+    const tGrad = cx.createRadialGradient(rushBackX, rushBackY, 4, rushBackX, rushBackY, 44);
+    tGrad.addColorStop(0, 'rgba(168, 85, 247, 0.45)');
+    tGrad.addColorStop(1, 'rgba(168, 85, 247, 0)');
+    cx.fillStyle = tGrad;
+    cx.beginPath(); cx.arc(rushBackX, rushBackY, 44, 0, 6.283); cx.fill();
     cx.restore();
   }
 
@@ -19053,7 +19513,7 @@ function drawBroodmotherEmergence(e, ex, ey, gy){
     cx.restore(); // end clip
 
     // Передняя кромка паутинного гнезда поверх брюшка и лап
-    drawCraterFrontLip(ex, gy, cw, ch);
+    drawCraterFrontLip(ex, gy, cw, ch, '#ea580c', '#2c1206');
     return;
   }
 
@@ -19468,9 +19928,9 @@ function drawTreantEmergence(e, ex, ey, gy){
   cx.save();
   // 1. Земляной разлом и бездна корней с инфернальным изумрудным свечением
   const pitGrad = cx.createRadialGradient(ex, gy, 4, ex, gy, cw);
-  pitGrad.addColorStop(0, '#052e16');
-  pitGrad.addColorStop(0.45, '#14532d');
-  pitGrad.addColorStop(0.8, '#713f12');
+  pitGrad.addColorStop(0, '#021a08');
+  pitGrad.addColorStop(0.45, '#063b15');
+  pitGrad.addColorStop(0.8, '#14532d');
   pitGrad.addColorStop(1, 'rgba(0,0,0,0)');
   cx.fillStyle = pitGrad;
   cx.beginPath();
@@ -19634,7 +20094,7 @@ function drawTreantEmergence(e, ex, ey, gy){
     cx.restore(); // end clip
 
     // Передняя кромка кратера поверх торса/пояса (земляной вал и булыжники)
-    drawCraterFrontLip(ex, gy, cw, ch);
+    drawCraterFrontLip(ex, gy, cw, ch, '#22c55e', '#152b14');
     return;
   }
 
