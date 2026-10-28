@@ -3328,7 +3328,7 @@ const CONFIG={
     spider_egg:{name:'Кокон паука',nameEn:'Spider Egg Sac',hp:38,speed:0,damage:3,xp:4,r:15,color:'#e2e8f0',weight:6,fromWave:6,sprite:'img/monsters/monster_spider_egg.webp',sheet:'img/monsters/monster_spider_egg_sheet.webp',frameW:240,frameH:240,frames:8,spriteW:46,spriteH:46,animRate:5},
     broodmother:{name:'Паучиха-праматерь',nameEn:'Spider Broodmother',hp:95,speed:56,damage:16,xp:16,r:22,color:'#d97706',weight:3,fromWave:11,sprite:'img/monsters/monster_broodmother.webp',sheet:'img/monsters/monster_broodmother_sheet.webp',frameW:300,frameH:260,frames:8,spriteW:76,spriteH:66,animRate:8},
     treant:{name:'Древень-мутант',nameEn:'Ancient Treant',hp:165,speed:36,damage:24,xp:24,r:26,color:'#854d0e',weight:2,fromWave:16,sprite:'img/monsters/monster_treant.webp',sheet:'img/monsters/monster_treant_sheet.webp',frameW:300,frameH:320,frames:8,spriteW:82,spriteH:88,animRate:6},
-    kraken:{name:'Кракен Бездны',nameEn:'Abyssal Kraken',hp:9500,speed:76,damage:70,xp:500,r:46,color:'#3b0764',weight:1,fromWave:99,sprite:'img/monsters/boss_kraken.webp?v=1',sheet:'img/monsters/boss_kraken_sheet.webp?v=1',frameW:280,frameH:280,frames:8,spriteW:72,spriteH:72,animRate:7}
+    kraken:{name:'Кракен Бездны',nameEn:'Abyssal Kraken',hp:14500,speed:86,damage:90,xp:650,r:48,color:'#3b0764',weight:1,fromWave:99,sprite:'img/monsters/boss_kraken.webp?v=1',sheet:'img/monsters/boss_kraken_sheet.webp?v=1',frameW:280,frameH:280,frames:8,spriteW:72,spriteH:72,animRate:7}
   },
   waves:{interval:0.9,minInterval:0.25,decayPerMin:0.75,hpPerMin:0.35,maxEnemies:150,waveDuration:15,maxWaves:50},
   level:{base:10,growth:1.18},
@@ -9612,7 +9612,7 @@ function hurt(e,d){
     }
     let kXp = 1;
     if(e.isBoss){
-      kXp = (e.bossId === 'kraken' || e.bossId === 'abomination') ? 500 : (e.bossId === 'treant' ? 340 : (e.bossId === 'toxic_slime' ? 300 : (e.bossId === 'rat_king' ? 220 : (e.bossId === 'broodmother' ? 180 : 150))));
+      kXp = (e.bossId === 'kraken' || e.bossId === 'abomination') ? 650 : (e.bossId === 'treant' ? 340 : (e.bossId === 'toxic_slime' ? 300 : (e.bossId === 'rat_king' ? 220 : (e.bossId === 'broodmother' ? 180 : 150))));
       G.bossesDefeated=(G.bossesDefeated||0)+1;
       e.phaseGuardT = 0;
       if(G.activeBoss===e)G.activeBoss=null;
@@ -11430,7 +11430,7 @@ function spawnKrakenBoss(){
   const bx = p.x + dx;
   const by = p.y + dy;
 
-  const maxHp = Math.round(9500 * (g.lvlConfig?.multHp || 1));
+  const maxHp = Math.round(14500 * (g.lvlConfig?.multHp || 1));
   const boss = {
     isBoss: true,
     bossId: 'kraken',
@@ -11445,11 +11445,11 @@ function spawnKrakenBoss(){
     hp: maxHp,
     maxHp: maxHp,
     c: {
-      r: 46,
-      speed: 76,
-      damage: 70,
+      r: 48,
+      speed: 86,
+      damage: 90,
       color: '#3b0764',
-      xp: 500
+      xp: 650
     },
     fl: 0,
     oh: 0,
@@ -11464,14 +11464,14 @@ function spawnKrakenBoss(){
     emergeSlamDone: false,
     action: 'idle',
     actionT: 0,
-    slamCd: 3.4,
-    chargeCd: 6.2,
-    spitCd: 4.6,
-    riftCd: 7.0,
-    novaCd: 3.4,
+    slamCd: 2.4,
+    chargeCd: 4.6,
+    spitCd: 3.2,
+    riftCd: 5.2,
+    novaCd: 2.6,
     chargeAng: 0,
     chargeDist: 0,
-    chargeMaxDist: 360,
+    chargeMaxDist: 440,
     rifts: [],
     slamAngle: 0,
     enraged: false
@@ -12574,67 +12574,78 @@ function update(dt){
       // Фаза Ярости (Enrage при HP < 50%)
       if(!e.enraged && e.hp <= e.maxHp * 0.5){
         e.enraged = true;
-        e.c.speed = 98; // Стремительное скольжение Кракена в ярости (база 76)
+        e.c.speed = 116; // Стремительное скольжение Кракена в ярости (база 86)
         showGameToast('💀 ' + T('KRAKEN IS ENRAGED! (+SPEED / -20% DMG TAKEN)', 'КРАКЕН ВПАДАЕТ В ЯРОСТЬ! (+СКОРОСТЬ / -20% УРОНА)'), '#ef4444', 3.2);
         Sfx.play('dash');
-        for(let k = 0; k < 35; k++){
+        for(let k = 0; k < 45; k++){
           g.fx.push({
-            x: e.x + (Math.random() - 0.5) * 36,
-            y: e.y + (Math.random() - 0.5) * 36,
-            vx: (Math.random() - 0.5) * 200,
-            vy: -75 - Math.random() * 95,
+            x: e.x + (Math.random() - 0.5) * 40,
+            y: e.y + (Math.random() - 0.5) * 40,
+            vx: (Math.random() - 0.5) * 220,
+            vy: -80 - Math.random() * 110,
             col: Math.random() > 0.4 ? '#7c3aed' : '#ef4444',
-            l: 0.70
+            l: 0.75
           });
         }
       }
 
-      if(e.enraged && Math.random() < 0.45){
+      if(e.enraged && Math.random() < 0.55){
         g.fx.push({
-          x: e.x + (Math.random() - 0.5) * 28,
-          y: e.y - 12 + (Math.random() - 0.5) * 16,
-          vx: (Math.random() - 0.5) * 35,
-          vy: -40 - Math.random() * 30,
-          col: 'rgba(168, 85, 247, 0.7)',
+          x: e.x + (Math.random() - 0.5) * 32,
+          y: e.y - 12 + (Math.random() - 0.5) * 18,
+          vx: (Math.random() - 0.5) * 40,
+          vy: -45 - Math.random() * 35,
+          col: 'rgba(147, 51, 234, 0.75)',
           l: 0.45,
           type: 'smoke'
         });
       }
 
-      // Обновление разломов Бездны (Abyssal Rifts)
+      // Обновление разломов / водоворотов Бездны (Abyssal Rifts)
       if(e.rifts && e.rifts.length > 0){
         for(let ri = e.rifts.length - 1; ri >= 0; ri--){
           const rf = e.rifts[ri];
           rf.t -= dt;
-          if(rf.t > 0 && Math.random() < 0.4){
-            const a = Math.random() * 6.283;
-            const dist = Math.random() * rf.r;
-            g.fx.push({
-              x: rf.x + Math.cos(a) * dist,
-              y: rf.y + Math.sin(a) * dist,
-              vx: (Math.random() - 0.5) * 20,
-              vy: -20 - Math.random() * 30,
-              col: Math.random() > 0.5 ? '#a855f7' : '#c084fc',
-              l: 0.3
-            });
+
+          // ГРАВИТАЦИОННАЯ ТЯГА ВОДОВОРОТА БЕЗДНЫ (Suction effect)
+          if(rf.t > 0){
+            const pullDist = Math.hypot(p.x - rf.x, p.y - rf.y);
+            if(pullDist < 125 && pullDist > 6){
+              const pullStr = (1 - pullDist / 125) * (e.enraged ? 90 : 65);
+              p.x += ((rf.x - p.x) / pullDist) * pullStr * dt;
+              p.y += ((rf.y - p.y) / pullDist) * pullStr * dt;
+            }
+            if(Math.random() < 0.45){
+              const a = Math.random() * 6.283;
+              const dist = Math.random() * rf.r;
+              g.fx.push({
+                x: rf.x + Math.cos(a) * dist,
+                y: rf.y + Math.sin(a) * dist,
+                vx: (Math.random() - 0.5) * 24,
+                vy: -20 - Math.random() * 30,
+                col: Math.random() > 0.5 ? '#a855f7' : '#c084fc',
+                l: 0.32
+              });
+            }
           }
+
           if(rf.t <= 0){
             Sfx.play('hit');
-            g.shake = Math.max(g.shake, 0.45);
-            for(let k = 0; k < 22; k++){
-              const a = (k / 22) * 6.283;
-              const spd = 40 + Math.random() * 110;
+            g.shake = Math.max(g.shake, 0.5);
+            for(let k = 0; k < 24; k++){
+              const a = (k / 24) * 6.283;
+              const spd = 50 + Math.random() * 130;
               g.fx.push({
                 x: rf.x, y: rf.y,
                 vx: Math.cos(a) * spd,
-                vy: -80 - Math.random() * 120,
+                vy: -90 - Math.random() * 130,
                 col: Math.random() > 0.4 ? '#a855f7' : '#f3e8ff',
-                r: 2.5 + Math.random() * 2,
+                r: 2.6 + Math.random() * 2.2,
                 l: 0.55
               });
             }
             if(Math.hypot(p.x - rf.x, p.y - rf.y) < rf.r + p.r && p.inv <= 0){
-              const dmg = Math.max(1, Math.round(36 * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
+              const dmg = Math.max(1, Math.round(52 * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
               damagePlayer(dmg);
               showGameToast('⚡ ' + T('VOID GEYSER ERUPTION!', 'РАЗЛОМ БЕЗДНЫ!'), '#a855f7', 1.5);
             }
@@ -12642,8 +12653,8 @@ function update(dt){
               x: rf.x, y: rf.y,
               vx: 0, vy: 0,
               angle: 0,
-              l: 2.8, maxL: 2.8,
-              dmg: 8,
+              l: 3.5, maxL: 3.5,
+              dmg: 9,
               col: '#a855f7',
               type: 'abom_puddle'
             });
@@ -12654,34 +12665,35 @@ function update(dt){
 
       // Импульс Сверхновой Бездны в ярости (Abyssal Nova Pulse)
       if(e.enraged){
-        e.novaCd = (e.novaCd || 3.5) - dt;
+        e.novaCd = (e.novaCd || 2.6) - dt;
         if(e.novaCd <= 0){
-          e.novaCd = 3.6;
+          e.novaCd = 2.6;
           Sfx.play('dash');
           const startAng = performance.now() * 0.002;
-          for(let k = 0; k < 8; k++){
-            const na = startAng + (k / 8) * 6.28318;
+          const novaCount = 12;
+          for(let k = 0; k < novaCount; k++){
+            const na = startAng + (k / novaCount) * 6.28318;
             g.bossShockwaves.push({
               x: e.x + Math.cos(na) * 26,
               y: e.y + Math.sin(na) * 26,
-              vx: Math.cos(na) * 210,
-              vy: Math.sin(na) * 210,
+              vx: Math.cos(na) * 240,
+              vy: Math.sin(na) * 240,
               angle: na,
-              l: 1.4,
-              maxL: 1.4,
-              dmg: 22,
+              l: 1.5,
+              maxL: 1.5,
+              dmg: 26,
               col: '#c084fc',
               type: 'abom_nova'
             });
           }
-          if(g.enemies.filter(en => !en.dead).length < 7 && Math.random() < 0.65){
+          if(g.enemies.filter(en => !en.dead).length < 8 && Math.random() < 0.75){
             const minAng = Math.random() * 6.283;
             const minion = {
               x: e.x + Math.cos(minAng) * 45,
               y: e.y + Math.sin(minAng) * 45,
-              hp: Math.round(95 * (g.lvlConfig?.multHp || 1)),
-              maxHp: Math.round(95 * (g.lvlConfig?.multHp || 1)),
-              c: { r: 16, speed: 75, damage: 18, color: '#a855f7', xp: 5 },
+              hp: Math.round(135 * (g.lvlConfig?.multHp || 1)),
+              maxHp: Math.round(135 * (g.lvlConfig?.multHp || 1)),
+              c: { r: 16, speed: 85, damage: 22, color: '#a855f7', xp: 6 },
               dead: false,
               fl: 0,
               isMinion: true
@@ -12699,62 +12711,62 @@ function update(dt){
         e.spitCd -= dt;
         e.riftCd -= dt;
 
-        if(e.slamCd <= 0 && d < 170){
+        if(e.slamCd <= 0 && d < 185){
           e.action = 'slam_windup';
-          e.actionT = 0.70;
+          e.actionT = e.enraged ? 0.42 : 0.52;
           e.slamAngle = Math.atan2(p.y - e.y, p.x - e.x);
           e.facing = dx >= 0 ? 1 : -1;
-          e.frame = 2;
+          e.frame = 7;
           continue;
-        }else if(e.chargeCd <= 0 && d > 140){
+        }else if(e.chargeCd <= 0 && d > 120){
           e.action = 'charge_prep';
-          e.actionT = 0.85;
+          e.actionT = e.enraged ? 0.45 : 0.60;
           e.chargeAng = Math.atan2(p.y - e.y, p.x - e.x);
           e.chargeDist = 0;
-          e.chargeMaxDist = Math.min(400, d + 70);
+          e.chargeMaxDist = Math.min(460, d + 80);
           e.facing = dx >= 0 ? 1 : -1;
-          e.frame = 5;
+          e.frame = 7;
           Sfx.play('dash');
           continue;
         }else if(e.riftCd <= 0){
           e.action = 'rift_prep';
-          e.actionT = 0.75;
+          e.actionT = e.enraged ? 0.45 : 0.60;
           e.facing = dx >= 0 ? 1 : -1;
           e.frame = 0;
           continue;
         }else if(e.spitCd <= 0){
           e.action = 'spit_prep';
-          e.actionT = 0.65;
+          e.actionT = e.enraged ? 0.38 : 0.48;
           e.facing = dx >= 0 ? 1 : -1;
-          e.frame = 6;
+          e.frame = 7;
           continue;
         }else if(e.slamCd <= 0){
           e.action = 'slam_windup';
-          e.actionT = 0.70;
+          e.actionT = e.enraged ? 0.42 : 0.52;
           e.slamAngle = Math.atan2(p.y - e.y, p.x - e.x);
           e.facing = dx >= 0 ? 1 : -1;
-          e.frame = 2;
+          e.frame = 7;
           continue;
         }else{
-          // Поступь Титана
-          const spd = (e.enraged ? 95 : 74) * (g.lvlConfig.multSpeed || 1);
+          // Стремительное скольжение Кракена
+          const spd = (e.enraged ? 116 : 86) * (g.lvlConfig.multSpeed || 1);
           e.x += (dx / d) * spd * dt;
           e.y += (dy / d) * spd * dt;
-          keepInsideBossArena(e, g.bossArena, 72); // Гарантированно держим внутри арены!
+          keepInsideBossArena(e, g.bossArena, 72);
           e.facing = dx >= 0 ? 1 : -1;
-          e.animT = (e.animT || 0) + dt * (e.enraged ? 9.5 : 7.2);
-          e.frame = Math.floor(e.animT) % 8;
+          e.animT = (e.animT || 0) + dt * (e.enraged ? 11.5 : 8.5);
+          e.frame = Math.floor(e.animT) % 7;
         }
       }else if(e.action === 'slam_windup'){
         e.actionT -= dt;
-        e.frame = 2;
+        e.frame = 7;
         e.facing = (p.x - e.x) >= 0 ? 1 : -1;
         keepInsideBossArena(e, g.bossArena, 72);
-        if(Math.random() < 0.6){
+        if(Math.random() < 0.7){
           g.fx.push({
             x: e.x + (e.facing > 0 ? 25 : -25) + (Math.random() - 0.5) * 20,
             y: e.y + 12 + (Math.random() - 0.5) * 16,
-            vx: (Math.random() - 0.5) * 40,
+            vx: (Math.random() - 0.5) * 50,
             vy: -25 - Math.random() * 35,
             col: Math.random() > 0.4 ? '#a855f7' : '#f3e8ff',
             l: 0.35
@@ -12762,24 +12774,26 @@ function update(dt){
         }
         if(e.actionT <= 0){
           e.action = 'slam_smash';
-          e.actionT = 0.35;
-          e.frame = 1;
+          e.actionT = 0.28;
+          e.frame = 7;
           Sfx.play('anvil');
-          g.shake = 0.7;
-          // 5-7 фиолетовых серповидных лезвий Бездны
+          g.shake = 0.75;
+          // 7-9 фиолетовых серповидных лезвий Бездны
           const baseAng = e.slamAngle;
-          const bladeOffsets = e.enraged ? [-0.52, -0.34, -0.17, 0, 0.17, 0.34, 0.52] : [-0.46, -0.23, 0, 0.23, 0.46];
+          const bladeOffsets = e.enraged
+            ? [-0.60, -0.45, -0.30, -0.15, 0, 0.15, 0.30, 0.45, 0.60]
+            : [-0.48, -0.32, -0.16, 0, 0.16, 0.32, 0.48];
           for(const angOff of bladeOffsets){
             const sa = baseAng + angOff;
             g.bossShockwaves.push({
               x: e.x + Math.cos(sa) * 32,
               y: e.y + Math.sin(sa) * 32,
-              vx: Math.cos(sa) * 310,
-              vy: Math.sin(sa) * 310,
+              vx: Math.cos(sa) * 360,
+              vy: Math.sin(sa) * 360,
               angle: sa,
-              l: 1.1,
-              maxL: 1.1,
-              dmg: 32,
+              l: 1.15,
+              maxL: 1.15,
+              dmg: 38,
               col: '#a855f7',
               type: 'abomination'
             });
@@ -12788,13 +12802,13 @@ function update(dt){
           let dAng = Math.atan2(p.y - e.y, p.x - e.x) - baseAng;
           while(dAng > Math.PI) dAng -= 2 * Math.PI;
           while(dAng < -Math.PI) dAng += 2 * Math.PI;
-          if(d < 95 && Math.abs(dAng) < 0.95 && p.inv <= 0){
-            damagePlayer(Math.max(1, Math.round(48 * (p.armor ? Math.max(0.2, 1 - p.armor) : 1))));
+          if(d < 105 && Math.abs(dAng) < 1.05 && p.inv <= 0){
+            damagePlayer(Math.max(1, Math.round(62 * (p.armor ? Math.max(0.2, 1 - p.armor) : 1))));
             showGameToast('💥 ' + T('LASHED BY ABYSSAL TENTACLES!', 'СОКРУШИТЕЛЬНЫЙ УДАР ЩУПАЛЕЦ!'), '#ef4444', 1.8);
           }
-          for(let k = 0; k < 30; k++){
+          for(let k = 0; k < 32; k++){
             const sa = Math.random() * 6.283;
-            const spd = 60 + Math.random() * 180;
+            const spd = 70 + Math.random() * 190;
             g.fx.push({
               x: e.x + Math.cos(baseAng) * 26,
               y: e.y + 16 + Math.sin(baseAng) * 26,
@@ -12808,28 +12822,28 @@ function update(dt){
         continue;
       }else if(e.action === 'slam_smash'){
         e.actionT -= dt;
-        e.frame = 1;
+        e.frame = 7;
         keepInsideBossArena(e, g.bossArena, 72);
         if(e.actionT <= 0){
           e.action = 'idle';
-          e.slamCd = e.enraged ? 2.8 : 3.8;
+          e.slamCd = e.enraged ? 1.8 : 2.6;
         }
         continue;
       }else if(e.action === 'charge_prep'){
         e.actionT -= dt;
-        e.frame = 5;
+        e.frame = 7;
         keepInsideBossArena(e, g.bossArena, 72);
-        if(e.actionT > 0.25){
+        if(e.actionT > 0.15){
           e.chargeAng = Math.atan2(p.y - e.y, p.x - e.x);
           e.facing = (p.x - e.x) >= 0 ? 1 : -1;
         }
-        g.shake = Math.max(g.shake, 0.2);
-        if(Math.random() < 0.6){
+        g.shake = Math.max(g.shake, 0.25);
+        if(Math.random() < 0.7){
           g.fx.push({
             x: e.x + (Math.random() - 0.5) * 36,
             y: e.y + 24,
-            vx: (Math.random() - 0.5) * 80,
-            vy: -20 - Math.random() * 40,
+            vx: (Math.random() - 0.5) * 90,
+            vy: -20 - Math.random() * 45,
             col: '#ef4444',
             l: 0.35
           });
@@ -12843,39 +12857,55 @@ function update(dt){
         continue;
       }else if(e.action === 'charge_rush'){
         e.actionT -= dt;
-        e.animT = (e.animT || 0) + dt * 14;
-        e.frame = Math.floor(e.animT) % 8;
-        const rushSpeed = e.enraged ? 420 : 360;
+        e.animT = (e.animT || 0) + dt * 16;
+        e.frame = 7;
+        const rushSpeed = e.enraged ? 540 : 460;
         const stepDist = rushSpeed * dt;
         e.chargeDist += stepDist;
         e.x += Math.cos(e.chargeAng) * stepDist;
         e.y += Math.sin(e.chargeAng) * stepDist;
         keepInsideBossArena(e, g.bossArena, 72);
-        g.shake = Math.max(g.shake, 0.35);
+        g.shake = Math.max(g.shake, 0.4);
 
-        for(let k = 0; k < 2; k++){
+        for(let k = 0; k < 3; k++){
           g.fx.push({
-            x: e.x + (Math.random() - 0.5) * 30,
+            x: e.x + (Math.random() - 0.5) * 32,
             y: e.y + 18 + (Math.random() - 0.5) * 12,
-            vx: -Math.cos(e.chargeAng) * 80 + (Math.random() - 0.5) * 40,
-            vy: -Math.sin(e.chargeAng) * 80 - Math.random() * 30,
+            vx: -Math.cos(e.chargeAng) * 90 + (Math.random() - 0.5) * 40,
+            vy: -Math.sin(e.chargeAng) * 90 - Math.random() * 30,
             col: Math.random() > 0.5 ? '#a855f7' : '#7c3aed',
             l: 0.4
           });
         }
 
-        if(Math.hypot(p.x - e.x, p.y - e.y) < e.c.r + p.r + 12 && p.inv <= 0){
-          damagePlayer(Math.max(1, Math.round(48 * (p.armor ? Math.max(0.2, 1 - p.armor) : 1))));
+        if(Math.hypot(p.x - e.x, p.y - e.y) < e.c.r + p.r + 14 && p.inv <= 0){
+          damagePlayer(Math.max(1, Math.round(62 * (p.armor ? Math.max(0.2, 1 - p.armor) : 1))));
           showGameToast('💥 ' + T('TRAMPLED BY KRAKEN RUSH!', 'РАЗДАВЛЕН БРОСКОМ КРАКЕНА!'), '#ef4444', 1.8);
           Sfx.play('hit');
         }
 
         if(e.chargeDist >= e.chargeMaxDist || e.actionT <= 0){
           e.action = 'charge_recover';
-          e.actionT = 0.35;
+          e.actionT = 0.30;
           e.frame = 0;
           Sfx.play('anvil');
-          g.shake = 0.6;
+          g.shake = 0.65;
+          // Круговой всплеск темной воды при остановке тарана
+          for(let k = 0; k < 8; k++){
+            const ca = (k / 8) * 6.283;
+            g.bossShockwaves.push({
+              x: e.x + Math.cos(ca) * 26,
+              y: e.y + Math.sin(ca) * 26,
+              vx: Math.cos(ca) * 240,
+              vy: Math.sin(ca) * 240,
+              angle: ca,
+              l: 0.95,
+              maxL: 0.95,
+              dmg: 24,
+              col: '#a855f7',
+              type: 'abomination'
+            });
+          }
         }
         continue;
       }else if(e.action === 'charge_recover'){
@@ -12884,41 +12914,43 @@ function update(dt){
         keepInsideBossArena(e, g.bossArena, 72);
         if(e.actionT <= 0){
           e.action = 'idle';
-          e.chargeCd = e.enraged ? 4.8 : 6.5;
+          e.chargeCd = e.enraged ? 3.4 : 5.0;
         }
         continue;
       }else if(e.action === 'spit_prep'){
         e.actionT -= dt;
-        e.frame = 6;
+        e.frame = 7;
         e.facing = (p.x - e.x) >= 0 ? 1 : -1;
         keepInsideBossArena(e, g.bossArena, 72);
-        if(Math.random() < 0.6){
+        if(Math.random() < 0.7){
           g.fx.push({
             x: e.x + (e.facing > 0 ? 18 : -18) + (Math.random() - 0.5) * 14,
             y: e.y - 28 + (Math.random() - 0.5) * 14,
-            vx: (Math.random() - 0.5) * 30,
+            vx: (Math.random() - 0.5) * 35,
             vy: -15 - Math.random() * 25,
             col: '#c084fc',
-            l: 0.3
+            l: 0.32
           });
         }
         if(e.actionT <= 0){
           e.action = 'idle';
-          e.spitCd = e.enraged ? 3.8 : 5.2;
+          e.spitCd = e.enraged ? 2.6 : 3.6;
           Sfx.play('dash');
           const baseAng = Math.atan2(p.y - e.y, p.x - e.x);
-          const globOffsets = [-0.36, -0.18, 0, 0.18, 0.36];
+          const globOffsets = e.enraged
+            ? [-0.56, -0.42, -0.28, -0.14, 0, 0.14, 0.28, 0.42, 0.56]
+            : [-0.45, -0.30, -0.15, 0, 0.15, 0.30, 0.45];
           for(const off of globOffsets){
             const sa = baseAng + off;
             g.bossShockwaves.push({
-              x: e.x + Math.cos(sa) * 22,
-              y: e.y - 12 + Math.sin(sa) * 22,
-              vx: Math.cos(sa) * 260,
-              vy: Math.sin(sa) * 260,
+              x: e.x + Math.cos(sa) * 24,
+              y: e.y - 12 + Math.sin(sa) * 24,
+              vx: Math.cos(sa) * 300,
+              vy: Math.sin(sa) * 300,
               angle: sa,
-              l: 1.1,
-              maxL: 1.1,
-              dmg: 24,
+              l: 1.2,
+              maxL: 1.2,
+              dmg: 28,
               col: '#a855f7',
               type: 'abom_glob'
             });
@@ -12932,16 +12964,20 @@ function update(dt){
         keepInsideBossArena(e, g.bossArena, 72);
         if(e.actionT <= 0){
           e.action = 'idle';
-          e.riftCd = e.enraged ? 5.2 : 7.0;
+          e.riftCd = e.enraged ? 3.8 : 5.4;
           Sfx.play('dash');
           e.rifts = e.rifts || [];
-          e.rifts.push({ x: p.x, y: p.y, r: 44, t: 0.9, maxT: 0.9 });
-          for(const angOff of [1.6, -1.6]){
-            const rfAng = Math.random() * 6.283;
+          // 1 центральный водоворот прямо под игроком
+          e.rifts.push({ x: p.x, y: p.y, r: 46, t: 0.85, maxT: 0.85 });
+          // 3-4 окружающих фланговых водоворота
+          const angles = e.enraged ? [0, 1.57, 3.14, 4.71] : [0.8, 2.8, 4.8];
+          const baseSpreadAng = Math.random() * 6.283;
+          for(const aOff of angles){
+            const rfAng = baseSpreadAng + aOff;
             const rfDist = 65 + Math.random() * 45;
-            const rx = p.x + Math.cos(rfAng + angOff) * rfDist;
-            const ry = p.y + Math.sin(rfAng + angOff) * rfDist;
-            const riftPt = { x: rx, y: ry, r: 40, t: 1.05, maxT: 1.05 };
+            const rx = p.x + Math.cos(rfAng) * rfDist;
+            const ry = p.y + Math.sin(rfAng) * rfDist;
+            const riftPt = { x: rx, y: ry, r: 42, t: 1.0, maxT: 1.0 };
             keepInsideBossArena(riftPt, g.bossArena, 50);
             e.rifts.push(riftPt);
           }
@@ -14599,16 +14635,16 @@ function update(dt){
           p.poisonDps = Math.max(p.poisonDps || 0, 2.0);
           p.poisonSlow = Math.min(p.poisonSlow || 1, 0.85);
         } else if(sw.type === 'abom_puddle'){
-          p.poisonT = Math.max(p.poisonT || 0, 2.4);
-          p.poisonDps = Math.max(p.poisonDps || 0, 3.0);
-          p.poisonSlow = Math.min(p.poisonSlow || 1, 0.80);
-          showGameToast('☣️ ' + T('DRENCHED IN MUTAGEN!', 'ОБЛИТ МУТАГЕНОМ БЕЗДНЫ!'), '#a855f7', 1.6);
+          p.poisonT = Math.max(p.poisonT || 0, 3.2);
+          p.poisonDps = Math.max(p.poisonDps || 0, 4.0);
+          p.poisonSlow = Math.min(p.poisonSlow || 1, 0.70);
+          showGameToast('☣️ ' + T('DRENCHED IN ABYSSAL INK!', 'ОБЛИТ ЧЕРНИЛАМИ БЕЗДНЫ!'), '#a855f7', 1.6);
         } else if(sw.type === 'abom_glob'){
-          p.poisonT = Math.max(p.poisonT || 0, 2.2);
-          p.poisonDps = Math.max(p.poisonDps || 0, 3.0);
-          p.poisonSlow = Math.min(p.poisonSlow || 1, 0.80);
-          showGameToast('☣️ ' + T('MUTAGENIC BILE SPLASH!', 'ВСПЛЕСК МУТАГЕННОЙ ЖЕЛЧИ!'), '#a855f7', 1.6);
-          g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 4.0, maxL: 4.0, dmg: 5, type: 'abom_puddle', col: '#a855f7' });
+          p.poisonT = Math.max(p.poisonT || 0, 3.0);
+          p.poisonDps = Math.max(p.poisonDps || 0, 4.0);
+          p.poisonSlow = Math.min(p.poisonSlow || 1, 0.70);
+          showGameToast('☣️ ' + T('ABYSSAL INK VOLLEY HIT!', 'УДАР ЧЕРНИЛ БЕЗДНЫ!'), '#a855f7', 1.6);
+          g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 4.5, maxL: 4.5, dmg: 8, type: 'abom_puddle', col: '#a855f7' });
           for(let k = 0; k < 12; k++){
             g.fx.push({ x: p.x, y: p.y, vx: (Math.random() - 0.5) * 80, vy: -15 - Math.random() * 25, col: '#a855f7', r: 2.5, l: 0.35 });
           }
