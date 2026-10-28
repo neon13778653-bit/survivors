@@ -9171,13 +9171,13 @@ function testSkipWaves(count=5){
     else if(g.wave===30)spawnAbominationBoss();
   }else if(lvl===2){
     if(g.wave===10)spawnBroodmotherBoss();
-    else if(g.wave===20)spawnTreantBoss();
-    else if(g.wave===30)spawnSlimeBoss();
+    else if(g.wave===20)spawnSlimeBoss();
+    else if(g.wave===30)spawnTreantBoss();
     else if(g.wave===40)spawnAbominationBoss();
   }else if(lvl===3){
     if(g.wave===10)spawnBroodmotherBoss();
-    else if(g.wave===20)spawnTreantBoss();
-    else if(g.wave===30)spawnSlimeBoss();
+    else if(g.wave===20)spawnSlimeBoss();
+    else if(g.wave===30)spawnTreantBoss();
     else if(g.wave===40)spawnRatKingBoss();
     else if(g.wave===50)spawnAbominationBoss();
   }
@@ -9610,7 +9610,7 @@ function hurt(e,d){
     }
     let kXp = 1;
     if(e.isBoss){
-      kXp = e.bossId === 'abomination' ? 350 : (e.bossId === 'toxic_slime' ? 320 : (e.bossId === 'treant' ? 280 : (e.bossId === 'rat_king' ? 220 : (e.bossId === 'broodmother' ? 180 : 150))));
+      kXp = e.bossId === 'abomination' ? 350 : (e.bossId === 'treant' ? 320 : (e.bossId === 'toxic_slime' ? 280 : (e.bossId === 'rat_king' ? 220 : (e.bossId === 'broodmother' ? 180 : 150))));
       G.bossesDefeated=(G.bossesDefeated||0)+1;
       e.phaseGuardT = 0;
       if(G.activeBoss===e)G.activeBoss=null;
@@ -9690,25 +9690,25 @@ function hurt(e,d){
         }
         showGameToast('🕷️ '+T('BROODMOTHER SLAIN! Weapon Dropped! +3 LEVEL-UPS!','ПАУЧИХА-ПРАМАТЕРЬ УНИЧТОЖЕНА! Выпало оружие! +3 УРОВНЯ!'),'#ef4444',4.0);
       } else if(e.bossId === 'treant'){
-        dropPurpleCrystals(e.x, e.y, 12, 1);
-        dropCoins(e.x, e.y, 35, Math.max(1, Math.round(2 * (G.lvlConfig?.multGold || 1))));
+        dropPurpleCrystals(e.x, e.y, 14, 1);
+        dropCoins(e.x, e.y, 40, Math.max(1, Math.round(2.5 * (G.lvlConfig?.multGold || 1))));
         G.gems.push({ x: e.x, y: e.y, v: 300, type: 'xp', isBoss: true, bossLevels: 3, mag: false });
         const trRoll = Math.random();
-        const trTier = trRoll < 0.50 ? 2 : (trRoll < 0.90 ? 3 : 4);
+        const trTier = trRoll < 0.40 ? 3 : (trRoll < 0.85 ? 4 : 5);
         spawnLootDrop(rollWeaponId(trTier), e.x, e.y);
-        if(Math.random() < 0.45){
+        if(Math.random() < 0.50){
           spawnLootDrop(rollGearId(3), e.x, e.y);
         }
         showGameToast('🌲 '+T('MUTANT TREANT FELLED! Weapon Dropped! +3 LEVEL-UPS!','ДРЕВЕНЬ-МУТАНТ ПОВЕРЖЕН! Выпало оружие! +3 УРОВНЯ!'),'#ef4444',4.0);
       } else if(e.bossId === 'toxic_slime'){
-        dropPurpleCrystals(e.x, e.y, 12, 1);
-        dropCoins(e.x, e.y, 40, Math.max(1, Math.round(2.5 * (G.lvlConfig?.multGold || 1))));
+        dropPurpleCrystals(e.x, e.y, 10, 1);
+        dropCoins(e.x, e.y, 35, Math.max(1, Math.round(2 * (G.lvlConfig?.multGold || 1))));
         G.gems.push({ x: e.x, y: e.y, v: 300, type: 'xp', isBoss: true, bossLevels: 3, mag: false });
         const slRoll = Math.random();
-        const slTier = slRoll < 0.40 ? 3 : (slRoll < 0.85 ? 4 : 5);
+        const slTier = slRoll < 0.50 ? 2 : (slRoll < 0.90 ? 3 : 4);
         spawnLootDrop(rollWeaponId(slTier), e.x, e.y);
-        if(Math.random() < 0.50){
-          spawnLootDrop(rollGearId(3), e.x, e.y);
+        if(Math.random() < 0.45){
+          spawnLootDrop(rollGearId(2), e.x, e.y);
         }
         showGameToast('🧪 '+T('TOXIC SLIME DISSOLVED! Weapon Dropped! +3 LEVEL-UPS!','ТОКСИЧНЫЙ СЛИЗЕНЬ РАСТВОРЕН! Выпало оружие! +3 УРОВНЯ!'),'#ef4444',4.0);
       } else {
@@ -11590,7 +11590,7 @@ function spawnTreantBoss(){
   const bx = p.x + dx;
   const by = p.y + dy;
 
-  const maxHp = Math.round(4400 * (g.lvlConfig?.multHp || 1));
+  const maxHp = Math.round(5200 * (g.lvlConfig?.multHp || 1));
   const boss = {
     isBoss: true,
     bossId: 'treant',
@@ -11607,9 +11607,9 @@ function spawnTreantBoss(){
     c: {
       r: 46,
       speed: 72,
-      damage: 48,
+      damage: 50,
       color: '#854d0e',
-      xp: 280
+      xp: 320
     },
     fl: 0,
     oh: 0,
@@ -11667,7 +11667,7 @@ function spawnSlimeBoss(){
   const bx = p.x + dx;
   const by = p.y + dy;
 
-  const maxHp = Math.round(5200 * (g.lvlConfig?.multHp || 1));
+  const maxHp = Math.round(4200 * (g.lvlConfig?.multHp || 1));
   const boss = {
     isBoss: true,
     bossId: 'toxic_slime',
@@ -11684,9 +11684,9 @@ function spawnSlimeBoss(){
     c: {
       r: 44,
       speed: 68,
-      damage: 46,
+      damage: 44,
       color: '#22c55e',
-      xp: 320
+      xp: 280
     },
     fl: 0,
     oh: 0,
@@ -11859,16 +11859,16 @@ function update(dt){
       else if(g.wave === 20) spawnRatKingBoss();
       else if(g.wave === 30) spawnAbominationBoss();
     }else if(curLvlId === 2){
-      // 2 локация (40 волн): волна 10 — Паучиха-праматерь, волна 20 — Древень-мутант, волна 30 — Токсичный слизень, волна 40 — Мутант-аберрация
+      // 2 локация (40 волн): волна 10 — Паучиха-праматерь, волна 20 — Токсичный слизень, волна 30 — Древень-мутант, волна 40 — Мутант-аберрация
       if(g.wave === 10) spawnBroodmotherBoss();
-      else if(g.wave === 20) spawnTreantBoss();
-      else if(g.wave === 30) spawnSlimeBoss();
+      else if(g.wave === 20) spawnSlimeBoss();
+      else if(g.wave === 30) spawnTreantBoss();
       else if(g.wave === 40) spawnAbominationBoss();
     }else if(curLvlId === 3){
       // 3 локация (Полигон 50 волн)
       if(g.wave === 10) spawnBroodmotherBoss();
-      else if(g.wave === 20) spawnTreantBoss();
-      else if(g.wave === 30) spawnSlimeBoss();
+      else if(g.wave === 20) spawnSlimeBoss();
+      else if(g.wave === 30) spawnTreantBoss();
       else if(g.wave === 40) spawnRatKingBoss();
       else if(g.wave === 50) spawnAbominationBoss();
     }
