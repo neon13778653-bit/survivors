@@ -12701,6 +12701,7 @@ function update(dt){
           e.actionT = 0.70;
           e.slamAngle = Math.atan2(p.y - e.y, p.x - e.x);
           e.facing = dx >= 0 ? 1 : -1;
+          e.frame = 2;
           continue;
         }else if(e.chargeCd <= 0 && d > 140){
           e.action = 'charge_prep';
@@ -12709,23 +12710,27 @@ function update(dt){
           e.chargeDist = 0;
           e.chargeMaxDist = Math.min(400, d + 70);
           e.facing = dx >= 0 ? 1 : -1;
+          e.frame = 5;
           Sfx.play('dash');
           continue;
         }else if(e.riftCd <= 0){
           e.action = 'rift_prep';
           e.actionT = 0.75;
           e.facing = dx >= 0 ? 1 : -1;
+          e.frame = 0;
           continue;
         }else if(e.spitCd <= 0){
           e.action = 'spit_prep';
           e.actionT = 0.65;
           e.facing = dx >= 0 ? 1 : -1;
+          e.frame = 6;
           continue;
         }else if(e.slamCd <= 0){
           e.action = 'slam_windup';
           e.actionT = 0.70;
           e.slamAngle = Math.atan2(p.y - e.y, p.x - e.x);
           e.facing = dx >= 0 ? 1 : -1;
+          e.frame = 2;
           continue;
         }else{
           // Поступь Титана
@@ -12739,6 +12744,7 @@ function update(dt){
         }
       }else if(e.action === 'slam_windup'){
         e.actionT -= dt;
+        e.frame = 2;
         e.facing = (p.x - e.x) >= 0 ? 1 : -1;
         keepInsideBossArena(e, g.bossArena, 72);
         if(Math.random() < 0.6){
@@ -12754,6 +12760,7 @@ function update(dt){
         if(e.actionT <= 0){
           e.action = 'slam_smash';
           e.actionT = 0.35;
+          e.frame = 1;
           Sfx.play('anvil');
           g.shake = 0.7;
           // 5-7 фиолетовых серповидных лезвий Бездны
@@ -12798,6 +12805,7 @@ function update(dt){
         continue;
       }else if(e.action === 'slam_smash'){
         e.actionT -= dt;
+        e.frame = 1;
         keepInsideBossArena(e, g.bossArena, 72);
         if(e.actionT <= 0){
           e.action = 'idle';
@@ -12806,6 +12814,7 @@ function update(dt){
         continue;
       }else if(e.action === 'charge_prep'){
         e.actionT -= dt;
+        e.frame = 5;
         keepInsideBossArena(e, g.bossArena, 72);
         if(e.actionT > 0.25){
           e.chargeAng = Math.atan2(p.y - e.y, p.x - e.x);
@@ -12831,6 +12840,8 @@ function update(dt){
         continue;
       }else if(e.action === 'charge_rush'){
         e.actionT -= dt;
+        e.animT = (e.animT || 0) + dt * 14;
+        e.frame = Math.floor(e.animT) % 8;
         const rushSpeed = e.enraged ? 420 : 360;
         const stepDist = rushSpeed * dt;
         e.chargeDist += stepDist;
@@ -12859,12 +12870,14 @@ function update(dt){
         if(e.chargeDist >= e.chargeMaxDist || e.actionT <= 0){
           e.action = 'charge_recover';
           e.actionT = 0.35;
+          e.frame = 0;
           Sfx.play('anvil');
           g.shake = 0.6;
         }
         continue;
       }else if(e.action === 'charge_recover'){
         e.actionT -= dt;
+        e.frame = 0;
         keepInsideBossArena(e, g.bossArena, 72);
         if(e.actionT <= 0){
           e.action = 'idle';
@@ -12873,6 +12886,7 @@ function update(dt){
         continue;
       }else if(e.action === 'spit_prep'){
         e.actionT -= dt;
+        e.frame = 6;
         e.facing = (p.x - e.x) >= 0 ? 1 : -1;
         keepInsideBossArena(e, g.bossArena, 72);
         if(Math.random() < 0.6){
@@ -12910,6 +12924,7 @@ function update(dt){
         continue;
       }else if(e.action === 'rift_prep'){
         e.actionT -= dt;
+        e.frame = 0;
         e.facing = (p.x - e.x) >= 0 ? 1 : -1;
         keepInsideBossArena(e, g.bossArena, 72);
         if(e.actionT <= 0){
@@ -19312,6 +19327,32 @@ function drawAbominationBoss(e, ox, oy){
   // 3. Спрайт Мутанта-Аберрации
   cx.translate(ex, ey);
   if(e.facing > 0) cx.scale(-1, 1);
+
+  // Динамические позы действий титана
+  if(e.action === 'slam_windup'){
+    const windProg = 1 - Math.max(0, (e.actionT || 0) / 0.70);
+    cx.rotate(-0.14 * windProg);
+    cx.translate(0, -6 * windProg);
+  } else if(e.action === 'slam_smash'){
+    const smashProg = 1 - Math.max(0, (e.actionT || 0) / 0.35);
+    cx.rotate(0.18 * (1 - smashProg * 0.5));
+    cx.translate(6, 6 * (1 - smashProg * 0.5));
+  } else if(e.action === 'charge_prep'){
+    const prepShake = (Math.random() - 0.5) * 2.5;
+    cx.translate(prepShake, 4);
+    cx.scale(1.05, 0.95);
+  } else if(e.action === 'charge_rush'){
+    cx.rotate(0.12);
+    cx.translate(6, -2);
+  } else if(e.action === 'charge_recover'){
+    const recProg = Math.max(0, (e.actionT || 0) / 0.35);
+    cx.rotate(-0.07 * recProg);
+    cx.translate(0, 3 * recProg);
+  } else if(e.action === 'spit_prep'){
+    const spitPulse = Math.sin(performance.now() * 0.02) * 2.5;
+    cx.translate(0, spitPulse);
+  }
+
   if(e.fl > 0) cx.filter = 'brightness(3)';
   else if(e.enraged) cx.filter = 'contrast(1.3) saturate(1.4)';
 
