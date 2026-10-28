@@ -9610,7 +9610,7 @@ function hurt(e,d){
     }
     let kXp = 1;
     if(e.isBoss){
-      kXp = e.bossId === 'abomination' ? 350 : (e.bossId === 'treant' ? 320 : (e.bossId === 'toxic_slime' ? 280 : (e.bossId === 'rat_king' ? 220 : (e.bossId === 'broodmother' ? 180 : 150))));
+      kXp = e.bossId === 'abomination' ? 350 : (e.bossId === 'treant' ? 320 : (e.bossId === 'toxic_slime' ? 300 : (e.bossId === 'rat_king' ? 220 : (e.bossId === 'broodmother' ? 180 : 150))));
       G.bossesDefeated=(G.bossesDefeated||0)+1;
       e.phaseGuardT = 0;
       if(G.activeBoss===e)G.activeBoss=null;
@@ -11667,7 +11667,7 @@ function spawnSlimeBoss(){
   const bx = p.x + dx;
   const by = p.y + dy;
 
-  const maxHp = Math.round(4200 * (g.lvlConfig?.multHp || 1));
+  const maxHp = Math.round(4800 * (g.lvlConfig?.multHp || 1));
   const boss = {
     isBoss: true,
     bossId: 'toxic_slime',
@@ -11682,11 +11682,11 @@ function spawnSlimeBoss(){
     hp: maxHp,
     maxHp: maxHp,
     c: {
-      r: 44,
-      speed: 68,
-      damage: 44,
+      r: 46,
+      speed: 78,
+      damage: 52,
       color: '#22c55e',
-      xp: 280
+      xp: 300
     },
     fl: 0,
     oh: 0,
@@ -11701,16 +11701,17 @@ function spawnSlimeBoss(){
     emergeSlamDone: false,
     action: 'idle',
     actionT: 0,
-    trailCd: 0.35,
-    globCd: 2.2,
-    slamCd: 5.5,
-    spawnCd: 6.5,
+    trailCd: 0.30,
+    globCd: 2.0,
+    slamCd: 4.5,
+    spawnCd: 6.0,
+    burstCd: 2.8,
     jumpStartX: 0,
     jumpStartY: 0,
     jumpTargetX: 0,
     jumpTargetY: 0,
     jumpY: 0,
-    jumpDur: 0.65,
+    jumpDur: 0.42,
     enraged: false
   };
 
@@ -13661,7 +13662,8 @@ function update(dt){
     }
 
     // ==========================================
-    // БОСС 30 ВОЛНЫ: ТОКСИЧНЫЙ СЛИЗЕНЬ
+    // ==========================================
+    // БОСС 20 ВОЛНЫ: ТОКСИЧНЫЙ СЛИЗЕНЬ (TOXIC SLIME)
     // ==========================================
     if(e.isBoss && e.bossId === 'toxic_slime'){
       if(e.fl > 0) e.fl -= dt;
@@ -13685,28 +13687,43 @@ function update(dt){
       // 2. Проверка порога Ярости при HP <= 50% (-20% входящего урона)
       if(!e.enraged && e.hp <= e.maxHp * 0.5){
         e.enraged = true;
-        g.shake = Math.max(g.shake, 0.5);
+        e.c.speed = 105;
+        g.shake = Math.max(g.shake, 0.65);
         showGameToast('⚠️ ' + T('TOXIC SLIME IS ENRAGED! (+SPEED / -20% DMG TAKEN)', 'ТОКСИЧНЫЙ СЛИЗЕНЬ В ЯРОСТИ! (+СКОРОСТЬ / -20% УРОНА)'), '#22c55e', 3.2);
-        for(let k = 0; k < 40; k++){
+        for(let k = 0; k < 45; k++){
           g.fx.push({
-            x: e.x + (Math.random() - 0.5) * 40,
-            y: e.y + (Math.random() - 0.5) * 40,
-            vx: (Math.random() - 0.5) * 120,
-            vy: -30 - Math.random() * 50,
+            x: e.x + (Math.random() - 0.5) * 44,
+            y: e.y + (Math.random() - 0.5) * 44,
+            vx: (Math.random() - 0.5) * 140,
+            vy: -40 - Math.random() * 60,
             col: Math.random() > 0.5 ? '#22c55e' : '#a3e635',
-            r: 3 + Math.random() * 2,
-            l: 0.55
+            r: 3 + Math.random() * 2.5,
+            l: 0.6
           });
         }
         Sfx.play('hit');
-        // При входе в ярость немедленно выплевывает 2 мини-слизней
-        for(let k = 0; k < 2; k++){
+        // Всплеск кислотных брызг по кругу при впадении в ярость
+        for(let k = 0; k < 8; k++){
+          const ra = (k / 8) * 6.283;
+          g.bossShockwaves.push({
+            x: e.x, y: e.y,
+            vx: Math.cos(ra) * 180,
+            vy: Math.sin(ra) * 180,
+            angle: ra,
+            l: 1.0, maxL: 1.0,
+            dmg: 18,
+            type: 'slime_glob',
+            col: '#22c55e'
+          });
+        }
+        // При входе в ярость немедленно выплевывает 3 усиленных мини-слизней
+        for(let k = 0; k < 3; k++){
           const sa = Math.random() * 6.283;
           g.enemies.push({
-            x: e.x + Math.cos(sa) * 42,
-            y: e.y + Math.sin(sa) * 42,
-            hp: 36 * (g.lvlConfig?.multHp || 1),
-            maxHp: 36 * (g.lvlConfig?.multHp || 1),
+            x: e.x + Math.cos(sa) * 44,
+            y: e.y + Math.sin(sa) * 44,
+            hp: 48 * (g.lvlConfig?.multHp || 1),
+            maxHp: 48 * (g.lvlConfig?.multHp || 1),
             c: CONFIG.enemies.slime,
             isMinion: true,
             minionType: 'slime',
@@ -13716,43 +13733,69 @@ function update(dt){
       }
 
       // 3. Постоянный кислотный след (Acid Trail) при движении
-      e.trailCd = (e.trailCd !== undefined ? e.trailCd : 0.35) - dt;
+      e.trailCd = (e.trailCd !== undefined ? e.trailCd : 0.30) - dt;
       if(e.trailCd <= 0){
-        e.trailCd = e.enraged ? 0.25 : 0.35;
+        e.trailCd = e.enraged ? 0.20 : 0.30;
         g.bossShockwaves.push({
           x: e.x + (Math.random() - 0.5) * 16,
           y: e.y + 18 + (Math.random() - 0.5) * 10,
           vx: 0, vy: 0,
-          l: e.enraged ? 6.0 : 4.8,
-          maxL: e.enraged ? 6.0 : 4.8,
-          dmg: e.enraged ? 5 : 4,
+          l: e.enraged ? 6.5 : 5.2,
+          maxL: e.enraged ? 6.5 : 5.2,
+          dmg: e.enraged ? 6 : 5,
           type: 'puddle',
           col: '#22c55e'
         });
       }
 
-      // Кулдауны способностей
-      e.globCd = (e.globCd !== undefined ? e.globCd : 2.2) - dt;
-      e.slamCd = (e.slamCd !== undefined ? e.slamCd : 5.5) - dt;
-      e.spawnCd = (e.spawnCd !== undefined ? e.spawnCd : 6.5) - dt;
+      // 4. Пассивная пульсация брызг (Acid Splatter Pulse)
+      e.burstCd = (e.burstCd !== undefined ? e.burstCd : 2.8) - dt;
+      if(e.burstCd <= 0){
+        e.burstCd = e.enraged ? 2.0 : 2.8;
+        const bCount = e.enraged ? 4 : 3;
+        for(let k = 0; k < bCount; k++){
+          const ba = Math.random() * 6.283;
+          const bSpd = 140 + Math.random() * 60;
+          g.bossShockwaves.push({
+            x: e.x, y: e.y,
+            vx: Math.cos(ba) * bSpd,
+            vy: Math.sin(ba) * bSpd,
+            angle: ba,
+            l: 0.95, maxL: 0.95,
+            dmg: 16,
+            type: 'slime_glob',
+            col: '#22c55e'
+          });
+        }
+      }
 
-      // 4. Способность: Слизневый наскок / Кислотный плюх (Acid Splashdown)
+      // Кулдауны способностей
+      e.globCd = (e.globCd !== undefined ? e.globCd : 2.0) - dt;
+      e.slamCd = (e.slamCd !== undefined ? e.slamCd : 4.5) - dt;
+      e.spawnCd = (e.spawnCd !== undefined ? e.spawnCd : 6.0) - dt;
+
+      // 5. Способность: Слизневый наскок / Кислотный плюх (Acid Splashdown)
       if(e.action === 'idle' && e.slamCd <= 0){
         e.action = 'slam_prep';
-        e.actionT = 0.55;
-        e.slamCd = e.enraged ? 4.2 : 6.2;
+        e.actionT = 0.40;
+        e.slamCd = e.enraged ? 3.4 : 4.8;
         e.jumpStartX = e.x;
         e.jumpStartY = e.y;
-        e.jumpTargetX = p.x;
-        e.jumpTargetY = p.y;
+        e.jumpTargetX = p.x + (p.vx || 0) * 0.25;
+        e.jumpTargetY = p.y + (p.vy || 0) * 0.25;
         continue;
       }
       if(e.action === 'slam_prep'){
         e.actionT -= dt;
+        // Наведение на игрока во время подготовки к прыжку
+        e.jumpTargetX = p.x + (p.vx || 0) * 0.25;
+        e.jumpTargetY = p.y + (p.vy || 0) * 0.25;
         if(e.actionT <= 0){
           e.action = 'slam_air';
-          e.actionT = 0.6;
-          e.jumpDur = 0.6;
+          e.actionT = 0.42;
+          e.jumpDur = 0.42;
+          e.jumpStartX = e.x;
+          e.jumpStartY = e.y;
           Sfx.play('dash');
         }
         continue;
@@ -13766,59 +13809,71 @@ function update(dt){
         if(e.actionT <= 0){
           e.action = 'idle';
           e.jumpY = 0;
-          g.shake = Math.max(g.shake, 0.45);
+          g.shake = Math.max(g.shake, 0.55);
           Sfx.play('hit');
-          // Удар по площади в радиусе 95px
-          if(Math.hypot(p.x - e.x, p.y - e.y) <= 95 && p.inv <= 0){
-            damagePlayer(Math.round(48 * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
+          // Удар по площади в радиусе 115px
+          if(Math.hypot(p.x - e.x, p.y - e.y) <= 115 && p.inv <= 0){
+            damagePlayer(Math.round(56 * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
             p.poisonT = Math.max(p.poisonT || 0, 3.5);
-            p.poisonDps = Math.max(p.poisonDps || 0, 6);
-            p.poisonSlow = 0.65;
+            p.poisonDps = Math.max(p.poisonDps || 0, 5.0);
+            p.poisonSlow = 0.70;
           }
           // Центральная большая кислотная лужа
           g.bossShockwaves.push({
             x: e.x, y: e.y + 12,
             vx: 0, vy: 0,
-            l: 6.5, maxL: 6.5,
-            dmg: 5,
+            l: 7.0, maxL: 7.0,
+            dmg: 6,
             type: 'puddle',
             col: '#22c55e'
           });
+          // Дополнительные 4 брызгающие лужи по сторонам
+          const splatD = [ [48, 0], [-48, 0], [0, 36], [0, -36] ];
+          for(const [sx, sy] of splatD){
+            g.bossShockwaves.push({
+              x: e.x + sx, y: e.y + sy,
+              vx: 0, vy: 0,
+              l: 5.5, maxL: 5.5,
+              dmg: 5,
+              type: 'puddle',
+              col: '#22c55e'
+            });
+          }
           // Разлет радиальных кислотных сгустков
-          const numGlobs = e.enraged ? 10 : 8;
+          const numGlobs = e.enraged ? 14 : 10;
           for(let k = 0; k < numGlobs; k++){
-            const ga = (k / numGlobs) * 6.283 + (Math.random() - 0.5) * 0.2;
-            const gSpd = 160 + Math.random() * 60;
+            const ga = (k / numGlobs) * 6.283 + (Math.random() - 0.5) * 0.15;
+            const gSpd = 190 + Math.random() * 70;
             g.bossShockwaves.push({
               x: e.x, y: e.y,
               vx: Math.cos(ga) * gSpd,
               vy: Math.sin(ga) * gSpd,
               angle: ga,
-              l: 0.95, maxL: 0.95,
-              dmg: 18,
+              l: 1.1, maxL: 1.1,
+              dmg: 20,
               type: 'slime_glob',
               col: '#22c55e'
             });
           }
-          for(let k = 0; k < 30; k++){
+          for(let k = 0; k < 35; k++){
             g.fx.push({
               x: e.x, y: e.y,
-              vx: (Math.random() - 0.5) * 140,
-              vy: (Math.random() - 0.5) * 140,
+              vx: (Math.random() - 0.5) * 160,
+              vy: (Math.random() - 0.5) * 160,
               col: Math.random() > 0.5 ? '#22c55e' : '#84cc16',
               r: 3 + Math.random() * 3,
-              l: 0.45
+              l: 0.5
             });
           }
         }
         continue;
       }
 
-      // 5. Способность: Залп ядовитых сгустков (Acid Glob Volley)
+      // 6. Способность: Залп ядовитых сгустков (Acid Glob Volley)
       if(e.action === 'idle' && e.globCd <= 0){
         e.action = 'glob_prep';
-        e.actionT = 0.4;
-        e.globCd = e.enraged ? 2.0 : 3.2;
+        e.actionT = 0.35;
+        e.globCd = e.enraged ? 1.9 : 2.7;
         continue;
       }
       if(e.action === 'glob_prep'){
@@ -13827,31 +13882,45 @@ function update(dt){
           e.action = 'idle';
           Sfx.play('dash');
           const baseAng = Math.atan2(dy, dx);
-          const count = e.enraged ? 5 : 3;
-          const spread = 0.28;
+          const count = e.enraged ? 7 : 5;
+          const spread = 0.22;
           for(let k = 0; k < count; k++){
             const angK = baseAng + (k - (count - 1) / 2) * spread;
-            const gSpd = 230 + Math.random() * 40;
+            const gSpd = 280 + Math.random() * 45;
             g.bossShockwaves.push({
               x: e.x, y: e.y - 8,
               vx: Math.cos(angK) * gSpd,
               vy: Math.sin(angK) * gSpd,
               angle: angK,
               l: 1.4, maxL: 1.4,
-              dmg: 22,
+              dmg: 26,
               type: 'slime_glob',
               col: '#22c55e'
             });
+          }
+          if(e.enraged){
+            for(const flankA of [baseAng + 2.1, baseAng - 2.1]){
+              g.bossShockwaves.push({
+                x: e.x, y: e.y - 8,
+                vx: Math.cos(flankA) * 230,
+                vy: Math.sin(flankA) * 230,
+                angle: flankA,
+                l: 1.2, maxL: 1.2,
+                dmg: 22,
+                type: 'slime_glob',
+                col: '#22c55e'
+              });
+            }
           }
         }
         continue;
       }
 
-      // 6. Способность: Деление / Призыв мелких слизней (Spawn Mini-Slimes)
+      // 7. Способность: Деление / Призыв мелких слизней (Spawn Mini-Slimes)
       if(e.action === 'idle' && e.spawnCd <= 0 && g.enemies.length < CONFIG.waves.maxEnemies){
         e.action = 'spawn_prep';
-        e.actionT = 0.45;
-        e.spawnCd = e.enraged ? 5.5 : 7.5;
+        e.actionT = 0.40;
+        e.spawnCd = e.enraged ? 5.2 : 6.8;
         continue;
       }
       if(e.action === 'spawn_prep'){
@@ -13865,8 +13934,8 @@ function update(dt){
             g.enemies.push({
               x: e.x + Math.cos(sa) * 44,
               y: e.y + Math.sin(sa) * 44,
-              hp: 34 * (g.lvlConfig?.multHp || 1),
-              maxHp: 34 * (g.lvlConfig?.multHp || 1),
+              hp: 48 * (g.lvlConfig?.multHp || 1),
+              maxHp: 48 * (g.lvlConfig?.multHp || 1),
               c: CONFIG.enemies.slime,
               isMinion: true,
               minionType: 'slime',
@@ -13880,11 +13949,11 @@ function update(dt){
 
       // Обычное передвижение босса к игроку
       if(e.action === 'idle'){
-        const bSpd = (e.enraged ? 95 : 68) * g.lvlConfig.multSpeed;
+        const bSpd = (e.enraged ? 105 : 78) * g.lvlConfig.multSpeed;
         e.x += (dx / d) * bSpd * dt;
         e.y += (dy / d) * bSpd * dt;
         e.facing = dx >= 0 ? 1 : -1;
-        e.animT = (e.animT || 0) + dt * (e.enraged ? 10 : 7.5);
+        e.animT = (e.animT || 0) + dt * (e.enraged ? 11 : 8.5);
         e.frame = Math.floor(e.animT) % 8;
       }
       continue;
@@ -14177,6 +14246,26 @@ function update(dt){
               vx: (Math.random() - .5) * 60,
               vy: -15 - Math.random() * 25,
               col: '#84cc16',
+              l: 0.35
+            });
+          }
+        }
+        if(e.bossId === 'toxic_slime' || e.c === CONFIG.enemies.slime){
+          const isBossSlime = (e.bossId === 'toxic_slime');
+          const pDur = isBossSlime ? 3.2 : 1.8;
+          const pDps = isBossSlime ? 4.0 : 2.0;
+          const pSlow = isBossSlime ? 0.75 : 0.88;
+          p.poisonT = Math.max(p.poisonT || 0, pDur);
+          p.poisonDps = Math.max(p.poisonDps || 0, pDps);
+          p.poisonSlow = Math.min(p.poisonSlow || 1, pSlow);
+          for(let k = 0; k < (isBossSlime ? 8 : 4); k++){
+            g.fx.push({
+              x: p.x,
+              y: p.y,
+              vx: (Math.random() - .5) * 75,
+              vy: -15 - Math.random() * 25,
+              col: '#22c55e',
+              r: 2.5,
               l: 0.35
             });
           }
@@ -20078,7 +20167,7 @@ function drawSlimeBoss(e, ox, oy){
     const ty = (e.jumpTargetY !== undefined ? e.jumpTargetY : e.y) + oy;
     cx.save();
     const tPulse = 0.8 + 0.2 * Math.sin(performance.now() * 0.02);
-    const tR = 95;
+    const tR = 115;
     cx.fillStyle = `rgba(34, 197, 94, ${0.2 * tPulse})`;
     cx.beginPath(); cx.ellipse(tx, ty + 10, tR, tR * 0.42, 0, 0, 6.283); cx.fill();
     cx.strokeStyle = `rgba(163, 230, 53, ${0.85 * tPulse})`;
