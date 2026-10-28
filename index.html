@@ -3327,7 +3327,8 @@ const CONFIG={
     spiderling:{name:'Паучонок',nameEn:'Spiderling',hp:10,speed:112,damage:4,xp:1,r:10,color:'#f59e0b',weight:6,fromWave:2,sprite:'img/monsters/monster_spiderling.webp',sheet:'img/monsters/monster_spiderling_sheet.webp',frameW:240,frameH:200,frames:8,spriteW:42,spriteH:35,animRate:12},
     spider_egg:{name:'Кокон паука',nameEn:'Spider Egg Sac',hp:38,speed:0,damage:3,xp:4,r:15,color:'#e2e8f0',weight:6,fromWave:6,sprite:'img/monsters/monster_spider_egg.webp',sheet:'img/monsters/monster_spider_egg_sheet.webp',frameW:240,frameH:240,frames:8,spriteW:46,spriteH:46,animRate:5},
     broodmother:{name:'Паучиха-праматерь',nameEn:'Spider Broodmother',hp:95,speed:56,damage:16,xp:16,r:22,color:'#d97706',weight:3,fromWave:11,sprite:'img/monsters/monster_broodmother.webp',sheet:'img/monsters/monster_broodmother_sheet.webp',frameW:300,frameH:260,frames:8,spriteW:76,spriteH:66,animRate:8},
-    treant:{name:'Древень-мутант',nameEn:'Ancient Treant',hp:165,speed:36,damage:24,xp:24,r:26,color:'#854d0e',weight:2,fromWave:16,sprite:'img/monsters/monster_treant.webp',sheet:'img/monsters/monster_treant_sheet.webp',frameW:300,frameH:320,frames:8,spriteW:82,spriteH:88,animRate:6}
+    treant:{name:'Древень-мутант',nameEn:'Ancient Treant',hp:165,speed:36,damage:24,xp:24,r:26,color:'#854d0e',weight:2,fromWave:16,sprite:'img/monsters/monster_treant.webp',sheet:'img/monsters/monster_treant_sheet.webp',frameW:300,frameH:320,frames:8,spriteW:82,spriteH:88,animRate:6},
+    kraken:{name:'Кракен Бездны',nameEn:'Abyssal Kraken',hp:9500,speed:76,damage:70,xp:500,r:46,color:'#3b0764',weight:1,fromWave:99,sprite:'img/monsters/boss_kraken.webp?v=1',sheet:'img/monsters/boss_kraken_sheet.webp?v=1',frameW:280,frameH:280,frames:8,spriteW:72,spriteH:72,animRate:7}
   },
   waves:{interval:0.9,minInterval:0.25,decayPerMin:0.75,hpPerMin:0.35,maxEnemies:150,waveDuration:15,maxWaves:50},
   level:{base:10,growth:1.18},
@@ -5668,6 +5669,7 @@ for(const enemyDef of Object.values(CONFIG.enemies)){
 }
 ['img/monsters/monster_slime.webp','img/monsters/monster_bat.webp','img/monsters/monster_mimic.webp','img/monsters/monster_gargoyle.webp','img/monsters/monster_treant.webp',
  'img/monsters/monster_mushroom.webp','img/monsters/monster_spiderling.webp','img/monsters/monster_rat.webp','img/monsters/monster_ghoul.webp','img/monsters/monster_abomination_v2.webp?v=25','img/monsters/monster_abomination.webp',
+ 'img/monsters/boss_kraken.webp?v=1','img/monsters/boss_kraken.webp','img/monsters/boss_kraken_attack.webp?v=1','img/monsters/boss_kraken_attack.webp',
  'img/pets/pet_scarab_icon.webp','img/pets/pet_scout_icon.webp','img/pets/pet_golem_icon.webp','img/pets/pet_voidray_icon.webp',
  'img/pets/pet_mushroom_icon.webp','img/pets/pet_spider_icon.webp','img/pets/pet_rat_icon.webp','img/pets/pet_ghoul_icon.webp',
  'img/pets/pet_scarab_sprite.webp','img/pets/pet_scout_sprite.webp','img/pets/pet_golem_sprite.webp','img/pets/pet_voidray_sprite.webp'].forEach(s=>{
@@ -5677,7 +5679,7 @@ for(const enemyDef of Object.values(CONFIG.enemies)){
  'img/monsters/monster_broodmother_sheet.webp','img/monsters/monster_spider_egg_sheet.webp','img/monsters/monster_rat_sheet.webp',
  'img/monsters/monster_ghoul_sheet.webp','img/monsters/monster_abomination_sheet_v2.webp?v=25','img/monsters/monster_abomination_sheet.webp','img/monsters/monster_slime_sheet.webp',
  'img/monsters/monster_bat_sheet.webp','img/monsters/monster_mimic_sheet.webp','img/monsters/monster_gargoyle_sheet.webp','img/monsters/monster_treant_sheet.webp',
- 'img/monsters/monster_skeleton_sheet.webp'].forEach(s=>{
+ 'img/monsters/monster_skeleton_sheet.webp','img/monsters/boss_kraken_sheet.webp?v=1','img/monsters/boss_kraken_sheet.webp'].forEach(s=>{
   if(!monsterSheetImgs[s]){const img=new Image();img.src=s;monsterSheetImgs[s]=img;}
 });
 const crateImg=new Image();crateImg.src='img/ui/crate_wood.webp';
@@ -9168,18 +9170,18 @@ function testSkipWaves(count=5){
   if(lvl===1){
     if(g.wave===10)spawnGravediggerBoss();
     else if(g.wave===20)spawnRatKingBoss();
-    else if(g.wave===30)spawnAbominationBoss();
+    else if(g.wave===30)spawnKrakenBoss();
   }else if(lvl===2){
     if(g.wave===10)spawnBroodmotherBoss();
     else if(g.wave===20)spawnSlimeBoss();
     else if(g.wave===30)spawnTreantBoss();
-    else if(g.wave===40)spawnAbominationBoss();
+    else if(g.wave===40)spawnKrakenBoss();
   }else if(lvl===3){
     if(g.wave===10)spawnBroodmotherBoss();
     else if(g.wave===20)spawnSlimeBoss();
     else if(g.wave===30)spawnTreantBoss();
     else if(g.wave===40)spawnRatKingBoss();
-    else if(g.wave===50)spawnAbominationBoss();
+    else if(g.wave===50)spawnKrakenBoss();
   }
 
   showGameToast('⏩ '+T('WARPED TO WAVE '+target+'!','ПЕРЕХОД К ВОЛНЕ '+target+'!'),'#38bdf8',2.0);
@@ -9610,7 +9612,7 @@ function hurt(e,d){
     }
     let kXp = 1;
     if(e.isBoss){
-      kXp = e.bossId === 'abomination' ? 450 : (e.bossId === 'treant' ? 340 : (e.bossId === 'toxic_slime' ? 300 : (e.bossId === 'rat_king' ? 220 : (e.bossId === 'broodmother' ? 180 : 150))));
+      kXp = (e.bossId === 'kraken' || e.bossId === 'abomination') ? 500 : (e.bossId === 'treant' ? 340 : (e.bossId === 'toxic_slime' ? 300 : (e.bossId === 'rat_king' ? 220 : (e.bossId === 'broodmother' ? 180 : 150))));
       G.bossesDefeated=(G.bossesDefeated||0)+1;
       e.phaseGuardT = 0;
       if(G.activeBoss===e)G.activeBoss=null;
@@ -9636,7 +9638,7 @@ function hurt(e,d){
       for(let k=0;k<45;k++){
         G.fx.push({x:e.x,y:e.y,vx:(Math.random()-.5)*260,vy:(Math.random()-.5)*260,col:Math.random()>.3?'#a855f7':'#ef4444',l:.7});
       }
-      if(e.bossId === 'abomination'){
+      if(e.bossId === 'kraken' || e.bossId === 'abomination'){
         dropPurpleCrystals(e.x, e.y, 18, 1);
         dropCoins(e.x, e.y, 55, Math.max(1, Math.round(3 * (G.lvlConfig?.multGold || 1))));
         // Особый массивный кристалл опыта босса (Tier 5)
@@ -11413,10 +11415,10 @@ function spawnRatKingBoss(){
 }
 window.spawnRatKingBoss = spawnRatKingBoss;
 
-function spawnAbominationBoss(){
+function spawnKrakenBoss(){
   if(!G || !G.run) return;
   const g = G, p = g.p;
-  if(g.enemies.some(e => e.isBoss && e.bossId === 'abomination' && !e.dead)) return;
+  if(g.enemies.some(e => e.isBoss && (e.bossId === 'kraken' || e.bossId === 'abomination') && !e.dead)) return;
 
   prepareBossArena(g);
   const ang = Math.random() * 6.283;
@@ -11428,14 +11430,14 @@ function spawnAbominationBoss(){
   const bx = p.x + dx;
   const by = p.y + dy;
 
-  const maxHp = Math.round(9200 * (g.lvlConfig?.multHp || 1));
+  const maxHp = Math.round(9500 * (g.lvlConfig?.multHp || 1));
   const boss = {
     isBoss: true,
-    bossId: 'abomination',
-    name: 'МУТАНТ-АБЕРРАЦИЯ',
-    nameEn: 'MUTANT ABOMINATION',
-    title: 'ФИНАЛЬНЫЙ ТИТАН ПУСТОШЕЙ',
-    titleEn: 'APEX WASTELAND TITAN',
+    bossId: 'kraken',
+    name: 'КРАКЕН БЕЗДНЫ',
+    nameEn: 'ABYSSAL KRAKEN',
+    title: 'ПОВЕЛИТЕЛЬ ТЕМНЫХ ГЛУБИН',
+    titleEn: 'SOVEREIGN OF THE VOID DEPTHS',
     x: bx,
     y: by,
     spawnX: bx,
@@ -11443,11 +11445,11 @@ function spawnAbominationBoss(){
     hp: maxHp,
     maxHp: maxHp,
     c: {
-      r: 48,
-      speed: 74,
-      damage: 65,
-      color: '#a855f7',
-      xp: 450
+      r: 46,
+      speed: 76,
+      damage: 70,
+      color: '#3b0764',
+      xp: 500
     },
     fl: 0,
     oh: 0,
@@ -11462,14 +11464,14 @@ function spawnAbominationBoss(){
     emergeSlamDone: false,
     action: 'idle',
     actionT: 0,
-    slamCd: 3.5,
-    chargeCd: 6.0,
-    spitCd: 4.8,
-    riftCd: 7.2,
-    novaCd: 3.5,
+    slamCd: 3.4,
+    chargeCd: 6.2,
+    spitCd: 4.6,
+    riftCd: 7.0,
+    novaCd: 3.4,
     chargeAng: 0,
     chargeDist: 0,
-    chargeMaxDist: 340,
+    chargeMaxDist: 360,
     rifts: [],
     slamAngle: 0,
     enraged: false
@@ -11482,7 +11484,6 @@ function spawnAbominationBoss(){
   g.activeBoss = boss;
   syncBossHUD(boss);
 
-  // Тревожный вжух при старте призыва
   Sfx.play('dash');
 
   g.bossWarning = {
@@ -11493,8 +11494,10 @@ function spawnAbominationBoss(){
     title: boss.title,
     titleEn: boss.titleEn
   };
-
-  // (СТАРЫЕ визуал и звук удалены: выброс частиц в t=0 и двойной 'dash')
+}
+window.spawnKrakenBoss = spawnKrakenBoss;
+function spawnAbominationBoss(){
+  return spawnKrakenBoss();
 }
 window.spawnAbominationBoss = spawnAbominationBoss;
 
@@ -11862,24 +11865,24 @@ function update(dt){
     }
 
     // Спавн боссов по волнам:
-    // 1 локация: волна 10 — Зомби-босс, волна 20 — Король крыс, волна 30 — Мутант-аберрация
+    // 1 локация: волна 10 — Зомби-босс, волна 20 — Король крыс, волна 30 — Кракен Бездны
     if(curLvlId === 1){
       if(g.wave === 10) spawnGravediggerBoss();
       else if(g.wave === 20) spawnRatKingBoss();
-      else if(g.wave === 30) spawnAbominationBoss();
+      else if(g.wave === 30) spawnKrakenBoss();
     }else if(curLvlId === 2){
-      // 2 локация (40 волн): волна 10 — Паучиха-праматерь, волна 20 — Токсичный слизень, волна 30 — Древень-мутант, волна 40 — Мутант-аберрация
+      // 2 локация (40 волн): волна 10 — Паучиха-праматерь, волна 20 — Токсичный слизень, волна 30 — Древень-мутант, волна 40 — Кракен Бездны
       if(g.wave === 10) spawnBroodmotherBoss();
       else if(g.wave === 20) spawnSlimeBoss();
       else if(g.wave === 30) spawnTreantBoss();
-      else if(g.wave === 40) spawnAbominationBoss();
+      else if(g.wave === 40) spawnKrakenBoss();
     }else if(curLvlId === 3){
       // 3 локация (Полигон 50 волн)
       if(g.wave === 10) spawnBroodmotherBoss();
       else if(g.wave === 20) spawnSlimeBoss();
       else if(g.wave === 30) spawnTreantBoss();
       else if(g.wave === 40) spawnRatKingBoss();
-      else if(g.wave === 50) spawnAbominationBoss();
+      else if(g.wave === 50) spawnKrakenBoss();
     }
   }
 
@@ -12475,17 +12478,17 @@ function update(dt){
       }
       continue;
     }
-    if(e.isBoss && e.bossId === 'abomination'){
+    if(e.isBoss && (e.bossId === 'kraken' || e.bossId === 'abomination')){
       if(e.fl > 0) e.fl -= dt;
       if(e.oh > 0) e.oh -= dt;
 
-      // Появление Мутанта-Аберрации из Мутагенного Разлома (Abomination Emergence)
+      // Появление Кракена из Водоворота Бездны (Kraken Emergence)
       if(e.spawnState === 'emerging'){
         e.spawnT -= dt;
         const prog = Math.min(1, Math.max(0, 1 - e.spawnT / e.emergeMaxT));
-        if(e.spawnT > e.emergeMaxT) continue; // ТЕЛЕГРАФ: босс ждёт под землёй, старые эффекты отключены
+        if(e.spawnT > e.emergeMaxT) continue; // ТЕЛЕГРАФ: босс ждёт под водой/землёй
 
-        // Фаза 1: 0.0 - 0.28 (Мутагенная дрожь земли, фиолетовые частицы и плазменный дым)
+        // Фаза 1: 0.0 - 0.28 (Водоворот, темные частицы чернил и фиолетовая пена)
         if(prog < 0.28){
           g.shake = Math.max(g.shake, 0.24 + Math.random() * 0.12);
           if(Math.random() < 0.75){
@@ -12496,7 +12499,7 @@ function update(dt){
               y: e.y + 24 + (Math.random() - 0.5) * 12,
               vx: Math.cos(a) * spd,
               vy: Math.sin(a) * spd,
-              col: Math.random() > 0.4 ? (Math.random() > 0.5 ? '#a855f7' : '#7c3aed') : '#c084fc',
+              col: Math.random() > 0.4 ? '#3b0764' : (Math.random() > 0.5 ? '#7c3aed' : '#c084fc'),
               r: 2 + Math.random() * 2.8,
               l: 0.35 + Math.random() * 0.25,
               maxL: 0.6
@@ -12508,13 +12511,13 @@ function update(dt){
               y: e.y + 22,
               vx: (Math.random() - 0.5) * 60,
               vy: -25 - Math.random() * 45,
-              col: 'rgba(168, 85, 247, 0.7)',
+              col: 'rgba(59, 7, 100, 0.7)',
               l: 0.45,
               type: 'smoke'
             });
           }
         }
-        // Фаза 2: 0.28 - 0.72 (Подъем колоссального титана, вздыбленная земля, мутагенные брызги)
+        // Фаза 2: 0.28 - 0.72 (Подъем щупалец и мантии из водоворота, вздыбленная вода)
         else if(prog < 0.72){
           g.shake = Math.max(g.shake, 0.16);
           if(Math.random() < 0.65){
@@ -12523,14 +12526,14 @@ function update(dt){
               y: e.y + 16 + (Math.random() - 0.5) * 20,
               vx: (Math.random() - 0.5) * 70,
               vy: 20 + Math.random() * 50,
-              col: Math.random() > 0.5 ? '#a855f7' : '#581c87',
+              col: Math.random() > 0.5 ? '#581c87' : '#1e1b4b',
               r: 2.2 + Math.random() * 2.2,
               l: 0.3 + Math.random() * 0.25,
               maxL: 0.55
             });
           }
         }
-        // Фаза 3: 0.72 - 1.0 (Сокрушительный удар клешни о землю, рев титана и ударная волна)
+        // Фаза 3: 0.72 - 1.0 (Всплеск титана Бездны, взрывная чернильная волна)
         else {
           if(!e.emergeSlamDone){
             e.emergeSlamDone = true;
@@ -12540,7 +12543,7 @@ function update(dt){
             g.fx.push({
               x: e.x, y: e.y + 24,
               r: 16, maxR: 110,
-              col: '#a855f7',
+              col: '#7c3aed',
               type: 'frostRing',
               l: 0.5, maxL: 0.5
             });
@@ -12551,7 +12554,7 @@ function update(dt){
                 x: e.x, y: e.y + 24,
                 vx: Math.cos(a) * spd,
                 vy: Math.sin(a) * spd * 0.6 - 30,
-                col: Math.random() > 0.4 ? '#a855f7' : (Math.random() > 0.5 ? '#c084fc' : '#ef4444'),
+                col: Math.random() > 0.4 ? '#3b0764' : (Math.random() > 0.5 ? '#c084fc' : '#ef4444'),
                 r: 2.5 + Math.random() * 3,
                 l: 0.5 + Math.random() * 0.35,
                 maxL: 0.85
@@ -12571,8 +12574,8 @@ function update(dt){
       // Фаза Ярости (Enrage при HP < 50%)
       if(!e.enraged && e.hp <= e.maxHp * 0.5){
         e.enraged = true;
-        e.c.speed = 95; // Быстрая поступь титана в ярости (база 74)
-        showGameToast('💀 ' + T('ABOMINATION IS ENRAGED! (+SPEED / -20% DMG TAKEN)', 'МУТАНТ ВПАДАЕТ В ЯРОСТЬ! (+СКОРОСТЬ / -20% УРОНА)'), '#ef4444', 3.2);
+        e.c.speed = 98; // Стремительное скольжение Кракена в ярости (база 76)
+        showGameToast('💀 ' + T('KRAKEN IS ENRAGED! (+SPEED / -20% DMG TAKEN)', 'КРАКЕН ВПАДАЕТ В ЯРОСТЬ! (+СКОРОСТЬ / -20% УРОНА)'), '#ef4444', 3.2);
         Sfx.play('dash');
         for(let k = 0; k < 35; k++){
           g.fx.push({
@@ -12580,7 +12583,7 @@ function update(dt){
             y: e.y + (Math.random() - 0.5) * 36,
             vx: (Math.random() - 0.5) * 200,
             vy: -75 - Math.random() * 95,
-            col: Math.random() > 0.4 ? '#a855f7' : '#ef4444',
+            col: Math.random() > 0.4 ? '#7c3aed' : '#ef4444',
             l: 0.70
           });
         }
@@ -12781,13 +12784,13 @@ function update(dt){
               type: 'abomination'
             });
           }
-          // Рубящий мили-удар клешней
+          // Рубящий удар щупальцами
           let dAng = Math.atan2(p.y - e.y, p.x - e.x) - baseAng;
           while(dAng > Math.PI) dAng -= 2 * Math.PI;
           while(dAng < -Math.PI) dAng += 2 * Math.PI;
-          if(d < 85 && Math.abs(dAng) < 0.85 && p.inv <= 0){
-            damagePlayer(Math.max(1, Math.round(45 * (p.armor ? Math.max(0.2, 1 - p.armor) : 1))));
-            showGameToast('💥 ' + T('CLEAVED BY TITAN CLAW!', 'РАССЕКАЮЩИЙ УДАР КЛЕШНИ!'), '#ef4444', 1.8);
+          if(d < 95 && Math.abs(dAng) < 0.95 && p.inv <= 0){
+            damagePlayer(Math.max(1, Math.round(48 * (p.armor ? Math.max(0.2, 1 - p.armor) : 1))));
+            showGameToast('💥 ' + T('LASHED BY ABYSSAL TENTACLES!', 'СОКРУШИТЕЛЬНЫЙ УДАР ЩУПАЛЕЦ!'), '#ef4444', 1.8);
           }
           for(let k = 0; k < 30; k++){
             const sa = Math.random() * 6.283;
@@ -12861,9 +12864,9 @@ function update(dt){
           });
         }
 
-        if(Math.hypot(p.x - e.x, p.y - e.y) < e.c.r + p.r + 10 && p.inv <= 0){
-          damagePlayer(Math.max(1, Math.round(45 * (p.armor ? Math.max(0.2, 1 - p.armor) : 1))));
-          showGameToast('💥 ' + T('TRAMPLED BY TITAN RUSH!', 'РАЗДАВЛЕН ТАРАНОМ ТИТАНА!'), '#ef4444', 1.8);
+        if(Math.hypot(p.x - e.x, p.y - e.y) < e.c.r + p.r + 12 && p.inv <= 0){
+          damagePlayer(Math.max(1, Math.round(48 * (p.armor ? Math.max(0.2, 1 - p.armor) : 1))));
+          showGameToast('💥 ' + T('TRAMPLED BY KRAKEN RUSH!', 'РАЗДАВЛЕН БРОСКОМ КРАКЕНА!'), '#ef4444', 1.8);
           Sfx.play('hit');
         }
 
@@ -17992,6 +17995,7 @@ function drawBossTelegraphRings(e, ex, gy){
   const themes = {
     gravedigger: { rgb: '239,68,68' },
     rat_king:    { rgb: '132,204,22' },
+    kraken:      { rgb: '147,51,234' },
     abomination: { rgb: '168,85,247' },
     broodmother: { rgb: '249,115,22' },
     treant:      { rgb: '34,197,94' },
@@ -18033,6 +18037,7 @@ function drawBossSpawnPad(e, ex, gy, prog){
   const themes = {
     gravedigger: { acc: '#ef4444', rgb: '239,68,68', base: '69,10,10' },
     rat_king:    { acc: '#84cc16', rgb: '132,204,22', base: '26,46,8' },
+    kraken:      { acc: '#a855f7', rgb: '147,51,234', base: '30,10,60' },
     abomination: { acc: '#a855f7', rgb: '168,85,247', base: '46,16,71' },
     broodmother: { acc: '#ea580c', rgb: '234,88,12',  base: '58,22,6' },
     treant:      { acc: '#22c55e', rgb: '34,197,94',  base: '10,46,20' },
@@ -18899,172 +18904,162 @@ function drawRatKingBoss(e, ox, oy){
 }
 
 
-function drawAbominationCraterLip(ex, gy, cw, ch){
+// ===== ВОДОВОРОТ БЕЗДНЫ И ПОЯВЛЕНИЕ КРАКЕНА (ABYSSAL KRAKEN EMERGENCE) =====
+function drawKrakenWhirlpoolLip(ex, gy, cw, ch){
   cx.save();
-  // 1. Вывернутый каменистый бруствер по передней кромке разлома
-  cx.fillStyle = '#1e0836';
+  // 1. Темный водяной бруствер по передней кромке водоворота
+  cx.fillStyle = '#0f051d';
   cx.beginPath();
   cx.ellipse(ex, gy + 3, cw * 0.96, ch * 0.52, 0, 0, Math.PI);
   cx.fill();
 
-  // 2. Обломки кристаллизованных тибериевых пород
-  cx.fillStyle = '#0f051d';
-  cx.beginPath(); cx.arc(ex - 32, gy + 4, 5.5, 0, 6.283); cx.fill();
-  cx.beginPath(); cx.arc(ex + 28, gy + 5, 6, 0, 6.283); cx.fill();
-  cx.beginPath(); cx.arc(ex - 10, gy + 6, 4.5, 0, 6.283); cx.fill();
-  cx.beginPath(); cx.arc(ex + 44, gy + 3, 4, 0, 6.283); cx.fill();
+  // 2. Вспененные волны и капли чернильной воды
+  const t = performance.now() * 0.004;
+  cx.fillStyle = '#1e1035';
+  cx.beginPath(); cx.arc(ex - 34 + Math.sin(t) * 3, gy + 4, 6, 0, 6.283); cx.fill();
+  cx.beginPath(); cx.arc(ex + 30 + Math.cos(t) * 3, gy + 5, 6.5, 0, 6.283); cx.fill();
+  cx.beginPath(); cx.arc(ex - 12, gy + 6, 5, 0, 6.283); cx.fill();
+  cx.beginPath(); cx.arc(ex + 46, gy + 3, 4.5, 0, 6.283); cx.fill();
 
-  // 3. Мутагенные кристаллы и светящиеся капли
-  cx.fillStyle = '#a855f7';
-  cx.beginPath(); cx.arc(ex - 18, gy + 4, 3.0, 0, 6.283); cx.fill();
-  cx.beginPath(); cx.arc(ex + 14, gy + 5, 3.2, 0, 6.283); cx.fill();
+  // 3. Биолюминесцентные пузыри Бездны
+  cx.fillStyle = '#9333ea';
+  cx.beginPath(); cx.arc(ex - 22, gy + 4, 3.2, 0, 6.283); cx.fill();
+  cx.beginPath(); cx.arc(ex + 16, gy + 5, 3.4, 0, 6.283); cx.fill();
   cx.fillStyle = '#c084fc';
   cx.beginPath(); cx.arc(ex + 2, gy + 6, 2.2, 0, 6.283); cx.fill();
+  cx.fillStyle = '#38bdf8';
+  cx.beginPath(); cx.arc(ex - 8, gy + 5, 1.8, 0, 6.283); cx.fill();
 
-  // 4. Неоновое фиолетовое свечение кромки разлома
+  // 4. Неоновое фиолетово-лазурное свечение кромки водоворота
   cx.strokeStyle = '#a855f7';
-  cx.lineWidth = 1.8;
+  cx.lineWidth = 2.0;
   cx.beginPath();
-  cx.ellipse(ex, gy + 2, cw * 0.92, ch * 0.5, 0, 0.1, Math.PI - 0.1);
+  cx.ellipse(ex, gy + 2, cw * 0.93, ch * 0.5, 0, 0.1, Math.PI - 0.1);
   cx.stroke();
   cx.restore();
 }
 
-
-function drawAbominationEmergence(e, ex, ey, gy){
+function drawKrakenEmergence(e, ex, ey, gy){
   const prog = Math.min(1, Math.max(0, 1 - (e.spawnT / e.emergeMaxT)));
   const tele = e.spawnT > e.emergeMaxT;
 
-  // Телеграф-платформа призыва: НЕПРЕРЫВНА через все фазы —
-  // плавный вход в первые ~25% телеграфа, удержание, затухание в конце прорыва (prog 0.74..1.0)
-  const tk = Math.min(1, Math.max(0, 1 - (e.spawnT - e.emergeMaxT) / (e.emergeDelay || 2.2)));
+  const tk = Math.min(1, Math.max(0, 1 - (e.spawnT - e.emergeMaxT) / (e.emergeDelay || 1.0)));
   const padProg = tele ? Math.min(0.6, tk * 4) : (prog < 0.74 ? 0.6 : 0.6 + (prog - 0.74) / 0.26 * 0.4);
   drawBossSpawnPad(e, ex, gy, padProg);
   if(tele){
     drawBossTelegraphRings(e, ex, gy);
     return;
   }
-  const aw = 126, ah = 126;
+  const aw = 140, ah = 140;
 
-  // Раскрытие мутагенного разлома
-  const riftExpand = Math.min(1, prog * 2.8);
-  const cw = 56 * riftExpand + 6;
-  const ch = 22 * riftExpand + 3;
+  // Раскрытие чернильного водоворота Бездны
+  const vortexExpand = Math.min(1, prog * 2.8);
+  const cw = 60 * vortexExpand + 6;
+  const ch = 24 * vortexExpand + 3;
+  const t = performance.now() * 0.003;
 
   cx.save();
-  // 1. Черная бездна разлома с фиолетовым мутагенным градиентом
+  // 1. Черная бездна водоворота с глубоким индиго-фиолетовым градиентом
   const pitGrad = cx.createRadialGradient(ex, gy, 4, ex, gy, cw);
-  pitGrad.addColorStop(0, '#030008');
-  pitGrad.addColorStop(0.5, '#1e0836');
-  pitGrad.addColorStop(0.85, '#581c87');
+  pitGrad.addColorStop(0, '#020008');
+  pitGrad.addColorStop(0.45, '#1e0836');
+  pitGrad.addColorStop(0.8, '#4c1d95');
   pitGrad.addColorStop(1, 'rgba(0,0,0,0)');
   cx.fillStyle = pitGrad;
   cx.beginPath();
   cx.ellipse(ex, gy, cw, ch, 0, 0, 6.283);
   cx.fill();
 
-  // 2. Ветвящиеся фиолетовые трещины в земле
-  const crackAlpha = Math.min(1, prog * 2.5) * (prog > 0.85 ? (1 - (prog - 0.85) / 0.15) * 0.4 + 0.6 : 1);
-  const pulse = 0.75 + 0.25 * Math.sin(performance.now() * 0.012);
-  cx.lineWidth = 2.2 * Math.min(1, prog * 2);
-  cx.strokeStyle = `rgba(168, 85, 247, ${0.92 * crackAlpha * pulse})`;
-
-  const crackNodes = [
-    [[-20, -5], [-42, -12], [-66, -18], [-88, -22]],
-    [[18, -6], [40, -14], [62, -20], [86, -24]],
-    [[-26, 4], [-52, 7], [-74, 14], [-94, 12]],
-    [[24, 5], [48, 8], [72, 16], [96, 13]],
-    [[-12, 9], [-24, 18], [-36, 26], [-48, 30]],
-    [[10, 10], [22, 19], [34, 27], [46, 32]],
-    [[-34, -2], [-58, -3], [-80, -2], [-102, -4]],
-    [[32, -3], [56, -4], [78, -3], [100, -5]]
-  ];
-
-  for(const node of crackNodes){
+  // 2. Спиральные струи водоворота
+  cx.save();
+  cx.translate(ex, gy);
+  for(let i = 0; i < 4; i++){
+    const ang = t * 2.5 + (i * Math.PI / 2);
+    cx.strokeStyle = i % 2 === 0 ? 'rgba(168, 85, 247, 0.45)' : 'rgba(56, 189, 248, 0.35)';
+    cx.lineWidth = 1.8;
     cx.beginPath();
-    cx.moveTo(ex + node[0][0], gy + node[0][1]);
-    const maxK = Math.min(node.length, Math.floor(riftExpand * (node.length + 0.8)));
-    for(let k = 1; k < maxK; k++){
-      cx.lineTo(ex + node[k][0], gy + node[k][1]);
-    }
-    cx.stroke();
-  }
-
-  // Ярко-лавандовая сердцевина трещин
-  cx.lineWidth = 1.1;
-  cx.strokeStyle = `rgba(232, 121, 249, ${0.88 * crackAlpha * pulse})`;
-  for(const node of crackNodes){
-    cx.beginPath();
-    cx.moveTo(ex + node[0][0], gy + node[0][1]);
-    const maxK = Math.min(node.length, Math.floor(riftExpand * (node.length + 0.8)));
-    for(let k = 1; k < maxK; k++){
-      cx.lineTo(ex + node[k][0], gy + node[k][1]);
+    for(let r = 6; r < cw * 0.9; r += 4){
+      const a = ang + r * 0.12;
+      const x = Math.cos(a) * r;
+      const y = Math.sin(a) * (r * 0.38);
+      if(r === 6) cx.moveTo(x, y);
+      else cx.lineTo(x, y);
     }
     cx.stroke();
   }
   cx.restore();
 
-  // 3. ФАЗА 1 (0.0 - 0.28): Пробуждение Циклопического Глаза в недрах разлома
+  // Пузыри Бездны, поднимающиеся из глубины
+  for(let b = 0; b < 6; b++){
+    const bx = ex + Math.sin(t * 3 + b * 1.5) * (cw * 0.55);
+    const by = gy - Math.abs(Math.sin(t * 4 + b)) * 18 + 4;
+    cx.fillStyle = b % 2 === 0 ? 'rgba(192, 132, 252, 0.75)' : 'rgba(56, 189, 248, 0.65)';
+    cx.beginPath(); cx.arc(bx, by, 1.8 + (b % 3), 0, 6.283); cx.fill();
+  }
+  cx.restore();
+
+  // 3. ФАЗА 1 (0.0 - 0.28): Пробуждение зловещих рубиновых глаз Кракена в глубинах бездны
   if(prog < 0.28){
-    // Пробуждение зловещего красного глаза титана в глубине
-    if(prog >= 0.10){
-      const eyeAwakeProg = (prog - 0.10) / (0.28 - 0.10);
-      const eyeR = (4 + 6 * eyeAwakeProg) * (0.8 + 0.2 * Math.sin(performance.now() * 0.02));
-      const eyeX = ex + (e.facing > 0 ? -14 : 14);
-      const eyeY = gy - 6;
+    if(prog >= 0.08){
+      const eyeProg = (prog - 0.08) / (0.28 - 0.08);
+      const eyeR = (3.5 + 4.5 * eyeProg) * (0.85 + 0.15 * Math.sin(performance.now() * 0.02));
+      const flip = e.facing > 0 ? 1 : -1;
+      const lx = ex + flip * (-2), rx = ex + flip * (18.5);
+      const eyY = gy - 4;
 
       cx.save();
-      const eyeGlow = cx.createRadialGradient(eyeX, eyeY, 1, eyeX, eyeY, eyeR * 2.5);
-      eyeGlow.addColorStop(0, '#ffffff');
-      eyeGlow.addColorStop(0.3, '#ef4444');
-      eyeGlow.addColorStop(0.7, 'rgba(168, 85, 247, 0.6)');
-      eyeGlow.addColorStop(1, 'rgba(168, 85, 247, 0)');
-      cx.fillStyle = eyeGlow;
-      cx.beginPath(); cx.arc(eyeX, eyeY, eyeR * 2.5, 0, 6.283); cx.fill();
+      for(const eyeX of [lx, rx]){
+        const eyeGlow = cx.createRadialGradient(eyeX, eyY, 1, eyeX, eyY, eyeR * 2.5);
+        eyeGlow.addColorStop(0, '#ffffff');
+        eyeGlow.addColorStop(0.35, '#ef4444');
+        eyeGlow.addColorStop(0.7, 'rgba(168, 85, 247, 0.6)');
+        eyeGlow.addColorStop(1, 'rgba(168, 85, 247, 0)');
+        cx.fillStyle = eyeGlow;
+        cx.beginPath(); cx.arc(eyeX, eyY, eyeR * 2.5, 0, 6.283); cx.fill();
 
-      // Лазерные лучи-крестовина из зрачка
-      const rayLen = (14 + 18 * eyeAwakeProg) * (0.85 + 0.15 * Math.sin(performance.now() * 0.025));
-      cx.strokeStyle = '#fca5a5';
-      cx.lineWidth = 1.4;
-      cx.beginPath();
-      cx.moveTo(eyeX - rayLen, eyeY); cx.lineTo(eyeX + rayLen, eyeY);
-      cx.moveTo(eyeX, eyeY - rayLen); cx.lineTo(eyeX, eyeY + rayLen);
-      cx.stroke();
+        const flareLen = (8 + 12 * eyeProg);
+        cx.strokeStyle = '#fca5a5';
+        cx.lineWidth = 1.3;
+        cx.beginPath();
+        cx.moveTo(eyeX - flareLen, eyY); cx.lineTo(eyeX + flareLen, eyY);
+        cx.moveTo(eyeX, eyY - flareLen * 0.7); cx.lineTo(eyeX, eyY + flareLen * 0.7);
+        cx.stroke();
 
-      cx.fillStyle = '#ffffff';
-      cx.beginPath(); cx.arc(eyeX, eyeY, 2.2, 0, 6.283); cx.fill();
+        cx.fillStyle = '#ffffff';
+        cx.beginPath(); cx.arc(eyeX, eyY, 2.0, 0, 6.283); cx.fill();
+      }
       cx.restore();
     }
 
-    // Столб фиолетовой плазмы и мутагенных испарений из разлома
+    // Столб чернильного вихря и фиолетовых испарений из глубин
     cx.save();
     const beamGrad = cx.createLinearGradient(ex, gy, ex, gy - 75);
-    beamGrad.addColorStop(0, `rgba(168, 85, 247, ${0.5 * prog / 0.28})`);
-    beamGrad.addColorStop(0.6, `rgba(192, 132, 252, ${0.2 * prog / 0.28})`);
-    beamGrad.addColorStop(1, 'rgba(168, 85, 247, 0)');
+    beamGrad.addColorStop(0, `rgba(147, 51, 234, ${0.55 * prog / 0.28})`);
+    beamGrad.addColorStop(0.6, `rgba(59, 7, 100, ${0.25 * prog / 0.28})`);
+    beamGrad.addColorStop(1, 'rgba(147, 51, 234, 0)');
     cx.fillStyle = beamGrad;
     cx.beginPath();
-    cx.moveTo(ex - 24, gy);
-    cx.lineTo(ex - 36, gy - 65);
-    cx.lineTo(ex + 36, gy - 65);
-    cx.lineTo(ex + 24, gy);
+    cx.moveTo(ex - 26, gy);
+    cx.lineTo(ex - 38, gy - 65);
+    cx.lineTo(ex + 38, gy - 65);
+    cx.lineTo(ex + 26, gy);
     cx.closePath();
     cx.fill();
     cx.restore();
     return;
   }
 
-  // 4. ФАЗА 2 (0.28 - 0.72): Восхождение Титана из разлома с КЛИППИНГОМ ПО УРОВНЮ ЗЕМЛИ
+  // 4. ФАЗА 2 (0.28 - 0.72): Восхождение Кракена из пучины с КЛИППИНГОМ ПО УРОВНЮ ВОДЫ
   if(prog < 0.72){
     const subProg = (prog - 0.28) / (0.72 - 0.28);
     const riseY = (1 - subProg) * 62;
-    const walkFrame = Math.min(7, Math.floor(subProg * 8));
+    const swimFrame = Math.floor(subProg * 7) % 7;
     const shakeY = (Math.random() - 0.5) * 2;
 
-    // КЛИППИНГ: нижняя часть тела скрыта в разломе
+    // КЛИППИНГ: нижние щупальца погружены в водоворот
     cx.save();
     cx.beginPath();
-    cx.rect(ex - 100, gy - 190, 200, 190 + 3);
+    cx.rect(ex - 120, gy - 190, 240, 190 + 3);
     cx.clip();
 
     cx.save();
@@ -19072,134 +19067,138 @@ function drawAbominationEmergence(e, ex, ey, gy){
     if(e.facing > 0) cx.scale(-1, 1);
 
     cx.imageSmoothingEnabled = false;
-    cx.filter = 'drop-shadow(0 0 10px rgba(168,85,247,0.75))';
-    const abImg = monsterSheetImgs['img/monsters/monster_abomination_sheet_v2.webp?v=25'] || monsterSheetImgs['img/monsters/monster_abomination_sheet.webp'];
-    if(abImg && abImg.complete && abImg.naturalWidth > 0){
-      cx.drawImage(abImg, walkFrame * 280, 0, 280, 280, -aw / 2, -ah / 2 - 10, aw, ah);
+    cx.filter = 'drop-shadow(0 0 12px rgba(168,85,247,0.8))';
+    const krImg = monsterSheetImgs['img/monsters/boss_kraken_sheet.webp?v=1'] || monsterSheetImgs['img/monsters/boss_kraken_sheet.webp'] || monsterSpriteImgs['img/monsters/boss_kraken.webp'];
+    if(krImg && krImg.complete && krImg.naturalWidth > 0){
+      cx.drawImage(krImg, swimFrame * 280, 0, 280, 280, -aw / 2, -ah / 2 - 10, aw, ah);
     } else {
-      circle(0, 0, e.c.r, '#a855f7');
+      circle(0, 0, e.c.r, '#3b0764');
     }
     cx.filter = 'none';
 
-    // Пылающий циклопический глаз титана
-    const eyeX = -16, eyeY = -42;
-    const eyeGrad = cx.createRadialGradient(eyeX, eyeY, 1, eyeX, eyeY, 7);
-    eyeGrad.addColorStop(0, 'rgba(254, 242, 242, 0.98)');
-    eyeGrad.addColorStop(0.35, 'rgba(239, 68, 68, 0.9)');
-    eyeGrad.addColorStop(1, 'rgba(220, 38, 38, 0)');
-    cx.fillStyle = eyeGrad;
-    cx.beginPath(); cx.arc(eyeX, eyeY, 7, 0, 6.283); cx.fill();
-    cx.fillStyle = '#ffffff';
-    cx.fillRect(eyeX - 1, eyeY - 1, 2, 2);
+    // Пылающие глаза Кракена (координаты (-2, -19) и (18.5, -19))
+    for(const [exO, eyO] of [[-2, -19], [18.5, -19]]){
+      const eyeGrad = cx.createRadialGradient(exO, eyO, 1, exO, eyO, 7);
+      eyeGrad.addColorStop(0, 'rgba(254, 242, 242, 0.98)');
+      eyeGrad.addColorStop(0.35, 'rgba(239, 68, 68, 0.92)');
+      eyeGrad.addColorStop(1, 'rgba(220, 38, 38, 0)');
+      cx.fillStyle = eyeGrad;
+      cx.beginPath(); cx.arc(exO, eyO, 7, 0, 6.283); cx.fill();
+      cx.fillStyle = '#ffffff';
+      cx.fillRect(exO - 1, eyO - 1, 2, 2);
+    }
 
-    cx.restore(); // end abomination translate
+    cx.restore(); // end kraken translate
     cx.restore(); // end clip
 
-    // Шипастые когти клешни, впивающиеся в поверхность земли
+    // Щупальца, вздымающиеся по кромке водоворота
     cx.save();
-    cx.fillStyle = '#2e1065';
+    cx.fillStyle = '#1e0836';
     cx.strokeStyle = '#a855f7';
-    cx.lineWidth = 1.2;
-    const clawOffsets = [-28, -20, -12, 16, 26];
-    for(const co of clawOffsets){
+    cx.lineWidth = 1.4;
+    const tentacleOffsets = [-32, -22, -12, 14, 24, 34];
+    for(const to of tentacleOffsets){
+      const tH = 6 + Math.abs(Math.sin(to + t * 4)) * 10;
       cx.beginPath();
-      cx.moveTo(ex + co - 3, gy - 2);
-      cx.lineTo(ex + co, gy + 4);
-      cx.lineTo(ex + co + 3, gy - 2);
+      cx.moveTo(ex + to - 3, gy + 2);
+      cx.quadraticCurveTo(ex + to + Math.sin(t * 3 + to) * 4, gy - tH, ex + to, gy - tH - 2);
+      cx.quadraticCurveTo(ex + to + 3, gy - tH * 0.5, ex + to + 3, gy + 2);
       cx.closePath();
       cx.fill();
       cx.stroke();
     }
     cx.restore();
 
-    // Передняя кромка разлома поверх тела
-    drawAbominationCraterLip(ex, gy, cw, ch);
+    // Передняя кромка водоворота поверх тела
+    drawKrakenWhirlpoolLip(ex, gy, cw, ch);
     return;
   }
 
-  // 5. ФАЗА 3 (0.72 - 1.0): Сокрушительный выход на поверхность и рев Апекс-Титана
+  // 5. ФАЗА 3 (0.72 - 1.0): Взрывной выход из пучины и боевой рев Владыки Бездны
   const roarProg = (prog - 0.72) / (1.0 - 0.72);
-  const abFrame = Math.min(7, Math.floor(roarProg * 8));
+  const krFrame = 7; // Кадр 7: Распахнутые щупальца боевого рывка!
 
-  // Овальная тень под ногами босса
+  // Овальная тень глубины под Кракеном
   cx.save();
-  cx.fillStyle = 'rgba(0,0,0,0.6)';
-  cx.beginPath(); cx.ellipse(ex, gy, 46, 14, 0, 0, 6.283); cx.fill();
+  cx.fillStyle = 'rgba(2,0,8,0.65)';
+  cx.beginPath(); cx.ellipse(ex, gy, 48, 15, 0, 0, 6.283); cx.fill();
 
-  // Пульсирующая мутагенная аура титана
-  const auraR = 40 + roarProg * 45;
+  // Пульсирующая биолюминесцентная аура Бездны
+  const auraR = 44 + roarProg * 48;
   const aura = cx.createRadialGradient(ex, ey + 10, 8, ex, ey + 10, auraR);
-  aura.addColorStop(0, 'rgba(168, 85, 247, 0.55)');
-  aura.addColorStop(0.65, 'rgba(124, 58, 237, 0.22)');
+  aura.addColorStop(0, 'rgba(147, 51, 234, 0.55)');
+  aura.addColorStop(0.65, 'rgba(59, 7, 100, 0.25)');
   aura.addColorStop(1, 'rgba(0,0,0,0)');
   cx.fillStyle = aura;
   cx.beginPath(); cx.arc(ex, ey + 10, auraR, 0, 6.283); cx.fill();
 
-  // Расходящиеся сейсмические волны по поверхности земли
-  const rippleExpand = roarProg * 55;
+  // Расходящиеся приливные волны чернил по поверхности
+  const rippleExpand = roarProg * 60;
   cx.strokeStyle = `rgba(168, 85, 247, ${0.85 * (1 - roarProg)})`;
   cx.lineWidth = 2.4;
   cx.beginPath();
-  cx.ellipse(ex, gy, 28 + rippleExpand, (28 + rippleExpand) * 0.36, 0, 0, 6.283);
+  cx.ellipse(ex, gy, 30 + rippleExpand, (30 + rippleExpand) * 0.36, 0, 0, 6.283);
   cx.stroke();
 
-  // Спрайт Аберрации
+  // Спрайт Кракена
   cx.save();
   cx.translate(ex, ey);
   if(e.facing > 0) cx.scale(-1, 1);
   cx.imageSmoothingEnabled = false;
-  cx.filter = 'drop-shadow(0 0 12px rgba(168,85,247,0.85))';
-  const abImg = monsterSheetImgs['img/monsters/monster_abomination_sheet_v2.webp?v=25'] || monsterSheetImgs['img/monsters/monster_abomination_sheet.webp'];
-  if(abImg && abImg.complete && abImg.naturalWidth > 0){
-    cx.drawImage(abImg, abFrame * 280, 0, 280, 280, -aw / 2, -ah / 2 - 10, aw, ah);
+  cx.filter = 'drop-shadow(0 0 14px rgba(168,85,247,0.9))';
+  const krImg = monsterSheetImgs['img/monsters/boss_kraken_sheet.webp?v=1'] || monsterSheetImgs['img/monsters/boss_kraken_sheet.webp'] || monsterSpriteImgs['img/monsters/boss_kraken.webp'];
+  if(krImg && krImg.complete && krImg.naturalWidth > 0){
+    cx.drawImage(krImg, krFrame * 280, 0, 280, 280, -aw / 2, -ah / 2 - 10, aw, ah);
   }
   cx.filter = 'none';
 
-  // Пылающий циклопический глаз титана
-  const eyeX = -16, eyeY = -42;
+  // Пылающие глаза Кракена во время рева
   const eyePulse = 0.85 + 0.15 * Math.sin(performance.now() / 70);
-  const eyeGrad = cx.createRadialGradient(eyeX, eyeY, 1, eyeX, eyeY, 9 * eyePulse);
-  eyeGrad.addColorStop(0, 'rgba(254, 242, 242, 0.98)');
-  eyeGrad.addColorStop(0.35, 'rgba(239, 68, 68, 0.92)');
-  eyeGrad.addColorStop(1, 'rgba(220, 38, 38, 0)');
-  cx.fillStyle = eyeGrad;
-  cx.beginPath(); cx.arc(eyeX, eyeY, 9 * eyePulse, 0, 6.283); cx.fill();
-  cx.fillStyle = '#ffffff';
-  cx.fillRect(eyeX - 1, eyeY - 1, 2, 2);
+  for(const [exO, eyO] of [[-9, -21], [11, -21]]){
+    const eyeGrad = cx.createRadialGradient(exO, eyO, 1, exO, eyO, 9 * eyePulse);
+    eyeGrad.addColorStop(0, 'rgba(254, 242, 242, 0.98)');
+    eyeGrad.addColorStop(0.35, 'rgba(239, 68, 68, 0.92)');
+    eyeGrad.addColorStop(1, 'rgba(220, 38, 38, 0)');
+    cx.fillStyle = eyeGrad;
+    cx.beginPath(); cx.arc(exO, eyO, 9 * eyePulse, 0, 6.283); cx.fill();
+    cx.fillStyle = '#ffffff';
+    cx.fillRect(exO - 1, eyO - 1, 2, 2);
 
-  // Крестообразный блик глаза
-  const flareLen = (10 + 6 * roarProg) * eyePulse;
-  cx.strokeStyle = '#fca5a5';
-  cx.lineWidth = 1.6;
-  cx.beginPath();
-  cx.moveTo(eyeX - flareLen, eyeY); cx.lineTo(eyeX + flareLen, eyeY);
-  cx.moveTo(eyeX, eyeY - flareLen); cx.lineTo(eyeX, eyeY + flareLen);
-  cx.stroke();
+    // Крестообразный блик глаза
+    const flareLen = (11 + 6 * roarProg) * eyePulse;
+    cx.strokeStyle = '#fca5a5';
+    cx.lineWidth = 1.6;
+    cx.beginPath();
+    cx.moveTo(exO - flareLen, eyO); cx.lineTo(exO + flareLen, eyO);
+    cx.moveTo(exO, eyO - flareLen * 0.7); cx.lineTo(exO, eyO + flareLen * 0.7);
+    cx.stroke();
+  }
 
   cx.restore();
   cx.restore();
 
-  // Передняя кромка разлома поверх ног
-  drawAbominationCraterLip(ex, gy, cw, ch);
+  // Передняя кромка водоворота поверх нижних щупалец
+  drawKrakenWhirlpoolLip(ex, gy, cw, ch);
 }
 
-function drawAbominationBoss(e, ox, oy){
+function drawKrakenBoss(e, ox, oy){
   const ex = e.x + ox, ey = e.y + oy;
   const gy = (e.spawnY !== undefined ? e.spawnY : e.y) + oy + 33;
 
-  // 1. Появление Мутанта-Аберрации из Мутагенного Разлома (Кинематографическая анимация)
+  // 1. Появление Кракена из Водоворота Бездны (Кинематографическая анимация)
   if(e.spawnState === 'emerging'){
-    drawAbominationEmergence(e, ex, ey, gy);
+    drawKrakenEmergence(e, ex, ey, gy);
     return;
   }
 
   // 1. Телеграфы способностей
   if(e.action === 'slam_windup'){
+    // Сокрушительный взмах щупальцами (веерный сектор удара)
     cx.save();
     const sa = e.slamAngle;
     const pulse = 0.7 + 0.3 * Math.sin(performance.now() / 80);
     const radius = 140;
-    cx.fillStyle = `rgba(168, 85, 247, ${0.28 * pulse})`;
+    cx.fillStyle = `rgba(147, 51, 234, ${0.28 * pulse})`;
     cx.strokeStyle = `rgba(192, 132, 252, ${0.85 * pulse})`;
     cx.lineWidth = 2.4;
     cx.beginPath();
@@ -19210,25 +19209,26 @@ function drawAbominationBoss(e, ox, oy){
     cx.stroke();
     cx.restore();
   } else if(e.action === 'charge_prep'){
+    // Стремительный бросок щупальцами (коридор рывка)
     cx.save();
-    const cLen = e.chargeMaxDist || 340;
+    const cLen = e.chargeMaxDist || 360;
     const cAng = e.chargeAng !== undefined ? e.chargeAng : Math.atan2(G.p.y - e.y, G.p.x - e.x);
     cx.translate(ex, ey + 18);
     cx.rotate(cAng);
     const pulse = 0.85 + 0.15 * Math.sin(performance.now() * 0.02);
 
     const runGrad = cx.createLinearGradient(0, 0, cLen, 0);
-    runGrad.addColorStop(0, `rgba(168, 85, 247, ${0.45 * pulse})`);
-    runGrad.addColorStop(0.7, `rgba(239, 68, 68, ${0.35 * pulse})`);
+    runGrad.addColorStop(0, `rgba(147, 51, 234, ${0.48 * pulse})`);
+    runGrad.addColorStop(0.7, `rgba(239, 68, 68, ${0.38 * pulse})`);
     runGrad.addColorStop(1, 'rgba(239, 68, 68, 0)');
     cx.fillStyle = runGrad;
-    cx.fillRect(0, -32, cLen, 64);
+    cx.fillRect(0, -34, cLen, 68);
 
     cx.strokeStyle = `rgba(239, 68, 68, ${0.9 * pulse})`;
     cx.lineWidth = 2.4;
     cx.beginPath();
-    cx.moveTo(0, -32); cx.lineTo(cLen, -32);
-    cx.moveTo(0, 32); cx.lineTo(cLen, 32);
+    cx.moveTo(0, -34); cx.lineTo(cLen, -34);
+    cx.moveTo(0, 34); cx.lineTo(cLen, 34);
     cx.stroke();
 
     const arrowStep = 55;
@@ -19247,6 +19247,7 @@ function drawAbominationBoss(e, ox, oy){
     }
     cx.restore();
   } else if(e.action === 'spit_prep'){
+    // Веерный плевок чернильными сферами Бездны
     cx.save();
     const baseAng = Math.atan2(G.p.y - e.y, G.p.x - e.x);
     const pulse = 0.75 + 0.25 * Math.sin(performance.now() * 0.02);
@@ -19264,7 +19265,7 @@ function drawAbominationBoss(e, ox, oy){
     cx.restore();
   }
 
-  // Отрисовка разломов Бездны на земле (Abyssal Rifts)
+  // Отрисовка разломов / водоворотов Бездны на земле (Abyssal Rifts)
   if(e.rifts && e.rifts.length > 0){
     for(const rf of e.rifts){
       const rx = rf.x + ox, ry = rf.y + oy;
@@ -19273,12 +19274,13 @@ function drawAbominationBoss(e, ox, oy){
       cx.save();
       const rGrad = cx.createRadialGradient(rx, ry, 2, rx, ry, rf.r);
       rGrad.addColorStop(0, `rgba(243, 232, 255, ${0.85 * rk})`);
-      rGrad.addColorStop(0.4, `rgba(168, 85, 247, ${0.6 * rk})`);
-      rGrad.addColorStop(0.8, `rgba(88, 28, 135, ${0.35 * rk})`);
+      rGrad.addColorStop(0.4, `rgba(147, 51, 234, ${0.65 * rk})`);
+      rGrad.addColorStop(0.8, `rgba(59, 7, 100, ${0.4 * rk})`);
       rGrad.addColorStop(1, 'rgba(0,0,0,0)');
       cx.fillStyle = rGrad;
       cx.beginPath(); cx.arc(rx, ry, rf.r * pulse, 0, 6.283); cx.fill();
 
+      // Щупальце, прорывающееся из центра разлома
       cx.strokeStyle = `rgba(192, 132, 252, ${0.95 * pulse})`;
       cx.lineWidth = 2.4;
       cx.beginPath();
@@ -19295,55 +19297,58 @@ function drawAbominationBoss(e, ox, oy){
     }
   }
 
-  // Скоростной шлейф во время тарана
+  // Скоростной гидро-след во время броска (Charge Rush)
   if(e.action === 'charge_rush'){
     cx.save();
     const rushBackX = ex - Math.cos(e.chargeAng || 0) * 26;
     const rushBackY = ey - Math.sin(e.chargeAng || 0) * 26;
-    const tGrad = cx.createRadialGradient(rushBackX, rushBackY, 4, rushBackX, rushBackY, 44);
-    tGrad.addColorStop(0, 'rgba(168, 85, 247, 0.45)');
-    tGrad.addColorStop(1, 'rgba(168, 85, 247, 0)');
+    const tGrad = cx.createRadialGradient(rushBackX, rushBackY, 4, rushBackX, rushBackY, 46);
+    tGrad.addColorStop(0, 'rgba(147, 51, 234, 0.55)');
+    tGrad.addColorStop(1, 'rgba(59, 7, 100, 0)');
     cx.fillStyle = tGrad;
-    cx.beginPath(); cx.arc(rushBackX, rushBackY, 44, 0, 6.283); cx.fill();
+    cx.beginPath(); cx.arc(rushBackX, rushBackY, 46, 0, 6.283); cx.fill();
     cx.restore();
   }
 
-  // 2. Мутагенная аура
+  // 2. Чернильно-фиолетовая аура глубин
   cx.save();
   const auraPulse = 0.7 + 0.25 * Math.sin(performance.now() / 120);
-  const abAura = cx.createRadialGradient(ex, ey + 20, 15, ex, ey + 20, 64);
-  abAura.addColorStop(0, `rgba(168, 85, 247, ${0.45 * auraPulse})`);
-  abAura.addColorStop(0.65, `rgba(109, 40, 217, ${0.22 * auraPulse})`);
-  abAura.addColorStop(1, 'rgba(0,0,0,0)');
-  cx.fillStyle = abAura;
-  cx.beginPath(); cx.ellipse(ex, ey + 20, 64, 28, 0, 0, 6.283); cx.fill();
+  const krAura = cx.createRadialGradient(ex, ey + 20, 15, ex, ey + 20, 66);
+  krAura.addColorStop(0, `rgba(147, 51, 234, ${0.45 * auraPulse})`);
+  krAura.addColorStop(0.65, `rgba(59, 7, 100, ${0.25 * auraPulse})`);
+  krAura.addColorStop(1, 'rgba(0,0,0,0)');
+  cx.fillStyle = krAura;
+  cx.beginPath(); cx.ellipse(ex, ey + 20, 66, 28, 0, 0, 6.283); cx.fill();
 
-  // Глубокая тень (с учетом тяжелой мутировавшей клешни)
-  cx.fillStyle = 'rgba(0,0,0,0.58)';
-  const clawSide = e.facing > 0 ? 1 : -1;
-  cx.beginPath(); cx.ellipse(ex + clawSide * 6, ey + 33, 44, 13, 0, 0, 6.283); cx.fill();
-  cx.beginPath(); cx.ellipse(ex - clawSide * 24, ey + 34, 26, 9, 0, 0, 6.283); cx.fill();
+  // Глубокая водяная тень
+  cx.fillStyle = 'rgba(2,0,8,0.62)';
+  cx.beginPath(); cx.ellipse(ex, ey + 33, 46, 14, 0, 0, 6.283); cx.fill();
 
-  // 3. Спрайт Мутанта-Аберрации
+  // 3. Спрайт Кракена Бездны
   cx.translate(ex, ey);
   if(e.facing > 0) cx.scale(-1, 1);
 
-  // Динамические позы действий титана
+  // Динамические позы действий Кракена
+  let useAttackFrame = false;
   if(e.action === 'slam_windup'){
     const windProg = 1 - Math.max(0, (e.actionT || 0) / 0.70);
     cx.rotate(-0.14 * windProg);
     cx.translate(0, -6 * windProg);
+    useAttackFrame = true;
   } else if(e.action === 'slam_smash'){
     const smashProg = 1 - Math.max(0, (e.actionT || 0) / 0.35);
     cx.rotate(0.18 * (1 - smashProg * 0.5));
     cx.translate(6, 6 * (1 - smashProg * 0.5));
+    useAttackFrame = true;
   } else if(e.action === 'charge_prep'){
     const prepShake = (Math.random() - 0.5) * 2.5;
     cx.translate(prepShake, 4);
     cx.scale(1.05, 0.95);
+    useAttackFrame = true;
   } else if(e.action === 'charge_rush'){
     cx.rotate(0.12);
     cx.translate(6, -2);
+    useAttackFrame = true;
   } else if(e.action === 'charge_recover'){
     const recProg = Math.max(0, (e.actionT || 0) / 0.35);
     cx.rotate(-0.07 * recProg);
@@ -19351,44 +19356,55 @@ function drawAbominationBoss(e, ox, oy){
   } else if(e.action === 'spit_prep'){
     const spitPulse = Math.sin(performance.now() * 0.02) * 2.5;
     cx.translate(0, spitPulse);
+    useAttackFrame = true;
   }
 
   if(e.fl > 0) cx.filter = 'brightness(3)';
   else if(e.enraged) cx.filter = 'contrast(1.3) saturate(1.4)';
 
-  const abImg = monsterSheetImgs['img/monsters/monster_abomination_sheet_v2.webp?v=25'] || monsterSheetImgs['img/monsters/monster_abomination_sheet.webp'];
-  const aw = 126, ah = 126;
-  if(abImg && abImg.complete && abImg.naturalWidth > 0){
+  const krImg = monsterSheetImgs['img/monsters/boss_kraken_sheet.webp?v=1'] || monsterSheetImgs['img/monsters/boss_kraken_sheet.webp'] || monsterSpriteImgs['img/monsters/boss_kraken.webp'];
+  const aw = 140, ah = 140;
+  const currentFrame = useAttackFrame ? 7 : ((e.frame || 0) % 7);
+
+  if(krImg && krImg.complete && krImg.naturalWidth > 0){
     cx.imageSmoothingEnabled = false;
-    cx.drawImage(abImg, (e.frame || 0) * 280, 0, 280, 280, -aw / 2, -ah / 2 - 10, aw, ah);
+    cx.drawImage(krImg, currentFrame * 280, 0, 280, 280, -aw / 2, -ah / 2 - 10, aw, ah);
   } else {
-    circle(0, 0, e.c.r, e.fl > 0 ? '#fff' : '#a855f7');
+    circle(0, 0, e.c.r, e.fl > 0 ? '#fff' : '#3b0764');
   }
 
-  // 4. Пылающий циклопический глаз (точно на зрачке глаза на голове)
+  // 4. Пылающие рубиновые глаза Кракена Бездны
   cx.filter = 'none';
-  const eyeX = -16;
-  const eyeY = -42;
+  const eyeCoords = useAttackFrame ? [[-9, -21], [11, -21]] : [[-2, -19], [18.5, -19]];
   const eyePulse = 0.85 + 0.15 * Math.sin(performance.now() / 90);
-  const eyeGrad = cx.createRadialGradient(eyeX, eyeY, 1, eyeX, eyeY, e.enraged ? 8 : 5.5);
-  eyeGrad.addColorStop(0, 'rgba(254, 242, 242, 0.95)');
-  eyeGrad.addColorStop(0.35, e.enraged ? 'rgba(239, 68, 68, 0.85)' : 'rgba(220, 38, 38, 0.7)');
-  eyeGrad.addColorStop(1, 'rgba(220, 38, 38, 0)');
-  cx.fillStyle = eyeGrad;
-  cx.beginPath(); cx.arc(eyeX, eyeY, (e.enraged ? 8 : 5.5) * eyePulse, 0, 6.283); cx.fill();
 
-  cx.fillStyle = '#ffffff';
-  cx.fillRect(eyeX - 1, eyeY - 1, 2, 2);
+  for(const [exO, eyO] of eyeCoords){
+    const eyeGrad = cx.createRadialGradient(exO, eyO, 1, exO, eyO, e.enraged ? 8.5 : 6);
+    eyeGrad.addColorStop(0, 'rgba(254, 242, 242, 0.95)');
+    eyeGrad.addColorStop(0.35, e.enraged ? 'rgba(239, 68, 68, 0.9)' : 'rgba(220, 38, 38, 0.75)');
+    eyeGrad.addColorStop(1, 'rgba(220, 38, 38, 0)');
+    cx.fillStyle = eyeGrad;
+    cx.beginPath(); cx.arc(exO, eyO, (e.enraged ? 8.5 : 6) * eyePulse, 0, 6.283); cx.fill();
 
-  if(e.enraged && Math.random() < 0.35){
-    const sparkAng = Math.random() * 6.283;
-    const sparkDist = 4 + Math.random() * 8;
-    cx.fillStyle = '#fca5a5';
-    cx.fillRect(eyeX + Math.cos(sparkAng) * sparkDist, eyeY + Math.sin(sparkAng) * sparkDist, 1.5, 1.5);
+    cx.fillStyle = '#ffffff';
+    cx.fillRect(exO - 1, eyO - 1, 2, 2);
+
+    if(e.enraged && Math.random() < 0.35){
+      const sparkAng = Math.random() * 6.283;
+      const sparkDist = 4 + Math.random() * 8;
+      cx.fillStyle = '#fca5a5';
+      cx.fillRect(exO + Math.cos(sparkAng) * sparkDist, eyO + Math.sin(sparkAng) * sparkDist, 1.5, 1.5);
+    }
   }
 
   cx.restore();
 }
+
+// Псевдонимы обратной совместимости
+function drawAbominationCraterLip(ex, gy, cw, ch){ drawKrakenWhirlpoolLip(ex, gy, cw, ch); }
+function drawAbominationEmergence(e, ex, ey, gy){ drawKrakenEmergence(e, ex, ey, gy); }
+function drawAbominationBoss(e, ox, oy){ drawKrakenBoss(e, ox, oy); }
+
 
 
 // ===== ПОКАДРОВАЯ ВИЗУАЛИЗАЦИЯ ПОЯВЛЕНИЯ ПАУЧИХИ-ПРАМАТЕРИ =====
@@ -20828,6 +20844,14 @@ function drawAnimatedMonster(cx, e, sprite, sw, sh, ox, oy){
     scaleX = 1.0 + wing * 0.14;
     scaleY = 1.0 - wing * 0.10;
     shadowScale = 0.85 + wing * 0.12;
+  } else if (sp && (sp.includes('boss_kraken') || sp.includes('kraken'))) {
+    // Кракен Бездны: плавное волнообразное парение в глубинах с дыхательным сжатием
+    const step = t * 0.72;
+    bobY = Math.sin(step) * 5.5 - 2;
+    rot = Math.sin(step * 0.6) * 0.08;
+    scaleX = 1.0 + Math.sin(step) * 0.08;
+    scaleY = 1.0 - Math.sin(step) * 0.06;
+    shadowScale = 0.95 + Math.sin(step) * 0.12;
   } else if (sp === 'img/monsters/monster_abomination.webp' || (sp && sp.includes('monster_abomination'))) {
     // 8. Мутант-аберрация: тяжелая сокрушительная поступь с раскачкой огромной клешни
     const step = t * 0.55;
@@ -21148,8 +21172,8 @@ function drawGame(){
         drawGravediggerBoss(e,ox,oy);
       }else if(e.bossId==='rat_king'){
         drawRatKingBoss(e,ox,oy);
-      }else if(e.bossId==='abomination'){
-        drawAbominationBoss(e,ox,oy);
+      }else if(e.bossId==='kraken' || e.bossId==='abomination'){
+        drawKrakenBoss(e,ox,oy);
       }else if(e.bossId==='broodmother'){
         drawBroodmotherBoss(e,ox,oy);
       }else if(e.bossId==='treant'){
