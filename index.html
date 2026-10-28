@@ -8770,7 +8770,21 @@ function dropCoins(x,y,count=1,val=1){
 }
 
 function getLevelXpRequirement(lvl){
-  return Math.round(9 + (lvl - 1) * 6 + Math.pow(lvl, 1.25) * 2.5);
+  if(lvl <= 1) return 10;
+  if(lvl <= 10){
+    // Фаза 1 (Уровни 1–10): Плавный быстрый вход для раннего сбора билда (10, 18, 28, 40, 54, 70, 88, 108, 130, 154)
+    return Math.round(10 + (lvl - 1) * 8 + (lvl - 1) * (lvl - 2) * 1.0);
+  } else if(lvl <= 25){
+    // Фаза 2 (Уровни 11–25): Стабильный мидгейм под плотность орд и прокачку способностей до 5★ (182 -> 952)
+    const base10 = 154;
+    const k = lvl - 10;
+    return Math.round(base10 + k * 28 + k * (k - 1) * 1.8);
+  } else {
+    // Фаза 3 (Уровни 26+): Лейтгейм и эволюции. Повышенная планка предотвращает спам окон прокачки в поздних волнах (1032 -> 2660+)
+    const base25 = 952;
+    const k = lvl - 25;
+    return Math.round(base25 + k * 80 + k * (k - 1) * 3.5);
+  }
 }
 
 function calculateBossXpToAdd(g, levels = 3){
@@ -9726,7 +9740,7 @@ function hurt(e,d){
       }
     
     } else if(e.isMiniBoss){
-      kXp = 35;
+      kXp = 40;
       if(!G.enemies.some(other => other !== e && !other.dead && other.isBoss)){
         G.bossArena = null;
       }
@@ -9744,13 +9758,13 @@ function hurt(e,d){
       if(mbRoll < 0.50){
         const mbTier = curWave <= 8 ? (Math.random() < 0.65 ? 1 : 2) : (curWave <= 18 ? (Math.random() < 0.45 ? 2 : 3) : (Math.random() < 0.5 ? 3 : 4));
         spawnLootDrop(rollWeaponId(mbTier), e.x, e.y);
-        showGameToast('⚡ '+T('MINI-BOSS DEFEATED! Weapon Dropped! +35 XP','МИНИ-БОСС ПОВЕРЖЕН! Выпало оружие! +35 XP'),'#fb923c',3.0);
+        showGameToast('⚡ '+T('MINI-BOSS DEFEATED! Weapon Dropped! +40 XP','МИНИ-БОСС ПОВЕРЖЕН! Выпало оружие! +40 XP'),'#fb923c',3.0);
       } else if(mbRoll < 0.85){
         const mbTier = curWave <= 10 ? 1 : (curWave <= 20 ? 2 : 3);
         spawnLootDrop(rollGearId(mbTier), e.x, e.y);
-        showGameToast('⚡ '+T('MINI-BOSS DEFEATED! Gear Dropped! +35 XP','МИНИ-БОСС ПОВЕРЖЕН! Выпало снаряжение! +35 XP'),'#fb923c',3.0);
+        showGameToast('⚡ '+T('MINI-BOSS DEFEATED! Gear Dropped! +40 XP','МИНИ-БОСС ПОВЕРЖЕН! Выпало снаряжение! +40 XP'),'#fb923c',3.0);
       } else {
-        showGameToast('⚡ '+T('MINI-BOSS DEFEATED! +35 XP','МИНИ-БОСС ПОВЕРЖЕН! +35 XP'),'#fb923c',3.0);
+        showGameToast('⚡ '+T('MINI-BOSS DEFEATED! +40 XP','МИНИ-БОСС ПОВЕРЖЕН! +40 XP'),'#fb923c',3.0);
       }
     } else {
       if(e.c && e.c.xp) kXp = e.c.xp;
@@ -16348,7 +16362,7 @@ function update(dt){
           g.coinsCollected=(g.coinsCollected||0)+(m.v||1);
           for(let k=0;k<4;k++) g.fx.push({x:g.pet.x,y:g.pet.y,vx:(Math.random()-.5)*70,vy:(Math.random()-.5)*70,col:'#facc15',l:.28});
         }else{
-          const xpToAdd = m.isBoss ? calculateBossXpToAdd(g, m.bossLevels || 3) : Math.min(m.v, Math.max(1, g.need - 1));
+          const xpToAdd = m.isBoss ? calculateBossXpToAdd(g, m.bossLevels || 3) : (m.v || 1);
           g.xp += xpToAdd;
           if(m.isBoss){
             showGameToast('🔴 ' + T('+3 LEVEL-UPS FROM BOSS CRYSTAL!', '+3 УРОВНЯ ОТ КРИСТАЛЛА БОССА!'), '#ef4444', 3.0);
@@ -16382,7 +16396,7 @@ function update(dt){
           g.fx.push({x:m.x,y:m.y,vx:(Math.random()-.5)*80,vy:(Math.random()-.5)*80,col:Math.random()>.4?'#facc15':'#fbbf24',l:.3});
         }
       }else{
-        const xpToAdd = m.isBoss ? calculateBossXpToAdd(g, m.bossLevels || 3) : Math.min(m.v, Math.max(1, g.need - 1));
+        const xpToAdd = m.isBoss ? calculateBossXpToAdd(g, m.bossLevels || 3) : (m.v || 1);
         g.xp += xpToAdd;
         if(m.isBoss){
           showGameToast('🔴 ' + T('+3 LEVEL-UPS FROM BOSS CRYSTAL!', '+3 УРОВНЯ ОТ КРИСТАЛЛА БОССА!'), '#ef4444', 3.0);
