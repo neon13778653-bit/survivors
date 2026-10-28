@@ -3322,7 +3322,7 @@ const CONFIG={
     ghoul:{name:'Пустошный гуль',nameEn:'Wasteland Ghoul',hp:38,speed:98,damage:12,xp:7,r:14,color:'#94a3b8',weight:4,fromWave:20,sprite:'img/monsters/monster_ghoul.webp',sheet:'img/monsters/monster_ghoul_sheet.webp',frameW:260,frameH:240,frames:8,spriteW:50,spriteH:46,animRate:11},
     slime:{name:'Токсичный слизень',nameEn:'Toxic Slime',hp:48,speed:34,damage:10,xp:8,r:17,color:'#22c55e',weight:4,fromWave:9,sprite:'img/monsters/monster_slime.webp',sheet:'img/monsters/monster_slime_sheet.webp',frameW:260,frameH:220,frames:8,spriteW:58,spriteH:48,animRate:7},
     gargoyle:{name:'Каменная гаргулья',nameEn:'Stone Gargoyle',hp:66,speed:52,damage:13,xp:10,r:17,color:'#64748b',weight:3,fromWave:20,sprite:'img/monsters/monster_gargoyle.webp',sheet:'img/monsters/monster_gargoyle_sheet.webp',frameW:240,frameH:240,frames:8,spriteW:48,spriteH:50,animRate:8,flying:true,ranged:true},
-    abomination:{name:'Мутант-аберрация',nameEn:'Mutant Abomination',hp:82,speed:42,damage:15,xp:14,r:18,color:'#a855f7',weight:2,fromWave:15,sprite:'img/monsters/monster_abomination.webp',sheet:'img/monsters/monster_abomination_sheet.webp',frameW:280,frameH:280,frames:8,spriteW:52,spriteH:50,animRate:7},
+    abomination:{name:'Мутант-аберрация',nameEn:'Mutant Abomination',hp:82,speed:42,damage:15,xp:14,r:18,color:'#a855f7',weight:2,fromWave:15,sprite:'img/monsters/monster_abomination_v2.webp?v=25',sheet:'img/monsters/monster_abomination_sheet_v2.webp?v=25',frameW:280,frameH:280,frames:8,spriteW:52,spriteH:50,animRate:7},
     mimic:{name:'Мимик-сундук',nameEn:'Mimic Chest',hp:115,speed:48,damage:17,xp:18,r:18,color:'#b45309',weight:1,fromWave:19,sprite:'img/monsters/monster_mimic.webp',sheet:'img/monsters/monster_mimic_sheet.webp',frameW:260,frameH:240,frames:8,spriteW:52,spriteH:48,animRate:9},
     spiderling:{name:'Паучонок',nameEn:'Spiderling',hp:10,speed:112,damage:4,xp:1,r:10,color:'#f59e0b',weight:6,fromWave:2,sprite:'img/monsters/monster_spiderling.webp',sheet:'img/monsters/monster_spiderling_sheet.webp',frameW:240,frameH:200,frames:8,spriteW:42,spriteH:35,animRate:12},
     spider_egg:{name:'Кокон паука',nameEn:'Spider Egg Sac',hp:38,speed:0,damage:3,xp:4,r:15,color:'#e2e8f0',weight:6,fromWave:6,sprite:'img/monsters/monster_spider_egg.webp',sheet:'img/monsters/monster_spider_egg_sheet.webp',frameW:240,frameH:240,frames:8,spriteW:46,spriteH:46,animRate:5},
@@ -5667,7 +5667,7 @@ for(const enemyDef of Object.values(CONFIG.enemies)){
   }
 }
 ['img/monsters/monster_slime.webp','img/monsters/monster_bat.webp','img/monsters/monster_mimic.webp','img/monsters/monster_gargoyle.webp','img/monsters/monster_treant.webp',
- 'img/monsters/monster_mushroom.webp','img/monsters/monster_spiderling.webp','img/monsters/monster_rat.webp','img/monsters/monster_ghoul.webp','img/monsters/monster_abomination.webp',
+ 'img/monsters/monster_mushroom.webp','img/monsters/monster_spiderling.webp','img/monsters/monster_rat.webp','img/monsters/monster_ghoul.webp','img/monsters/monster_abomination_v2.webp?v=25','img/monsters/monster_abomination.webp',
  'img/pets/pet_scarab_icon.webp','img/pets/pet_scout_icon.webp','img/pets/pet_golem_icon.webp','img/pets/pet_voidray_icon.webp',
  'img/pets/pet_mushroom_icon.webp','img/pets/pet_spider_icon.webp','img/pets/pet_rat_icon.webp','img/pets/pet_ghoul_icon.webp',
  'img/pets/pet_scarab_sprite.webp','img/pets/pet_scout_sprite.webp','img/pets/pet_golem_sprite.webp','img/pets/pet_voidray_sprite.webp'].forEach(s=>{
@@ -5675,7 +5675,7 @@ for(const enemyDef of Object.values(CONFIG.enemies)){
 });
 ['img/monsters/monster_mushroom_sheet.webp','img/monsters/monster_spiderling_sheet.webp','img/monsters/monster_spider_sheet.webp',
  'img/monsters/monster_broodmother_sheet.webp','img/monsters/monster_spider_egg_sheet.webp','img/monsters/monster_rat_sheet.webp',
- 'img/monsters/monster_ghoul_sheet.webp','img/monsters/monster_abomination_sheet.webp','img/monsters/monster_slime_sheet.webp',
+ 'img/monsters/monster_ghoul_sheet.webp','img/monsters/monster_abomination_sheet_v2.webp?v=25','img/monsters/monster_abomination_sheet.webp','img/monsters/monster_slime_sheet.webp',
  'img/monsters/monster_bat_sheet.webp','img/monsters/monster_mimic_sheet.webp','img/monsters/monster_gargoyle_sheet.webp','img/monsters/monster_treant_sheet.webp',
  'img/monsters/monster_skeleton_sheet.webp'].forEach(s=>{
   if(!monsterSheetImgs[s]){const img=new Image();img.src=s;monsterSheetImgs[s]=img;}
@@ -19073,7 +19073,7 @@ function drawAbominationEmergence(e, ex, ey, gy){
 
     cx.imageSmoothingEnabled = false;
     cx.filter = 'drop-shadow(0 0 10px rgba(168,85,247,0.75))';
-    const abImg = monsterSheetImgs['img/monsters/monster_abomination_sheet.webp'];
+    const abImg = monsterSheetImgs['img/monsters/monster_abomination_sheet_v2.webp?v=25'] || monsterSheetImgs['img/monsters/monster_abomination_sheet.webp'];
     if(abImg && abImg.complete && abImg.naturalWidth > 0){
       cx.drawImage(abImg, walkFrame * 280, 0, 280, 280, -aw / 2, -ah / 2 - 10, aw, ah);
     } else {
@@ -19149,7 +19149,7 @@ function drawAbominationEmergence(e, ex, ey, gy){
   if(e.facing > 0) cx.scale(-1, 1);
   cx.imageSmoothingEnabled = false;
   cx.filter = 'drop-shadow(0 0 12px rgba(168,85,247,0.85))';
-  const abImg = monsterSheetImgs['img/monsters/monster_abomination_sheet.webp'];
+  const abImg = monsterSheetImgs['img/monsters/monster_abomination_sheet_v2.webp?v=25'] || monsterSheetImgs['img/monsters/monster_abomination_sheet.webp'];
   if(abImg && abImg.complete && abImg.naturalWidth > 0){
     cx.drawImage(abImg, abFrame * 280, 0, 280, 280, -aw / 2, -ah / 2 - 10, aw, ah);
   }
@@ -19356,7 +19356,7 @@ function drawAbominationBoss(e, ox, oy){
   if(e.fl > 0) cx.filter = 'brightness(3)';
   else if(e.enraged) cx.filter = 'contrast(1.3) saturate(1.4)';
 
-  const abImg = monsterSheetImgs['img/monsters/monster_abomination_sheet.webp'];
+  const abImg = monsterSheetImgs['img/monsters/monster_abomination_sheet_v2.webp?v=25'] || monsterSheetImgs['img/monsters/monster_abomination_sheet.webp'];
   const aw = 126, ah = 126;
   if(abImg && abImg.complete && abImg.naturalWidth > 0){
     cx.imageSmoothingEnabled = false;
@@ -20828,7 +20828,7 @@ function drawAnimatedMonster(cx, e, sprite, sw, sh, ox, oy){
     scaleX = 1.0 + wing * 0.14;
     scaleY = 1.0 - wing * 0.10;
     shadowScale = 0.85 + wing * 0.12;
-  } else if (sp === 'img/monsters/monster_abomination.webp') {
+  } else if (sp === 'img/monsters/monster_abomination.webp' || (sp && sp.includes('monster_abomination'))) {
     // 8. Мутант-аберрация: тяжелая сокрушительная поступь с раскачкой огромной клешни
     const step = t * 0.55;
     bobY = -Math.abs(Math.sin(step)) * 4.5;
