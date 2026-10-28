@@ -2710,7 +2710,7 @@ button:disabled{opacity:.35;cursor:default;transform:none}
           </div>
           <div class="upgrade-card">
             <div class="up-info">
-              <div class="up-title">🧲 Радиус сбора (+15%)</div>
+              <div class="up-title">🧲 Радиус сбора (+5%)</div>
               <div class="up-desc">Текущий уровень: <b id="up-pick-lvl">0</b></div>
             </div>
             <button id="btn-up-pick" class="up-btn">15 🪙</button>
@@ -3333,7 +3333,7 @@ const CONFIG={
   waves:{interval:0.9,minInterval:0.25,decayPerMin:0.75,hpPerMin:0.35,maxEnemies:150,waveDuration:15,maxWaves:50},
   level:{base:10,growth:1.18},
   meta:{
-    hpStep:0.1,pickStep:0.15,dmgStep:0.1,spdStep:0.05,
+    hpStep:0.1,pickStep:0.05,dmgStep:0.1,spdStep:0.05,
     hpCost:20,pickCost:15,dmgCost:25,spdCost:25,costGrowth:1.55
   }
 };
@@ -3373,8 +3373,8 @@ const ABILITY_TR = {
   tac_magnet: {
     nameRu: "Магнит патронов",
     nameEn: 'Ammo Magnet',
-    descEn: 'Increases crystal and loot pickup radius by +25%.',
-    getDescEn: lv => 'Increases pickup radius by +' + (lv * 25) + '%.'
+    descEn: 'Increases crystal and loot pickup radius by +18% (up to +50% at Lv.5).',
+    getDescEn: lv => 'Increases pickup radius by +' + (10 + lv * 8) + '%.'
   },
   fmj_ammo: {
     nameRu: "Оболочечные пули FMJ",
@@ -3534,8 +3534,8 @@ const ABILITY_TR = {
   soul_magnet: {
     nameRu: "Притяжение душ",
     nameEn: 'Soul Magnet',
-    descEn: 'Increases crystal and xp orb pickup radius by +25%.',
-    getDescEn: lv => 'Pickup radius for orbs and crystals +' + (lv * 25) + '%.'
+    descEn: 'Increases crystal and xp orb pickup radius by +18% (up to +50% at Lv.5).',
+    getDescEn: lv => 'Pickup radius for orbs and crystals +' + (10 + lv * 8) + '%.'
   },
   arcane_power: {
     nameRu: "Тайная мощь",
@@ -3948,6 +3948,16 @@ function clampPlayerSpeed(p){
   return Math.min(315, Number(p) || 155);
 }
 
+function clampPlayerPickup(p){
+  const MAX_PICKUP = 165;
+  const MIN_PICKUP = 40;
+  if(p && typeof p === 'object'){
+    p.pickup = Math.min(MAX_PICKUP, Math.max(MIN_PICKUP, p.pickup || 50));
+    return p.pickup;
+  }
+  return Math.min(MAX_PICKUP, Math.max(MIN_PICKUP, Number(p) || 50));
+}
+
 const FIREARM_ABILITIES = [
   // === 1★ ТАКТИЧЕСКИЕ И БАЗОВЫЕ НАВЫКИ (доступны для любого огнестрела 1★+) ===
   {
@@ -3985,10 +3995,11 @@ const FIREARM_ABILITIES = [
     cat: 'defense',
     reqStars: 1,
     max: 5,
-    desc: 'Увеличивает радиус сбора кристаллов и лута на +35%.',
-    getDesc: lv => 'Увеличивает радиус сбора на +' + (25 + lv * 12) + '%.',
+    desc: 'Увеличивает радиус сбора кристаллов и лута на +18% (до +50% на 5★).',
+    getDesc: lv => 'Увеличивает радиус сбора на +' + (10 + lv * 8) + '%.',
     apply: p => {
-      p.pickup *= abStepMult(p, 'tac_magnet', lv => 25 + lv * 12);
+      p.pickup *= abStepMult(p, 'tac_magnet', lv => 10 + lv * 8);
+      clampPlayerPickup(p);
     }
   },
   {
@@ -4359,10 +4370,11 @@ const MAGIC_ABILITIES = [
     reqStars: 1,
     max: 5,
     icon: '🔮',
-    desc: 'Увеличивает радиус сбора кристаллов и сфер опыта на +37%.',
-    getDesc: lv => 'Радиус сбора сфер и кристаллов +' + (25 + lv * 12) + '%.',
+    desc: 'Увеличивает радиус сбора кристаллов и сфер опыта на +18% (до +50% на 5★).',
+    getDesc: lv => 'Радиус сбора сфер и кристаллов +' + (10 + lv * 8) + '%.',
     apply: p => {
-      p.pickup *= abStepMult(p, 'soul_magnet', lv => 25 + lv * 12);
+      p.pickup *= abStepMult(p, 'soul_magnet', lv => 10 + lv * 8);
+      clampPlayerPickup(p);
     }
   },
   {
@@ -6141,7 +6153,7 @@ function renderRewards(){
 // ===== ЯЗЫК И НАСТРОЙКИ =====
 let LANG='en';
 const EN={'ЗОНА ОТЧУЖДЕНИЯ':'Exclusion Zone','НАЖМИТЕ, ЧТОБЫ ВОЙТИ В МЕНЮ':'Tap to enter the menu','ВЫЖИВШИЙ':'Survivor','★ ГЛАВА 1 ★':'★ Chapter 1 ★','НОРМАЛЬНО':'Normal','ЗАБРОШЕННЫЙ ГОРОД':'Abandoned City','💀 Зомби':'💀 Zombies','ГЕРОИ':'Heroes','СКЛАД':'Storage','В БОЙ!':'Play','СТАТЫ':'Stats','НАГРАДЫ':'Rewards','КУЗНИЦА':'FORGE','Кузница':'Forge','ОТЛИЧНО!':'Awesome!','УР.':'LV.',
-'СКЛАД И ЭКИПИРОВКА':'Storage & Gear','СНАРЯЖЕНИЕ':'Gear','УЛУЧШЕНИЯ':'Upgrades','ПОСТОЯННЫЕ УЛУЧШЕНИЯ':'Permanent upgrades','❤️ Здоровье (+10%)':'❤️ Health (+10%)','Текущий уровень:':'Current level:','🧲 Радиус сбора (+15%)':'🧲 Pickup radius (+15%)','⚔️ Урон оружия (+10%)':'⚔️ Weapon damage (+10%)','👟 Скорость бега (+5%)':'👟 Move speed (+5%)',
+'СКЛАД И ЭКИПИРОВКА':'Storage & Gear','СНАРЯЖЕНИЕ':'Gear','УЛУЧШЕНИЯ':'Upgrades','ПОСТОЯННЫЕ УЛУЧШЕНИЯ':'Permanent upgrades','❤️ Здоровье (+10%)':'❤️ Health (+10%)','Текущий уровень:':'Current level:','🧲 Радиус сбора (+5%)':'🧲 Pickup radius (+5%)','⚔️ Урон оружия (+10%)':'⚔️ Weapon damage (+10%)','👟 Скорость бега (+5%)':'👟 Move speed (+5%)',
 'БОЕВЫЕ ХАРАКТЕРИСТИКИ':'Combat Stats','ТАКТИЧЕСКИЕ ДАННЫЕ':'Tactical data','❤️ Максимальное HP:':'❤️ Max HP:','⚔️ Базовый урон выстрела:':'⚔️ Base shot damage:','⚡ Скорострельность:':'⚡ Fire rate:','👟 Скорость перемещения:':'👟 Move speed:','🧲 Радиус сбора кристаллов:':'🧲 Crystal pickup radius:','РЕКОРДЫ КАРЬЕРЫ':'Career records','⏱️ Рекорд выживания:':'⏱️ Best survival time:','💀 Уничтожено врагов:':'💀 Enemies destroyed:','🪙 Всего золота добыто:':'🪙 Total gold earned:','🎮 Сыграно вылазок:':'🎮 Runs played:',
 'ОТРЯД ВЫЖИВШИХ':'Survivor Squad','БОЕВЫЕ НАГРАДЫ':'Battle Rewards','ВЫБЕРИТЕ УЛУЧШЕНИЕ':'Choose an upgrade','ПАУЗА':'Paused','Бой приостановлен':'The battle is paused','ПРОДОЛЖИТЬ':'Resume','В ГЛАВНОЕ МЕНЮ':'Main Menu','ВЫ ПОГИБЛИ':'You Died','ВРЕМЯ':'Time','ВРЕМЯ БОЯ':'Battle Time','ВЫЖИВАНИЕ':'Survival','УБИТО':'Kills','УБИТО ВРАГОВ':'Kills','ЗОЛОТО':'Gold','КРИСТАЛЛЫ':'Crystals','ВЫПАЛО В БОЮ':'Battle Loot','НЕ СОБРАНО':'Not collected','СЕКТОР:':'Sector:','УР.':'LV','ВОСКРЕСНУТЬ (РЕКЛАМА)':'Revive (Ad)','УДВОИТЬ ЗОЛОТО ×2':'Double Gold ×2','СЕКТОР ОПЕРАЦИИ:':'Operation Sector:','СЕКТОР ОПЕРАЦИИ':'Operation Sector','ОБОРОНА':'Defense','XP В БОЮ':'XP Earned','В БОЮ':'In Battle','Очки в лобби':'Points in lobby','Доступны очки в меню':'Lobby points available','НОВЫЙ УРОВЕНЬ!':'Level Up!','ПОРАЖЕНИЕ':'Defeat','МИССИЯ ВЫПОЛНЕНА':'Mission Cleared',
 'Персонажи':'Characters','Инвентарь':'Inventory','В бой':'Play','Характеристики':'Stats','Награды':'Rewards',
@@ -6820,40 +6832,40 @@ const ITEMS={
   sh_riot:    {s:'shield',r:2,n:'Штурмовой щит',img:'img/shields/shield_riot_icon.webp',ic:'🛡️',d:'Усиленный баллистический щит. Добавляет +65 к прочности щита (зарядка 1.8/сек) и +5% к поглощению урона.',shield:65,shieldRegen:1.8,m:{shield:65,shieldRegen:1.8,armor:.05}},
   sh_plasma:  {s:'shield',r:3,n:'Плазменный экран',img:'img/shields/shield_plasma_icon.webp',ic:'🛡️',d:'Генератор силового кинетического поля. Добавляет +105 к прочности щита (зарядка 2.5/сек), +8% к поглощению урона и +6% скорости бега.',shield:105,shieldRegen:2.5,m:{shield:105,shieldRegen:2.5,armor:.08,spd:.06}},
   sh_titan:   {s:'shield',r:4,n:'Титановый бастион',img:'img/shields/shield_titan_icon.webp',ic:'🛡️',d:'Тяжёлый генератор купола. Добавляет +150 к прочности щита (зарядка 3.5/сек), +12% к поглощению урона, +15% к здоровью и +8% скорости бега.',shield:150,shieldRegen:3.5,m:{shield:150,shieldRegen:3.5,armor:.12,hp:.15,spd:.08}},
-  sh_aegis:   {s:'shield',r:5,n:'Эгида Предтеч',img:'img/shields/shield_aegis_icon.webp',ic:'🛡️',d:'Реликтовый гипер-щит. Добавляет +200 к прочности щита (зарядка 4.5/сек), +16% к поглощению урона, +25% к здоровью, +10% скорости бега и +20% к радиусу сбора.',shield:200,shieldRegen:4.5,m:{shield:200,shieldRegen:4.5,armor:.16,hp:.25,spd:.10,pick:.2}},
+  sh_aegis:   {s:'shield',r:5,n:'Эгида Предтеч',img:'img/shields/shield_aegis_icon.webp',ic:'🛡️',d:'Реликтовый гипер-щит. Добавляет +200 к прочности щита (зарядка 4.5/сек), +16% к поглощению урона, +25% к здоровью, +10% скорости бега и +10% к радиусу сбора.',shield:200,shieldRegen:4.5,m:{shield:200,shieldRegen:4.5,armor:.16,hp:.25,spd:.10,pick:.10}},
   // Совместимость со старыми сохранениями (броня превращается в щиты)
   a_vest:   {s:'shield',r:1,n:'Барьерный щит',img:'img/shields/shield_buckler_icon.webp',ic:'🛡️',d:'Тактический барьерный щит. Проецирует силовое поле на +35 к прочности щита. Без доп. бонусов.',shield:35,shieldRegen:1,m:{shield:35,shieldRegen:1}},
   a_kevlar: {s:'shield',r:2,n:'Штурмовой щит',img:'img/shields/shield_riot_icon.webp',ic:'🛡️',d:'Усиленный баллистический щит. Добавляет +65 к прочности щита и +5% к поглощению урона.',shield:65,shieldRegen:1.8,m:{shield:65,shieldRegen:1.8,armor:.05}},
   a_nano:   {s:'shield',r:3,n:'Плазменный экран',img:'img/shields/shield_plasma_icon.webp',ic:'🛡️',d:'Генератор кинетического поля. Добавляет +105 к прочности щита, +8% к поглощению урона и +6% скорости бега.',shield:105,shieldRegen:2.5,m:{shield:105,shieldRegen:2.5,armor:.08,spd:.06}},
   a_exo:    {s:'shield',r:4,n:'Титановый бастион',img:'img/shields/shield_titan_icon.webp',ic:'🛡️',d:'Тяжёлый энерго-барьер. Добавляет +150 к прочности щита, +12% к поглощению урона, +15% к здоровью и +8% скорости бега.',shield:150,shieldRegen:3.5,m:{shield:150,shieldRegen:3.5,armor:.12,hp:.15,spd:.08}},
-  a_aegis:  {s:'shield',r:5,n:'Эгида Предтеч',img:'img/shields/shield_aegis_icon.webp',ic:'🛡️',d:'Реликтовый гипер-щит. Добавляет +200 к прочности щита, +16% к поглощению урона, +25% к здоровью, +10% скорости бега и +20% к радиусу сбора.',shield:200,shieldRegen:4.5,m:{shield:200,shieldRegen:4.5,armor:.16,hp:.25,spd:.10,pick:.2}},
+  a_aegis:  {s:'shield',r:5,n:'Эгида Предтеч',img:'img/shields/shield_aegis_icon.webp',ic:'🛡️',d:'Реликтовый гипер-щит. Добавляет +200 к прочности щита, +16% к поглощению урона, +25% к здоровью, +10% скорости бега и +10% к радиусу сбора.',shield:200,shieldRegen:4.5,m:{shield:200,shieldRegen:4.5,armor:.16,hp:.25,spd:.10,pick:.10}},
 
   // === ПИТОМЦЫ (1★ - 5★) — КЛАССИЧЕСКИЕ КОМПАНЬОНЫ С АНИМАЦИЕЙ ХОДЬБЫ ===
   pet_slime:   {s:'pet',r:1,n:'Слизень-малыш',img:'img/pets/pet_slime_icon.webp',sprite:'img/monsters/monster_slime.webp',sheet:'img/monsters/monster_slime_sheet.webp',frameW:260,frameH:220,frames:8,animRate:7,spriteW:44,spriteH:37,ic:'🟢',active:'Каскадная кислотная бомба + Сбор',d:'Ручной токсичный слизень. Бросает навесную кислотную бомбу, которая взрывается лужей кислоты и разлетается на 2 мини-капли, а также собирает кристаллы опыта в радиусе 140.',petType:'slime',m:{}},
   pet_bat:     {s:'pet',r:2,n:'Ручной нетопырь',img:'img/pets/pet_bat_icon.webp',sprite:'img/monsters/monster_bat.webp',sheet:'img/monsters/monster_bat_sheet.webp',frameW:280,frameH:200,frames:8,animRate:9,flying:true,spriteW:46,spriteH:33,ic:'🦇',active:'Налёт и цепной эхо-резонанс',d:'Пустошная летучая мышь. Совершает стремительный налёт и запускает цепной ультразвуковой резонанс до 4 врагов с отталкиванием и замедлением, даёт +10% к скорости бега.',petType:'bat',m:{spd:.1}},
-  pet_mimic:   {s:'pet',r:3,n:'Карманный мимик',img:'img/pets/pet_mimic_icon.webp',sprite:'img/monsters/monster_mimic.webp',sheet:'img/monsters/monster_mimic_sheet.webp',frameW:260,frameH:240,frames:8,animRate:9,spriteW:42,spriteH:40,ic:'📦',active:'Зубастый кусь (монеты 🪙)',d:'Одомашненный зубастый сундучок. Совершает стремительный кусь челюстями, выбивая из врагов золотые монеты, даёт +20% к сбору и +8% скорости бега.',petType:'mimic',m:{pick:.2,spd:.08}},
+  pet_mimic:   {s:'pet',r:3,n:'Карманный мимик',img:'img/pets/pet_mimic_icon.webp',sprite:'img/monsters/monster_mimic.webp',sheet:'img/monsters/monster_mimic_sheet.webp',frameW:260,frameH:240,frames:8,animRate:9,spriteW:42,spriteH:40,ic:'📦',active:'Зубастый кусь (монеты 🪙)',d:'Одомашненный зубастый сундучок. Совершает стремительный кусь челюстями, выбивая из врагов золотые монеты, даёт +10% к сбору и +8% скорости бега.',petType:'mimic',m:{pick:.10,spd:.08}},
   pet_gargoyle:{s:'pet',r:4,n:'Страж-гаргулья',img:'img/pets/pet_gargoyle_icon.webp',sprite:'img/monsters/monster_gargoyle.webp',sheet:'img/monsters/monster_gargoyle_sheet.webp',frameW:240,frameH:240,frames:8,animRate:8,flying:true,spriteW:42,spriteH:44,ic:'🗿',active:'Пикирующий таран и шипы',d:'Каменный крылатый защитник. Пикирует прямо на врагов, обрушивая кольцо обсидиановых шипов с мощным уроном и окаменением, даёт +20% к здоровью, +10% к броне и +12% к перезарядке.',petType:'gargoyle',m:{hp:.2,armor:.1,cool:.88}},
-  pet_treant:  {s:'pet',r:5,n:'Древень-хранитель',img:'img/pets/pet_treant_icon.webp',sprite:'img/monsters/monster_treant.webp',sheet:'img/monsters/monster_treant_sheet.webp',frameW:300,frameH:320,frames:8,animRate:6,spriteW:50,spriteH:54,ic:'🌲',active:'Подземный пронзающий капкан корней',d:'Древний лесной гигант. Пускает под землёй корни к 3–5 врагам, пронзает их и сковывает в недвижимом капкане на 2 сек (100+ урона/сек), исцеляя здоровье и щит хозяина (+5% HP и +4% щита). Даёт +35% к HP, +15% к броне, +25% к сбору и +15% к скорости.',petType:'treant',m:{hp:.35,armor:.15,pick:.25,spd:.15}},
+  pet_treant:  {s:'pet',r:5,n:'Древень-хранитель',img:'img/pets/pet_treant_icon.webp',sprite:'img/monsters/monster_treant.webp',sheet:'img/monsters/monster_treant_sheet.webp',frameW:300,frameH:320,frames:8,animRate:6,spriteW:50,spriteH:54,ic:'🌲',active:'Подземный пронзающий капкан корней',d:'Древний лесной гигант. Пускает под землёй корни к 3–5 врагам, пронзает их и сковывает в недвижимом капкане на 2 сек (100+ урона/сек), исцеляя здоровье и щит хозяина (+5% HP и +4% щита). Даёт +35% к HP, +15% к броне, +12% к сбору и +15% к скорости.',petType:'treant',m:{hp:.35,armor:.15,pick:.12,spd:.15}},
   // Совместимость со старыми сохранениями
   pet_drone: {s:'pet',r:1,n:'Слизень-малыш',img:'img/pets/pet_slime_icon.webp',sprite:'img/monsters/monster_slime.webp',sheet:'img/monsters/monster_slime_sheet.webp',frameW:260,frameH:220,frames:8,animRate:7,spriteW:38,spriteH:32,ic:'🟢',active:'Каскадная кислотная бомба + Сбор',d:'Ручной токсичный слизень. Бросает каскадную кислотную бомбу и собирает кристаллы.',petType:'slime',m:{}},
   pet_dog:   {s:'pet',r:2,n:'Ручной нетопырь',img:'img/pets/pet_bat_icon.webp',sprite:'img/monsters/monster_bat.webp',sheet:'img/monsters/monster_bat_sheet.webp',frameW:280,frameH:200,frames:8,animRate:9,flying:true,spriteW:40,spriteH:28,ic:'🦇',active:'Налёт и цепной эхо-резонанс',d:'Пустошная летучая мышь. Налетает на врагов и бьёт цепным ультразвуковым резонансом.',petType:'bat',m:{spd:.1}},
-  pet_turret:{s:'pet',r:3,n:'Карманный мимик',img:'img/pets/pet_mimic_icon.webp',sprite:'img/monsters/monster_mimic.webp',sheet:'img/monsters/monster_mimic_sheet.webp',frameW:260,frameH:240,frames:8,animRate:9,spriteW:36,spriteH:34,ic:'📦',active:'Зубастый кусь (монеты 🪙)',d:'Одомашненный зубастый сундучок. Вгрызается во врагов и выбивает золото.',petType:'mimic',m:{pick:.2,spd:.08}},
+  pet_turret:{s:'pet',r:3,n:'Карманный мимик',img:'img/pets/pet_mimic_icon.webp',sprite:'img/monsters/monster_mimic.webp',sheet:'img/monsters/monster_mimic_sheet.webp',frameW:260,frameH:240,frames:8,animRate:9,spriteW:36,spriteH:34,ic:'📦',active:'Зубастый кусь (монеты 🪙)',d:'Одомашненный зубастый сундучок. Вгрызается во врагов и выбивает золото.',petType:'mimic',m:{pick:.10,spd:.08}},
   pet_medbot:{s:'pet',r:4,n:'Страж-гаргулья',img:'img/pets/pet_gargoyle_icon.webp',sprite:'img/monsters/monster_gargoyle.webp',sheet:'img/monsters/monster_gargoyle_sheet.webp',frameW:240,frameH:240,frames:8,animRate:8,flying:true,spriteW:36,spriteH:38,ic:'🗿',active:'Пикирующий таран и шипы',d:'Каменный крылатый защитник. Пикирует во врагов и вздымает каменные шипы.',petType:'gargoyle',m:{hp:.2,armor:.1,cool:.88}},
-  pet_dragon:{s:'pet',r:5,n:'Древень-хранитель',img:'img/pets/pet_treant_icon.webp',sprite:'img/monsters/monster_treant.webp',sheet:'img/monsters/monster_treant_sheet.webp',frameW:300,frameH:320,frames:8,animRate:6,spriteW:44,spriteH:48,ic:'🌲',active:'Подземный пронзающий капкан корней',d:'Древний лесной гигант. Пронзает и сковывает врагов корнями на 2 секунды и лечит героя.',petType:'treant',m:{hp:.35,armor:.15,pick:.25,spd:.15}},
+  pet_dragon:{s:'pet',r:5,n:'Древень-хранитель',img:'img/pets/pet_treant_icon.webp',sprite:'img/monsters/monster_treant.webp',sheet:'img/monsters/monster_treant_sheet.webp',frameW:300,frameH:320,frames:8,animRate:6,spriteW:44,spriteH:48,ic:'🌲',active:'Подземный пронзающий капкан корней',d:'Древний лесной гигант. Пронзает и сковывает врагов корнями на 2 секунды и лечит героя.',petType:'treant',m:{hp:.35,armor:.15,pick:.12,spd:.15}},
 
   // === ПИТОМЦЫ (1★ - 5★) — МОНСТРЫ-КОМПАНЬОНЫ С АНИМАЦИЕЙ ХОДЬБЫ ===
   pet_scarab:  {s:'pet',r:1,n:'Грибной споровик',img:'img/pets/pet_mushroom_icon.webp',sprite:'img/monsters/monster_mushroom.webp',sheet:'img/monsters/monster_mushroom_sheet.webp',frameW:220,frameH:220,frames:8,animRate:8,spriteW:38,spriteH:38,ic:'🍄',active:'Залп споровых бомб (3 шт.)',d:'Одомашненный грибной мутант. Выстреливает навесным залпом из 3 споровых бомб, которые взрываются токсичными облаками и отравляют врагов.',petType:'mushroom',m:{}},
-    pet_golem:   {s:'pet',r:3,n:'Пустошная крыса',img:'img/pets/pet_rat_icon.webp',sprite:'img/monsters/monster_rat.webp',sheet:'img/monsters/monster_rat_sheet.webp',frameW:280,frameH:200,frames:8,animRate:11,spriteW:44,spriteH:30,ic:'🐀',active:'Бешеный укус и мародёрство',d:'Чумная пустошная крыса. Наносит серии стремительных бешеных укусов и выбивает из врагов бонусные монеты 🪙, даёт +8% к броне и +15% к сбору.',petType:'rat',m:{armor:.08,pick:.15}},
+    pet_golem:   {s:'pet',r:3,n:'Пустошная крыса',img:'img/pets/pet_rat_icon.webp',sprite:'img/monsters/monster_rat.webp',sheet:'img/monsters/monster_rat_sheet.webp',frameW:280,frameH:200,frames:8,animRate:11,spriteW:44,spriteH:30,ic:'🐀',active:'Бешеный укус и мародёрство',d:'Чумная пустошная крыса. Наносит серии стремительных бешеных укусов и выбивает из врагов бонусные монеты 🪙, даёт +8% к броне и +8% к сбору.',petType:'rat',m:{armor:.08,pick:.08}},
   pet_voidray: {s:'pet',r:4,n:'Пустошный гуль',img:'img/pets/pet_ghoul_icon.webp',sprite:'img/monsters/monster_ghoul.webp',sheet:'img/monsters/monster_ghoul_sheet.webp',frameW:260,frameH:240,frames:8,animRate:8,spriteW:42,spriteH:38,ic:'🧟',active:'Кровавый прыжок и X-разрыв',d:'Свирепый мертвяк-гуль. Прыгает прямо на жертву, разрывая врагов вокруг крестообразным ударом когтей с кровотечением и вампиризмом HP хозяину, даёт +12% к броне, +20% к HP и +12% к перезарядке.',petType:'ghoul',m:{armor:.12,hp:.20,cool:.88}},
   // Алиасы для прямого обращения по именам монстров:
   pet_mushroom: {s:'pet',r:1,n:'Грибной споровик',img:'img/pets/pet_mushroom_icon.webp',sprite:'img/monsters/monster_mushroom.webp',sheet:'img/monsters/monster_mushroom_sheet.webp',frameW:220,frameH:220,frames:8,animRate:8,spriteW:44,spriteH:44,ic:'🍄',active:'Залп споровых бомб (3 шт.)',d:'Одомашненный грибной мутант. Выстреливает навесным залпом из 3 споровых бомб, которые взрываются токсичными облаками и отравляют врагов.',petType:'mushroom',m:{}},
   pet_spider:   {s:'pet',r:2,n:'Пещерный паучок',img:'img/pets/pet_spider_icon.webp',sprite:'img/monsters/monster_spiderling.webp',sheet:'img/monsters/monster_spiderling_sheet.webp',frameW:240,frameH:200,frames:8,animRate:12,spriteW:46,spriteH:40,ic:'🕷️',active:'Паутинный гарпун и кокон',d:'Проворный паучок-мутант. Выстреливает паутинным гарпуном, спелёнывая цель в кокон и стягивая соседей в сеть, плюс пускает 2 ядовитых дротика. Даёт +10% к скорости бега.',petType:'spider',m:{spd:.10}},
-  pet_rat:      {s:'pet',r:3,n:'Пустошная крыса',img:'img/pets/pet_rat_icon.webp',sprite:'img/monsters/monster_rat.webp',sheet:'img/monsters/monster_rat_sheet.webp',frameW:280,frameH:200,frames:8,animRate:11,spriteW:51,spriteH:35,ic:'🐀',active:'Бешеный укус и мародёрство',d:'Чумная пустошная крыса. Наносит серии стремительных бешеных укусов и выбивает из врагов бонусные монеты 🪙, даёт +8% к броне и +15% к сбору.',petType:'rat',m:{armor:.08,pick:.15}},
+  pet_rat:      {s:'pet',r:3,n:'Пустошная крыса',img:'img/pets/pet_rat_icon.webp',sprite:'img/monsters/monster_rat.webp',sheet:'img/monsters/monster_rat_sheet.webp',frameW:280,frameH:200,frames:8,animRate:11,spriteW:51,spriteH:35,ic:'🐀',active:'Бешеный укус и мародёрство',d:'Чумная пустошная крыса. Наносит серии стремительных бешеных укусов и выбивает из врагов бонусные монеты 🪙, даёт +8% к броне и +8% к сбору.',petType:'rat',m:{armor:.08,pick:.08}},
   pet_ghoul:    {s:'pet',r:4,n:'Пустошный гуль',img:'img/pets/pet_ghoul_icon.webp',sprite:'img/monsters/monster_ghoul.webp',sheet:'img/monsters/monster_ghoul_sheet.webp',frameW:260,frameH:240,frames:8,animRate:8,spriteW:48,spriteH:43,ic:'🧟',active:'Кровавый прыжок и X-разрыв',d:'Свирепый мертвяк-гуль. Прыгает прямо на жертву, разрывая врагов вокруг крестообразным ударом когтей с кровотечением и вампиризмом HP хозяину, даёт +12% к броне, +20% к HP и +12% к перезарядке.',petType:'ghoul',m:{armor:.12,hp:.20,cool:.88}},
 
   // === АРТЕФАКТЫ (1★ - 5★) ===
   art_compass:    {s:'artifact',r:1,n:'Компас выжившего',img:'img/artifacts/art_compass_icon.webp',ic:'🧭',d:'Облегчает маневрирование и увеличивает скорость бега.',m:{spd:.10}},
-  art_magnet:     {s:'artifact',r:2,n:'Неодимовое кольцо',img:'img/artifacts/art_magnet_icon.webp',ic:'🧲',d:'Мощный магнит притягивает кристаллы и опыт издалека.',m:{pick:.45}},
+  art_magnet:     {s:'artifact',r:2,n:'Неодимовое кольцо',img:'img/artifacts/art_magnet_icon.webp',ic:'🧲',d:'Мощный магнит притягивает кристаллы и опыт издалека.',m:{pick:.20}},
   art_crystal:    {s:'artifact',r:3,n:'Кристалл ярости',img:'img/artifacts/art_crystal_icon.webp',ic:'💎',d:'Концентрирует боевую энергию, усиливая урон оружия.',m:{dmg:.25}},
   art_chronos:    {s:'artifact',r:4,n:'Хроно-песочные часы',img:'img/artifacts/art_chronos_icon.webp',ic:'⌛',d:'Искажает время, резко ускоряя стрельбу и перезарядку.',m:{cool:.80,spd:.08}},
   art_heart:      {s:'artifact',r:5,n:'Сердце Титана',img:'img/artifacts/art_heart_icon.webp',ic:'❤️‍🔥',d:'Реликтовое ядро колоссально усиливает здоровье и силу.',m:{hp:.65,dmg:.30,regen:2.0}},
@@ -6878,7 +6890,7 @@ const ITEMS={
   art_overdrive:  {s:'artifact',r:4,n:'Модуль «Овердрайв»',img:'img/artifacts/art_overdrive_icon.webp',ic:'⚡',d:'Сверхпроводящий чип разгоняет автоматику оружия до предельных частот.',m:{cool:.78,spd:.15,dmg:.20}},
   art_nanites:    {s:'artifact',r:4,n:'Наноматрица плоти',img:'img/artifacts/art_nanites_icon.webp',ic:'🧬',d:'Микроскопические боты непрерывно латают ткани и укрепляют щит носителя.',m:{hp:.25,regen:1.0,shield:65,armor:.08}},
   // 5★ (Легендарные)
-  art_singularity:{s:'artifact',r:5,n:'Ядро Сингулярности',img:'img/artifacts/art_singularity_icon.webp',ic:'🌌',d:'Гравитационный микро-разлом стягивает всю материю и пронзает плоть полчищ.',m:{dmg:.40,pick:.75,pierce:2}},
+  art_singularity:{s:'artifact',r:5,n:'Ядро Сингулярности',img:'img/artifacts/art_singularity_icon.webp',ic:'🌌',d:'Гравитационный микро-разлом стягивает всю материю и пронзает плоть полчищ.',m:{dmg:.40,pick:.25,pierce:2}},
   art_phoenix:    {s:'artifact',r:5,n:'Перо Феникса',img:'img/artifacts/art_phoenix_icon.webp',ic:'🪶',d:'Огненная реликвия наделяет владельца невероятной живучестью и мощнейшей регенерацией.',m:{hp:.55,regen:3.5,armor:.18}},
   art_crown:      {s:'artifact',r:5,n:'Корона Повелителя',img:'img/artifacts/art_crown_icon.webp',ic:'👑',d:'Древняя регалия абсолютной власти, поднимающая все боевые параметры до максимума.',m:{dmg:.35,cool:.76,spd:.18,shield:85,critChance:.15}},
 };
@@ -7280,14 +7292,14 @@ function equipMods(){
       if(up.armor)m.armor=(m.armor||0)+up.armor*0.006;
       if(up.hp)m.armor=(m.armor||0)+up.hp*0.006;
     }else if(it.s==='pet'){
-      // Прокачка питомца усиливает питомца; герою дает умеренную синергию сбора
-      if(up.pick)m.pick+=up.pick*0.02;
+      // Прокачка питомца усиливает питомца; герою дает умеренную синергию сбора (+1% за ур.)
+      if(up.pick)m.pick+=up.pick*0.01;
       // Убрано двойное наложение: урон и скорость атаки питомца применяются к самому питомцу
     }else if(it.s==='artifact'){
-      // Сбалансированные параметры артефактов: +1.2% силы, +0.5% скорости, +2% сбора
+      // Сбалансированные параметры артефактов: +1.2% силы, +0.5% скорости, +1% сбора
       if(up.dmg)m.dmg+=up.dmg*0.012;
       if(up.spd)m.spd+=up.spd*0.005;
-      if(up.pick)m.pick+=up.pick*0.02;
+      if(up.pick)m.pick+=up.pick*0.01;
     }
   }
   return m;
@@ -7716,8 +7728,8 @@ function calcStats(o){
   const L=Object.assign({hpLv:save.hpLv||0,dmgLv:save.dmgLv||0,spdLv:save.spdLv||0,pickLv:save.pickLv||0,rateLv:save.rateLv||0},o||{});
   return{hp:CONFIG.player.hp*(1+CONFIG.meta.hpStep*L.hpLv)*c.hpMod*(1+EM.hp),
     dmg:CONFIG.weapon.damage*(1+CONFIG.meta.dmgStep*L.dmgLv)*c.dmgMod*(1+EM.dmg),
-    spd:CONFIG.player.speed*(1+CONFIG.meta.spdStep*L.spdLv)*c.spdMod*(1+EM.spd),
-    pick:CONFIG.player.pickup*(1+CONFIG.meta.pickStep*L.pickLv)*(1+EM.pick),
+    spd:clampPlayerSpeed(CONFIG.player.speed*(1+CONFIG.meta.spdStep*L.spdLv)*c.spdMod*(1+EM.spd)),
+    pick:clampPlayerPickup(CONFIG.player.pickup*(1+(CONFIG.meta.pickStep*L.pickLv)+(EM.pick||0))),
     rate:1/(CONFIG.weapon.cooldown*c.coolMod*EM.cool*Math.pow(.95,L.rateLv))};
 }
 function fmtS(k,v){return k==='dmg'?v.toFixed(1):k==='rate'?v.toFixed(2)+T(' /sec',' в/сек'):k==='pick'?Math.round(v)+' px':String(Math.round(v))}
@@ -7765,7 +7777,7 @@ function petUpgradeDefs(id){
   return [
     {key:'dmg', n:'Pet damage', ru:'Урон питомца', img:'img/ui/st_pet_dmg.webp', lv:dmgLv, max:10, step:3, cost:getUpgradeCrystalCost(dmgLv)},
     {key:'cool',n:'Attack speed', ru:'Скорость атаки', img:'img/ui/st_pet_cool.webp', lv:coolLv, max:10, step:2, cost:getUpgradeCrystalCost(coolLv)},
-    {key:'pick',n:'Pickup radius', ru:'Радиус сбора', img:'img/ui/st_pet_pick.webp', lv:pickLv, max:10, step:2, cost:getUpgradeCrystalCost(pickLv)}
+    {key:'pick',n:'Pickup radius', ru:'Радиус сбора', img:'img/ui/st_pet_pick.webp', lv:pickLv, max:10, step:1, cost:getUpgradeCrystalCost(pickLv)}
   ];
 }
 function renderPetUpgrades(){
@@ -7913,7 +7925,7 @@ function getItemUpgradeDefs(id){
     return [
       {key:'dmg',name:'Сила артефакта',nameEn:'Artifact power',ico:artIco,curLv:curDmgLv,maxLv:10,curVal:'+'+(curDmgLv*1.2).toFixed(1)+'%',nextVal:'+'+((curDmgLv+1)*1.2).toFixed(1)+'%',cost:getUpgradeCrystalCost(curDmgLv)},
       {key:'spd',name:'Скорость',nameEn:'Speed',ico:`<img src="img/ui/st_spd.webp" class="craft-stat-img-ico" alt="Скорость">`,curLv:curSpdLv,maxLv:10,curVal:'+'+(curSpdLv*0.5).toFixed(1)+'%',nextVal:'+'+((curSpdLv+1)*0.5).toFixed(1)+'%',cost:getUpgradeCrystalCost(curSpdLv)},
-      {key:'pick',name:'Магнетизм',nameEn:'Magnetism',ico:`<img src="img/ui/st_pick.webp" class="craft-stat-img-ico" alt="Магнетизм">`,curLv:curPickLv,maxLv:10,curVal:'+'+(curPickLv*2)+'%',nextVal:'+'+((curPickLv+1)*2)+'%',cost:getUpgradeCrystalCost(curPickLv)}
+      {key:'pick',name:'Магнетизм',nameEn:'Magnetism',ico:`<img src="img/ui/st_pick.webp" class="craft-stat-img-ico" alt="Магнетизм">`,curLv:curPickLv,maxLv:10,curVal:'+'+(curPickLv*1)+'%',nextVal:'+'+((curPickLv+1)*1)+'%',cost:getUpgradeCrystalCost(curPickLv)}
     ];
   }
 }
@@ -9019,7 +9031,8 @@ function startGame(){
   const dmg=weaponBaseDamage*(1+CONFIG.meta.dmgStep*save.dmgLv)*curChar.dmgMod*(1+EM.dmg);
   const cool=(directWeapon?1/weaponRate:CONFIG.weapon.cooldown)*curChar.coolMod*EM.cool*Math.pow(.95,save.rateLv||0);
   const proj=weaponProjectiles+(curChar.projMod-1)+EM.proj;
-  const pick=CONFIG.player.pickup*(1+CONFIG.meta.pickStep*save.pickLv)*(1+EM.pick);
+  const pickBonus=(CONFIG.meta.pickStep*(save.pickLv||0))+(EM.pick||0);
+  const pick=clampPlayerPickup(CONFIG.player.pickup*(1+pickBonus));
   const weaponBaseRange=directWeapon?(parseFloat(wepItem.range)||CONFIG.weapon.range):CONFIG.weapon.range;
   const wepRange=weaponBaseRange+(EM.range||0);
 
