@@ -9063,7 +9063,7 @@ function startGame(){
     lvlConfig:curLvl,
     spawnT:0.9,
     spawnFxSpawned:false,
-    airdrops:[],lootDrops:[],crates:[],lastCrateWave:1,lastSurgeWave:0,pickups:[],toasts:[],sessionLoot:[],
+    airdrops:[],lootDrops:[],crates:[],lastCrateWave:1,lastSurgeWave:0,waveSpawnedCount:0,pickups:[],toasts:[],sessionLoot:[],
     nextAirdropT:30+Math.random()*15,nextBossT:60,bossWave:1,activeBoss:null,
     bossArena:null,bossWarning:null,bossShockwaves:[],bossCraters:[],bossFlash:0,
     meteors:[],vortices:[],fireballs:[],firePatches:[],thunderStrikes:[],orbitalBeams:[],supernovas:[],
@@ -9117,16 +9117,16 @@ function startGame(){
       });
     });
   } else if(curLvl){
-    // Стартовый десант: 10 врагов на видимой границе арены для мгновенного экшена
-    const initCount = 10;
+    // Стартовый десант: 8 врагов на безопасной границе видимости (380-440px)
+    const initCount = 8;
     for(let i = 0; i < initCount; i++){
       const ang = (i / initCount) * 6.283 + (Math.random() - 0.5) * 0.35;
-      const dist = 320 + Math.random() * 80;
+      const dist = 380 + Math.random() * 60;
       let startEnemy = CONFIG.enemies.zombie;
       if(curLvl.id === 2){
-        startEnemy = (i % 3 === 0) ? CONFIG.enemies.bat : CONFIG.enemies.skeleton;
+        startEnemy = (i % 2 === 0) ? CONFIG.enemies.bat : CONFIG.enemies.skeleton;
       } else {
-        startEnemy = (i % 4 === 0) ? CONFIG.enemies.hound : CONFIG.enemies.zombie;
+        startEnemy = (i % 3 === 0) ? CONFIG.enemies.hound : CONFIG.enemies.zombie;
       }
       spawn(startEnemy, ang, dist);
     }
@@ -9287,6 +9287,22 @@ document.getElementById('btn-game-pause').onclick=()=>{
   openModal('modal-pause');
 };
 
+function getWaveSpawnBudget(wave){
+  // Строгий лимит общего числа монстров, которые могут заспавниться за 15-секундную волну.
+  // Защищает от перефарма и спам-гринда при высоком DPS игрока.
+  if(wave <= 1) return 18;
+  if(wave <= 2) return 22;
+  if(wave <= 3) return 26;
+  if(wave <= 4) return 30;
+  if(wave <= 5) return 36;
+  if(wave <= 8) return 46;
+  if(wave <= 10) return 58;
+  if(wave <= 15) return 72;
+  if(wave <= 20) return 90;
+  if(wave <= 30) return 115;
+  return 140;
+}
+
 function getEnemySpawnDistance(angle){
   const halfW = (W || 1280) / 2;
   const halfH = (H || 720) / 2;
@@ -9295,17 +9311,22 @@ function getEnemySpawnDistance(angle){
   const distW = absCos > 0.0001 ? (halfW / absCos) : 99999;
   const distH = absSin > 0.0001 ? (halfH / absSin) : 99999;
   const edgeDist = Math.min(distW, distH);
-  // Спавн в 55-80px за видимой границей экрана (входит в кадр за 1.2-1.5 сек вместо 15-20 сек)
-  return Math.max(300, Math.min(edgeDist + 65 + (Math.random() - 0.5) * 30, 950));
+  // Всегда за видимым экраном на безопасном расстоянии (+95..120px)
+  // На узких мобильных экранах min 420px защищает от автонаведения дальнобойного оружия прямо в точку спавна
+  const safeDist = Math.max(edgeDist + 95, Math.hypot(halfW, halfH) * 0.75 + 50);
+  return Math.max(420, Math.min(safeDist + (Math.random() - 0.5) * 30, 950));
 }
 
 function spawnSquad(count = 3, baseAngle, enemyType){
   if(!G || G.bossArena || G.enemies.some(e => e.isBoss && !e.dead)) return;
   const isPolygon = G.lvlConfig && G.lvlConfig.id === 3;
   if(isPolygon) return;
+  const waveBudget = getWaveSpawnBudget(G.wave || 1);
+  if((G.waveSpawnedCount || 0) >= waveBudget) return;
   const ang = (baseAngle !== undefined) ? baseAngle : Math.random() * 6.283;
   for(let i = 0; i < count; i++){
     if(G.enemies.length >= (CONFIG.waves.maxEnemies || 150)) break;
+    if((G.waveSpawnedCount || 0) >= waveBudget) break;
     const a = ang + (Math.random() - 0.5) * 0.40;
     const d = getEnemySpawnDistance(a) + (Math.random() - 0.5) * 30;
     spawn(enemyType, a, d);
@@ -9351,6 +9372,9 @@ function spawn(overrideConfig, customAngle, customDist){
     G.enemies.push(enPoly);
     return;
   }
+  const waveBudget = getWaveSpawnBudget(curWave);
+  if((G.waveSpawnedCount || 0) >= waveBudget) return;
+  G.waveSpawnedCount = (G.waveSpawnedCount || 0) + 1;
   let c = overrideConfig;
   if(!c){
     const lvlId = (G.lvlConfig && G.lvlConfig.id) || 1;
@@ -11871,30 +11895,25 @@ function update(dt){
   if(!isPolygon && !hasActiveBoss && !g.bossArena){
     g.spawn -= dt;
 
-    // Динамический интервал между спавнами отрядов (быстрый темп с 1-й волны)
+    // Плавный интервал между спавнами отрядов с защитой от перегрузки
     let iv;
-    if(curWaveNum <= 2) iv = 0.65;
-    else if(curWaveNum <= 5) iv = 0.50;
-    else if(curWaveNum <= 10) iv = 0.38;
-    else iv = Math.max(0.18, 0.38 - (curWaveNum - 10) * 0.008);
+    if(curWaveNum <= 2) iv = 0.85;
+    else if(curWaveNum <= 5) iv = 0.70;
+    else if(curWaveNum <= 10) iv = 0.55;
+    else iv = Math.max(0.25, 0.55 - (curWaveNum - 10) * 0.012);
 
-    // Размер отряда (спавн кучными группами под сплэш/пробитие)
+    // Размер отряда
     let squadSize = 2;
-    if(curWaveNum <= 2) squadSize = Math.random() < 0.6 ? 2 : 3;
-    else if(curWaveNum <= 5) squadSize = 3;
-    else if(curWaveNum <= 10) squadSize = 4;
-    else squadSize = Math.min(8, 4 + Math.floor((curWaveNum - 10) / 4));
+    if(curWaveNum <= 2) squadSize = 2;
+    else if(curWaveNum <= 5) squadSize = Math.random() < 0.5 ? 2 : 3;
+    else if(curWaveNum <= 10) squadSize = 3;
+    else squadSize = Math.min(6, 3 + Math.floor((curWaveNum - 10) / 5));
 
-    // Целевая минимальная плотность (Anti-downtime): если игрок быстро вычистил карту, подкрепление приходит сразу
-    const targetDensity = curWaveNum <= 2 ? 14 : (curWaveNum <= 5 ? 24 : (curWaveNum <= 10 ? 40 : 65));
-    const enemyCap = curWaveNum <= 3 ? 40 : (curWaveNum <= 6 ? 65 : (curWaveNum <= 10 ? 95 : (CONFIG.waves.maxEnemies || 150)));
-
-    if(g.enemies.length < targetDensity && g.spawn > 0.16){
-      g.spawn = 0.16;
-    }
+    const enemyCap = curWaveNum <= 3 ? 35 : (curWaveNum <= 6 ? 55 : (curWaveNum <= 10 ? 80 : (CONFIG.waves.maxEnemies || 150)));
+    const waveBudget = getWaveSpawnBudget(curWaveNum);
 
     while(g.spawn <= 0){
-      if(g.enemies.length < enemyCap){
+      if(g.enemies.length < enemyCap && (g.waveSpawnedCount || 0) < waveBudget){
         const baseAngle = Math.random() * 6.283;
         spawnSquad(squadSize, baseAngle);
       }
@@ -11906,7 +11925,7 @@ function update(dt){
     const waveTime = (g.waveProgressT || 0) % waveDuration;
     if(waveTime >= 7.0 && waveTime <= 8.5 && g.lastSurgeWave !== g.wave){
       g.lastSurgeWave = g.wave;
-      const surgeCount = curWaveNum <= 3 ? 6 : (curWaveNum <= 8 ? 9 : 14);
+      const surgeCount = curWaveNum <= 3 ? 4 : (curWaveNum <= 8 ? 6 : 8);
       const surgeAngle = Math.random() * 6.283;
       let surgeEnemy = null;
       if(curLvlId === 1){
@@ -11930,6 +11949,7 @@ function update(dt){
   if(curWave!==g.wave){
     const completedWaves=Math.max(0,curWave-g.wave);
     g.wave=curWave;
+    g.waveSpawnedCount = 0; // Сброс счетчика спавна для новой волны
     const hwVal=document.getElementById('hud-wave-val');
     if(hwVal)hwVal.textContent=g.wave;
 
