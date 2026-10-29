@@ -6909,7 +6909,7 @@ const ITEMS={
   pet_ghoul:    {s:'pet',r:4,n:'Пустошный гуль',img:'img/pets/pet_ghoul_icon.webp',sprite:'img/monsters/monster_ghoul.webp',sheet:'img/monsters/monster_ghoul_sheet.webp',frameW:260,frameH:240,frames:8,animRate:8,spriteW:48,spriteH:43,ic:'🧟',active:'Кровавый прыжок и X-разрыв',d:'Свирепый мертвяк-гуль [4★]. Прыжок и разрыв когтями с вампиризмом. Бонусы: +14% броня, +24% HP, +22% урон, +14% темп.',petType:'ghoul',m:{armor:.14,hp:.24,dmg:.22,cool:.86}},
 
   // === АРТЕФАКТЫ (1★ - 5★) ===
-  art_compass:    {s:'artifact',r:1,n:'Компас выжившего',img:'img/artifacts/art_compass_icon.webp',ic:'🧭',d:'Облегчает маневрирование и увеличивает скорость бега.',m:{spd:.10}},
+  art_compass:    {s:'artifact',r:1,n:'Компас выжившего',img:'img/artifacts/art_compass_icon.webp',ic:'🧭',d:'Облегчает навигацию: увеличивает скорость бега на +10% и радиус сбора на +8%.',m:{spd:.10,pick:.08}},
   art_magnet:     {s:'artifact',r:2,n:'Неодимовое кольцо',img:'img/artifacts/art_magnet_icon.webp',ic:'🧲',d:'Мощный магнит притягивает кристаллы и опыт издалека.',m:{pick:.20}},
   art_crystal:    {s:'artifact',r:3,n:'Кристалл ярости',img:'img/artifacts/art_crystal_icon.webp',ic:'💎',d:'Концентрирует боевую энергию, усиливая урон оружия.',m:{dmg:.25}},
   art_chronos:    {s:'artifact',r:4,n:'Хроно-песочные часы',img:'img/artifacts/art_chronos_icon.webp',ic:'⌛',d:'Искажает время, резко ускоряя стрельбу и перезарядку.',m:{cool:.80,spd:.08}},
@@ -8738,10 +8738,10 @@ const WEAPONS_BY_TIER = {
 };
 
 const GEAR_BY_TIER = {
-  1: ['sh_buckler', 'pet_slime', 'pet_mushroom', 'art_compass', 'art_boots', 'art_scope', 'art_bandage', 'art_plate'],
-  2: ['sh_riot', 'pet_bat', 'pet_spider', 'art_magnet', 'art_battery', 'art_gloves', 'art_stim', 'art_ammo_box'],
-  3: ['sh_plasma', 'pet_mimic', 'pet_rat', 'art_crystal', 'art_generator', 'art_skull'],
-  4: ['sh_titan', 'pet_gargoyle', 'pet_ghoul', 'art_chronos', 'art_overdrive', 'art_nanites'],
+  1: ['sh_buckler', 'pet_slime', 'pet_mushroom', 'art_compass', 'art_boots', 'art_scope', 'art_bandage'],
+  2: ['sh_riot', 'pet_bat', 'pet_spider', 'art_magnet', 'art_battery', 'art_gloves', 'art_plate'],
+  3: ['sh_plasma', 'pet_mimic', 'pet_rat', 'art_crystal', 'art_generator', 'art_stim', 'art_ammo_box'],
+  4: ['sh_titan', 'pet_gargoyle', 'pet_ghoul', 'art_chronos', 'art_overdrive', 'art_nanites', 'art_skull'],
   5: ['sh_aegis', 'pet_treant', 'art_heart', 'art_singularity', 'art_phoenix', 'art_crown']
 };
 
