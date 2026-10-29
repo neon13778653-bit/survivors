@@ -11555,8 +11555,8 @@ function syncBossHUD(b){
   const nameEl = document.getElementById('hud-boss-name');
   if(nameEl){
     let nm = T(b.nameEn, b.name);
-    if(b.spawnState === 'emerging') nm += ' [' + T('SUMMONING...', 'ПРИЗЫВ...') + ']';
-    else if(b.enraged) nm += ' [' + T('ENRAGED: -20% DMG', 'ЯРОСТЬ: -20% УРОНА') + ']';
+    nm = nm.replace(/\s*\([^)]*\)/g, '').trim();
+    if(b.enraged) nm += ' [' + T('ENRAGED', 'ЯРОСТЬ') + ']';
     if(nameEl.textContent !== nm) nameEl.textContent = nm;
   }
   const curEl = document.getElementById('hud-boss-hp-cur');
@@ -11598,8 +11598,8 @@ function spawnGravediggerBoss(isPlague = false){
     isBoss: true,
     bossId: 'gravedigger',
     isPlague: !!isPlague,
-    name: isPlague ? 'ЧУМНОЙ МОГИЛЬЩИК' : 'ЗОМБИ-БОСС (МОГИЛЬЩИК)',
-    nameEn: isPlague ? 'PLAGUE GRAVEDIGGER' : 'ZOMBIE BOSS (GRAVEDIGGER)',
+    name: isPlague ? 'ЧУМНОЙ МОГИЛЬЩИК' : 'МОГИЛЬЩИК',
+    nameEn: isPlague ? 'PLAGUE GRAVEDIGGER' : 'GRAVEDIGGER',
     title: isPlague ? 'ЗОМБИ-ТИТАН ПУСТОШЕЙ' : 'ТИТАН НЕЖИТИ',
     titleEn: isPlague ? 'WASTELAND ZOMBIE TITAN' : 'UNDEAD TITAN',
     x: bx,
@@ -11681,8 +11681,8 @@ function spawnRatKingBoss(){
     isBoss: true,
     bossId: 'rat_king',
     isFinalBoss: isFinalBoss,
-    name: isFinalBoss ? 'КОРОЛЬ КРЫС (ФИНАЛЬНЫЙ БОСС)' : 'КОРОЛЬ КРЫС',
-    nameEn: isFinalBoss ? 'RAT KING (FINAL BOSS)' : 'RAT KING',
+    name: 'КОРОЛЬ КРЫС',
+    nameEn: 'RAT KING',
     title: isFinalBoss ? 'ВЕЛИКИЙ ПОВЕЛИТЕЛЬ СТАИ' : 'ПОВЕЛИТЕЛЬ СТАИ',
     titleEn: isFinalBoss ? 'GREAT SWARM OVERLORD' : 'SWARM OVERLORD',
     x: bx,
