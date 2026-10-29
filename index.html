@@ -9325,13 +9325,13 @@ function testSkipWaves(count=5){
 
   // Сразу спавним босса, если перешли на волну босса
   if(lvl===1){
-    if(g.wave===10)spawnGravediggerBoss();
-    else if(g.wave===20)spawnRatKingBoss();
-    else if(g.wave===30)spawnSlimeBoss();
+    if(g.wave===10)spawnGravediggerBoss(false);
+    else if(g.wave===20)spawnGravediggerBoss(true);
+    else if(g.wave===30)spawnRatKingBoss();
   }else if(lvl===2){
     if(g.wave===10)spawnBroodmotherBoss();
-    else if(g.wave===20)spawnTreantBoss();
-    else if(g.wave===30)spawnRatKingBoss();
+    else if(g.wave===20)spawnSlimeBoss();
+    else if(g.wave===30)spawnTreantBoss();
     else if(g.wave===40)spawnKrakenBoss();
   }else if(lvl===3){
     if(g.wave===10)spawnGravediggerBoss();
@@ -9843,29 +9843,38 @@ function hurt(e,d){
           G.waveProgressT = maxW * (CONFIG.waves.waveDuration || 15);
         }
       } else if(e.bossId === 'rat_king'){
-        dropPurpleCrystals(e.x, e.y, 10, 1);
-        dropCoins(e.x, e.y, 35, Math.max(1, Math.round(2 * (G.lvlConfig?.multGold || 1))));
+        dropPurpleCrystals(e.x, e.y, 14, 1);
+        dropCoins(e.x, e.y, 45, Math.max(1, Math.round(2.5 * (G.lvlConfig?.multGold || 1))));
         // Особый массивный кристалл опыта босса (Tier 5)
         G.gems.push({ x: e.x, y: e.y, v: 300, type: 'xp', isBoss: true, bossLevels: 3, mag: false });
         // 100% Гарантированный дроп оружия (3★, 4★ или 5★)
+        const curWave = G.wave || 1;
         const rkRoll = Math.random();
-        const rkTier = rkRoll < 0.65 ? 3 : (rkRoll < 0.95 ? 4 : 5);
+        const rkTier = curWave >= 30 ? (rkRoll < 0.35 ? 4 : 5) : (rkRoll < 0.65 ? 3 : (rkRoll < 0.95 ? 4 : 5));
         spawnLootDrop(rollWeaponId(rkTier), e.x, e.y);
-        // 35% шанс на доп. снаряжение
-        if(Math.random() < 0.35){
-          spawnLootDrop(rollGearId(3), e.x, e.y);
+        // 50% шанс на доп. снаряжение
+        if(Math.random() < 0.50){
+          spawnLootDrop(rollGearId(curWave >= 30 ? 4 : 3), e.x, e.y);
         }
         showGameToast('👑 '+T('RAT KING DETHRONED! Weapon Dropped! +3 LEVEL-UPS!','КОРОЛЬ КРЫС ПОВЕРЖЕН! Выпало оружие! +3 УРОВНЯ!'),'#ef4444',4.0);
+        const maxW = G.lvlConfig?.maxWaves || 30;
+        if(G.wave >= maxW){
+          G.waveProgressT = maxW * (CONFIG.waves.waveDuration || 15);
+        }
       } else if(e.bossId === 'gravedigger'){
-        dropPurpleCrystals(e.x, e.y, 8, 1);
-        dropCoins(e.x, e.y, 25, Math.max(1, Math.round(2 * (G.lvlConfig?.multGold || 1))));
+        const isPlague = !!e.isPlague;
+        dropPurpleCrystals(e.x, e.y, isPlague ? 12 : 8, 1);
+        dropCoins(e.x, e.y, isPlague ? 35 : 25, Math.max(1, Math.round(2 * (G.lvlConfig?.multGold || 1))));
         // Особый массивный кристалл опыта босса (Tier 5)
         G.gems.push({ x: e.x, y: e.y, v: 300, type: 'xp', isBoss: true, bossLevels: 3, mag: false });
-        // 100% Гарантированный дроп оружия (2★, 3★ или 4★)
+        // 100% Гарантированный дроп оружия
         const gdRoll = Math.random();
-        const gdTier = gdRoll < 0.60 ? 2 : (gdRoll < 0.95 ? 3 : 4);
+        const gdTier = isPlague ? (gdRoll < 0.45 ? 3 : 4) : (gdRoll < 0.60 ? 2 : (gdRoll < 0.95 ? 3 : 4));
         spawnLootDrop(rollWeaponId(gdTier), e.x, e.y);
-        showGameToast('💀 '+T('ZOMBIE BOSS DEFEATED! Weapon Dropped! +3 LEVEL-UPS!','ЗОМБИ-БОСС УНИЧТОЖЕН! Выпало оружие! +3 УРОВНЯ!'),'#ef4444',4.0);
+        if(isPlague && Math.random() < 0.40){
+          spawnLootDrop(rollGearId(3), e.x, e.y);
+        }
+        showGameToast('💀 '+ (isPlague ? T('PLAGUE GRAVEDIGGER DEFEATED! Weapon Dropped! +3 LEVEL-UPS!','ЧУМНОЙ МОГИЛЬЩИК УНИЧТОЖЕН! Выпало оружие! +3 УРОВНЯ!') : T('ZOMBIE BOSS DEFEATED! Weapon Dropped! +3 LEVEL-UPS!','ЗОМБИ-БОСС УНИЧТОЖЕН! Выпало оружие! +3 УРОВНЯ!')), '#ef4444', 4.0);
       } else if(e.bossId === 'broodmother'){
         dropPurpleCrystals(e.x, e.y, 10, 1);
         dropCoins(e.x, e.y, 30, Math.max(1, Math.round(2 * (G.lvlConfig?.multGold || 1))));
@@ -11509,10 +11518,14 @@ function syncBossHUD(b){
   if(trailEl && trailEl.style.width !== pctStr) trailEl.style.width = pctStr;
 }
 
-function spawnGravediggerBoss(){
+function spawnGravediggerBoss(isPlague = false){
   if(!G || !G.run) return;
   const g = G, p = g.p;
   if(g.enemies.some(e => e.isBoss && e.bossId === 'gravedigger' && !e.dead)) return;
+
+  if(isPlague === undefined && g.wave >= 20 && (!g.lvlConfig || g.lvlConfig.id === 1)){
+    isPlague = true;
+  }
 
   prepareBossArena(g);
   g.gravediggerSpawned = true;
@@ -11526,14 +11539,16 @@ function spawnGravediggerBoss(){
   const bx = p.x + dx;
   const by = p.y + dy;
 
-  const maxHp = scaledBossHp(g, 9500);
+  const baseHp = isPlague ? 18500 : 9500;
+  const maxHp = scaledBossHp(g, baseHp);
   const boss = {
     isBoss: true,
     bossId: 'gravedigger',
-    name: 'ЗОМБИ-БОСС (МОГИЛЬЩИК)',
-    nameEn: 'ZOMBIE BOSS (GRAVEDIGGER)',
-    title: 'ТИТАН НЕЖИТИ',
-    titleEn: 'UNDEAD TITAN',
+    isPlague: !!isPlague,
+    name: isPlague ? 'ЧУМНОЙ МОГИЛЬЩИК' : 'ЗОМБИ-БОСС (МОГИЛЬЩИК)',
+    nameEn: isPlague ? 'PLAGUE GRAVEDIGGER' : 'ZOMBIE BOSS (GRAVEDIGGER)',
+    title: isPlague ? 'ЗОМБИ-ТИТАН ПУСТОШЕЙ' : 'ТИТАН НЕЖИТИ',
+    titleEn: isPlague ? 'WASTELAND ZOMBIE TITAN' : 'UNDEAD TITAN',
     x: bx,
     y: by,
     spawnX: bx,
@@ -11541,11 +11556,11 @@ function spawnGravediggerBoss(){
     hp: maxHp,
     maxHp: maxHp,
     c: {
-      r: 36,
-      speed: 44, // +5% (было 42)
-      damage: 34,
-      color: '#ef4444',
-      xp: 150
+      r: isPlague ? 40 : 36,
+      speed: isPlague ? 52 : 44,
+      damage: isPlague ? 46 : 34,
+      color: isPlague ? '#dc2626' : '#ef4444',
+      xp: isPlague ? 240 : 150
     },
     fl: 0,
     oh: 0,
@@ -11560,8 +11575,8 @@ function spawnGravediggerBoss(){
     emergeSlamDone: false,
     action: 'idle',
     actionT: 0,
-    slamCd: 4.0, // было 4.5
-    summonCd: 8.2, // было 9.0
+    slamCd: isPlague ? 3.2 : 4.0,
+    summonCd: isPlague ? 6.5 : 8.2,
     slamAngle: 0,
     enraged: false
   };
@@ -11606,14 +11621,17 @@ function spawnRatKingBoss(){
   const bx = p.x + dx;
   const by = p.y + dy;
 
-  const maxHp = scaledBossHp(g, 24000);
+  const isFinalBoss = (g.wave >= 30 && (!g.lvlConfig || g.lvlConfig.id === 1));
+  const ratBaseHp = isFinalBoss ? 32000 : 24000;
+  const maxHp = scaledBossHp(g, ratBaseHp);
   const boss = {
     isBoss: true,
     bossId: 'rat_king',
-    name: 'КОРОЛЬ КРЫС',
-    nameEn: 'RAT KING',
-    title: 'ПОВЕЛИТЕЛЬ СТАИ',
-    titleEn: 'SWARM OVERLORD',
+    isFinalBoss: isFinalBoss,
+    name: isFinalBoss ? 'КОРОЛЬ КРЫС (ФИНАЛЬНЫЙ БОСС)' : 'КОРОЛЬ КРЫС',
+    nameEn: isFinalBoss ? 'RAT KING (FINAL BOSS)' : 'RAT KING',
+    title: isFinalBoss ? 'ВЕЛИКИЙ ПОВЕЛИТЕЛЬ СТАИ' : 'ПОВЕЛИТЕЛЬ СТАИ',
+    titleEn: isFinalBoss ? 'GREAT SWARM OVERLORD' : 'SWARM OVERLORD',
     x: bx,
     y: by,
     spawnX: bx,
@@ -11622,10 +11640,10 @@ function spawnRatKingBoss(){
     maxHp: maxHp,
     c: {
       r: 34,
-      speed: 59, // +5.3% (было 56)
-      damage: 36,
+      speed: isFinalBoss ? 64 : 59,
+      damage: isFinalBoss ? 48 : 36,
       color: '#84cc16',
-      xp: 220
+      xp: isFinalBoss ? 350 : 220
     },
     fl: 0,
     oh: 0,
@@ -11640,8 +11658,8 @@ function spawnRatKingBoss(){
     emergeSlamDone: false,
     action: 'idle',
     actionT: 0,
-    dashCd: 4.0, // было 4.5
-    summonCd: 7.8, // было 8.5
+    dashCd: isFinalBoss ? 3.4 : 4.0,
+    summonCd: isFinalBoss ? 6.5 : 7.8,
     dashAngle: 0,
     dashVx: 0,
     dashVy: 0,
@@ -12167,16 +12185,16 @@ function update(dt){
     }
 
     // Спавн боссов по волнам:
-    // 1 локация (30 волн): волна 10 — Могильщик, волна 20 — Король крыс, волна 30 — Токсичный слизень
+    // 1 локация (30 волн): волна 10 — Могильщик, волна 20 — Чумной Могильщик (Зомби-титан), волна 30 — Король крыс (Финальный босс)
     if(curLvlId === 1){
-      if(g.wave === 10) spawnGravediggerBoss();
-      else if(g.wave === 20) spawnRatKingBoss();
-      else if(g.wave === 30) spawnSlimeBoss();
-    }else if(curLvlId === 2){
-      // 2 локация (40 волн): волна 10 — Паучиха-праматерь, волна 20 — Древень-мутант, волна 30 — Король крыс, волна 40 — Кракен Бездны
-      if(g.wave === 10) spawnBroodmotherBoss();
-      else if(g.wave === 20) spawnTreantBoss();
+      if(g.wave === 10) spawnGravediggerBoss(false);
+      else if(g.wave === 20) spawnGravediggerBoss(true);
       else if(g.wave === 30) spawnRatKingBoss();
+    }else if(curLvlId === 2){
+      // 2 локация (40 волн): волна 10 — Паучиха-праматерь, волна 20 — Токсичный слизень, волна 30 — Древень-мутант, волна 40 — Кракен Бездны
+      if(g.wave === 10) spawnBroodmotherBoss();
+      else if(g.wave === 20) spawnSlimeBoss();
+      else if(g.wave === 30) spawnTreantBoss();
       else if(g.wave === 40) spawnKrakenBoss();
     }else if(curLvlId === 3){
       // 3 локация (Полигон 50 волн): все 5 боссов по очереди
