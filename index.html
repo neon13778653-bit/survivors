@@ -3322,11 +3322,11 @@ const CONFIG={
     ghoul:{name:'Пустошный гуль',nameEn:'Wasteland Ghoul',hp:38,speed:98,damage:12,xp:7,r:14,color:'#94a3b8',weight:4,fromWave:20,sprite:'img/monsters/monster_ghoul.webp',sheet:'img/monsters/monster_ghoul_sheet.webp',frameW:260,frameH:240,frames:8,spriteW:50,spriteH:46,animRate:11},
     slime:{name:'Токсичный слизень',nameEn:'Toxic Slime',hp:48,speed:34,damage:10,xp:8,r:17,color:'#22c55e',weight:4,fromWave:9,sprite:'img/monsters/monster_slime.webp',sheet:'img/monsters/monster_slime_sheet.webp',frameW:260,frameH:220,frames:8,spriteW:58,spriteH:48,animRate:7},
     gargoyle:{name:'Каменная гаргулья',nameEn:'Stone Gargoyle',hp:66,speed:52,damage:13,xp:10,r:17,color:'#64748b',weight:3,fromWave:20,sprite:'img/monsters/monster_gargoyle.webp',sheet:'img/monsters/monster_gargoyle_sheet.webp',frameW:240,frameH:240,frames:8,spriteW:48,spriteH:50,animRate:8,flying:true,ranged:true},
-    abomination:{name:'Мутант-аберрация',nameEn:'Mutant Abomination',hp:82,speed:42,damage:15,xp:14,r:18,color:'#a855f7',weight:2,fromWave:15,sprite:'img/monsters/monster_abomination_v2.webp?v=25',sheet:'img/monsters/monster_abomination_sheet_v2.webp?v=25',frameW:280,frameH:280,frames:8,spriteW:52,spriteH:50,animRate:7},
+    abomination:{name:'Мутант-аберрация',nameEn:'Mutant Abomination',hp:82,speed:42,damage:15,xp:14,r:18,color:'#a855f7',weight:0,fromWave:999,sprite:'img/monsters/monster_abomination_v2.webp?v=25',sheet:'img/monsters/monster_abomination_sheet_v2.webp?v=25',frameW:280,frameH:280,frames:8,spriteW:52,spriteH:50,animRate:7},
     mimic:{name:'Мимик-сундук',nameEn:'Mimic Chest',hp:115,speed:48,damage:17,xp:18,r:18,color:'#b45309',weight:1,fromWave:19,sprite:'img/monsters/monster_mimic.webp',sheet:'img/monsters/monster_mimic_sheet.webp',frameW:260,frameH:240,frames:8,spriteW:52,spriteH:48,animRate:9},
     spiderling:{name:'Паучонок',nameEn:'Spiderling',hp:10,speed:112,damage:4,xp:1,r:10,color:'#f59e0b',weight:6,fromWave:2,sprite:'img/monsters/monster_spiderling.webp',sheet:'img/monsters/monster_spiderling_sheet.webp',frameW:240,frameH:200,frames:8,spriteW:42,spriteH:35,animRate:12},
     spider_egg:{name:'Кокон паука',nameEn:'Spider Egg Sac',hp:38,speed:0,damage:3,xp:4,r:15,color:'#e2e8f0',weight:6,fromWave:6,sprite:'img/monsters/monster_spider_egg.webp',sheet:'img/monsters/monster_spider_egg_sheet.webp',frameW:240,frameH:240,frames:8,spriteW:46,spriteH:46,animRate:5},
-    broodmother:{name:'Паучиха-праматерь',nameEn:'Spider Broodmother',hp:95,speed:56,damage:16,xp:16,r:22,color:'#d97706',weight:3,fromWave:11,sprite:'img/monsters/monster_broodmother.webp',sheet:'img/monsters/monster_broodmother_sheet.webp',frameW:300,frameH:260,frames:8,spriteW:76,spriteH:66,animRate:8},
+    broodmother:{name:'Паучиха-праматерь',nameEn:'Spider Broodmother',hp:95,speed:56,damage:16,xp:16,r:22,color:'#d97706',weight:0,fromWave:999,sprite:'img/monsters/monster_broodmother.webp',sheet:'img/monsters/monster_broodmother_sheet.webp',frameW:300,frameH:260,frames:8,spriteW:76,spriteH:66,animRate:8},
     treant:{name:'Древень-мутант',nameEn:'Ancient Treant',hp:165,speed:36,damage:24,xp:24,r:26,color:'#854d0e',weight:2,fromWave:16,sprite:'img/monsters/monster_treant.webp',sheet:'img/monsters/monster_treant_sheet.webp',frameW:300,frameH:320,frames:8,spriteW:82,spriteH:88,animRate:6},
     kraken:{name:'Кракен Бездны',nameEn:'Abyssal Kraken',hp:14500,speed:86,damage:90,xp:650,r:48,color:'#3b0764',weight:1,fromWave:99,sprite:'img/monsters/boss_kraken.webp?v=1',sheet:'img/monsters/boss_kraken_sheet.webp?v=1',frameW:280,frameH:280,frames:8,spriteW:72,spriteH:72,animRate:7}
   },
@@ -9007,7 +9007,8 @@ function getXpGemVisuals(gem){
 
 function dropMonsterRewards(e){
   if(!G) return;
-  if(e.isBoss) return;
+  // Боссы сбрасывают трофеи в своём обработчике, а призванные миньоны (паучата, коконы) не спамят монетами
+  if(e.isBoss || e.isMinion || e.c === CONFIG.enemies.spiderling || e.c === CONFIG.enemies.spider_egg) return;
 
   const locId = G.lvlConfig?.id || 1;
   const goldMult = G.lvlConfig?.multGold || 1;
@@ -9242,30 +9243,7 @@ function startGame(){
     G.pet.y = G.pet.flying ? (G.p.y - 18) : (G.p.y + 10);
     G.pet.facing = G.p.facing;
   }
-  if(curLvl && curLvl.id === 3){
-    // ПОЛИГОН ТЕСТОВ: СПАВН ВСЕХ 9 НОВЫХ МОНСТРОВ СРАЗУ ПО ОДНОМУ (БЕССМЕРТНЫЕ)
-    const POLYGON_MONSTERS = ['rat', 'spider', 'spiderling', 'spider_egg', 'bat', 'mushroom', 'ghoul', 'slime', 'gargoyle', 'abomination', 'mimic', 'broodmother', 'treant'];
-    POLYGON_MONSTERS.forEach((k, idx) => {
-      const c = CONFIG.enemies[k];
-      if(!c) return;
-      const ang = (idx / POLYGON_MONSTERS.length) * 6.283 - 1.57;
-      const dist = 140;
-      G.enemies.push({
-        x: G.p.x + Math.cos(ang) * dist,
-        y: G.p.y + Math.sin(ang) * dist,
-        hp: (c.hp || 20) * 10,
-        maxHp: (c.hp || 20) * 10,
-        c: c,
-        oh: 0,
-        fl: 0,
-        dead: false,
-        frame: 0,
-        animT: idx * 0.7,
-        facing: Math.cos(ang) < 0 ? 1 : -1,
-        immortal: true
-      });
-    });
-  } else if(curLvl){
+  if(curLvl){
     // Стартовый десант: 8 врагов на безопасной границе видимости (380-440px)
     const initCount = 8;
     for(let i = 0; i < initCount; i++){
@@ -9274,6 +9252,8 @@ function startGame(){
       let startEnemy = CONFIG.enemies.zombie;
       if(curLvl.id === 2){
         startEnemy = (i % 2 === 0) ? CONFIG.enemies.bat : CONFIG.enemies.skeleton;
+      } else if(curLvl.id === 3){
+        startEnemy = (i % 3 === 0) ? CONFIG.enemies.spider : ((i % 3 === 1) ? CONFIG.enemies.slime : CONFIG.enemies.rat);
       } else {
         startEnemy = (i % 3 === 0) ? CONFIG.enemies.hound : CONFIG.enemies.zombie;
       }
@@ -9347,17 +9327,17 @@ function testSkipWaves(count=5){
   if(lvl===1){
     if(g.wave===10)spawnGravediggerBoss();
     else if(g.wave===20)spawnRatKingBoss();
-    else if(g.wave===30)spawnKrakenBoss();
+    else if(g.wave===30)spawnSlimeBoss();
   }else if(lvl===2){
     if(g.wave===10)spawnBroodmotherBoss();
-    else if(g.wave===20)spawnSlimeBoss();
-    else if(g.wave===30)spawnTreantBoss();
+    else if(g.wave===20)spawnTreantBoss();
+    else if(g.wave===30)spawnRatKingBoss();
     else if(g.wave===40)spawnKrakenBoss();
   }else if(lvl===3){
-    if(g.wave===10)spawnBroodmotherBoss();
-    else if(g.wave===20)spawnSlimeBoss();
-    else if(g.wave===30)spawnTreantBoss();
-    else if(g.wave===40)spawnRatKingBoss();
+    if(g.wave===10)spawnGravediggerBoss();
+    else if(g.wave===20)spawnRatKingBoss();
+    else if(g.wave===30)spawnSlimeBoss();
+    else if(g.wave===40)spawnBroodmotherBoss();
     else if(g.wave===50)spawnKrakenBoss();
   }
 
@@ -9486,41 +9466,6 @@ function spawn(overrideConfig, customAngle, customDist){
   if(!G || G.bossArena || G.enemies.some(e => e.isBoss && !e.dead)) return;
   if(G.enemies.length>=CONFIG.waves.maxEnemies)return;
   const curWave = G.wave || 1;
-  const isPolygon = G.lvlConfig && G.lvlConfig.id === 3;
-  if(isPolygon){
-    // На полигоне тестов уже есть все 13 монстров (по одному). Не спавним бесконечную орду!
-    if(G.enemies.length >= 13) return;
-    const POLYGON_MONSTERS = ['rat', 'spider', 'spiderling', 'spider_egg', 'bat', 'mushroom', 'ghoul', 'slime', 'gargoyle', 'abomination', 'mimic', 'broodmother', 'treant'];
-    const existing = new Set(G.enemies.map(e => Object.keys(CONFIG.enemies).find(k => CONFIG.enemies[k] === e.c)));
-    const missing = POLYGON_MONSTERS.filter(k => !existing.has(k));
-    const k = missing[0] || POLYGON_MONSTERS[Math.floor(Math.random() * POLYGON_MONSTERS.length)];
-    const c = CONFIG.enemies[k];
-    if(!c) return;
-    const a = Math.random() * 6.283, d = 140;
-    const enPoly = {
-      x: G.p.x + Math.cos(a) * d,
-      y: G.p.y + Math.sin(a) * d,
-      hp: (c.hp || 20) * 10,
-      maxHp: (c.hp || 20) * 10,
-      c: c,
-      oh: 0,
-      fl: 0,
-      dead: false,
-      frame: 0,
-      animT: Math.random() * 8,
-      facing: 1,
-      immortal: true
-    };
-    if(c === CONFIG.enemies.bat || c.ranged){
-      enPoly.isRanged = true;
-      enPoly.shootCd = 1.0 + Math.random() * 2.0;
-    }
-    if(c === CONFIG.enemies.spider_egg){
-      enPoly.hatchT = 6.5;
-    }
-    G.enemies.push(enPoly);
-    return;
-  }
   const waveBudget = getWaveSpawnBudget(curWave);
   if((G.waveSpawnedCount || 0) >= waveBudget) return;
   G.waveSpawnedCount = (G.waveSpawnedCount || 0) + 1;
@@ -9582,20 +9527,19 @@ function spawn(overrideConfig, customAngle, customDist){
         ];
         if(activeMushrooms < 2) list.push({ c: CONFIG.enemies.mushroom, weight: 2 });
       } else if(curWave < 36){
-        // Волны 30-35: Цитадель аберраций (Аберрации, Гули, Гаргульи, Скелеты)
+        // Волны 30-35: Элитный склеп (Гули, Слизни, Гаргульи, Скелеты)
         list = [
-          { c: CONFIG.enemies.abomination, weight: 5 },
-          { c: CONFIG.enemies.ghoul, weight: 6 },
+          { c: CONFIG.enemies.ghoul, weight: 7 },
+          { c: CONFIG.enemies.slime, weight: 6 },
           { c: CONFIG.enemies.skeleton, weight: 4 }
         ];
         if(activeGargoyles < 3) list.push({ c: CONFIG.enemies.gargoyle, weight: 4 });
       } else {
         // Волны 36-40: Некрополис (Финальные элитные монстры без перегрузки стрелками)
         list = [
-          { c: CONFIG.enemies.abomination, weight: 5 },
-          { c: CONFIG.enemies.ghoul, weight: 6 },
-          { c: CONFIG.enemies.mimic, weight: 4 },
-          { c: CONFIG.enemies.slime, weight: 4 }
+          { c: CONFIG.enemies.ghoul, weight: 7 },
+          { c: CONFIG.enemies.mimic, weight: 5 },
+          { c: CONFIG.enemies.slime, weight: 5 }
         ];
         if(activeGargoyles < 3) list.push({ c: CONFIG.enemies.gargoyle, weight: 4 });
       }
@@ -9798,13 +9742,8 @@ function hurt(e,d){
     G.fx.push({type:'dmg',x:e.x+(Math.random()-.5)*14,y:dmgSpawnY,vx:(Math.random()-.5)*30,vy:-55,l:.55,txt:Math.round(d)});
   }
   if(e.hp<=0){
-    if(e.immortal || (G.lvlConfig && G.lvlConfig.id === 3)){
-      // Бессмертный монстр на полигоне: здоровье восстанавливается, монстр продолжает бой!
-      e.hp = e.maxHp || (e.c && e.c.hp * 10) || 200;
-      const gemVal = Math.round((e.c?.xp || 1) * (G.lvlConfig?.multXp || 1));
-      G.gems.push({ x: e.x + (Math.random() - 0.5) * 16, y: e.y + (Math.random() - 0.5) * 16, v: gemVal, type: 'xp', isBoss: false, mag: false });
-      dropMonsterRewards(e);
-      for(let i=0;i<4;i++)G.fx.push({x:e.x,y:e.y,vx:(Math.random()-.5)*140,vy:(Math.random()-.5)*140,l:.35,col:e.c?.color||'#4ade80'});
+    if(e.isDummy){
+      e.hp = e.maxHp || 1000;
       return;
     }
     e.dead=true;G.kills++;
@@ -10003,23 +9942,31 @@ function hurt(e,d){
       if(e.c && e.c.xp) kXp = e.c.xp;
       dropMonsterRewards(e);
       if(e.c === CONFIG.enemies.spider_egg && G.enemies.length < CONFIG.waves.maxEnemies){
-        Sfx.play('dash');
-        for(let si=0; si<3; si++){
-          const ang = Math.random() * 6.283, dst = 12 + Math.random() * 16;
-          G.enemies.push({
-            x: e.x + Math.cos(ang) * dst,
-            y: e.y + Math.sin(ang) * dst,
-            hp: CONFIG.enemies.spiderling.hp * (1 + ((G.wave||1)-1)*0.025),
-            c: CONFIG.enemies.spiderling,
-            oh: 0, fl: 0, dead: false, frame: 0, animT: Math.random() * 8, facing: Math.random() > 0.5 ? 1 : -1
-          });
+        const curSpiders = G.enemies.filter(en => !en.dead && (en.c === CONFIG.enemies.spiderling || en.isMinion)).length;
+        const spawnCount = Math.min(2, Math.max(0, 10 - curSpiders));
+        if(spawnCount > 0){
+          Sfx.play('dash');
+          for(let si=0; si<spawnCount; si++){
+            const ang = Math.random() * 6.283, dst = 12 + Math.random() * 16;
+            G.enemies.push({
+              x: e.x + Math.cos(ang) * dst,
+              y: e.y + Math.sin(ang) * dst,
+              hp: CONFIG.enemies.spiderling.hp * (1 + ((G.wave||1)-1)*0.025),
+              c: CONFIG.enemies.spiderling,
+              isMinion: true,
+              oh: 0, fl: 0, dead: false, frame: 0, animT: Math.random() * 8, facing: Math.random() > 0.5 ? 1 : -1
+            });
+          }
         }
       }
     }
     G.accXpKills = (G.accXpKills || 0) + kXp;
     if(!e.isBoss && !e.isMiniBoss){
-      const gemVal = Math.round((e.c?.xp || 1) * (G.lvlConfig?.multXp || 1));
-      G.gems.push({ x: e.x, y: e.y, v: gemVal, type: 'xp', isBoss: false, mag: false });
+      // Призванные миньоны (паучата босса, споры) и коконы не спамят кристаллами опыта
+      if(!e.isMinion && e.c !== CONFIG.enemies.spider_egg && e.c !== CONFIG.enemies.spiderling){
+        const gemVal = Math.round((e.c?.xp || 1) * (G.lvlConfig?.multXp || 1));
+        G.gems.push({ x: e.x, y: e.y, v: gemVal, type: 'xp', isBoss: false, mag: false });
+      }
     }
     for(let i=0;i<5;i++)G.fx.push({x:e.x,y:e.y,vx:(Math.random()-.5)*180,vy:(Math.random()-.5)*180,l:.4,col:e.c?.color||'#4ade80'});
   }
@@ -12220,23 +12167,23 @@ function update(dt){
     }
 
     // Спавн боссов по волнам:
-    // 1 локация: волна 10 — Зомби-босс, волна 20 — Король крыс, волна 30 — Кракен Бездны
+    // 1 локация (30 волн): волна 10 — Могильщик, волна 20 — Король крыс, волна 30 — Токсичный слизень
     if(curLvlId === 1){
       if(g.wave === 10) spawnGravediggerBoss();
       else if(g.wave === 20) spawnRatKingBoss();
-      else if(g.wave === 30) spawnKrakenBoss();
+      else if(g.wave === 30) spawnSlimeBoss();
     }else if(curLvlId === 2){
-      // 2 локация (40 волн): волна 10 — Паучиха-праматерь, волна 20 — Токсичный слизень, волна 30 — Древень-мутант, волна 40 — Кракен Бездны
+      // 2 локация (40 волн): волна 10 — Паучиха-праматерь, волна 20 — Древень-мутант, волна 30 — Король крыс, волна 40 — Кракен Бездны
       if(g.wave === 10) spawnBroodmotherBoss();
-      else if(g.wave === 20) spawnSlimeBoss();
-      else if(g.wave === 30) spawnTreantBoss();
+      else if(g.wave === 20) spawnTreantBoss();
+      else if(g.wave === 30) spawnRatKingBoss();
       else if(g.wave === 40) spawnKrakenBoss();
     }else if(curLvlId === 3){
-      // 3 локация (Полигон 50 волн)
-      if(g.wave === 10) spawnBroodmotherBoss();
-      else if(g.wave === 20) spawnSlimeBoss();
-      else if(g.wave === 30) spawnTreantBoss();
-      else if(g.wave === 40) spawnRatKingBoss();
+      // 3 локация (Полигон 50 волн): все 5 боссов по очереди
+      if(g.wave === 10) spawnGravediggerBoss();
+      else if(g.wave === 20) spawnRatKingBoss();
+      else if(g.wave === 30) spawnSlimeBoss();
+      else if(g.wave === 40) spawnBroodmotherBoss();
       else if(g.wave === 50) spawnKrakenBoss();
     }
   }
@@ -13372,6 +13319,7 @@ function update(dt){
                 hp: CONFIG.enemies.spider_egg.hp * 1.5,
                 maxHp: CONFIG.enemies.spider_egg.hp * 1.5,
                 c: CONFIG.enemies.spider_egg,
+                isMinion: true,
                 oh: 0, fl: 0, dead: false, frame: 0, animT: Math.random() * 8, facing: 1,
                 hatchT: 6.5
               });
@@ -13394,9 +13342,11 @@ function update(dt){
         g.shake = Math.max(g.shake, 0.65);
         showGameToast('🕷️ ' + T('BROODMOTHER IS ENRAGED! (+SPEED / -20% DMG TAKEN)', 'ПАУЧИХА-ПРАМАТЕРЬ ВПАДАЕТ В ЯРОСТЬ! (+СКОРОСТЬ / -20% УРОНА)'), '#ef4444', 3.5);
         Sfx.play('dash');
-        // Взрыв кладки: босс мгновенно разбрасывает 6 коконов паука вокруг себя!
-        for(let k = 0; k < 6; k++){
-          const ang = (k / 6) * 6.283 + Math.random() * 0.3;
+        // Взрыв кладки: босс разбрасывает коконы паука вокруг себя (с лимитом)
+        const curMinions = g.enemies.filter(en => !en.dead && (en.isMinion || en.c === CONFIG.enemies.spiderling || en.c === CONFIG.enemies.spider_egg)).length;
+        const eggCount = Math.min(4, Math.max(0, 10 - curMinions));
+        for(let k = 0; k < eggCount; k++){
+          const ang = (k / Math.max(1, eggCount)) * 6.283 + Math.random() * 0.3;
           const eggDist = 50 + Math.random() * 32;
           const eggX = e.x + Math.cos(ang) * eggDist;
           const eggY = e.y + Math.sin(ang) * eggDist;
@@ -13406,6 +13356,7 @@ function update(dt){
             hp: CONFIG.enemies.spider_egg.hp * 1.6,
             maxHp: CONFIG.enemies.spider_egg.hp * 1.6,
             c: CONFIG.enemies.spider_egg,
+            isMinion: true,
             oh: 0, fl: 0, dead: false, frame: 0, animT: Math.random() * 8, facing: 1,
             hatchT: 5.0
           });
@@ -13582,9 +13533,10 @@ function update(dt){
         }
         if(e.actionT <= 0){
           e.action = 'idle';
-          e.eggCd = e.enraged ? 3.4 : 4.8;
+          e.eggCd = e.enraged ? 6.0 : 8.0;
           Sfx.play('dash');
-          const eggCount = e.enraged ? 7 : 4;
+          const curMinions = g.enemies.filter(en => !en.dead && (en.isMinion || en.c === CONFIG.enemies.spiderling || en.c === CONFIG.enemies.spider_egg)).length;
+          const eggCount = Math.min(e.enraged ? 3 : 2, Math.max(0, 10 - curMinions));
           for(let k = 0; k < eggCount; k++){
             const eggAng = ((k - (eggCount - 1) / 2) * 0.55) + Math.atan2(p.y - e.y, p.x - e.x) + 3.14;
             const eggDist = 36 + Math.random() * 28;
@@ -13594,6 +13546,7 @@ function update(dt){
               hp: CONFIG.enemies.spider_egg.hp * (e.enraged ? 1.6 : 1.3),
               maxHp: CONFIG.enemies.spider_egg.hp * (e.enraged ? 1.6 : 1.3),
               c: CONFIG.enemies.spider_egg,
+              isMinion: true,
               oh: 0, fl: 0, dead: false, frame: 0, animT: Math.random() * 8, facing: 1,
               hatchT: e.enraged ? 4.5 : 6.0
             });
@@ -14564,13 +14517,16 @@ function update(dt){
       if(e.hatchT <= 0){
         e.dead = true;
         Sfx.play('dash');
-        for(let si = 0; si < 3; si++){
+        const curSpiders = g.enemies.filter(en => !en.dead && (en.c === CONFIG.enemies.spiderling || en.isMinion)).length;
+        const spawnCount = Math.min(2, Math.max(0, 10 - curSpiders));
+        for(let si = 0; si < spawnCount; si++){
           const ang = Math.random() * 6.283, dst = 12 + Math.random() * 16;
           g.enemies.push({
             x: e.x + Math.cos(ang) * dst,
             y: e.y + Math.sin(ang) * dst,
             hp: CONFIG.enemies.spiderling.hp * (1 + ((g.wave || 1) - 1) * 0.025),
             c: CONFIG.enemies.spiderling,
+            isMinion: true,
             oh: 0, fl: 0, dead: false, frame: 0, animT: Math.random() * 8, facing: Math.random() > 0.5 ? 1 : -1
           });
         }
@@ -15103,7 +15059,7 @@ function update(dt){
         if(d <= radius+(e.c?.r||10)){
           hurt(e, voidDmg);
           // Гравитационное притяжение к сингулярности Ока Бездны
-          if(!e.isBoss && d > 15){
+          if(!e.isBoss && !e.isMiniBoss && !(e.c && e.c.boss) && d > 15){
             const pullAngle = Math.atan2(p.y - e.y, p.x - e.x);
             const pullDist = p.voidSingularity
               ? Math.min(54, (radius - d) * 0.48 + 14)
@@ -15396,14 +15352,20 @@ function update(dt){
         s.hit.push(e);
 
         if(s.knockback){
-          const ka=Math.atan2(s.vy,s.vx);
-          const kb=e.isBoss ? s.knockback*0.25 : s.knockback;
-          e.x+=Math.cos(ka)*kb;
-          e.y+=Math.sin(ka)*kb;
-          e.slow=Math.max(e.slow||0,0.35);
-          e.slowT=Math.max(e.slowT||0,0.45);
+          if(e.isBoss || e.isMiniBoss || (e.c && e.c.boss)){
+            // 100% иммунитет боссов и мини-боссов к отталкиванию
+          } else {
+            const ka=Math.atan2(s.vy,s.vx);
+            e.x+=Math.cos(ka)*s.knockback;
+            e.y+=Math.sin(ka)*s.knockback;
+            e.slow=Math.max(e.slow||0,0.35);
+            e.slowT=Math.max(e.slowT||0,0.45);
+          }
         }
-        if(s.slow){e.slow=Math.max(e.slow||0,s.slow);e.slowT=Math.max(e.slowT||0,s.slowDuration||1.5)}
+        if(s.slow && !e.isBoss && !e.isMiniBoss && !(e.c && e.c.boss)){
+          e.slow=Math.max(e.slow||0,s.slow);
+          e.slowT=Math.max(e.slowT||0,s.slowDuration||1.5);
+        }
         if(s.poison){e.poisonDmg=Math.max(e.poisonDmg||0,s.poison);e.poisonT=Math.max(e.poisonT||0,s.poisonDuration||3);e.poisonTick=Math.min(e.poisonTick||.5,.5)}
         if(s.chain&&!s.isShard){
           const chained=[e];let from=e;
@@ -15766,7 +15728,7 @@ function update(dt){
         if(e.dead||(e.isBoss&&e.spawnState==='emerging'))continue;
         const vdx=vor.x-e.x,vdy=vor.y-e.y,vd=Math.hypot(vdx,vdy);
         if(vd<vor.r){
-          if(!e.isBoss){
+          if(!e.isBoss && !e.isMiniBoss && !(e.c && e.c.boss)){
             const pullSpeed=105*(1-vd/vor.r);
             e.x+=(vdx/(vd||1))*pullSpeed*dt;
             e.y+=(vdy/(vd||1))*pullSpeed*dt;
@@ -15935,7 +15897,7 @@ function update(dt){
         const d=Math.hypot(e.x-p.x,e.y-p.y);
         if(d<=sRad){
           hurt(e,sDmg);
-          if(!e.isBoss){
+          if(!e.isBoss && !e.isMiniBoss && !(e.c && e.c.boss)){
             const kx=(e.x-p.x)/(d||1), ky=(e.y-p.y)/(d||1);
             e.x+=kx*44; e.y+=ky*44;
           }
@@ -16349,9 +16311,11 @@ function update(dt){
             const d=Math.hypot(e.x-impX,e.y-impY);
             if(d<=138){
               hurt(e,petAtkDmg*2.35);
-              const pushDx=e.x-impX,pushDy=e.y-impY,pDist=Math.hypot(pushDx,pushDy)||1;
-              e.x+=(pushDx/pDist)*46;e.y+=(pushDy/pDist)*46;
-              e.slow=Math.max(e.slow||0,0.85);e.slowT=Math.max(e.slowT||0,1.6);
+              if(!e.isBoss && !e.isMiniBoss && !(e.c && e.c.boss)){
+                const pushDx=e.x-impX,pushDy=e.y-impY,pDist=Math.hypot(pushDx,pushDy)||1;
+                e.x+=(pushDx/pDist)*46;e.y+=(pushDy/pDist)*46;
+                e.slow=Math.max(e.slow||0,0.85);e.slowT=Math.max(e.slowT||0,1.6);
+              }
               for(let k=0;k<3;k++)g.fx.push({x:e.x,y:e.y,vx:(Math.random()-.5)*110,vy:(Math.random()-.5)*110,col:'#cbd5e1',l:.32});
             }
           }
@@ -16478,8 +16442,10 @@ function update(dt){
             const d=Math.hypot(e.x-t.x,e.y-t.y);
             if(d<=68){
               hurt(e,petAtkDmg*0.80);
-              e.x+=(t.x-e.x)*0.28;e.y+=(t.y-e.y)*0.28;
-              e.slow=Math.max(e.slow||0,0.65);e.slowT=Math.max(e.slowT||0,2.0);
+              if(!e.isBoss && !e.isMiniBoss && !(e.c && e.c.boss)){
+                e.x+=(t.x-e.x)*0.28;e.y+=(t.y-e.y)*0.28;
+                e.slow=Math.max(e.slow||0,0.65);e.slowT=Math.max(e.slowT||0,2.0);
+              }
             }
           }
 
