@@ -2703,31 +2703,31 @@ button:disabled{opacity:.35;cursor:default;transform:none}
           <div class="section-tag" style="margin-top:6px">ПОСТОЯННЫЕ УЛУЧШЕНИЯ</div>
           <div class="upgrade-card">
             <div class="up-info">
-              <div class="up-title">❤️ Здоровье (+10%)</div>
-              <div class="up-desc">Текущий уровень: <b id="up-hp-lvl">0</b></div>
+              <div class="up-title">❤️ Здоровье (+5% / ур., макс. 20)</div>
+              <div class="up-desc">Текущий уровень: <b id="up-hp-lvl">0/20</b></div>
             </div>
-            <button id="btn-up-hp" class="up-btn">20 🪙</button>
+            <button id="btn-up-hp" class="up-btn">120 🪙</button>
           </div>
           <div class="upgrade-card">
             <div class="up-info">
-              <div class="up-title">🧲 Радиус сбора (+5%)</div>
-              <div class="up-desc">Текущий уровень: <b id="up-pick-lvl">0</b></div>
+              <div class="up-title">🧲 Радиус сбора (+3.5% / ур., макс. 20)</div>
+              <div class="up-desc">Текущий уровень: <b id="up-pick-lvl">0/20</b></div>
             </div>
-            <button id="btn-up-pick" class="up-btn">15 🪙</button>
+            <button id="btn-up-pick" class="up-btn">100 🪙</button>
           </div>
           <div class="upgrade-card">
             <div class="up-info">
-              <div class="up-title">⚔️ Урон оружия (+10%)</div>
-              <div class="up-desc">Текущий уровень: <b id="up-dmg-lvl">0</b></div>
+              <div class="up-title">⚔️ Урон оружия (+4% / ур., макс. 20)</div>
+              <div class="up-desc">Текущий уровень: <b id="up-dmg-lvl">0/20</b></div>
             </div>
-            <button id="btn-up-dmg" class="up-btn">25 🪙</button>
+            <button id="btn-up-dmg" class="up-btn">160 🪙</button>
           </div>
           <div class="upgrade-card">
             <div class="up-info">
-              <div class="up-title">👟 Скорость бега (+5%)</div>
-              <div class="up-desc">Текущий уровень: <b id="up-spd-lvl">0</b></div>
+              <div class="up-title">👟 Скорость бега (+1.5% / ур., макс. 20)</div>
+              <div class="up-desc">Текущий уровень: <b id="up-spd-lvl">0/20</b></div>
             </div>
-            <button id="btn-up-spd" class="up-btn">25 🪙</button>
+            <button id="btn-up-spd" class="up-btn">140 🪙</button>
           </div>
           </div>
         </div>
@@ -3333,8 +3333,8 @@ const CONFIG={
   waves:{interval:0.9,minInterval:0.25,decayPerMin:0.75,hpPerMin:0.35,maxEnemies:150,waveDuration:12,maxWaves:50},
   level:{base:10,growth:1.18},
   meta:{
-    hpStep:0.1,pickStep:0.05,dmgStep:0.1,spdStep:0.05,rateStep:0.018,
-    hpCost:120,pickCost:100,dmgCost:160,spdCost:140,rateCost:200,costGrowth:1.62
+    hpStep:0.05,pickStep:0.035,dmgStep:0.04,spdStep:0.015,rateStep:0.015,
+    hpCost:120,pickCost:100,dmgCost:160,spdCost:140,rateCost:180,costGrowth:1.26
   }
 };
 
@@ -5430,7 +5430,7 @@ const SafeStorage = {
 
 // Хранилище
 let save={
-  gold:0,gems:15,hpLv:0,pickLv:0,dmgLv:0,spdLv:0,
+  gold:0,gems:15,hpLv:0,pickLv:0,dmgLv:0,spdLv:0,rateLv:0,
   selectedChar:'john',unlockedChars:['john'],selectedLvl:1,unlockedLvls:[1,3],
   maxWave:1,maxWaveByLvl:{1:1,2:0,3:0},
   totalKills:0,totalGoldEarned:0,bestTime:0,gamesPlayed:0,
@@ -5439,6 +5439,11 @@ let save={
   equip:{weapon:'w_pistol',shield:'sh_buckler',pet:null,art1:null,art2:null,art3:null}
 };
 try{Object.assign(save,JSON.parse(SafeStorage.getItem('surv_save')||'{}'))}catch(e){}
+const MAX_STAT_LVL=20;
+['hpLv','dmgLv','spdLv','pickLv','rateLv'].forEach(k=>{
+  if(typeof save[k]==='number')save[k]=Math.min(MAX_STAT_LVL,Math.max(0,Math.floor(save[k])));
+  else save[k]=0;
+});
 if(!save.equip||typeof save.equip!=='object')save.equip={weapon:'w_pistol',shield:'sh_buckler',pet:null,art1:null,art2:null,art3:null};
 if(typeof save.gems!=='number')save.gems=15;
 if(!save.itemUpgrades||typeof save.itemUpgrades!=='object')save.itemUpgrades={};
@@ -7758,30 +7763,52 @@ function renderInventory(){
   const invGems=document.getElementById('inv-gems');if(invGems)invGems.textContent=save.gems||0;
   const stGems=document.getElementById('stats-gems');if(stGems)stGems.textContent=save.gems||0;
   renderEquip();
-  const ch=cost(CONFIG.meta.hpCost,save.hpLv);
-  const cp=cost(CONFIG.meta.pickCost,save.pickLv);
-  const cd=cost(CONFIG.meta.dmgCost,save.dmgLv);
-  const cs=cost(CONFIG.meta.spdCost,save.spdLv);
+  const cap=statCap();
+  const hpL=Math.min(20,save.hpLv||0);
+  const pickL=Math.min(20,save.pickLv||0);
+  const dmgL=Math.min(20,save.dmgLv||0);
+  const spdL=Math.min(20,save.spdLv||0);
 
-  document.getElementById('up-hp-lvl').textContent=save.hpLv;
-  document.getElementById('up-pick-lvl').textContent=save.pickLv;
-  document.getElementById('up-dmg-lvl').textContent=save.dmgLv;
-  document.getElementById('up-spd-lvl').textContent=save.spdLv;
+  const ch=cost(CONFIG.meta.hpCost,hpL);
+  const cp=cost(CONFIG.meta.pickCost,pickL);
+  const cd=cost(CONFIG.meta.dmgCost,dmgL);
+  const cs=cost(CONFIG.meta.spdCost,spdL);
+
+  const elHpLvl=document.getElementById('up-hp-lvl');if(elHpLvl)elHpLvl.textContent=hpL+'/20';
+  const elPickLvl=document.getElementById('up-pick-lvl');if(elPickLvl)elPickLvl.textContent=pickL+'/20';
+  const elDmgLvl=document.getElementById('up-dmg-lvl');if(elDmgLvl)elDmgLvl.textContent=dmgL+'/20';
+  const elSpdLvl=document.getElementById('up-spd-lvl');if(elSpdLvl)elSpdLvl.textContent=spdL+'/20';
 
   const bHp=document.getElementById('btn-up-hp');
   const bPick=document.getElementById('btn-up-pick');
   const bDmg=document.getElementById('btn-up-dmg');
   const bSpd=document.getElementById('btn-up-spd');
 
-  bHp.innerHTML='<span>'+ch+'</span>'+coinIco(15,'#3a1d00');bHp.disabled=save.gold<ch;
-  bPick.innerHTML='<span>'+cp+'</span>'+coinIco(15,'#3a1d00');bPick.disabled=save.gold<cp;
-  bDmg.innerHTML='<span>'+cd+'</span>'+coinIco(15,'#3a1d00');bDmg.disabled=save.gold<cd;
-  bSpd.innerHTML='<span>'+cs+'</span>'+coinIco(15,'#3a1d00');bSpd.disabled=save.gold<cs;
+  const maxHp=hpL>=20||hpL>=cap;
+  const maxPick=pickL>=20||pickL>=cap;
+  const maxDmg=dmgL>=20||dmgL>=cap;
+  const maxSpd=spdL>=20||spdL>=cap;
 
-  bHp.onclick=()=>{if(save.gold>=ch){save.gold-=ch;save.hpLv++;persist();Sfx.play('levelup');renderInventory();updateMenuUI()}};
-  bPick.onclick=()=>{if(save.gold>=cp){save.gold-=cp;save.pickLv++;persist();Sfx.play('levelup');renderInventory();updateMenuUI()}};
-  bDmg.onclick=()=>{if(save.gold>=cd){save.gold-=cd;save.dmgLv++;persist();Sfx.play('levelup');renderInventory();updateMenuUI()}};
-  bSpd.onclick=()=>{if(save.gold>=cs){save.gold-=cs;save.spdLv++;persist();Sfx.play('levelup');renderInventory();updateMenuUI()}};
+  if(bHp){
+    bHp.innerHTML=hpL>=20?T('MAX','МАКС'):maxHp?('🔒 '+T('LV.','УР.')+Math.max(1,Math.ceil((hpL-3)/2))):('<span>'+ch+'</span>'+coinIco(15,'#3a1d00'));
+    bHp.disabled=maxHp||save.gold<ch;
+    bHp.onclick=()=>{if(!maxHp&&save.gold>=ch&&hpL<20){save.gold-=ch;save.hpLv=hpL+1;persist();Sfx.play('levelup');renderInventory();updateMenuUI()}};
+  }
+  if(bPick){
+    bPick.innerHTML=pickL>=20?T('MAX','МАКС'):maxPick?('🔒 '+T('LV.','УР.')+Math.max(3,Math.ceil((pickL-3)/2))):('<span>'+cp+'</span>'+coinIco(15,'#3a1d00'));
+    bPick.disabled=maxPick||save.gold<cp;
+    bPick.onclick=()=>{if(!maxPick&&save.gold>=cp&&pickL<20){save.gold-=cp;save.pickLv=pickL+1;persist();Sfx.play('levelup');renderInventory();updateMenuUI()}};
+  }
+  if(bDmg){
+    bDmg.innerHTML=dmgL>=20?T('MAX','МАКС'):maxDmg?('🔒 '+T('LV.','УР.')+Math.max(1,Math.ceil((dmgL-3)/2))):('<span>'+cd+'</span>'+coinIco(15,'#3a1d00'));
+    bDmg.disabled=maxDmg||save.gold<cd;
+    bDmg.onclick=()=>{if(!maxDmg&&save.gold>=cd&&dmgL<20){save.gold-=cd;save.dmgLv=dmgL+1;persist();Sfx.play('levelup');renderInventory();updateMenuUI()}};
+  }
+  if(bSpd){
+    bSpd.innerHTML=spdL>=20?T('MAX','МАКС'):maxSpd?('🔒 '+T('LV.','УР.')+Math.max(2,Math.ceil((spdL-3)/2))):('<span>'+cs+'</span>'+coinIco(15,'#3a1d00'));
+    bSpd.disabled=maxSpd||save.gold<cs;
+    bSpd.onclick=()=>{if(!maxSpd&&save.gold>=cs&&spdL<20){save.gold-=cs;save.spdLv=spdL+1;persist();Sfx.play('levelup');renderInventory();updateMenuUI()}};
+  }
 }
 
 // ===== УРОВЕНЬ ВЫЖИВШЕГО И ПРОКАЧКА ХАРАКТЕРИСТИК =====
@@ -7801,25 +7828,36 @@ function upIco(k){
   return '';
 }
 const STAT_UP=[
-  {k:'hp',lv:'hpLv',ic:upIco('hp'),n:'Max HP',ru:'Макс. HP',unlock:1,base:120},
-  {k:'dmg',lv:'dmgLv',ic:upIco('dmg'),n:'Shot damage',ru:'Урон выстрела',unlock:1,base:160},
-  {k:'spd',lv:'spdLv',ic:upIco('spd'),n:'Move speed',ru:'Скорость бега',unlock:2,base:140},
-  {k:'pick',lv:'pickLv',ic:upIco('pick'),n:'Pickup radius',ru:'Радиус сбора',unlock:3,base:100},
-  {k:'rate',lv:'rateLv',ic:upIco('rate'),n:'Fire rate',ru:'Скорострельность',unlock:4,base:200}
+  {k:'hp',lv:'hpLv',ic:upIco('hp'),n:'Max HP',ru:'Макс. HP',unlock:1,base:CONFIG.meta.hpCost||120},
+  {k:'dmg',lv:'dmgLv',ic:upIco('dmg'),n:'Shot damage',ru:'Урон выстрела',unlock:1,base:CONFIG.meta.dmgCost||160},
+  {k:'spd',lv:'spdLv',ic:upIco('spd'),n:'Move speed',ru:'Скорость бега',unlock:2,base:CONFIG.meta.spdCost||140},
+  {k:'pick',lv:'pickLv',ic:upIco('pick'),n:'Pickup radius',ru:'Радиус сбора',unlock:3,base:CONFIG.meta.pickCost||100},
+  {k:'rate',lv:'rateLv',ic:upIco('rate'),n:'Fire rate',ru:'Скорострельность',unlock:4,base:CONFIG.meta.rateCost||180}
 ];
-function statCap(){return 3+2*(save.accLv||1)}
-function upCost(u){return Math.floor(u.base*Math.pow(CONFIG.meta.costGrowth,save[u.lv]||0))}
+function statCap(){return Math.min(20, 3+2*(save.accLv||1))}
+function upCost(u){
+  const curL = Math.min(20, save[u.lv] || 0);
+  return Math.floor(u.base * Math.pow(CONFIG.meta.costGrowth, curL));
+}
 function calcStats(o){
   const EM=equipMods(),c=CHARACTERS.find(c=>c.id===save.selectedChar)||CHARACTERS[0];
-  const L=Object.assign({hpLv:save.hpLv||0,dmgLv:save.dmgLv||0,spdLv:save.spdLv||0,pickLv:save.pickLv||0,rateLv:save.rateLv||0},o||{});
-  const rateBonus = 1 + (CONFIG.meta.rateStep || 0.018) * (L.rateLv || 0);
+  const L=Object.assign({
+    hpLv:Math.min(20, save.hpLv||0),
+    dmgLv:Math.min(20, save.dmgLv||0),
+    spdLv:Math.min(20, save.spdLv||0),
+    pickLv:Math.min(20, save.pickLv||0),
+    rateLv:Math.min(20, save.rateLv||0)
+  },o||{});
+  const rateBonus = 1 + (CONFIG.meta.rateStep || 0.015) * (L.rateLv || 0);
   const baseCool = (CONFIG.weapon.cooldown * c.coolMod * EM.cool) / rateBonus;
   const clampedCool = clampPlayerCooldown(baseCool, null, null);
-  return{hp:CONFIG.player.hp*(1+CONFIG.meta.hpStep*L.hpLv)*c.hpMod*(1+EM.hp),
+  return{
+    hp:CONFIG.player.hp*(1+CONFIG.meta.hpStep*L.hpLv)*c.hpMod*(1+EM.hp),
     dmg:CONFIG.weapon.damage*(1+CONFIG.meta.dmgStep*L.dmgLv)*c.dmgMod*(1+EM.dmg),
     spd:clampPlayerSpeed(CONFIG.player.speed*(1+CONFIG.meta.spdStep*L.spdLv)*c.spdMod*(1+EM.spd)),
     pick:clampPlayerPickup(CONFIG.player.pickup*(1+(CONFIG.meta.pickStep*L.pickLv)+(EM.pick||0))),
-    rate: 1 / clampedCool};
+    rate: 1 / clampedCool
+  };
 }
 function fmtS(k,v){return k==='dmg'?v.toFixed(1):k==='rate'?v.toFixed(2)+T(' /sec',' в/сек'):k==='pick'?Math.round(v)+' px':String(Math.round(v))}
 function renderStats(){
@@ -7828,7 +7866,7 @@ function renderStats(){
   const statsGold=document.getElementById('stats-gold');if(statsGold)statsGold.textContent=save.gold||0;
   const stGems=document.getElementById('stats-gems');if(stGems)stGems.textContent=save.gems||0;
   const sumTag=document.getElementById('stats-sum-tag');if(sumTag)sumTag.textContent=T('CURRENT STATS','ТЕКУЩИЕ ХАРАКТЕРИСТИКИ');
-  const upTag=document.getElementById('stats-up-tag');if(upTag)upTag.textContent=T('Permanent upgrades','ПРОКАЧКА · ЗОЛОТО');
+  const upTag=document.getElementById('stats-up-tag');if(upTag)upTag.textContent=T('Permanent upgrades (Max Lv. 20)','ПРОКАЧКА · ЗОЛОТО (МАКС 20 УР)');
   const petTag=document.getElementById('stats-pet-tag');if(petTag)petTag.textContent=T('Pet upgrades · Crystals','ПИТОМЦЫ · КРИСТАЛЛЫ');
   const lv=save.accLv||1,xp=save.accXp||0,need=accNeed(lv),cur=calcStats(),cap=statCap();
   document.getElementById('acc-card').innerHTML=`<div class="acc-card"><div class="acc-lv"><b>${lv}</b><span>${T('LEVEL','УРОВЕНЬ')}</span></div><div class="acc-main"><div class="acc-t">${T('Survivor level','Уровень выжившего')}</div><div class="acc-bar"><i style="width:${Math.round(xp/need*100)}%"></i></div><div class="acc-d"><span style="color:#facc15">★</span> ${xp} / ${need} XP · ${T('earn XP in battles to unlock upgrades','получайте опыт в боях, чтобы открывать улучшения')}</div></div></div>`;
@@ -7837,17 +7875,47 @@ function renderStats(){
   const sumBox=document.getElementById('stat-summary');
   if(sumBox)sumBox.innerHTML=`<div class="st-sum">${['hp','dmg','rate','spd','pick'].map(k=>`<div class="st-tile"><span class="st-t-ico"><img src="${STAT_ICONS[k]}" alt=""></span><b class="st-t-val">${fmtShort[k](cur[k])}</b><span class="st-t-lbl">${T(SUM_META[k][0],SUM_META[k][1])}</span></div>`).join('')}</div>`;
   document.getElementById('stat-up-list').innerHTML=STAT_UP.map(u=>{
-    const l=save[u.lv]||0,locked=lv<u.unlock,max=l>=cap,cost=upCost(u),nxt=calcStats({[u.lv]:l+1});
-    const lbl=locked?'🔒 '+T('LV.','УР.')+u.unlock:max?T('MAX','МАКС'):`<span>${cost}</span>${coinIco(16,'#3a1d00')}`;
-    const sub=locked?T('Unlocks at Lv. '+u.unlock,'Откроется на ур. '+u.unlock):max?T('Max for current level','Макс. для тек. уровня'):fmtS(u.k,cur[u.k])+' <s>→</s> <b>'+fmtS(u.k,nxt[u.k])+'</b>';
-    return `<div class="su-card up-${u.k}${locked?' lock':''}"><div class="su-ic">${u.ic}</div><div class="su-mid"><div class="su-name">${T(u.n,u.ru)}<em>${locked?'':'Lv '+l+'/'+cap}</em></div><div class="su-val">${locked||max?'<span class="set-d">'+sub+'</span>':sub}</div><div class="su-bar"><i style="width:${locked?0:Math.min(100,Math.round(l/cap*100))}%"></i></div></div><button class="su-go" data-up="${u.k}" ${locked||max||save.gold<cost?'disabled':''}>${lbl}</button></div>`}).join('');
+    const l=Math.min(20, save[u.lv]||0), locked=lv<u.unlock;
+    const isMax = l >= 20;
+    const isCap = l >= cap && !isMax;
+    const cost = upCost(u), nxt = calcStats({[u.lv]: Math.min(20, l + 1)});
+    const reqAccLv = Math.max(u.unlock, Math.ceil((l - 3) / 2));
+
+    let lbl, sub;
+    if(locked){
+      lbl = '🔒 ' + T('LV. ', 'УР. ') + u.unlock;
+      sub = T('Unlocks at Survivor Lv. ' + u.unlock, 'Откроется на ур. выжившего ' + u.unlock);
+    } else if(isMax){
+      lbl = T('MAX', 'МАКС');
+      sub = T('Max level reached (20/20)', 'Максимальный уровень (20/20)');
+    } else if(isCap){
+      lbl = '🔒 ' + T('LV. ', 'УР. ') + reqAccLv;
+      sub = T('Requires Survivor Lv. ' + reqAccLv, 'Требуется Ур. Выжившего ' + reqAccLv);
+    } else {
+      lbl = `<span>${cost}</span>${coinIco(16, '#3a1d00')}`;
+      sub = fmtS(u.k, cur[u.k]) + ' <s>→</s> <b>' + fmtS(u.k, nxt[u.k]) + '</b>';
+    }
+
+    const canBuy = !locked && !isMax && !isCap && save.gold >= cost;
+    const pct = Math.min(100, Math.round((l / 20) * 100));
+
+    return `<div class="su-card up-${u.k}${locked ? ' lock' : ''}"><div class="su-ic">${u.ic}</div><div class="su-mid"><div class="su-name">${T(u.n,u.ru)}<em>${locked ? '' : 'Lv ' + l + '/20'}</em></div><div class="su-val">${(locked || isMax || isCap) ? '<span class="set-d">' + sub + '</span>' : sub}</div><div class="su-bar"><i style="width:${locked ? 0 : pct}%"></i></div></div><button class="su-go" data-up="${u.k}" ${!canBuy ? 'disabled' : ''}>${lbl}</button></div>`;
+  }).join('');
   renderPetUpgrades();
 }
 document.getElementById('stat-up-list').onclick=e=>{
   const b=e.target.closest('[data-up]');if(!b||b.disabled)return;
-  const u=STAT_UP.find(x=>x.k===b.dataset.up),cost=upCost(u);
-  if(save.gold<cost||(save[u.lv]||0)>=statCap()||(save.accLv||1)<u.unlock)return;
-  save.gold-=cost;save[u.lv]=(save[u.lv]||0)+1;persist();Sfx.play('levelup');updateMenuUI();renderStats();
+  const u=STAT_UP.find(x=>x.k===b.dataset.up);
+  if(!u) return;
+  const cost=upCost(u);
+  const curLv = Math.min(20, save[u.lv] || 0);
+  if(curLv >= 20 || curLv >= statCap() || (save.accLv || 1) < u.unlock || save.gold < cost) return;
+  save.gold -= cost;
+  save[u.lv] = curLv + 1;
+  persist();
+  Sfx.play('levelup');
+  updateMenuUI();
+  renderStats();
 };
 
 // ===== ПРОГРЕССИВНАЯ СТОИМОСТЬ И ПРОКАЧКА ЗА ФИОЛЕТОВЫЕ КРИСТАЛЛЫ =====
@@ -9203,18 +9271,24 @@ function startGame(){
   const wepItem=ITEMS[eqWepId]||ITEMS.w_pistol;
   const directWeapon=!!wepItem.combatStats;
 
-  const maxHp=CONFIG.player.hp*(1+CONFIG.meta.hpStep*save.hpLv)*curChar.hpMod*(1+EM.hp);
-  const spd=clampPlayerSpeed(CONFIG.player.speed*(1+CONFIG.meta.spdStep*save.spdLv)*curChar.spdMod*(1+EM.spd));
+  const safeHpLv = Math.min(20, save.hpLv || 0);
+  const safeSpdLv = Math.min(20, save.spdLv || 0);
+  const safeDmgLv = Math.min(20, save.dmgLv || 0);
+  const safeRateLv = Math.min(20, save.rateLv || 0);
+  const safePickLv = Math.min(20, save.pickLv || 0);
+
+  const maxHp=CONFIG.player.hp*(1+CONFIG.meta.hpStep*safeHpLv)*curChar.hpMod*(1+EM.hp);
+  const spd=clampPlayerSpeed(CONFIG.player.speed*(1+CONFIG.meta.spdStep*safeSpdLv)*curChar.spdMod*(1+EM.spd));
   const weaponBaseDamage=directWeapon?(Number(wepItem.dmg)||CONFIG.weapon.damage):CONFIG.weapon.damage;
   const weaponRate=directWeapon?(parseFloat(wepItem.fireRate)||1/CONFIG.weapon.cooldown):1/CONFIG.weapon.cooldown;
   const weaponProjectiles=directWeapon?(wepItem.projectiles||CONFIG.weapon.projectiles):CONFIG.weapon.projectiles;
-  const dmg=weaponBaseDamage*(1+CONFIG.meta.dmgStep*save.dmgLv)*curChar.dmgMod*(1+EM.dmg);
+  const dmg=weaponBaseDamage*(1+CONFIG.meta.dmgStep*safeDmgLv)*curChar.dmgMod*(1+EM.dmg);
   const baseWepCool = directWeapon ? (1 / weaponRate) : CONFIG.weapon.cooldown;
-  const rateBonus = 1 + (CONFIG.meta.rateStep || 0.018) * (save.rateLv || 0);
+  const rateBonus = 1 + (CONFIG.meta.rateStep || 0.015) * safeRateLv;
   const rawCool = (baseWepCool * curChar.coolMod * EM.cool) / rateBonus;
   const cool = clampPlayerCooldown(rawCool, wepItem, null);
   const proj=weaponProjectiles+(curChar.projMod-1)+EM.proj;
-  const pickBonus=(CONFIG.meta.pickStep*(save.pickLv||0))+(EM.pick||0);
+  const pickBonus=(CONFIG.meta.pickStep*safePickLv)+(EM.pick||0);
   const pick=clampPlayerPickup(CONFIG.player.pickup*(1+pickBonus));
   const weaponBaseRange=directWeapon?(parseFloat(wepItem.range)||CONFIG.weapon.range):CONFIG.weapon.range;
   const wepRange=weaponBaseRange+(EM.range||0);
