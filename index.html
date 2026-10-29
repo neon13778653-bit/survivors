@@ -3333,7 +3333,7 @@ const CONFIG={
   waves:{interval:0.9,minInterval:0.25,decayPerMin:0.75,hpPerMin:0.35,maxEnemies:150,waveDuration:12,maxWaves:50},
   level:{base:10,growth:1.18},
   meta:{
-    hpStep:0.1,pickStep:0.05,dmgStep:0.1,spdStep:0.05,
+    hpStep:0.1,pickStep:0.05,dmgStep:0.1,spdStep:0.05,rateStep:0.018,
     hpCost:120,pickCost:100,dmgCost:160,spdCost:140,rateCost:200,costGrowth:1.62
   }
 };
@@ -3934,7 +3934,9 @@ function abStepRate(p, id, pctFn){
   const lv = (p.got[id] || 0) + 1;
   const cur = 1 + pctFn(lv) / 100;
   const prev = lv > 1 ? (1 + pctFn(lv - 1) / 100) : 1;
-  p.cool = Math.max(0.065, p.cool * (prev / cur));
+  const targetCool = p.cool * (prev / cur);
+  const wep = (typeof G !== 'undefined' && G && G.weaponDef) || (typeof ITEMS !== 'undefined' && typeof save !== 'undefined' && save.equip && ITEMS[save.equip.weapon]) || null;
+  p.cool = clampPlayerCooldown(targetCool, wep, p);
 }
 function abStepAdd(p, id, valFn){
   const lv = (p.got[id] || 0) + 1;
@@ -3956,6 +3958,40 @@ function clampPlayerPickup(p){
     return p.pickup;
   }
   return Math.min(MAX_PICKUP, Math.max(MIN_PICKUP, Number(p) || 65));
+}
+
+function clampPlayerCooldown(cool, wepDef, p){
+  let baseRate = 1.4;
+  if(wepDef && wepDef.fireRate){
+    baseRate = parseFloat(wepDef.fireRate) || 1.4;
+  } else if(typeof G !== 'undefined' && G && G.weaponDef && G.weaponDef.fireRate){
+    baseRate = parseFloat(G.weaponDef.fireRate) || 1.4;
+  } else if(typeof CONFIG !== 'undefined' && CONFIG.weapon && CONFIG.weapon.cooldown){
+    baseRate = 1 / CONFIG.weapon.cooldown;
+  }
+
+  // Сбалансированный потолок скорострельности по архетипам оружия:
+  // - Скорострельное оружие (Вектор / SMG база 7.5, Лазер база 6.0): потолок 13.5 в/сек (cooldown >= 0.074s)
+  // - Автоматическое / среднее (АК-47 Мародер база 2.8, Скипетр база 3.4): потолок 7.0 в/сек (cooldown >= 0.143s)
+  // - Тяжёлое оружие (Дробовики, Пистолеты, Револьвер, Гаусс база 0.85-1.5): потолок 3.8 в/сек (cooldown >= 0.263s)
+  let maxRate = 3.8;
+  if(baseRate >= 5.0){
+    maxRate = 13.5;
+  } else if(baseRate >= 2.0){
+    maxRate = 7.0;
+  } else {
+    maxRate = Math.min(3.8, Math.max(1.8, baseRate * 2.2));
+  }
+
+  const minCool = 1 / maxRate;
+
+  if(cool && typeof cool === 'object'){
+    cool.cool = Math.max(minCool, cool.cool || minCool);
+    return cool.cool;
+  }
+
+  const val = Number(cool) || minCool;
+  return Math.max(minCool, val);
 }
 
 const FIREARM_ABILITIES = [
@@ -4269,7 +4305,7 @@ const FIREARM_EVOLUTIONS = [
     isEvolved: true,
     apply: p => {
       p.proj = (p.proj || 1) + 2;
-      p.cool = Math.max(0.065, p.cool * 0.80);
+      p.cool = clampPlayerCooldown(p.cool * 0.80, G?.weaponDef, p);
     }
   },
   {
@@ -4296,7 +4332,7 @@ const FIREARM_EVOLUTIONS = [
       p.leadstorm = (p.leadstorm || 0) + 2;
       p.leadstormEvolved = true;
       p.dmg *= 1.20;
-      p.cool = Math.max(0.065, p.cool * 0.88);
+      p.cool = clampPlayerCooldown(p.cool * 0.88, G?.weaponDef, p);
     }
   },
   {
@@ -4662,7 +4698,7 @@ const MAGIC_EVOLUTIONS = [
     isEvolved: true,
     apply: p => {
       p.proj = (p.proj || 1) + 2;
-      p.cool = Math.max(0.065, p.cool * 0.80);
+      p.cool = clampPlayerCooldown(p.cool * 0.80, G?.weaponDef, p);
     }
   },
   {
@@ -5355,7 +5391,7 @@ const WEAPON_ABILITIES = {
       getDesc: lv => 'Убийства восстанавливают +' + (3 + lv * 2) + ' щита и ускоряют заклинания на +' + (4 + lv * 3) + '%.',
       apply: p => {
         p.soulDrain = (p.soulDrain || 0) + 1;
-        p.cool *= 0.94;
+        p.cool = clampPlayerCooldown(p.cool * 0.94, G?.weaponDef, p);
       }
     }
   ]
@@ -5406,6 +5442,16 @@ try{Object.assign(save,JSON.parse(SafeStorage.getItem('surv_save')||'{}'))}catch
 if(!save.equip||typeof save.equip!=='object')save.equip={weapon:'w_pistol',shield:'sh_buckler',pet:null,art1:null,art2:null,art3:null};
 if(typeof save.gems!=='number')save.gems=15;
 if(!save.itemUpgrades||typeof save.itemUpgrades!=='object')save.itemUpgrades={};
+if(save.itemUpgrades){
+  if(save.itemUpgrades.pet_dog && !save.itemUpgrades.pet_bat){
+    save.itemUpgrades.pet_bat = Object.assign({}, save.itemUpgrades.pet_dog);
+    delete save.itemUpgrades.pet_dog;
+  }
+  if(save.itemUpgrades.pet_bat && save.itemUpgrades.pet_bat.pick && !save.itemUpgrades.pet_bat.spd){
+    save.itemUpgrades.pet_bat.spd = save.itemUpgrades.pet_bat.pick;
+    delete save.itemUpgrades.pet_bat.pick;
+  }
+}
 if(!save.unlockedLvls||!Array.isArray(save.unlockedLvls))save.unlockedLvls=[1,3];
 if(!save.unlockedLvls.includes(1))save.unlockedLvls.push(1);
 if(!save.unlockedLvls.includes(3))save.unlockedLvls.push(3);
@@ -7289,7 +7335,7 @@ function equipMods(){
       const rateStep = r === 5 ? 0.032 : (r === 4 ? 0.025 : (r === 3 ? 0.020 : (r === 2 ? 0.015 : 0.012)));
       const rangeStep = r === 5 ? 15 : (r === 4 ? 12 : (r === 3 ? 10 : (r === 2 ? 8 : 6)));
       if(up.dmg)m.dmg+=up.dmg*dmgStep;
-      if(up.rate)m.cool*=Math.pow(1 - rateStep, up.rate);
+      if(up.rate)m.cool /= (1 + rateStep * (up.rate || 0));
       if(up.range)m.range=(m.range||0)+up.range*rangeStep;
     }else if(it.s==='shield'){
       const baseS=it.shield||50;
@@ -7310,7 +7356,7 @@ function equipMods(){
         else if(pCfg.thirdKey === 'spd') m.spd += val;
         else if(pCfg.thirdKey === 'armor') m.armor = (m.armor || 0) + val;
         else if(pCfg.thirdKey === 'hp') m.hp = (m.hp || 0) + val;
-        else if(pCfg.thirdKey === 'rate') m.cool *= Math.pow(1 - (pCfg.step / 100), lv);
+        else if(pCfg.thirdKey === 'rate') m.cool /= (1 + (pCfg.step / 100) * (lv || 0));
         else if(pCfg.thirdKey === 'gold') m.goldBonus = (m.goldBonus || 0) + val;
       }
     }else if(it.s==='artifact'){
@@ -7322,6 +7368,7 @@ function equipMods(){
       if(up.pick)m.pick+=up.pick*pickStep;
     }
   }
+  m.cool = Math.max(0.65, m.cool);
   return m;
 }
 function modLines(m){
@@ -7771,11 +7818,14 @@ function upCost(u){return Math.floor(u.base*Math.pow(CONFIG.meta.costGrowth,save
 function calcStats(o){
   const EM=equipMods(),c=CHARACTERS.find(c=>c.id===save.selectedChar)||CHARACTERS[0];
   const L=Object.assign({hpLv:save.hpLv||0,dmgLv:save.dmgLv||0,spdLv:save.spdLv||0,pickLv:save.pickLv||0,rateLv:save.rateLv||0},o||{});
+  const rateBonus = 1 + (CONFIG.meta.rateStep || 0.018) * (L.rateLv || 0);
+  const baseCool = (CONFIG.weapon.cooldown * c.coolMod * EM.cool) / rateBonus;
+  const clampedCool = clampPlayerCooldown(baseCool, null, null);
   return{hp:CONFIG.player.hp*(1+CONFIG.meta.hpStep*L.hpLv)*c.hpMod*(1+EM.hp),
     dmg:CONFIG.weapon.damage*(1+CONFIG.meta.dmgStep*L.dmgLv)*c.dmgMod*(1+EM.dmg),
     spd:clampPlayerSpeed(CONFIG.player.speed*(1+CONFIG.meta.spdStep*L.spdLv)*c.spdMod*(1+EM.spd)),
     pick:clampPlayerPickup(CONFIG.player.pickup*(1+(CONFIG.meta.pickStep*L.pickLv)+(EM.pick||0))),
-    rate:1/(CONFIG.weapon.cooldown*c.coolMod*EM.cool*Math.pow(.95,L.rateLv))};
+    rate: 1 / clampedCool};
 }
 function fmtS(k,v){return k==='dmg'?v.toFixed(1):k==='rate'?v.toFixed(2)+T(' /sec',' в/сек'):k==='pick'?Math.round(v)+' px':String(Math.round(v))}
 function renderStats(){
@@ -9165,7 +9215,10 @@ function startGame(){
   const weaponRate=directWeapon?(parseFloat(wepItem.fireRate)||1/CONFIG.weapon.cooldown):1/CONFIG.weapon.cooldown;
   const weaponProjectiles=directWeapon?(wepItem.projectiles||CONFIG.weapon.projectiles):CONFIG.weapon.projectiles;
   const dmg=weaponBaseDamage*(1+CONFIG.meta.dmgStep*save.dmgLv)*curChar.dmgMod*(1+EM.dmg);
-  const cool=(directWeapon?1/weaponRate:CONFIG.weapon.cooldown)*curChar.coolMod*EM.cool*Math.pow(.95,save.rateLv||0);
+  const baseWepCool = directWeapon ? (1 / weaponRate) : CONFIG.weapon.cooldown;
+  const rateBonus = 1 + (CONFIG.meta.rateStep || 0.018) * (save.rateLv || 0);
+  const rawCool = (baseWepCool * curChar.coolMod * EM.cool) / rateBonus;
+  const cool = clampPlayerCooldown(rawCool, wepItem, null);
   const proj=weaponProjectiles+(curChar.projMod-1)+EM.proj;
   const pickBonus=(CONFIG.meta.pickStep*(save.pickLv||0))+(EM.pick||0);
   const pick=clampPlayerPickup(CONFIG.player.pickup*(1+pickBonus));
@@ -15097,7 +15150,7 @@ function update(dt){
       const spAng=Math.random()*6.283, spSpd=35+Math.random()*75;
       g.fx.push({type:'magicSpark',x:muzzle.x,y:muzzle.y,vx:Math.cos(spAng)*spSpd,vy:Math.sin(spAng)*spSpd,col:sp%2===0?'#a78bfa':'#c084fc',l:0.3,maxL:0.3});
     }
-    Sfx.play('magic_shoot');p.cd=p.cool;
+    Sfx.play('magic_shoot');p.cd=Math.max(0.0625, p.cool);
   }else if(weaponDef.special==='heaven'&&p.cd<=0&&t&&!t.dead&&isEnemyOnScreen(t)){
     const radius=(weaponDef.radius||64)*(p.heavenRadMult||1)*(p.aoeMult||1);
     const stunDur=(weaponDef.stun||0.75)+(p.heavenStunAdd||0);
@@ -15126,7 +15179,7 @@ function update(dt){
       const spAng=Math.random()*6.283, spSpd=30+Math.random()*60;
       g.fx.push({type:'magicSpark',x:muzzle.x,y:muzzle.y,vx:Math.cos(spAng)*spSpd,vy:Math.sin(spAng)*spSpd,col:weaponDef.color||'#fef08a',l:0.22,maxL:0.22});
     }
-    Sfx.play('magic_shoot');p.cd=p.cool;
+    Sfx.play('magic_shoot');p.cd=Math.max(0.0625, p.cool);
   }else if(p.cd<=0){
     const curTarget=(t&&!t.dead&&isEnemyOnScreen(t))?t:nearest(p.x,p.y-12,g.weaponRange||CONFIG.weapon.range);
     if(curTarget&&!curTarget.dead&&isEnemyOnScreen(curTarget)){
@@ -15323,8 +15376,10 @@ function update(dt){
           }
         }
       }
-      const lsMult = p.leadstormEvolved ? (1 / 2.2) : (1 / (1 + 0.40 + (p.leadstorm || 1) * 0.15));
-      p.cd = p.leadstormActive > 0 ? (p.cool * lsMult) : p.cool;
+      const lsMult = p.leadstormEvolved ? (1 / 1.40) : (1 / (1 + 0.20 + (p.leadstorm || 1) * 0.08));
+      const rawCd = p.leadstormActive > 0 ? (p.cool * lsMult) : p.cool;
+      // Универсальный абсолютный пол: ни при каких модификаторах темп не превышает 16.0 выстрелов/сек (cooldown >= 0.0625s)
+      p.cd = Math.max(0.0625, rawCd);
     }else p.cd=.1;
   }
   for(let i=g.shots.length-1;i>=0;i--){
