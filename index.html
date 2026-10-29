@@ -11592,7 +11592,7 @@ function spawnGravediggerBoss(isPlague = false){
   const bx = p.x + dx;
   const by = p.y + dy;
 
-  const baseHp = isPlague ? 18500 : 9500;
+  const baseHp = isPlague ? 9000 : 4200;
   const maxHp = scaledBossHp(g, baseHp);
   const boss = {
     isBoss: true,
@@ -11675,7 +11675,7 @@ function spawnRatKingBoss(){
   const by = p.y + dy;
 
   const isFinalBoss = (g.wave >= 30 && (!g.lvlConfig || g.lvlConfig.id === 1));
-  const ratBaseHp = isFinalBoss ? 32000 : 24000;
+  const ratBaseHp = isFinalBoss ? 16500 : 12000;
   const maxHp = scaledBossHp(g, ratBaseHp);
   const boss = {
     isBoss: true,
@@ -11757,7 +11757,7 @@ function spawnKrakenBoss(){
   const bx = p.x + dx;
   const by = p.y + dy;
 
-  const krakenBaseHp = (g.wave >= 50) ? 140000 : ((g.wave >= 40) ? 95000 : 58000);
+  const krakenBaseHp = (g.wave >= 50) ? 70000 : ((g.wave >= 40) ? 48000 : 32000);
   const maxHp = scaledBossHp(g, krakenBaseHp);
   const boss = {
     isBoss: true,
@@ -11844,7 +11844,7 @@ function spawnBroodmotherBoss(){
   const bx = p.x + dx;
   const by = p.y + dy;
 
-  const maxHp = scaledBossHp(g, 11000);
+  const maxHp = scaledBossHp(g, 7000);
   const boss = {
     isBoss: true,
     bossId: 'broodmother',
@@ -11928,7 +11928,7 @@ function spawnTreantBoss(){
   const bx = p.x + dx;
   const by = p.y + dy;
 
-  const maxHp = scaledBossHp(g, 55000);
+  const maxHp = scaledBossHp(g, 26000);
   const boss = {
     isBoss: true,
     bossId: 'treant',
@@ -12006,7 +12006,7 @@ function spawnSlimeBoss(){
   const bx = p.x + dx;
   const by = p.y + dy;
 
-  const maxHp = scaledBossHp(g, 28000);
+  const maxHp = scaledBossHp(g, 14000);
   const boss = {
     isBoss: true,
     bossId: 'toxic_slime',
