@@ -6843,14 +6843,8 @@ const RAR={
 };
 const ITEMS={
   // === ОРУЖИЕ (1★ - 5★) ===
+  // Огнестрельное и энергетическое оружие (1★ - 5★)
   w_pistol: {s:'weapon',r:1,n:'M1911',img:'img/weapons/item_m1911.webp',ic:'🔫',d:'Надёжный армейский пистолет M1911. Базовое оружие выжившего с высоким контролем отдачи.',dmg:14,fireRate:'1.5 /сек',range:'270 м',projectiles:1,spread:.08,speed:960,combatStats:true,color:'#fbbf24',m:{}},
-  w_smg:    {s:'weapon',r:2,n:'Скорпион SMG',img:'img/weapons/weapon_vector_smg.webp',ic:'⚡',d:'Высокая скорострельность для эффективного сдерживания толпы.',dmg:4.4,fireRate:'7.5 /сек',range:'205 м',speed:920,combatStats:true,color:'#fbbf24',m:{dmg:.06,cool:.96}},
-  w_shotgun:{s:'weapon',r:3,n:'Дробовик «Вепрь»',img:'img/weapons/weapon_vepr.webp',ic:'💥',d:'Залп из 6 картечин с широким разбросом и сокрушительным уроном.',dmg:6.4,fireRate:'1.3 /сек',range:'215 м',projectiles:6,spread:.44,speed:780,combatStats:true,color:'#fb923c',m:{dmg:.12,critChance:.06}},
-  w_plasma: {s:'weapon',r:4,n:'Плазмоган «Зенит»',img:'img/weapons/weapon_nova_plasma.webp',ic:'🔮',d:'Тяжёлые плазменные сгустки взрываются энергетической вспышкой.',dmg:38,fireRate:'1.45 /сек',range:'295 м',speed:580,aoe:78,combatStats:true,color:'#38bdf8',kind:'plasma',m:{dmg:.20,cool:.92,critChance:.08}},
-  w_laser:  {s:'weapon',r:5,n:'Лазерная пушка «Прометей»',img:'img/weapons/weapon_prometheus_laser.webp',ic:'⚡',d:'Непрерывные сдвоенные лазерные лучи выжигают орду насквозь.',dmg:7.5,fireRate:'6 /сек',range:'325 м',projectiles:2,spread:.07,speed:1550,pierce:99,isLaser:true,combatStats:true,color:'#22d3ee',m:{dmg:.32,cool:.86,critChance:.14,pierce:1}},
-  w_minigun:{s:'weapon',r:5,n:'Лазерная пушка «Прометей»',img:'img/weapons/weapon_prometheus_laser.webp',ic:'⚡',d:'Непрерывные сдвоенные лазерные лучи выжигают орду насквозь.',dmg:7.5,fireRate:'6 /сек',range:'325 м',projectiles:2,spread:.07,speed:1550,pierce:99,isLaser:true,combatStats:true,color:'#22d3ee',m:{dmg:.32,cool:.86,critChance:.14,pierce:1}},
-
-  // Огнестрельное оружие (1★ - 5★)
   w_rebel:{s:'weapon',r:1,n:'Обрез «Бунтарь»',img:'img/weapons/weapon_rebel_sawedoff.webp',ic:'💥',d:'Мощный веер дроби разносит врагов вблизи.',dmg:4.4,fireRate:'0.85 /сек',range:'190 м',projectiles:5,spread:.46,speed:720,combatStats:true,color:'#fbbf24',m:{}},
   w_python:{s:'weapon',r:2,n:'Револьвер .44 «Питон»',img:'img/weapons/weapon_python_revolver.webp',ic:'🔫',d:'Тяжёлый урон и сильное отбрасывание мутантов.',dmg:28,fireRate:'1.1 /сек',range:'280 м',speed:1020,knockback:115,combatStats:true,color:'#f59e0b',m:{dmg:.08,critChance:.04}},
   w_vector:{s:'weapon',r:2,n:'ПП «Вектор»',img:'img/weapons/weapon_vector_smg.webp',ic:'⚡',d:'Бешеная скорострельность в упор: шквал пуль.',dmg:4.4,fireRate:'7.5 /сек',range:'205 м',speed:920,combatStats:true,color:'#fbbf24',m:{dmg:.06,cool:.96}},
@@ -6860,6 +6854,7 @@ const ITEMS={
   w_nova:{s:'weapon',r:4,n:'Плазмоган «Нова»',img:'img/weapons/weapon_nova_plasma.webp',ic:'🔮',d:'Тяжёлые плазменные сгустки взрываются микро-вспышками.',dmg:38,fireRate:'1.45 /сек',range:'295 м',speed:580,aoe:78,combatStats:true,color:'#38bdf8',kind:'plasma',m:{dmg:.20,cool:.92,critChance:.08}},
   w_aa12:{s:'weapon',r:4,n:'Авто-дробовик AA-12 «Мясник»',img:'img/weapons/weapon_aa12.webp',ic:'💥',d:'Барабанный дробовик создаёт сплошную стену картечи.',dmg:5.2,fireRate:'1.75 /сек',range:'205 м',projectiles:8,spread:.52,speed:750,combatStats:true,color:'#fb923c',m:{dmg:.18,cool:.90,critChance:.08}},
   w_phantom:{s:'weapon',r:5,n:'Гаусс-пушка «Призрак»',img:'img/weapons/weapon_phantom_gauss.webp',ic:'⚡',d:'Электромагнитный гиперзвуковой выстрел прошивает весь экран.',dmg:110,fireRate:'0.85 /сек',range:'345 м',speed:2600,pierce:99,combatStats:true,color:'#93c5fd',kind:'gauss',m:{dmg:.35,cool:.88,critChance:.15,pierce:1}},
+  w_laser:  {s:'weapon',r:5,n:'Лазерная пушка «Прометей»',img:'img/weapons/weapon_prometheus_laser.webp',ic:'⚡',d:'Непрерывные сдвоенные лазерные лучи выжигают орду насквозь.',dmg:7.5,fireRate:'6 /сек',range:'325 м',projectiles:2,spread:.07,speed:1550,pierce:99,isLaser:true,combatStats:true,color:'#22d3ee',m:{dmg:.32,cool:.86,critChance:.14,pierce:1}},
 
   // Магическое оружие (1★ - 5★)
   m_rune:{s:'weapon',r:1,n:'Посох ученика рун',img:'img/weapons/weapon_rune_staff.webp',ic:'✨',d:'Выпускает базовые магические стрелы света.',dmg:14,fireRate:'1.5 /сек',range:'265 м',speed:720,combatStats:true,color:'#fde68a',kind:'magic',m:{}},
@@ -6878,12 +6873,7 @@ const ITEMS={
   sh_plasma:  {s:'shield',r:3,n:'Плазменный экран',img:'img/shields/shield_plasma_icon.webp',ic:'🛡️',d:'Генератор силового кинетического поля. Добавляет +105 к прочности щита (зарядка 2.5/сек), +8% к поглощению урона и +6% скорости бега.',shield:105,shieldRegen:2.5,m:{shield:105,shieldRegen:2.5,armor:.08,spd:.06}},
   sh_titan:   {s:'shield',r:4,n:'Титановый бастион',img:'img/shields/shield_titan_icon.webp',ic:'🛡️',d:'Тяжёлый генератор купола. Добавляет +150 к прочности щита (зарядка 3.5/сек), +12% к поглощению урона, +15% к здоровью и +8% скорости бега.',shield:150,shieldRegen:3.5,m:{shield:150,shieldRegen:3.5,armor:.12,hp:.15,spd:.08}},
   sh_aegis:   {s:'shield',r:5,n:'Эгида Предтеч',img:'img/shields/shield_aegis_icon.webp',ic:'🛡️',d:'Реликтовый гипер-щит. Добавляет +200 к прочности щита (зарядка 4.5/сек), +16% к поглощению урона, +25% к здоровью, +10% скорости бега и +10% к радиусу сбора.',shield:200,shieldRegen:4.5,m:{shield:200,shieldRegen:4.5,armor:.16,hp:.25,spd:.10,pick:.10}},
-  // Совместимость со старыми сохранениями (броня превращается в щиты)
-  a_vest:   {s:'shield',r:1,n:'Барьерный щит',img:'img/shields/shield_buckler_icon.webp',ic:'🛡️',d:'Тактический барьерный щит. Проецирует силовое поле на +35 к прочности щита. Без доп. бонусов.',shield:35,shieldRegen:1,m:{shield:35,shieldRegen:1}},
-  a_kevlar: {s:'shield',r:2,n:'Штурмовой щит',img:'img/shields/shield_riot_icon.webp',ic:'🛡️',d:'Усиленный баллистический щит. Добавляет +65 к прочности щита и +5% к поглощению урона.',shield:65,shieldRegen:1.8,m:{shield:65,shieldRegen:1.8,armor:.05}},
-  a_nano:   {s:'shield',r:3,n:'Плазменный экран',img:'img/shields/shield_plasma_icon.webp',ic:'🛡️',d:'Генератор кинетического поля. Добавляет +105 к прочности щита, +8% к поглощению урона и +6% скорости бега.',shield:105,shieldRegen:2.5,m:{shield:105,shieldRegen:2.5,armor:.08,spd:.06}},
-  a_exo:    {s:'shield',r:4,n:'Титановый бастион',img:'img/shields/shield_titan_icon.webp',ic:'🛡️',d:'Тяжёлый энерго-барьер. Добавляет +150 к прочности щита, +12% к поглощению урона, +15% к здоровью и +8% скорости бега.',shield:150,shieldRegen:3.5,m:{shield:150,shieldRegen:3.5,armor:.12,hp:.15,spd:.08}},
-  a_aegis:  {s:'shield',r:5,n:'Эгида Предтеч',img:'img/shields/shield_aegis_icon.webp',ic:'🛡️',d:'Реликтовый гипер-щит. Добавляет +200 к прочности щита, +16% к поглощению урона, +25% к здоровью, +10% скорости бега и +10% к радиусу сбора.',shield:200,shieldRegen:4.5,m:{shield:200,shieldRegen:4.5,armor:.16,hp:.25,spd:.10,pick:.10}},
+
 
   // === ПИТОМЦЫ (1★ - 5★) — КЛАССИЧЕСКИЕ КОМПАНЬОНЫ С АНИМАЦИЕЙ ХОДЬБЫ ===
   pet_slime:   {s:'pet',r:1,n:'Слизень-малыш',img:'img/pets/pet_slime_icon.webp',sprite:'img/monsters/monster_slime.webp',sheet:'img/monsters/monster_slime_sheet.webp',frameW:260,frameH:220,frames:8,animRate:7,spriteW:44,spriteH:37,ic:'🟢',active:'Каскадная кислотная бомба + Сбор',d:'Ручной токсичный слизень [1★]. Бросает навесную кислотную бомбу и собирает кристаллы опыта в радиусе 140. Бонусы: +8% радиус сбора, +6% HP.',petType:'slime',m:{pick:.08,hp:.06}},
@@ -6891,18 +6881,7 @@ const ITEMS={
   pet_mimic:   {s:'pet',r:3,n:'Карманный мимик',img:'img/pets/pet_mimic_icon.webp',sprite:'img/monsters/monster_mimic.webp',sheet:'img/monsters/monster_mimic_sheet.webp',frameW:260,frameH:240,frames:8,animRate:9,spriteW:42,spriteH:40,ic:'📦',active:'Зубастый кусь (монеты 🪙)',d:'Одомашненный зубастый сундучок [3★]. Вгрызается во врагов (урон x1.80) и выбивает золото. Бонусы: +18% сбор, +10% скорость, +12% урон.',petType:'mimic',m:{pick:.18,spd:.10,dmg:.12}},
   pet_gargoyle:{s:'pet',r:4,n:'Страж-гаргулья',img:'img/pets/pet_gargoyle_icon.webp',sprite:'img/monsters/monster_gargoyle.webp',sheet:'img/monsters/monster_gargoyle_sheet.webp',frameW:240,frameH:240,frames:8,animRate:8,flying:true,spriteW:42,spriteH:44,ic:'🗿',active:'Пикирующий таран и шипы',d:'Каменный крылатый защитник [4★]. Пикирующий таран с обсидиановыми шипами и окаменением (урон x2.40). Бонусы: +24% HP, +15% броня, +14% темп, +18% урон.',petType:'gargoyle',m:{hp:.24,armor:.15,cool:.86,dmg:.18}},
   pet_treant:  {s:'pet',r:5,n:'Древень-хранитель',img:'img/pets/pet_treant_icon.webp',sprite:'img/monsters/monster_treant.webp',sheet:'img/monsters/monster_treant_sheet.webp',frameW:300,frameH:320,frames:8,animRate:6,spriteW:50,spriteH:54,ic:'🌲',active:'Подземный пронзающий капкан корней',d:'Древний лесной гигант [5★ Реликвия]. Опутывает до 5 врагов корнями (урон x3.20) и исцеляет героя (+5% HP). Бонусы: +42% HP, +20% броня, +22% сбор, +15% скорость, +28% урон.',petType:'treant',m:{hp:.42,armor:.20,pick:.22,spd:.15,dmg:.28}},
-  // Совместимость со старыми сохранениями
-  pet_drone: {s:'pet',r:1,n:'Слизень-малыш',img:'img/pets/pet_slime_icon.webp',sprite:'img/monsters/monster_slime.webp',sheet:'img/monsters/monster_slime_sheet.webp',frameW:260,frameH:220,frames:8,animRate:7,spriteW:38,spriteH:32,ic:'🟢',active:'Каскадная кислотная бомба + Сбор',d:'Ручной токсичный слизень [1★]. Бросает каскадную кислотную бомбу и собирает кристаллы.',petType:'slime',m:{pick:.08,hp:.06}},
-  pet_dog:   {s:'pet',r:2,n:'Ручной нетопырь',img:'img/pets/pet_bat_icon.webp',sprite:'img/monsters/monster_bat.webp',sheet:'img/monsters/monster_bat_sheet.webp',frameW:280,frameH:200,frames:8,animRate:9,flying:true,spriteW:40,spriteH:28,ic:'🦇',active:'Налёт и цепной эхо-резонанс',d:'Пустошная летучая мышь [2★]. Налетает на врагов и бьёт цепным ультразвуковым резонансом.',petType:'bat',m:{spd:.12,pick:.10,dmg:.06}},
-  pet_turret:{s:'pet',r:3,n:'Карманный мимик',img:'img/pets/pet_mimic_icon.webp',sprite:'img/monsters/monster_mimic.webp',sheet:'img/monsters/monster_mimic_sheet.webp',frameW:260,frameH:240,frames:8,animRate:9,spriteW:36,spriteH:34,ic:'📦',active:'Зубастый кусь (монеты 🪙)',d:'Одомашненный зубастый сундучок [3★]. Вгрызается во врагов и выбивает золото.',petType:'mimic',m:{pick:.18,spd:.10,dmg:.12}},
-  pet_medbot:{s:'pet',r:4,n:'Страж-гаргулья',img:'img/pets/pet_gargoyle_icon.webp',sprite:'img/monsters/monster_gargoyle.webp',sheet:'img/monsters/monster_gargoyle_sheet.webp',frameW:240,frameH:240,frames:8,animRate:8,flying:true,spriteW:36,spriteH:38,ic:'🗿',active:'Пикирующий таран и шипы',d:'Каменный крылатый защитник [4★]. Пикирует во врагов и вздымает каменные шипы.',petType:'gargoyle',m:{hp:.24,armor:.15,cool:.86,dmg:.18}},
-  pet_dragon:{s:'pet',r:5,n:'Древень-хранитель',img:'img/pets/pet_treant_icon.webp',sprite:'img/monsters/monster_treant.webp',sheet:'img/monsters/monster_treant_sheet.webp',frameW:300,frameH:320,frames:8,animRate:6,spriteW:44,spriteH:48,ic:'🌲',active:'Подземный пронзающий капкан корней',d:'Древний лесной гигант [5★ Реликвия]. Пронзает и сковывает врагов корнями на 2 секунды и лечит героя.',petType:'treant',m:{hp:.42,armor:.20,pick:.22,spd:.15,dmg:.28}},
-
-  // === ПИТОМЦЫ (1★ - 5★) — МОНСТРЫ-КОМПАНЬОНЫ С АНИМАЦИЕЙ ХОДЬБЫ ===
-  pet_scarab:  {s:'pet',r:1,n:'Грибной споровик',img:'img/pets/pet_mushroom_icon.webp',sprite:'img/monsters/monster_mushroom.webp',sheet:'img/monsters/monster_mushroom_sheet.webp',frameW:220,frameH:220,frames:8,animRate:8,spriteW:38,spriteH:38,ic:'🍄',active:'Залп споровых бомб (3 шт.)',d:'Одомашненный грибной мутант [1★]. Залп из 3 споровых бомб. Бонусы: +8% урон, +6% HP.',petType:'mushroom',m:{dmg:.08,hp:.06}},
-  pet_golem:   {s:'pet',r:3,n:'Пустошная крыса',img:'img/pets/pet_rat_icon.webp',sprite:'img/monsters/monster_rat.webp',sheet:'img/monsters/monster_rat_sheet.webp',frameW:280,frameH:200,frames:8,animRate:11,spriteW:44,spriteH:30,ic:'🐀',active:'Бешеный укус и мародёрство',d:'Чумная пустошная крыса [3★]. Стремительные укусы с выбиванием монет 🪙. Бонусы: +10% броня, +14% сбор, +14% урон.',petType:'rat',m:{armor:.10,pick:.14,dmg:.14}},
-  pet_voidray: {s:'pet',r:4,n:'Пустошный гуль',img:'img/pets/pet_ghoul_icon.webp',sprite:'img/monsters/monster_ghoul.webp',sheet:'img/monsters/monster_ghoul_sheet.webp',frameW:260,frameH:240,frames:8,animRate:8,spriteW:42,spriteH:38,ic:'🧟',active:'Кровавый прыжок и X-разрыв',d:'Свирепый мертвяк-гуль [4★]. Прыжок и разрыв когтями с вампиризмом. Бонусы: +14% броня, +24% HP, +22% урон, +14% темп.',petType:'ghoul',m:{armor:.14,hp:.24,dmg:.22,cool:.86}},
-  // Алиасы для прямого обращения по именам монстров:
+  // Монстры-компаньоны (1★ - 5★):
   pet_mushroom: {s:'pet',r:1,n:'Грибной споровик',img:'img/pets/pet_mushroom_icon.webp',sprite:'img/monsters/monster_mushroom.webp',sheet:'img/monsters/monster_mushroom_sheet.webp',frameW:220,frameH:220,frames:8,animRate:8,spriteW:44,spriteH:44,ic:'🍄',active:'Залп споровых бомб (3 шт.)',d:'Одомашненный грибной мутант [1★]. Залп из 3 споровых бомб. Бонусы: +8% урон, +6% HP.',petType:'mushroom',m:{dmg:.08,hp:.06}},
   pet_spider:   {s:'pet',r:2,n:'Пещерный паучок',img:'img/pets/pet_spider_icon.webp',sprite:'img/monsters/monster_spiderling.webp',sheet:'img/monsters/monster_spiderling_sheet.webp',frameW:240,frameH:200,frames:8,animRate:12,spriteW:46,spriteH:40,ic:'🕷️',active:'Паутинный гарпун и кокон',d:'Проворный паучок-мутант [2★]. Паутинный гарпун и кокон. Бонусы: +10% скорость бега, +8% темп, +8% урон.',petType:'spider',m:{spd:.10,cool:.92,dmg:.08}},
   pet_rat:      {s:'pet',r:3,n:'Пустошная крыса',img:'img/pets/pet_rat_icon.webp',sprite:'img/monsters/monster_rat.webp',sheet:'img/monsters/monster_rat_sheet.webp',frameW:280,frameH:200,frames:8,animRate:11,spriteW:51,spriteH:35,ic:'🐀',active:'Бешеный укус и мародёрство',d:'Чумная пустошная крыса [3★]. Стремительные укусы с выбиванием монет 🪙. Бонусы: +10% броня, +14% сбор, +14% урон.',petType:'rat',m:{armor:.10,pick:.14,dmg:.14}},
@@ -6949,8 +6928,12 @@ const LEGACY_ITEM_MIGRATIONS = {
   pet_scarab: 'pet_mushroom', pet_scout: 'pet_spider', pet_golem: 'pet_rat', pet_voidray: 'pet_ghoul',
   // Мутант-аберрация (pet_abom/pet_wyvern) удалена из игры; старые сохранения наследуют Древня-хранителя
   pet_abom: 'pet_treant', pet_wyvern: 'pet_treant',
-  // Оружие
-  w_minigun: 'w_laser', m_grimoire: 'm_void'
+  // Устаревшие ID оружия -> актуальное каноническое оружие (устранение дублей Вектора, Вепря и Новы)
+  w_smg: 'w_vector',
+  w_shotgun: 'w_vepr_auto',
+  w_plasma: 'w_nova',
+  w_minigun: 'w_laser',
+  m_grimoire: 'm_void'
 };
 // Не-перечислимые геттеры в ITEMS для безопасной обратной совместимости (не попадают в Object.keys(ITEMS) и сумку)
 for(const [alias, target] of Object.entries(LEGACY_ITEM_MIGRATIONS)){
@@ -7282,16 +7265,27 @@ function ensureInv(){
     save.equip.shield = (ITEMS[save.equip.armor] && ITEMS[save.equip.armor].s==='shield') ? save.equip.armor : null;
     delete save.equip.armor;
   }
-  if(save.equip.ability) delete save.equip.ability;
-  if(save.equip.pet){
-    const petMigrate = {pet_drone:'pet_slime', pet_dog:'pet_bat', pet_turret:'pet_mimic', pet_medbot:'pet_gargoyle', pet_dragon:'pet_treant', pet_wyvern:'pet_treant', pet_abom:'pet_treant'};
-    if(petMigrate[save.equip.pet]) save.equip.pet = petMigrate[save.equip.pet];
+  if(save.equip&&typeof save.equip==='object'){
+    for(const sl in save.equip){
+      const curId=save.equip[sl];
+      if(curId&&typeof LEGACY_ITEM_MIGRATIONS!=='undefined'&&LEGACY_ITEM_MIGRATIONS[curId]){
+        save.equip[sl]=LEGACY_ITEM_MIGRATIONS[curId];
+      }
+    }
   }
-  if(save.equip.weapon==='w_minigun')save.equip.weapon='w_laser';
-  if(save.equip.weapon==='m_grimoire')save.equip.weapon='m_void';
+  if(save.itemUpgrades&&typeof save.itemUpgrades==='object'&&typeof LEGACY_ITEM_MIGRATIONS!=='undefined'){
+    for(const [alias, canonical] of Object.entries(LEGACY_ITEM_MIGRATIONS)){
+      if(save.itemUpgrades[alias]){
+        if(!save.itemUpgrades[canonical]){
+          save.itemUpgrades[canonical]=save.itemUpgrades[alias];
+        }
+        delete save.itemUpgrades[alias];
+      }
+    }
+  }
   if(save.inv&&Array.isArray(save.inv)){
     if(typeof LEGACY_ITEM_MIGRATIONS!=='undefined'){save.inv=save.inv.map(id=>LEGACY_ITEM_MIGRATIONS[id]||id);}
-    save.inv=save.inv.filter(id=>!id.startsWith('ab_'));
+    save.inv=save.inv.filter(id=>!id.startsWith('ab_')&&ITEMS[id]);
     save.inv=[...new Set(save.inv)];
   }
   if(!save.equip.weapon||!ITEMS[save.equip.weapon]||ITEMS[save.equip.weapon].s!=='weapon'||!save.inv.includes(save.equip.weapon)){
@@ -7998,7 +7992,7 @@ document.getElementById('stat-pet-box').onclick=e=>{
 
 // ===== МАСТЕРСКАЯ КРАФТА И СИНТЕЗ СНАРЯЖЕНИЯ =====
 const ITEM_CHAINS={
-  weapon:       ['w_pistol','w_smg','w_shotgun','w_plasma','w_laser'],
+  weapon:       ['w_pistol','w_vector','w_vepr_auto','w_nova','w_laser'],
   shield:       ['sh_buckler','sh_riot','sh_plasma','sh_titan','sh_aegis'],
   pet:          ['pet_slime','pet_bat','pet_mimic','pet_gargoyle','pet_treant'],
   pet_mutant:   ['pet_mushroom','pet_spider','pet_rat','pet_ghoul'],
