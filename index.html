@@ -9505,7 +9505,7 @@ function startGame(){
       const dist = getEnemySpawnDistance(ang);
       let startEnemy = CONFIG.enemies.zombie;
       if(curLvl.id === 2){
-        startEnemy = (i % 2 === 0) ? CONFIG.enemies.bat : CONFIG.enemies.skeleton;
+        startEnemy = CONFIG.enemies.skeleton;
       } else if(curLvl.id === 3){
         startEnemy = (i % 3 === 0) ? CONFIG.enemies.spider : ((i % 3 === 1) ? CONFIG.enemies.slime : CONFIG.enemies.rat);
       } else {
@@ -9748,67 +9748,65 @@ function spawn(overrideConfig, customAngle, customDist){
       const activeEggs = G.enemies.filter(e => !e.dead && e.c === CONFIG.enemies.spider_egg).length;
       const activeGargoyles = G.enemies.filter(e => !e.dead && e.c === CONFIG.enemies.gargoyle).length;
 
-      // Вторая локация (Кладбище мутантов, 40 волн) — оптимизированные сбалансированные когорты
-      if(curWave < 6){
-        // Волны 1-5: Вход в склеп (Скелеты, Нетопыри)
+      // Вторая локация (Кладбище мутантов, 40 волн) — плавное и строгое открытие врагов по актам
+      if(curWave < 5){
+        // Волны 1-4: Только скелеты склепа (игрок осваивается с увеличенным HP мобов второй главы)
         list = [
-          { c: CONFIG.enemies.skeleton, weight: 10 },
-          { c: CONFIG.enemies.bat, weight: 5 }
+          { c: CONFIG.enemies.skeleton, weight: 10 }
         ];
       } else if(curWave < 10){
-        // Волны 6-9: Паучье логово (Паучата, Скелеты, редкие коконы)
+        // Волны 5-9: Подключаются быстрые летучие мыши
         list = [
           { c: CONFIG.enemies.skeleton, weight: 8 },
-          { c: CONFIG.enemies.spiderling, weight: 7 }
+          { c: CONFIG.enemies.bat, weight: 5 }
         ];
-        if(activeEggs < 2) list.push({ c: CONFIG.enemies.spider_egg, weight: 3 });
       } else if(curWave < 15){
-        // Волны 10-14: Глубины склепа (Скелеты, Гули, Нетопыри)
+        // Волны 10-14: Паучье гнездо (быстрые паучата и редкие коконы)
         list = [
           { c: CONFIG.enemies.skeleton, weight: 7 },
-          { c: CONFIG.enemies.ghoul, weight: 6 },
-          { c: CONFIG.enemies.bat, weight: 4 }
+          { c: CONFIG.enemies.bat, weight: 4 },
+          { c: CONFIG.enemies.spiderling, weight: 6 }
         ];
+        if(activeEggs < 2) list.push({ c: CONFIG.enemies.spider_egg, weight: 2 });
       } else if(curWave < 20){
-        // Волны 15-19: Грибная чаща (Пауки, Скелеты, Гули, до 2 грибных стрелков)
+        // Волны 15-19: Взрослые пещерные пауки и коконы
         list = [
           { c: CONFIG.enemies.skeleton, weight: 6 },
+          { c: CONFIG.enemies.spiderling, weight: 5 },
+          { c: CONFIG.enemies.spider, weight: 6 }
+        ];
+        if(activeEggs < 2) list.push({ c: CONFIG.enemies.spider_egg, weight: 2 });
+      } else if(curWave < 25){
+        // Волны 20-24: Токсичная топь — появление слизней и споровых грибов (до 2 стрелков)
+        list = [
+          { c: CONFIG.enemies.skeleton, weight: 5 },
           { c: CONFIG.enemies.spider, weight: 5 },
-          { c: CONFIG.enemies.ghoul, weight: 5 }
+          { c: CONFIG.enemies.slime, weight: 6 }
         ];
         if(activeMushrooms < 3) list.push({ c: CONFIG.enemies.mushroom, weight: 3 });
-        if(activeEggs < 1) list.push({ c: CONFIG.enemies.spider_egg, weight: 2 });
-      } else if(curWave < 26){
-        // Волны 20-25: Каменные шпили (Гули, Слизни, Гаргульи)
-        list = [
-          { c: CONFIG.enemies.ghoul, weight: 7 },
-          { c: CONFIG.enemies.slime, weight: 5 },
-          { c: CONFIG.enemies.skeleton, weight: 4 }
-        ];
-        if(activeGargoyles < 3) list.push({ c: CONFIG.enemies.gargoyle, weight: 4 });
       } else if(curWave < 30){
-        // Волны 26-29: Элитный авангард (Гули, Мимики, Слизни)
+        // Волны 25-29: Пробуждение свирепых гулей
         list = [
-          { c: CONFIG.enemies.ghoul, weight: 7 },
-          { c: CONFIG.enemies.mimic, weight: 4 },
           { c: CONFIG.enemies.slime, weight: 5 },
-          { c: CONFIG.enemies.spider, weight: 4 }
+          { c: CONFIG.enemies.spider, weight: 4 },
+          { c: CONFIG.enemies.ghoul, weight: 7 }
         ];
         if(activeMushrooms < 2) list.push({ c: CONFIG.enemies.mushroom, weight: 2 });
-      } else if(curWave < 36){
-        // Волны 30-35: Элитный склеп (Гули, Слизни, Гаргульи, Скелеты)
+      } else if(curWave < 35){
+        // Волны 30-34: Каменные шпили — каменные гаргульи и мимики
         list = [
           { c: CONFIG.enemies.ghoul, weight: 7 },
-          { c: CONFIG.enemies.slime, weight: 6 },
-          { c: CONFIG.enemies.skeleton, weight: 4 }
+          { c: CONFIG.enemies.slime, weight: 5 },
+          { c: CONFIG.enemies.mimic, weight: 4 }
         ];
         if(activeGargoyles < 3) list.push({ c: CONFIG.enemies.gargoyle, weight: 4 });
       } else {
-        // Волны 36-40: Некрополис (Финальные элитные монстры без перегрузки стрелками)
+        // Волны 35-40: Некрополис Бездны — элитный натиск перед Кракеном
         list = [
           { c: CONFIG.enemies.ghoul, weight: 7 },
+          { c: CONFIG.enemies.slime, weight: 5 },
           { c: CONFIG.enemies.mimic, weight: 5 },
-          { c: CONFIG.enemies.slime, weight: 5 }
+          { c: CONFIG.enemies.skeleton, weight: 4 }
         ];
         if(activeGargoyles < 3) list.push({ c: CONFIG.enemies.gargoyle, weight: 4 });
       }
@@ -12428,7 +12426,7 @@ function update(dt){
       if(curLvlId === 1){
         surgeEnemy = curWaveNum < 10 ? CONFIG.enemies.hound : (curWaveNum < 16 ? CONFIG.enemies.rat : CONFIG.enemies.zombie_mutant);
       } else if(curLvlId === 2){
-        surgeEnemy = curWaveNum < 6 ? CONFIG.enemies.spiderling : (curWaveNum < 15 ? CONFIG.enemies.bat : CONFIG.enemies.ghoul);
+        surgeEnemy = curWaveNum < 10 ? CONFIG.enemies.bat : (curWaveNum < 18 ? CONFIG.enemies.spiderling : (curWaveNum < 28 ? CONFIG.enemies.spider : CONFIG.enemies.ghoul));
       }
       spawnSquad(surgeCount, surgeAngle, surgeEnemy);
       Sfx.play('dash');
