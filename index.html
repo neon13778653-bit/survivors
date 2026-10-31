@@ -9509,7 +9509,7 @@ function startGame(){
       } else if(curLvl.id === 3){
         startEnemy = (i % 3 === 0) ? CONFIG.enemies.spider : ((i % 3 === 1) ? CONFIG.enemies.slime : CONFIG.enemies.rat);
       } else {
-        startEnemy = (i % 3 === 0) ? CONFIG.enemies.hound : CONFIG.enemies.zombie;
+        startEnemy = CONFIG.enemies.zombie;
       }
       spawn(startEnemy, ang, dist);
     }
@@ -9813,32 +9813,40 @@ function spawn(overrideConfig, customAngle, customDist){
         if(activeGargoyles < 3) list.push({ c: CONFIG.enemies.gargoyle, weight: 4 });
       }
     } else if(lvlId === 1){
-      // Первая локация (Заброшенный город, 30 волн)
+      // Первая локация (Заброшенный город, 30 волн) - постепенное открытие врагов
       if(curWave < 5){
+        // Волны 1-4: Только простые зомби
         list = [
-          { c: CONFIG.enemies.zombie, weight: 12 },
-          { c: CONFIG.enemies.hound, weight: 4 },
-          { c: CONFIG.enemies.rat, weight: 3 }
+          { c: CONFIG.enemies.zombie, weight: 10 }
         ];
       } else if(curWave < 10){
+        // Волны 5-9: Появляются быстрые волки (гончие)
         list = [
-          { c: CONFIG.enemies.zombie, weight: 10 },
-          { c: CONFIG.enemies.hound, weight: 5 },
+          { c: CONFIG.enemies.zombie, weight: 8 },
+          { c: CONFIG.enemies.hound, weight: 6 }
+        ];
+      } else if(curWave < 16){
+        // Волны 10-15: Подключаются радиоактивные крысы
+        list = [
+          { c: CONFIG.enemies.zombie, weight: 7 },
+          { c: CONFIG.enemies.hound, weight: 6 },
           { c: CONFIG.enemies.rat, weight: 6 }
         ];
-      } else if(curWave < 20){
+      } else if(curWave < 23){
+        // Волны 16-22: Начинают наступать опасные мутировавшие зомби
         list = [
-          { c: CONFIG.enemies.zombie, weight: 6 },
-          { c: CONFIG.enemies.zombie_mutant, weight: 7 },
+          { c: CONFIG.enemies.zombie, weight: 4 },
           { c: CONFIG.enemies.hound, weight: 5 },
-          { c: CONFIG.enemies.rat, weight: 5 }
+          { c: CONFIG.enemies.rat, weight: 6 },
+          { c: CONFIG.enemies.zombie_mutant, weight: 7 }
         ];
       } else {
+        // Волны 23-30: Финальная элита - прорыв гулей и мутировавших зомби
         list = [
-          { c: CONFIG.enemies.zombie_mutant, weight: 8 },
           { c: CONFIG.enemies.hound, weight: 4 },
           { c: CONFIG.enemies.rat, weight: 5 },
-          { c: CONFIG.enemies.ghoul, weight: 5 }
+          { c: CONFIG.enemies.zombie_mutant, weight: 8 },
+          { c: CONFIG.enemies.ghoul, weight: 6 }
         ];
       }
     } else {
@@ -12409,16 +12417,16 @@ function update(dt){
       g.spawn += iv;
     }
 
-    // Мини-наплыв орды (Horde Surge) в середине волны (начиная с 4 волны, если лимит мобов волны ещё не исчерпан)
+    // Мини-наплыв орды (Horde Surge) в середине волны (начиная с 5 волны, если лимит мобов волны ещё не исчерпан)
     const waveDuration = CONFIG.waves.waveDuration || 12;
     g.waveElapsedT = (g.waveElapsedT || 0) + dt;
-    if(curWaveNum >= 4 && g.waveElapsedT >= 5.5 && g.waveElapsedT <= 7.0 && g.lastSurgeWave !== g.wave && (g.waveSpawnedCount || 0) < waveBudget){
+    if(curWaveNum >= 5 && g.waveElapsedT >= 5.5 && g.waveElapsedT <= 7.0 && g.lastSurgeWave !== g.wave && (g.waveSpawnedCount || 0) < waveBudget){
       g.lastSurgeWave = g.wave;
       const surgeCount = curWaveNum <= 8 ? 4 : 6;
       const surgeAngle = Math.random() * 6.283;
       let surgeEnemy = null;
       if(curLvlId === 1){
-        surgeEnemy = curWaveNum < 6 ? CONFIG.enemies.hound : (curWaveNum < 12 ? CONFIG.enemies.rat : CONFIG.enemies.zombie_mutant);
+        surgeEnemy = curWaveNum < 10 ? CONFIG.enemies.hound : (curWaveNum < 16 ? CONFIG.enemies.rat : CONFIG.enemies.zombie_mutant);
       } else if(curLvlId === 2){
         surgeEnemy = curWaveNum < 6 ? CONFIG.enemies.spiderling : (curWaveNum < 15 ? CONFIG.enemies.bat : CONFIG.enemies.ghoul);
       }
