@@ -9767,10 +9767,18 @@ function quitToMenu(){
       G.xpGiven=totalAccXp;
       gainAccXp(xpG);
     }
+    G.run = false;
+    G.activeBoss = null;
+    G.bossArena = null;
+    G.bossWarning = null;
+    G.bossShockwaves = [];
+    G.bossCraters = [];
   }
   document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.remove('open'));
   G=null;
   showScreen('menu');
+  const d=Math.min(window.devicePixelRatio||1,2);
+  cx.setTransform(d,0,0,d,0,0);
   if(window.Platform&&Platform.gameplayStop)Platform.gameplayStop();
   if(window.Platform&&Platform.interstitial)Platform.interstitial();
 }
@@ -12124,14 +12132,7 @@ function spawnRatKingBoss(){
   if(g.enemies.some(e => e.isBoss && e.bossId === 'rat_king' && !e.dead)) return;
 
   prepareBossArena(g);
-  const ang = Math.random() * 6.283;
-  const dist = 110 + Math.random() * 30;
-  const maxDx = Math.max(70, W * 0.35 - 30);
-  const maxDy = Math.max(80, H * 0.28 - 30);
-  const dx = Math.max(-maxDx, Math.min(maxDx, Math.cos(ang) * dist));
-  const dy = Math.max(-maxDy, Math.min(maxDy, Math.sin(ang) * dist));
-  const bx = p.x + dx;
-  const by = p.y + dy;
+  const { bx, by } = computeBossSpawnCoords(p, g, 78);
 
   const isFinalBoss = (g.wave >= 30 && (!g.lvlConfig || g.lvlConfig.id === 1));
   const ratBaseHp = isFinalBoss ? 27000 : 16000;
@@ -12210,14 +12211,7 @@ function spawnKrakenBoss(){
   if(g.enemies.some(e => e.isBoss && (e.bossId === 'kraken' || e.bossId === 'abomination') && !e.dead)) return;
 
   prepareBossArena(g);
-  const ang = Math.random() * 6.283;
-  const dist = 115 + Math.random() * 30;
-  const maxDx = Math.max(70, W * 0.35 - 30);
-  const maxDy = Math.max(80, H * 0.28 - 30);
-  const dx = Math.max(-maxDx, Math.min(maxDx, Math.cos(ang) * dist));
-  const dy = Math.max(-maxDy, Math.min(maxDy, Math.sin(ang) * dist));
-  const bx = p.x + dx;
-  const by = p.y + dy;
+  const { bx, by } = computeBossSpawnCoords(p, g, 78);
 
   const krakenBaseHp = (g.wave >= 50) ? 120000 : ((g.wave >= 40) ? 84000 : 52000);
   const maxHp = scaledBossHp(g, krakenBaseHp);
@@ -12297,14 +12291,7 @@ function spawnBroodmotherBoss(){
   if(g.enemies.some(e => e.isBoss && e.bossId === 'broodmother' && !e.dead)) return;
 
   prepareBossArena(g);
-  const ang = Math.random() * 6.283;
-  const dist = 110 + Math.random() * 30;
-  const maxDx = Math.max(70, W * 0.35 - 30);
-  const maxDy = Math.max(80, H * 0.28 - 30);
-  const dx = Math.max(-maxDx, Math.min(maxDx, Math.cos(ang) * dist));
-  const dy = Math.max(-maxDy, Math.min(maxDy, Math.sin(ang) * dist));
-  const bx = p.x + dx;
-  const by = p.y + dy;
+  const { bx, by } = computeBossSpawnCoords(p, g, 96);
 
   const maxHp = scaledBossHp(g, 9500);
   const boss = {
@@ -12381,14 +12368,7 @@ function spawnTreantBoss(){
   if(g.enemies.some(e => e.isBoss && e.bossId === 'treant' && !e.dead)) return;
 
   prepareBossArena(g);
-  const ang = Math.random() * 6.283;
-  const dist = 115 + Math.random() * 30;
-  const maxDx = Math.max(70, W * 0.35 - 30);
-  const maxDy = Math.max(80, H * 0.28 - 30);
-  const dx = Math.max(-maxDx, Math.min(maxDx, Math.cos(ang) * dist));
-  const dy = Math.max(-maxDy, Math.min(maxDy, Math.sin(ang) * dist));
-  const bx = p.x + dx;
-  const by = p.y + dy;
+  const { bx, by } = computeBossSpawnCoords(p, g, 86);
 
   const maxHp = scaledBossHp(g, 47000);
   const boss = {
@@ -12536,6 +12516,27 @@ function spawnSlimeBoss(){
 }
 window.spawnSlimeBoss = spawnSlimeBoss;
 
+// Расчет точки спавна босса: строго по вертикали в поле зрения игрока,
+// с мягким центрированием по X, чтобы босс и все кольца телеграфа гарантированно помещались в экран
+function computeBossSpawnCoords(p, g, bossRadius = 78){
+  const arenaY = g.bossArena ? g.bossArena.y : (p.y - 300);
+  const topMargin = p.y - arenaY;
+  // Если у игрока сверху достаточно места на арене (>160px) — спавним сверху (классический вход босса)
+  const spawnAbove = topMargin > 160;
+  const dirY = spawnAbove ? -1 : 1;
+  const distY = 118 + Math.random() * 22;
+  const dy = dirY * distY;
+
+  // Ограничиваем X так, чтобы босс (~160-192px) и его 140px телеграфные кольца не касались краёв экрана
+  const safePad = Math.max(15, Math.min(38, (W * 0.5) - bossRadius - 25));
+  const dx = (Math.random() - 0.5) * 2 * safePad;
+
+  return {
+    bx: p.x + dx,
+    by: p.y + dy
+  };
+}
+
 // ===== БОСС 1 (ВОЛНА 10, ЛОК. 3): КИБЕР-ЦЕРБЕР =====
 function spawnCyberCerberusBoss(){
   if(!G || !G.run) return;
@@ -12543,14 +12544,7 @@ function spawnCyberCerberusBoss(){
   if(g.enemies.some(e => e.isBoss && e.bossId === 'cyber_cerberus' && !e.dead)) return;
 
   prepareBossArena(g);
-  const ang = Math.random() * 6.283;
-  const dist = 110 + Math.random() * 30;
-  const maxDx = Math.max(70, W * 0.35 - 30);
-  const maxDy = Math.max(80, H * 0.28 - 30);
-  const dx = Math.max(-maxDx, Math.min(maxDx, Math.cos(ang) * dist));
-  const dy = Math.max(-maxDy, Math.min(maxDy, Math.sin(ang) * dist));
-  const bx = p.x + dx;
-  const by = p.y + dy;
+  const { bx, by } = computeBossSpawnCoords(p, g, 78);
 
   const maxHp = scaledBossHp(g, 90000);
   const boss = {
@@ -24533,7 +24527,79 @@ function drawSlimeEmergence(e, ex, ey, gy){
 }
 
 
-// ===== АНИМАЦИЯ ПОЯВЛЕНИЯ БОССА 1: КИБЕР-ЦЕРБЕР =====
+// ===== АНИМАЦИЯ ПОЯВЛЕНИЯ БОССОВ ЗОНЫ 3 (СЕКРЕТНЫЙ БУНКЕР) =====
+
+function drawCyberCerberusHatchLip(ex, gy, cw, ch){
+  cx.save();
+  cx.fillStyle = '#0f172a';
+  cx.beginPath();
+  cx.ellipse(ex, gy + 2, cw * 0.95, ch * 0.5, 0, 0, Math.PI);
+  cx.fill();
+  cx.strokeStyle = '#ef4444';
+  cx.lineWidth = 1.6;
+  cx.beginPath();
+  cx.ellipse(ex, gy + 2, cw * 0.9, ch * 0.5, 0, 0.1, Math.PI - 0.1);
+  cx.stroke();
+  cx.restore();
+}
+
+function drawBioButcherFissureLip(ex, gy, cw, ch){
+  cx.save();
+  cx.fillStyle = '#1c0505';
+  cx.beginPath();
+  cx.ellipse(ex, gy + 2, cw * 0.95, ch * 0.5, 0, 0, Math.PI);
+  cx.fill();
+  cx.strokeStyle = '#dc2626';
+  cx.lineWidth = 1.6;
+  cx.beginPath();
+  cx.ellipse(ex, gy + 2, cw * 0.9, ch * 0.5, 0, 0.1, Math.PI - 0.1);
+  cx.stroke();
+  cx.restore();
+}
+
+function drawChitinReaperCraterLip(ex, gy, cw, ch){
+  cx.save();
+  cx.fillStyle = '#052e16';
+  cx.beginPath();
+  cx.ellipse(ex, gy + 2, cw * 0.95, ch * 0.5, 0, 0, Math.PI);
+  cx.fill();
+  cx.strokeStyle = '#22c55e';
+  cx.lineWidth = 1.6;
+  cx.beginPath();
+  cx.ellipse(ex, gy + 2, cw * 0.9, ch * 0.5, 0, 0.1, Math.PI - 0.1);
+  cx.stroke();
+  cx.restore();
+}
+
+function drawNeuroOvermindVortexLip(ex, gy, cw, ch){
+  cx.save();
+  cx.fillStyle = '#1e052e';
+  cx.beginPath();
+  cx.ellipse(ex, gy + 2, cw * 0.95, ch * 0.5, 0, 0, Math.PI);
+  cx.fill();
+  cx.strokeStyle = '#c084fc';
+  cx.lineWidth = 1.6;
+  cx.beginPath();
+  cx.ellipse(ex, gy + 2, cw * 0.9, ch * 0.5, 0, 0.1, Math.PI - 0.1);
+  cx.stroke();
+  cx.restore();
+}
+
+function drawPatientZeroCraterLip(ex, gy, cw, ch){
+  cx.save();
+  cx.fillStyle = '#180404';
+  cx.beginPath();
+  cx.ellipse(ex, gy + 2, cw * 0.95, ch * 0.5, 0, 0, Math.PI);
+  cx.fill();
+  cx.strokeStyle = '#ef4444';
+  cx.lineWidth = 1.8;
+  cx.beginPath();
+  cx.ellipse(ex, gy + 2, cw * 0.9, ch * 0.5, 0, 0.1, Math.PI - 0.1);
+  cx.stroke();
+  cx.restore();
+}
+
+// ===== 1. КИБЕР-ЦЕРБЕР (ВОЛНА 10) =====
 function drawCyberCerberusEmergence(e, ex, ey, gy){
   const g = G;
   const emergeMax = e.emergeMaxT || 1.5;
@@ -24548,45 +24614,77 @@ function drawCyberCerberusEmergence(e, ex, ey, gy){
     return;
   }
 
-  // Механический шлюз бункера: стальные створки и плазменное свечение из шахты
+  const fw = 340, fh = 300, bw = 156, bh = 138;
   const hatchExpand = Math.min(1, prog * 2.5);
-  const hw = 58 * hatchExpand + 6;
-  const hh = 20 * hatchExpand + 2;
+  const cw = 58 * hatchExpand + 6;
+  const ch = 20 * hatchExpand + 2;
 
   cx.save();
-  const pitGrad = cx.createRadialGradient(ex, gy, 4, ex, gy, hw);
+  const pitGrad = cx.createRadialGradient(ex, gy, 4, ex, gy, cw);
   pitGrad.addColorStop(0, '#1a0505');
   pitGrad.addColorStop(0.55, '#3b0808');
   pitGrad.addColorStop(0.85, '#6b1111');
   pitGrad.addColorStop(1, 'rgba(0,0,0,0)');
   cx.fillStyle = pitGrad;
   cx.beginPath();
-  cx.ellipse(ex, gy, hw, hh, 0, 0, 6.283);
+  cx.ellipse(ex, gy, cw, ch, 0, 0, 6.283);
   cx.fill();
 
   cx.strokeStyle = '#ef4444';
   cx.lineWidth = 1.8;
   cx.beginPath();
-  cx.ellipse(ex, gy, hw, hh, 0, 0, 6.283);
+  cx.ellipse(ex, gy, cw, ch, 0, 0, 6.283);
   cx.stroke();
   cx.restore();
 
-  if(prog < 0.3){
+  // Фаза 1: сенсоры трёх голов
+  if(prog < 0.28){
     cx.save();
-    const sensorAlpha = Math.min(1, prog / 0.3);
+    const sensorAlpha = Math.min(1, prog / 0.28);
     const pulse = 0.8 + 0.2 * Math.sin(performance.now() * 0.02);
     cx.fillStyle = `rgba(239, 68, 68, ${0.95 * sensorAlpha * pulse})`;
     cx.shadowColor = '#ef4444';
     cx.shadowBlur = 10;
     for(const offX of [-16, 0, 16]){
-      cx.beginPath(); cx.arc(ex + offX, gy - 10, 3, 0, 6.283); cx.fill();
+      cx.beginPath(); cx.arc(ex + offX, gy - 8, 3, 0, 6.283); cx.fill();
     }
     cx.shadowBlur = 0;
     cx.restore();
     return;
   }
 
-  if(!e.emergeSlamDone && prog >= 0.74){
+  const sheet = (bossCyberCerberusWalkImg && bossCyberCerberusWalkImg.complete && bossCyberCerberusWalkImg.naturalWidth > 0) ? bossCyberCerberusWalkImg : bossCyberCerberusSheetImg;
+
+  // Фаза 2: Выход из шлюза с клиппингом по уровню земли
+  if(prog < 0.74){
+    const subProg = (prog - 0.28) / (0.74 - 0.28);
+    const riseY = (1 - subProg) * 50;
+    const climbFrame = Math.min(7, Math.floor(subProg * 8));
+
+    cx.save();
+    cx.beginPath();
+    cx.rect(ex - 110, gy - 200, 220, 200 + 4);
+    cx.clip();
+
+    cx.save();
+    cx.translate(ex, ey + riseY);
+    if(e.facing > 0) cx.scale(-1, 1);
+    cx.imageSmoothingEnabled = false;
+    cx.filter = 'drop-shadow(0 0 10px rgba(239, 68, 68, 0.75))';
+    if(sheet && sheet.complete && sheet.naturalWidth > 0){
+      cx.drawImage(sheet, climbFrame * fw, 0, fw, fh, -bw / 2, -bh / 2 - 8, bw, bh);
+    } else if(bossCyberCerberusImg && bossCyberCerberusImg.complete && bossCyberCerberusImg.naturalWidth > 0){
+      cx.drawImage(bossCyberCerberusImg, -bw / 2, -bh / 2 - 8, bw, bh);
+    }
+    cx.restore();
+    cx.restore();
+
+    drawCyberCerberusHatchLip(ex, gy, cw, ch);
+    return;
+  }
+
+  // Фаза 3: Приземление и готовность к бою
+  if(!e.emergeSlamDone){
     e.emergeSlamDone = true;
     Sfx.play('dash');
     if(g) g.shake = Math.max(g.shake || 0, 0.55);
@@ -24605,29 +24703,30 @@ function drawCyberCerberusEmergence(e, ex, ey, gy){
     }
   }
 
-  const subProg = (prog - 0.3) / 0.7;
-  const riseY = (1 - subProg) * 45;
-  const bw = 156, bh = 138;
+  const slamProg = (prog - 0.74) / 0.26;
+  const frame = Math.min(7, Math.floor(slamProg * 8));
 
   cx.save();
-  cx.translate(ex, ey + riseY);
-  if(e.facing < 0) cx.scale(-1, 1);
-  cx.globalAlpha = Math.min(1, subProg * 1.4);
-  cx.imageSmoothingEnabled = false;
+  cx.fillStyle = 'rgba(0,0,0,0.52)';
+  cx.beginPath(); cx.ellipse(ex, gy, 52, 16, 0, 0, 6.283); cx.fill();
+  cx.restore();
 
-  const currentSheet = bossCyberCerberusWalkImg || bossCyberCerberusSheetImg;
-  const frame = Math.floor(subProg * 8) % 8;
-  if(currentSheet && currentSheet.complete && currentSheet.naturalWidth > 0){
-    cx.drawImage(currentSheet, frame * 340, 0, 340, 300, -bw / 2, -bh / 2 - 8, bw, bh);
+  cx.save();
+  cx.translate(ex, ey);
+  if(e.facing > 0) cx.scale(-1, 1);
+  cx.imageSmoothingEnabled = false;
+  cx.filter = 'drop-shadow(0 0 12px rgba(239, 68, 68, 0.85))';
+  if(sheet && sheet.complete && sheet.naturalWidth > 0){
+    cx.drawImage(sheet, frame * fw, 0, fw, fh, -bw / 2, -bh / 2 - 8, bw, bh);
   } else if(bossCyberCerberusImg && bossCyberCerberusImg.complete && bossCyberCerberusImg.naturalWidth > 0){
     cx.drawImage(bossCyberCerberusImg, -bw / 2, -bh / 2 - 8, bw, bh);
-  } else {
-    circle(0, 0, e.c.r, '#ef4444');
   }
   cx.restore();
+
+  drawCyberCerberusHatchLip(ex, gy, cw, ch);
 }
 
-// ===== АНИМАЦИЯ ПОЯВЛЕНИЯ БОССА 2: ХИРУРГ-МЯСНИК =====
+// ===== 2. ХИРУРГ-МЯСНИК (ВОЛНА 20) =====
 function drawBioButcherEmergence(e, ex, ey, gy){
   const g = G;
   const emergeMax = e.emergeMaxT || 1.5;
@@ -24642,32 +24741,34 @@ function drawBioButcherEmergence(e, ex, ey, gy){
     return;
   }
 
+  const fw = 360, fh = 300, bw = 192, bh = 160;
   const pitExpand = Math.min(1, prog * 2.5);
-  const pw = 56 * pitExpand + 6;
-  const ph = 22 * pitExpand + 2;
+  const cw = 56 * pitExpand + 6;
+  const ch = 22 * pitExpand + 2;
 
   cx.save();
-  const pitGrad = cx.createRadialGradient(ex, gy, 4, ex, gy, pw);
+  const pitGrad = cx.createRadialGradient(ex, gy, 4, ex, gy, cw);
   pitGrad.addColorStop(0, '#1a0404');
   pitGrad.addColorStop(0.55, '#450a0a');
   pitGrad.addColorStop(0.85, '#7f1d1d');
   pitGrad.addColorStop(1, 'rgba(0,0,0,0)');
   cx.fillStyle = pitGrad;
   cx.beginPath();
-  cx.ellipse(ex, gy, pw, ph, 0, 0, 6.283);
+  cx.ellipse(ex, gy, cw, ch, 0, 0, 6.283);
   cx.fill();
 
   cx.strokeStyle = '#dc2626';
   cx.lineWidth = 2.0;
   cx.beginPath();
-  cx.ellipse(ex, gy, pw, ph, 0, 0, 6.283);
+  cx.ellipse(ex, gy, cw, ch, 0, 0, 6.283);
   cx.stroke();
   cx.restore();
 
-  if(prog < 0.3){
+  // Фаза 1: тесак и крюк пробивают породу
+  if(prog < 0.28){
     cx.save();
-    const bladeH = (prog / 0.3) * 26;
-    cx.translate(ex + (e.facing > 0 ? 14 : -14), gy - 4);
+    const bladeH = (prog / 0.28) * 26;
+    cx.translate(ex + (e.facing > 0 ? -14 : 14), gy - 4);
     cx.fillStyle = '#475569';
     cx.strokeStyle = '#dc2626';
     cx.lineWidth = 1.5;
@@ -24681,7 +24782,38 @@ function drawBioButcherEmergence(e, ex, ey, gy){
     return;
   }
 
-  if(!e.emergeSlamDone && prog >= 0.74){
+  const sheet = (bossBioButcherWalkImg && bossBioButcherWalkImg.complete && bossBioButcherWalkImg.naturalWidth > 0) ? bossBioButcherWalkImg : bossBioButcherSheetImg;
+
+  // Фаза 2: Выход Мясника из коллектора с клиппингом
+  if(prog < 0.74){
+    const subProg = (prog - 0.28) / (0.74 - 0.28);
+    const riseY = (1 - subProg) * 52;
+    const climbFrame = Math.min(7, Math.floor(subProg * 8));
+
+    cx.save();
+    cx.beginPath();
+    cx.rect(ex - 120, gy - 210, 240, 210 + 4);
+    cx.clip();
+
+    cx.save();
+    cx.translate(ex, ey + riseY);
+    if(e.facing > 0) cx.scale(-1, 1);
+    cx.imageSmoothingEnabled = false;
+    cx.filter = 'drop-shadow(0 0 10px rgba(220, 38, 38, 0.75))';
+    if(sheet && sheet.complete && sheet.naturalWidth > 0){
+      cx.drawImage(sheet, climbFrame * fw, 0, fw, fh, -bw / 2, -bh / 2 - 8, bw, bh);
+    } else if(bossBioButcherImg && bossBioButcherImg.complete && bossBioButcherImg.naturalWidth > 0){
+      cx.drawImage(bossBioButcherImg, -bw / 2, -bh / 2 - 8, bw, bh);
+    }
+    cx.restore();
+    cx.restore();
+
+    drawBioButcherFissureLip(ex, gy, cw, ch);
+    return;
+  }
+
+  // Фаза 3: Землетрясение от шага Мясника
+  if(!e.emergeSlamDone){
     e.emergeSlamDone = true;
     Sfx.play('anvil');
     if(g) g.shake = Math.max(g.shake || 0, 0.6);
@@ -24700,29 +24832,30 @@ function drawBioButcherEmergence(e, ex, ey, gy){
     }
   }
 
-  const subProg = (prog - 0.3) / 0.7;
-  const riseY = (1 - subProg) * 48;
-  const bw = 152, bh = 142;
+  const slamProg = (prog - 0.74) / 0.26;
+  const frame = Math.min(7, Math.floor(slamProg * 8));
 
   cx.save();
-  cx.translate(ex, ey + riseY);
-  if(e.facing < 0) cx.scale(-1, 1);
-  cx.globalAlpha = Math.min(1, subProg * 1.4);
-  cx.imageSmoothingEnabled = false;
+  cx.fillStyle = 'rgba(0,0,0,0.56)';
+  cx.beginPath(); cx.ellipse(ex, gy, 56, 18, 0, 0, 6.283); cx.fill();
+  cx.restore();
 
-  const currentSheet = bossBioButcherWalkImg || bossBioButcherSheetImg;
-  const frame = Math.floor(subProg * 8) % 8;
-  if(currentSheet && currentSheet.complete && currentSheet.naturalWidth > 0){
-    cx.drawImage(currentSheet, frame * 320, 0, 320, 300, -bw / 2, -bh / 2 - 8, bw, bh);
+  cx.save();
+  cx.translate(ex, ey);
+  if(e.facing > 0) cx.scale(-1, 1);
+  cx.imageSmoothingEnabled = false;
+  cx.filter = 'drop-shadow(0 0 12px rgba(220, 38, 38, 0.85))';
+  if(sheet && sheet.complete && sheet.naturalWidth > 0){
+    cx.drawImage(sheet, frame * fw, 0, fw, fh, -bw / 2, -bh / 2 - 8, bw, bh);
   } else if(bossBioButcherImg && bossBioButcherImg.complete && bossBioButcherImg.naturalWidth > 0){
     cx.drawImage(bossBioButcherImg, -bw / 2, -bh / 2 - 8, bw, bh);
-  } else {
-    circle(0, 0, e.c.r, '#dc2626');
   }
   cx.restore();
+
+  drawBioButcherFissureLip(ex, gy, cw, ch);
 }
 
-// ===== АНИМАЦИЯ ПОЯВЛЕНИЯ БОССА 3: ХИТИНОВЫЙ ЖНЕЦ =====
+// ===== 3. ХИТИНОВЫЙ ЖНЕЦ (ВОЛНА 30) =====
 function drawChitinReaperEmergence(e, ex, ey, gy){
   const g = G;
   const emergeMax = e.emergeMaxT || 1.8;
@@ -24737,31 +24870,33 @@ function drawChitinReaperEmergence(e, ex, ey, gy){
     return;
   }
 
+  const fw = 280, fh = 280, bw = 156, bh = 156;
   const pitExpand = Math.min(1, prog * 2.5);
-  const pw = 54 * pitExpand + 6;
-  const ph = 20 * pitExpand + 2;
+  const cw = 54 * pitExpand + 6;
+  const ch = 20 * pitExpand + 2;
 
   cx.save();
-  const pitGrad = cx.createRadialGradient(ex, gy, 4, ex, gy, pw);
+  const pitGrad = cx.createRadialGradient(ex, gy, 4, ex, gy, cw);
   pitGrad.addColorStop(0, '#052e16');
   pitGrad.addColorStop(0.55, '#14532d');
   pitGrad.addColorStop(0.85, '#166534');
   pitGrad.addColorStop(1, 'rgba(0,0,0,0)');
   cx.fillStyle = pitGrad;
   cx.beginPath();
-  cx.ellipse(ex, gy, pw, ph, 0, 0, 6.283);
+  cx.ellipse(ex, gy, cw, ch, 0, 0, 6.283);
   cx.fill();
 
   cx.strokeStyle = '#22c55e';
   cx.lineWidth = 1.8;
   cx.beginPath();
-  cx.ellipse(ex, gy, pw, ph, 0, 0, 6.283);
+  cx.ellipse(ex, gy, cw, ch, 0, 0, 6.283);
   cx.stroke();
   cx.restore();
 
-  if(prog < 0.3){
+  // Фаза 1: острие жвал и косы
+  if(prog < 0.28){
     cx.save();
-    const scytheH = (prog / 0.3) * 24;
+    const scytheH = (prog / 0.28) * 24;
     cx.translate(ex, gy - 2);
     cx.strokeStyle = '#4ade80';
     cx.lineWidth = 2.2;
@@ -24773,7 +24908,38 @@ function drawChitinReaperEmergence(e, ex, ey, gy){
     return;
   }
 
-  if(!e.emergeSlamDone && prog >= 0.74){
+  const sheet = (bossChitinReaperWalkImg && bossChitinReaperWalkImg.complete && bossChitinReaperWalkImg.naturalWidth > 0) ? bossChitinReaperWalkImg : bossChitinReaperSheetImg;
+
+  // Фаза 2: Выползание скорпиона с клиппингом по уровню земли
+  if(prog < 0.74){
+    const subProg = (prog - 0.28) / (0.74 - 0.28);
+    const riseY = (1 - subProg) * 48;
+    const climbFrame = Math.min(7, Math.floor(subProg * 8));
+
+    cx.save();
+    cx.beginPath();
+    cx.rect(ex - 110, gy - 200, 220, 200 + 4);
+    cx.clip();
+
+    cx.save();
+    cx.translate(ex, ey + riseY);
+    if(e.facing > 0) cx.scale(-1, 1);
+    cx.imageSmoothingEnabled = false;
+    cx.filter = 'drop-shadow(0 0 10px rgba(34, 197, 94, 0.75))';
+    if(sheet && sheet.complete && sheet.naturalWidth > 0){
+      cx.drawImage(sheet, climbFrame * fw, 0, fw, fh, -bw / 2, -bh / 2 - 8, bw, bh);
+    } else if(bossChitinReaperImg && bossChitinReaperImg.complete && bossChitinReaperImg.naturalWidth > 0){
+      cx.drawImage(bossChitinReaperImg, -bw / 2, -bh / 2 - 8, bw, bh);
+    }
+    cx.restore();
+    cx.restore();
+
+    drawChitinReaperCraterLip(ex, gy, cw, ch);
+    return;
+  }
+
+  // Фаза 3: Всплеск кислоты и появление скорпиона в полный рост
+  if(!e.emergeSlamDone){
     e.emergeSlamDone = true;
     Sfx.play('dash');
     if(g) g.shake = Math.max(g.shake || 0, 0.55);
@@ -24792,29 +24958,30 @@ function drawChitinReaperEmergence(e, ex, ey, gy){
     }
   }
 
-  const subProg = (prog - 0.3) / 0.7;
-  const riseY = (1 - subProg) * 44;
-  const bw = 148, bh = 140;
+  const slamProg = (prog - 0.74) / 0.26;
+  const frame = Math.min(7, Math.floor(slamProg * 8));
 
   cx.save();
-  cx.translate(ex, ey + riseY);
-  if(e.facing < 0) cx.scale(-1, 1);
-  cx.globalAlpha = Math.min(1, subProg * 1.4);
-  cx.imageSmoothingEnabled = false;
+  cx.fillStyle = 'rgba(0,0,0,0.52)';
+  cx.beginPath(); cx.ellipse(ex, gy, 54, 16, 0, 0, 6.283); cx.fill();
+  cx.restore();
 
-  const currentSheet = bossChitinReaperWalkImg || bossChitinReaperSheetImg;
-  const frame = Math.floor(subProg * 8) % 8;
-  if(currentSheet && currentSheet.complete && currentSheet.naturalWidth > 0){
-    cx.drawImage(currentSheet, frame * 320, 0, 320, 300, -bw / 2, -bh / 2 - 8, bw, bh);
+  cx.save();
+  cx.translate(ex, ey);
+  if(e.facing > 0) cx.scale(-1, 1);
+  cx.imageSmoothingEnabled = false;
+  cx.filter = 'drop-shadow(0 0 12px rgba(34, 197, 94, 0.85))';
+  if(sheet && sheet.complete && sheet.naturalWidth > 0){
+    cx.drawImage(sheet, frame * fw, 0, fw, fh, -bw / 2, -bh / 2 - 8, bw, bh);
   } else if(bossChitinReaperImg && bossChitinReaperImg.complete && bossChitinReaperImg.naturalWidth > 0){
     cx.drawImage(bossChitinReaperImg, -bw / 2, -bh / 2 - 8, bw, bh);
-  } else {
-    circle(0, 0, e.c.r, '#22c55e');
   }
   cx.restore();
+
+  drawChitinReaperCraterLip(ex, gy, cw, ch);
 }
 
-// ===== АНИМАЦИЯ ПОЯВЛЕНИЯ БОССА 4: НЕЙРО-СВЕРХРАЗУМ =====
+// ===== 4. НЕЙРО-СВЕРХРАЗУМ (ВОЛНА 40) =====
 function drawNeuroOvermindEmergence(e, ex, ey, gy){
   const g = G;
   const emergeMax = e.emergeMaxT || 1.6;
@@ -24829,29 +24996,31 @@ function drawNeuroOvermindEmergence(e, ex, ey, gy){
     return;
   }
 
+  const fw = 320, fh = 320, bw = 156, bh = 156;
   const vortexExpand = Math.min(1, prog * 2.5);
-  const vw = 52 * vortexExpand + 6;
-  const vh = 22 * vortexExpand + 2;
+  const cw = 52 * vortexExpand + 6;
+  const ch = 22 * vortexExpand + 2;
 
   cx.save();
-  const pitGrad = cx.createRadialGradient(ex, gy, 4, ex, gy, vw);
+  const pitGrad = cx.createRadialGradient(ex, gy, 4, ex, gy, cw);
   pitGrad.addColorStop(0, '#1e052e');
   pitGrad.addColorStop(0.55, '#581c87');
   pitGrad.addColorStop(0.85, '#7e22ce');
   pitGrad.addColorStop(1, 'rgba(0,0,0,0)');
   cx.fillStyle = pitGrad;
   cx.beginPath();
-  cx.ellipse(ex, gy, vw, vh, 0, 0, 6.283);
+  cx.ellipse(ex, gy, cw, ch, 0, 0, 6.283);
   cx.fill();
 
   cx.strokeStyle = '#c084fc';
   cx.lineWidth = 1.6;
   cx.beginPath();
-  cx.ellipse(ex, gy, vw, vh, performance.now() * 0.002, 0, 6.283);
+  cx.ellipse(ex, gy, cw, ch, performance.now() * 0.002, 0, 6.283);
   cx.stroke();
   cx.restore();
 
-  if(prog < 0.3){
+  // Фаза 1: псионические молнии
+  if(prog < 0.28){
     cx.save();
     const pulse = 0.8 + 0.2 * Math.sin(performance.now() * 0.025);
     cx.strokeStyle = `rgba(192, 132, 252, ${0.9 * pulse})`;
@@ -24859,14 +25028,45 @@ function drawNeuroOvermindEmergence(e, ex, ey, gy){
     for(let a = 0; a < 6.28; a += 1.25){
       cx.beginPath();
       cx.moveTo(ex, gy - 8);
-      cx.lineTo(ex + Math.cos(a) * 25 * (prog / 0.3), gy - 8 + Math.sin(a) * 16 * (prog / 0.3));
+      cx.lineTo(ex + Math.cos(a) * 25 * (prog / 0.28), gy - 8 + Math.sin(a) * 16 * (prog / 0.28));
       cx.stroke();
     }
     cx.restore();
     return;
   }
 
-  if(!e.emergeSlamDone && prog >= 0.74){
+  const sheet = (bossNeuroOvermindFloatImg && bossNeuroOvermindFloatImg.complete && bossNeuroOvermindFloatImg.naturalWidth > 0) ? bossNeuroOvermindFloatImg : bossNeuroOvermindSheetImg;
+
+  // Фаза 2: Левитация из портала с клиппингом
+  if(prog < 0.74){
+    const subProg = (prog - 0.28) / (0.74 - 0.28);
+    const riseY = (1 - subProg) * 44;
+    const climbFrame = Math.min(7, Math.floor(subProg * 8));
+
+    cx.save();
+    cx.beginPath();
+    cx.rect(ex - 110, gy - 200, 220, 200 + 4);
+    cx.clip();
+
+    cx.save();
+    cx.translate(ex, ey + riseY);
+    if(e.facing > 0) cx.scale(-1, 1);
+    cx.imageSmoothingEnabled = false;
+    cx.filter = 'drop-shadow(0 0 12px rgba(168, 85, 247, 0.85))';
+    if(sheet && sheet.complete && sheet.naturalWidth > 0){
+      cx.drawImage(sheet, climbFrame * fw, 0, fw, fh, -bw / 2, -bh / 2 - 8, bw, bh);
+    } else if(bossNeuroOvermindImg && bossNeuroOvermindImg.complete && bossNeuroOvermindImg.naturalWidth > 0){
+      cx.drawImage(bossNeuroOvermindImg, -bw / 2, -bh / 2 - 8, bw, bh);
+    }
+    cx.restore();
+    cx.restore();
+
+    drawNeuroOvermindVortexLip(ex, gy, cw, ch);
+    return;
+  }
+
+  // Фаза 3: Пси-детонация и переход в парение
+  if(!e.emergeSlamDone){
     e.emergeSlamDone = true;
     Sfx.play('hit');
     if(g) g.shake = Math.max(g.shake || 0, 0.5);
@@ -24885,29 +25085,30 @@ function drawNeuroOvermindEmergence(e, ex, ey, gy){
     }
   }
 
-  const subProg = (prog - 0.3) / 0.7;
-  const riseY = (1 - subProg) * 40;
-  const bw = 138, bh = 138;
+  const slamProg = (prog - 0.74) / 0.26;
+  const frame = Math.min(7, Math.floor(slamProg * 8));
 
   cx.save();
-  cx.translate(ex, ey + riseY);
-  if(e.facing < 0) cx.scale(-1, 1);
-  cx.globalAlpha = Math.min(1, subProg * 1.4);
-  cx.imageSmoothingEnabled = false;
+  cx.fillStyle = 'rgba(0,0,0,0.52)';
+  cx.beginPath(); cx.ellipse(ex, gy, 52, 16, 0, 0, 6.283); cx.fill();
+  cx.restore();
 
-  const currentSheet = bossNeuroOvermindFloatImg || bossNeuroOvermindSheetImg;
-  const frame = Math.floor(subProg * 8) % 8;
-  if(currentSheet && currentSheet.complete && currentSheet.naturalWidth > 0){
-    cx.drawImage(currentSheet, frame * 300, 0, 300, 300, -bw / 2, -bh / 2 - 8, bw, bh);
+  cx.save();
+  cx.translate(ex, ey);
+  if(e.facing > 0) cx.scale(-1, 1);
+  cx.imageSmoothingEnabled = false;
+  cx.filter = 'drop-shadow(0 0 14px rgba(168, 85, 247, 0.9))';
+  if(sheet && sheet.complete && sheet.naturalWidth > 0){
+    cx.drawImage(sheet, frame * fw, 0, fw, fh, -bw / 2, -bh / 2 - 8, bw, bh);
   } else if(bossNeuroOvermindImg && bossNeuroOvermindImg.complete && bossNeuroOvermindImg.naturalWidth > 0){
     cx.drawImage(bossNeuroOvermindImg, -bw / 2, -bh / 2 - 8, bw, bh);
-  } else {
-    circle(0, 0, e.c.r, '#a855f7');
   }
   cx.restore();
+
+  drawNeuroOvermindVortexLip(ex, gy, cw, ch);
 }
 
-// ===== АНИМАЦИЯ ПОЯВЛЕНИЯ БОССА 5: НУЛЕВОЙ ПАЦИЕНТ =====
+// ===== 5. НУЛЕВОЙ ПАЦИЕНТ (ВОЛНА 50) =====
 function drawPatientZeroEmergence(e, ex, ey, gy){
   const g = G;
   const emergeMax = e.emergeMaxT || 2.0;
@@ -24922,6 +25123,7 @@ function drawPatientZeroEmergence(e, ex, ey, gy){
     return;
   }
 
+  const fw = 280, fh = 280, bw = 172, bh = 172;
   const craterExpand = Math.min(1, prog * 2.5);
   const cw = 64 * craterExpand + 8;
   const ch = 24 * craterExpand + 3;
@@ -24944,21 +25146,53 @@ function drawPatientZeroEmergence(e, ex, ey, gy){
   cx.stroke();
   cx.restore();
 
-  if(prog < 0.3){
+  // Фаза 1: пульсация био-мутагена
+  if(prog < 0.28){
     cx.save();
     const pulse = 0.75 + 0.25 * Math.sin(performance.now() * 0.02);
-    cx.fillStyle = `rgba(239, 68, 68, ${0.85 * pulse * (prog / 0.3)})`;
+    cx.fillStyle = `rgba(239, 68, 68, ${0.85 * pulse * (prog / 0.28)})`;
     cx.shadowColor = '#ef4444';
     cx.shadowBlur = 12;
     cx.beginPath();
-    cx.arc(ex, gy - 6, 12 * (prog / 0.3), 0, 6.283);
+    cx.arc(ex, gy - 6, 12 * (prog / 0.28), 0, 6.283);
     cx.fill();
     cx.shadowBlur = 0;
     cx.restore();
     return;
   }
 
-  if(!e.emergeSlamDone && prog >= 0.74){
+  const sheet = (bossPatientZeroWalkImg && bossPatientZeroWalkImg.complete && bossPatientZeroWalkImg.naturalWidth > 0) ? bossPatientZeroWalkImg : bossPatientZeroSheetImg;
+
+  // Фаза 2: Подъем колосса из реактора с клиппингом
+  if(prog < 0.74){
+    const subProg = (prog - 0.28) / (0.74 - 0.28);
+    const riseY = (1 - subProg) * 56;
+    const climbFrame = Math.min(7, Math.floor(subProg * 8));
+
+    cx.save();
+    cx.beginPath();
+    cx.rect(ex - 120, gy - 220, 240, 220 + 4);
+    cx.clip();
+
+    cx.save();
+    cx.translate(ex, ey + riseY);
+    if(e.facing > 0) cx.scale(-1, 1);
+    cx.imageSmoothingEnabled = false;
+    cx.filter = 'drop-shadow(0 0 12px rgba(239, 68, 68, 0.85))';
+    if(sheet && sheet.complete && sheet.naturalWidth > 0){
+      cx.drawImage(sheet, climbFrame * fw, 0, fw, fh, -bw / 2, -bh / 2 - 10, bw, bh);
+    } else if(bossPatientZeroImg && bossPatientZeroImg.complete && bossPatientZeroImg.naturalWidth > 0){
+      cx.drawImage(bossPatientZeroImg, -bw / 2, -bh / 2 - 10, bw, bh);
+    }
+    cx.restore();
+    cx.restore();
+
+    drawPatientZeroCraterLip(ex, gy, cw, ch);
+    return;
+  }
+
+  // Фаза 3: Взрыв реактора и выход в полный рост
+  if(!e.emergeSlamDone){
     e.emergeSlamDone = true;
     Sfx.play('anvil');
     if(g) g.shake = Math.max(g.shake || 0, 0.7);
@@ -24977,26 +25211,27 @@ function drawPatientZeroEmergence(e, ex, ey, gy){
     }
   }
 
-  const subProg = (prog - 0.3) / 0.7;
-  const riseY = (1 - subProg) * 55;
-  const bw = 160, bh = 152;
+  const slamProg = (prog - 0.74) / 0.26;
+  const frame = Math.min(7, Math.floor(slamProg * 8));
 
   cx.save();
-  cx.translate(ex, ey + riseY);
-  if(e.facing < 0) cx.scale(-1, 1);
-  cx.globalAlpha = Math.min(1, subProg * 1.4);
-  cx.imageSmoothingEnabled = false;
+  cx.fillStyle = 'rgba(0,0,0,0.56)';
+  cx.beginPath(); cx.ellipse(ex, gy, 58, 18, 0, 0, 6.283); cx.fill();
+  cx.restore();
 
-  const currentSheet = bossPatientZeroWalkImg || bossPatientZeroSheetImg;
-  const frame = Math.floor(subProg * 8) % 8;
-  if(currentSheet && currentSheet.complete && currentSheet.naturalWidth > 0){
-    cx.drawImage(currentSheet, frame * 320, 0, 320, 300, -bw / 2, -bh / 2 - 8, bw, bh);
+  cx.save();
+  cx.translate(ex, ey);
+  if(e.facing > 0) cx.scale(-1, 1);
+  cx.imageSmoothingEnabled = false;
+  cx.filter = 'drop-shadow(0 0 14px rgba(239, 68, 68, 0.9))';
+  if(sheet && sheet.complete && sheet.naturalWidth > 0){
+    cx.drawImage(sheet, frame * fw, 0, fw, fh, -bw / 2, -bh / 2 - 10, bw, bh);
   } else if(bossPatientZeroImg && bossPatientZeroImg.complete && bossPatientZeroImg.naturalWidth > 0){
-    cx.drawImage(bossPatientZeroImg, -bw / 2, -bh / 2 - 8, bw, bh);
-  } else {
-    circle(0, 0, e.c.r, '#ef4444');
+    cx.drawImage(bossPatientZeroImg, -bw / 2, -bh / 2 - 10, bw, bh);
   }
   cx.restore();
+
+  drawPatientZeroCraterLip(ex, gy, cw, ch);
 }
 
 function drawCyberCerberusBoss(e, ox, oy){
@@ -29732,6 +29967,8 @@ function loop(now){
   if(rawDt>0.15)rawDt=0.15;
 
   try {
+    const d=Math.min(window.devicePixelRatio||1,2);
+    cx.setTransform(d,0,0,d,0,0);
     if(G&&G.run&&!G.pause){
       if(rawDt>0.033){
         const steps=Math.min(4,Math.ceil(rawDt/0.025));
