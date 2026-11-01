@@ -9735,6 +9735,7 @@ function testSkipBoss(){
     g.activeBoss = null;
     g.bossArena = null;
     g.bossWarning = null;
+    g.bossShockwaves = [];
     const gameHudEl = document.getElementById('screen-game');
     if(gameHudEl) gameHudEl.classList.remove('boss-hud-active', 'boss-warning-active');
     const nameEl = document.getElementById('hud-boss-name');
@@ -11996,6 +11997,9 @@ function prepareBossArena(g){
     x:g.p.x-side/2,
     y:g.p.y-side/2,
     size:side,
+    cx:g.p.x,
+    cy:g.p.y,
+    rad:side/2,
     spawnAt:performance.now()
   };
   // (СТАРЫЙ визуал удалён: красное кольцо вокруг игрока конфликтовало с новым телеграфом)
@@ -16008,12 +16012,15 @@ function update(dt){
       if(e.action === 'cage_prep'){
         e.actionT -= dt;
         if(e.actionT <= 0){
-          const arena = g.bossArena || { cx: e.x, cy: e.y, rad: 220 };
+          const arena = g.bossArena || { x: p.x - 220, y: p.y - 220, size: 440, cx: p.x, cy: p.y, rad: 220 };
+          const acx = arena.cx !== undefined ? arena.cx : (arena.x + arena.size / 2);
+          const acy = arena.cy !== undefined ? arena.cy : (arena.y + arena.size / 2);
+          const arad = arena.rad !== undefined ? arena.rad : (arena.size / 2);
           const corners = [0, 1.5708, 3.1416, 4.7124];
           for(let c = 0; c < 4; c++){
             const ang = corners[c];
-            const sx = arena.cx + Math.cos(ang) * (arena.rad - 25);
-            const sy = arena.cy + Math.sin(ang) * (arena.rad - 25);
+            const sx = acx + Math.cos(ang) * (arad - 25);
+            const sy = acy + Math.sin(ang) * (arad - 25);
             const targetAng = Math.atan2(p.y - sy, p.x - sx);
             const sSpd = 370;
             g.bossShockwaves.push({
@@ -16308,8 +16315,10 @@ function update(dt){
         e.actionT -= dt;
         if(e.actionT <= 0){
           if(g.bossArena){
-            e.x = g.bossArena.cx;
-            e.y = g.bossArena.cy;
+            const acx = g.bossArena.cx !== undefined ? g.bossArena.cx : (g.bossArena.x + g.bossArena.size / 2);
+            const acy = g.bossArena.cy !== undefined ? g.bossArena.cy : (g.bossArena.y + g.bossArena.size / 2);
+            e.x = acx;
+            e.y = acy;
           }
           for(let tw = 0; tw < 2; tw++){
             g.bossShockwaves.push({
@@ -16454,11 +16463,14 @@ function update(dt){
             type: 'psi_nova',
             col: '#a855f7'
           });
-          const arena = g.bossArena;
+          const arena = g.bossArena || { x: p.x - 220, y: p.y - 220, size: 440, cx: p.x, cy: p.y, rad: 220 };
+          const acx = arena.cx !== undefined ? arena.cx : (arena.x + arena.size / 2);
+          const acy = arena.cy !== undefined ? arena.cy : (arena.y + arena.size / 2);
+          const arad = arena.rad !== undefined ? arena.rad : (arena.size / 2);
           const teleAng = Math.atan2(e.y - p.y, e.x - p.x) + (Math.random() - 0.5) * 1.5;
-          const teleDist = Math.min(arena.rad * 0.75, 140 + Math.random() * 60);
-          e.x = arena.cx + Math.cos(teleAng) * teleDist;
-          e.y = arena.cy + Math.sin(teleAng) * teleDist;
+          const teleDist = Math.min(arad * 0.75, 140 + Math.random() * 60);
+          e.x = acx + Math.cos(teleAng) * teleDist;
+          e.y = acy + Math.sin(teleAng) * teleDist;
           keepInsideBossArena(e, g.bossArena, (e.c?.r || 50) + 10);
           Sfx.play('dash');
           g.shake = Math.max(g.shake, 0.5);
@@ -16594,11 +16606,14 @@ function update(dt){
           e.actionT = 1.9;
           e.invulnerable = true;
           // Спавн 4 расщелин улья по 4 сторонам
-          const arena = g.bossArena || { cx: e.x, cy: e.y, rad: 220 };
+          const arena = g.bossArena || { x: p.x - 220, y: p.y - 220, size: 440, cx: p.x, cy: p.y, rad: 220 };
+          const acx = arena.cx !== undefined ? arena.cx : (arena.x + arena.size / 2);
+          const acy = arena.cy !== undefined ? arena.cy : (arena.y + arena.size / 2);
+          const arad = arena.rad !== undefined ? arena.rad : (arena.size / 2);
           const angles = [0.78, 2.35, 3.92, 5.49];
           for(const a of angles){
-            const fx = arena.cx + Math.cos(a) * (arena.rad * 0.6);
-            const fy = arena.cy + Math.sin(a) * (arena.rad * 0.6);
+            const fx = acx + Math.cos(a) * (arad * 0.6);
+            const fy = acy + Math.sin(a) * (arad * 0.6);
             for(let k = 0; k < 4; k++){
               const sa = (k / 4) * 6.283;
               g.bossShockwaves.push({
@@ -17579,23 +17594,35 @@ function update(dt){
           }
         }
       }
-      // Отражение дисковых пил от границ арены
-      if(sw.type === 'bouncing_saw' && g.bossArena){
-        const arena = g.bossArena;
-        const bRad = arena.rad || 220;
-        const aDist = Math.hypot(sw.x - arena.cx, sw.y - arena.cy);
-        if(aDist > bRad - 15){
-          const nA = Math.atan2(sw.y - arena.cy, sw.x - arena.cx);
-          const vAng = Math.atan2(sw.vy, sw.vx);
-          const refAng = 2 * nA - vAng + Math.PI;
-          const spd = Math.hypot(sw.vx, sw.vy);
-          sw.vx = Math.cos(refAng) * spd;
-          sw.vy = Math.sin(refAng) * spd;
+      // Прямоугольный рикошет дисковых пил от лазерных стен арены
+      if((sw.type === 'bouncing_saw' || sw.type === 'execution_saw') && g.bossArena){
+        if(sw.hitHeroCd > 0) sw.hitHeroCd -= dt;
+        const ax1 = g.bossArena.x + 20, ax2 = g.bossArena.x + g.bossArena.size - 20;
+        const ay1 = g.bossArena.y + 20, ay2 = g.bossArena.y + g.bossArena.size - 20;
+        let bounced = false;
+        if(sw.x <= ax1 && sw.vx < 0){ sw.x = ax1; sw.vx = Math.abs(sw.vx); bounced = true; }
+        else if(sw.x >= ax2 && sw.vx > 0){ sw.x = ax2; sw.vx = -Math.abs(sw.vx); bounced = true; }
+        if(sw.y <= ay1 && sw.vy < 0){ sw.y = ay1; sw.vy = Math.abs(sw.vy); bounced = true; }
+        else if(sw.y >= ay2 && sw.vy > 0){ sw.y = ay2; sw.vy = -Math.abs(sw.vy); bounced = true; }
+        if(bounced){
           sw.bounces = (sw.bounces || 0) + 1;
           Sfx.play('anvil');
-          if(sw.bounces >= 4) sw.l = 0;
+          g.shake = Math.max(g.shake, 0.25);
+          const maxB = sw.type === 'execution_saw' ? 7 : 5;
+          if(sw.bounces >= maxB) sw.l = 0;
+        }
+        if(Math.random() < 0.65){
+          g.fx.push({
+            x: sw.x + (Math.random() - 0.5) * 16,
+            y: sw.y + (Math.random() - 0.5) * 16,
+            vx: -sw.vx * 0.15 + (Math.random() - 0.5) * 40,
+            vy: -sw.vy * 0.15 + (Math.random() - 0.5) * 40,
+            col: sw.type === 'execution_saw' ? (Math.random() > 0.4 ? '#ef4444' : '#f59e0b') : '#94a3b8',
+            r: 2.2, l: 0.25
+          });
         }
       }
+
       // Самонаведение микроракет на игрока в полете
       if(sw.type === 'cyber_missile'){
         if(sw.l > sw.maxL * 0.35){
@@ -17622,45 +17649,16 @@ function update(dt){
         }
       }
 
-
-      // execution_saw (Хирург-Мясник: Стальной капкан - рикошетящие пилы)
-      if(sw.type === 'execution_saw' && g.bossArena){
-        if(sw.hitHeroCd > 0) sw.hitHeroCd -= dt;
-        const arena = g.bossArena;
-        const bRad = arena.rad || 220;
-        const aDist = Math.hypot(sw.x - arena.cx, sw.y - arena.cy);
-        if(aDist > bRad - 18){
-          const nA = Math.atan2(sw.y - arena.cy, sw.x - arena.cx);
-          const vAng = Math.atan2(sw.vy, sw.vx);
-          const refAng = 2 * nA - vAng + Math.PI;
-          const spd = Math.hypot(sw.vx, sw.vy);
-          sw.vx = Math.cos(refAng) * spd;
-          sw.vy = Math.sin(refAng) * spd;
-          sw.bounces = (sw.bounces || 0) + 1;
-          Sfx.play('anvil');
-          g.shake = Math.max(g.shake, 0.25);
-          if(sw.bounces >= 7) sw.l = 0;
-        }
-        if(Math.random() < 0.65){
-          g.fx.push({
-            x: sw.x + (Math.random() - 0.5) * 16,
-            y: sw.y + (Math.random() - 0.5) * 16,
-            vx: -sw.vx * 0.15 + (Math.random() - 0.5) * 40,
-            vy: -sw.vy * 0.15 + (Math.random() - 0.5) * 40,
-            col: Math.random() > 0.4 ? '#ef4444' : '#f59e0b',
-            r: 2.2, l: 0.25
-          });
-        }
-      }
-
       // twin_singularity (Нейро-Сверхразум: Пси-Сверхновая - двойная гравитационная сингулярность)
       if(sw.type === 'twin_singularity'){
         sw.orbitAngle = (sw.orbitAngle || 0) + 0.95 * dt;
         if(g.bossArena){
+          const acx = g.bossArena.cx !== undefined ? g.bossArena.cx : (g.bossArena.x + g.bossArena.size / 2);
+          const acy = g.bossArena.cy !== undefined ? g.bossArena.cy : (g.bossArena.y + g.bossArena.size / 2);
           const oRad = sw.orbitRad || 125;
           const oAng = sw.orbitAngle + (sw.twinId || 0) * Math.PI;
-          sw.x = g.bossArena.cx + Math.cos(oAng) * oRad;
-          sw.y = g.bossArena.cy + Math.sin(oAng) * oRad;
+          sw.x = acx + Math.cos(oAng) * oRad;
+          sw.y = acy + Math.sin(oAng) * oRad;
         }
         const sDist = Math.hypot(p.x - sw.x, p.y - sw.y);
         if(sDist < 145 && sDist > 8){
@@ -17734,9 +17732,12 @@ function update(dt){
         if(sw.hitHeroCd > 0) sw.hitHeroCd -= dt;
       }
 
-const distHero=Math.hypot(p.x-sw.x,p.y-sw.y);
-      if(distHero<p.r+16&&p.inv<=0){
-        if(sw.type === 'puddle'){
+      const distHero = Math.hypot(p.x - sw.x, p.y - sw.y);
+      if(distHero < p.r + 16 && p.inv <= 0){
+        // ЧИСТЫЕ НАЗЕМНЫЕ ТЕЛЕГРАФЫ ОБРАТНОГО ОТСЧЕТА: взрываются строго при sw.l <= 0
+        if(sw.type === 'carpet_bomb' || sw.type === 'acid_geyser' || sw.type === 'abyssal_spike_eruption'){
+          // Пропускаем нанесение урона в фазе предупреждения!
+        } else if(sw.type === 'puddle'){
           p.poisonT = Math.max(p.poisonT || 0, 2.0);
           p.poisonDps = Math.max(p.poisonDps || 0, 2.0);
           p.poisonSlow = Math.min(p.poisonSlow || 1, 0.85);
@@ -17754,22 +17755,38 @@ const distHero=Math.hypot(p.x-sw.x,p.y-sw.y);
           for(let k = 0; k < 12; k++){
             g.fx.push({ x: p.x, y: p.y, vx: (Math.random() - 0.5) * 80, vy: -15 - Math.random() * 25, col: '#a855f7', r: 2.5, l: 0.35 });
           }
+          const dmg = Math.max(1, Math.round((sw.dmg || 28) * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
+          damagePlayer(dmg);
+          g.bossShockwaves.splice(i, 1);
+          continue;
         } else if(sw.type === 'abomination'){
           for(let k = 0; k < 10; k++){
             g.fx.push({ x: p.x, y: p.y, vx: (Math.random() - 0.5) * 90, vy: -20 - Math.random() * 30, col: Math.random() > 0.4 ? '#a855f7' : '#f3e8ff', l: 0.35 });
           }
           Sfx.play('hit');
+          const dmg = Math.max(1, Math.round((sw.dmg || 35) * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
+          damagePlayer(dmg);
+          g.bossShockwaves.splice(i, 1);
+          continue;
         } else if(sw.type === 'abom_nova'){
           for(let k = 0; k < 8; k++){
             g.fx.push({ x: p.x, y: p.y, vx: (Math.random() - 0.5) * 75, vy: -15 - Math.random() * 25, col: '#c084fc', l: 0.3 });
           }
           Sfx.play('hit');
+          const dmg = Math.max(1, Math.round((sw.dmg || 30) * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
+          damagePlayer(dmg);
+          g.bossShockwaves.splice(i, 1);
+          continue;
         } else if(sw.type === 'web'){
           p.poisonT = Math.max(p.poisonT || 0, 1.8);
           p.poisonDps = Math.max(p.poisonDps || 0, 2.0);
           p.poisonSlow = Math.min(p.poisonSlow || 1, 0.82);
+          const dmg = Math.max(1, Math.round((sw.dmg || 20) * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
+          damagePlayer(dmg);
+          g.bossShockwaves.splice(i, 1);
+          continue;
         } else if(sw.type === 'web_snare'){
-          p.webStunT = 0.75; // Снижено оцепление до 0.75с
+          p.webStunT = 0.75;
           p.poisonT = Math.max(p.poisonT || 0, 2.0);
           p.poisonDps = Math.max(p.poisonDps || 0, 2.0);
           p.poisonSlow = Math.min(p.poisonSlow || 1, 0.85);
@@ -17785,6 +17802,10 @@ const distHero=Math.hypot(p.x-sw.x,p.y-sw.y);
               l: 0.45
             });
           }
+          const dmg = Math.max(1, Math.round((sw.dmg || 25) * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
+          damagePlayer(dmg);
+          g.bossShockwaves.splice(i, 1);
+          continue;
         } else if(sw.type === 'treant_seismic'){
           for(let k = 0; k < 8; k++){
             g.fx.push({
@@ -17795,6 +17816,10 @@ const distHero=Math.hypot(p.x-sw.x,p.y-sw.y);
               l: 0.35
             });
           }
+          const dmg = Math.max(1, Math.round((sw.dmg || 30) * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
+          damagePlayer(dmg);
+          g.bossShockwaves.splice(i, 1);
+          continue;
         } else if(sw.type === 'treant_spore' || sw.type === 'mushroom_spore'){
           p.poisonT = Math.max(p.poisonT || 0, sw.type === 'mushroom_spore' ? 1.8 : 2.4);
           p.poisonDps = Math.max(p.poisonDps || 0, sw.type === 'mushroom_spore' ? 2 : 3);
@@ -17809,48 +17834,11 @@ const distHero=Math.hypot(p.x-sw.x,p.y-sw.y);
               l: 0.4
             });
           }
-        } else 
-        if(sw.type === 'carpet_bomb'){
-          Sfx.play('anvil');
-          g.shake = Math.max(g.shake, 0.65);
-          const cDist = Math.hypot(p.x - sw.x, p.y - sw.y);
-          if(cDist < 65 && p.inv <= 0){
-            damagePlayer(sw.dmg || 48);
-            p.poisonT = 2.0;
-            p.poisonDps = 3.5;
-          }
-          g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 3.5, maxL: 3.5, dmg: 7, type: 'napalm_trail', col: '#ef4444' });
-          for(let k = 0; k < 14; k++){
-            const ca = Math.random() * 6.283, cspd = 50 + Math.random() * 110;
-            g.fx.push({ x: sw.x, y: sw.y, vx: Math.cos(ca) * cspd, vy: Math.sin(ca) * cspd, col: Math.random() > 0.4 ? '#ef4444' : '#f59e0b', r: 3, l: 0.4 });
-          }
-        } else if(sw.type === 'acid_geyser'){
-          Sfx.play('dash');
-          const gDist = Math.hypot(p.x - sw.x, p.y - sw.y);
-          if(gDist < 55 && p.inv <= 0){
-            damagePlayer(sw.dmg || 36);
-            p.slowT = 1.6;
-            p.poisonT = 2.5;
-            p.poisonDps = 3.0;
-          }
-          g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 4.5, maxL: 4.5, dmg: 6, type: 'puddle', col: '#22c55e' });
-          for(let k = 0; k < 12; k++){
-            g.fx.push({ x: sw.x, y: sw.y, vx: (Math.random() - 0.5) * 80, vy: -30 - Math.random() * 40, col: '#22c55e', r: 2.8, l: 0.4 });
-          }
-        } else if(sw.type === 'abyssal_spike_eruption'){
-          Sfx.play('hit');
-          const spDist = Math.hypot(p.x - sw.x, p.y - sw.y);
-          if(spDist < 45 && p.inv <= 0){
-            damagePlayer(sw.dmg || 42);
-            g.shake = Math.max(g.shake, 0.4);
-          }
-          for(let k = 0; k < 10; k++){
-            g.fx.push({ x: sw.x, y: sw.y, vx: (Math.random() - 0.5) * 60, vy: -20 - Math.random() * 30, col: '#ef4444', r: 2.5, l: 0.35 });
-          }
-        } else if(sw.type === 'napalm_burst'){
-          g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 2.2, maxL: 2.2, dmg: 5, type: 'napalm_trail', col: '#f97316' });
-        } else 
-if(sw.type === 'slime_glob'){
+          const dmg = Math.max(1, Math.round((sw.dmg || 22) * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
+          damagePlayer(dmg);
+          g.bossShockwaves.splice(i, 1);
+          continue;
+        } else if(sw.type === 'slime_glob'){
           p.poisonT = Math.max(p.poisonT || 0, 2.0);
           p.poisonDps = Math.max(p.poisonDps || 0, 2.5);
           p.poisonSlow = Math.min(p.poisonSlow || 1, 0.85);
@@ -17859,105 +17847,77 @@ if(sw.type === 'slime_glob'){
           for(let k = 0; k < 12; k++){
             g.fx.push({ x: p.x, y: p.y, vx: (Math.random() - 0.5) * 80, vy: -15 - Math.random() * 25, col: '#22c55e', r: 2.5, l: 0.35 });
           }
-        } else if(sw.type === 'zone3_mutagen_spit'){
-          for(let k = 0; k < 10; k++){
-            g.fx.push({ x: p.x, y: p.y, vx: (Math.random() - 0.5) * 85, vy: -20 - Math.random() * 35, col: '#4ade80', r: 2.4, l: 0.35 });
-          }
-        } else if(sw.type === 'zone3_incinerator_flame'){
-          for(let k = 0; k < 12; k++){
-            g.fx.push({ x: p.x, y: p.y, vx: (Math.random() - 0.5) * 100, vy: -25 - Math.random() * 40, col: '#f97316', r: 2.8, l: 0.4 });
-          }
-        } else if(sw.type === 'gargoyle_rock'){
-          for(let k = 0; k < 8; k++){
-            g.fx.push({ x: p.x, y: p.y, vx: (Math.random() - 0.5) * 70, vy: -15 - Math.random() * 25, col: '#94a3b8', r: 2, l: 0.3 });
-          }
-          Sfx.play('hit');
-        } else if(sw.type === 'rat_salvo'){
-          p.poisonT = Math.max(p.poisonT || 0, 2.5);
-          p.poisonDps = Math.max(p.poisonDps || 0, 3.5);
-          p.poisonSlow = Math.min(p.poisonSlow || 1, 0.80);
-          showGameToast('☣️ ' + T('HIT BY PLAGUE GLOB!', 'ПОПАДАНИЕ ЧУМНОЙ СФЕРЫ!'), '#84cc16', 1.6);
-          g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 4.5, maxL: 4.5, dmg: 6, type: 'puddle', col: '#84cc16' });
-          for(let k = 0; k < 12; k++){
-            g.fx.push({ x: p.x, y: p.y, vx: (Math.random() - 0.5) * 85, vy: -15 - Math.random() * 25, col: '#84cc16', r: 2.5, l: 0.35 });
-          }
-          Sfx.play('hit');
-        } else if(sw.type === 'rat_screech'){
-          p.poisonT = Math.max(p.poisonT || 0, 2.0);
-          p.poisonSlow = Math.min(p.poisonSlow || 1, 0.80);
-          showGameToast('💀 ' + T('PESTILENCE SCREECH!', 'ЧУМНОЙ ВИЗГ!'), '#84cc16', 1.8);
-          for(let k = 0; k < 16; k++){
-            g.fx.push({ x: p.x, y: p.y, vx: (Math.random() - 0.5) * 110, vy: -20 - Math.random() * 30, col: '#84cc16', l: 0.4 });
-          }
-          Sfx.play('hit');
-        }
-        else if(sw.type === 'butcher_hook'){
-          damagePlayer(sw.dmg || 35);
+          const dmg = Math.max(1, Math.round((sw.dmg || 24) * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
+          damagePlayer(dmg);
+          g.bossShockwaves.splice(i, 1);
+          continue;
+        } else if(sw.type === 'butcher_hook'){
+          const dmg = Math.max(1, Math.round((sw.dmg || 35) * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
+          damagePlayer(dmg);
           const butcher = g.enemies.find(en => en.isBoss && en.bossId === 'bio_butcher' && !en.dead);
           if(butcher){
-            p.x += (butcher.x - p.x) * 0.55;
-            p.y += (butcher.y - p.y) * 0.55;
+            p.x += (butcher.x - p.x) * 0.45;
+            p.y += (butcher.y - p.y) * 0.45;
+            keepInsideBossArena(p, g.bossArena);
             p.slowT = 1.0;
             showGameToast('🪓 ' + T('HOOKED BY THE BUTCHER!', 'ЗАХВАЧЕН ГАРПУНОМ МЯСНИКА!'), '#dc2626', 1.8);
           }
           g.shake = Math.max(g.shake, 0.5);
           Sfx.play('hit');
-          sw.l = 0;
+          g.bossShockwaves.splice(i, 1);
+          continue;
         } else if(sw.type === 'cerberus_quill'){
-          damagePlayer(sw.dmg || 24);
+          const dmg = Math.max(1, Math.round((sw.dmg || 24) * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
+          damagePlayer(dmg);
           p.slowT = Math.max(p.slowT || 0, 1.2);
           Sfx.play('hit');
-          sw.l = 0;
+          g.bossShockwaves.splice(i, 1);
+          continue;
         } else if(sw.type === 'emp_mine'){
-          damagePlayer(25);
+          const dmg = Math.max(1, Math.round(25 * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
+          damagePlayer(dmg);
           p.slowT = Math.max(p.slowT || 0, 2.0);
           showGameToast('⚡ ' + T('EMP SYSTEM OVERLOAD!', 'ЭМИ-ИМПУЛЬС: ПЕРЕГРУЗКА!'), '#38bdf8', 2.0);
           Sfx.play('dash');
-          sw.l = 0;
-        } else if(sw.type === 'acid_geyser_eruption'){
-          damagePlayer(sw.dmg || 45);
-          p.slowT = 2.0;
-          p.poisonT = 3.5;
-          p.poisonDps = 4.0;
-          g.shake = Math.max(g.shake, 0.5);
-          Sfx.play('hit');
-        } else if(sw.type === 'abyssal_spike_eruption'){
-          damagePlayer(sw.dmg || 50);
-          g.shake = Math.max(g.shake, 0.6);
-          Sfx.play('anvil');
-        } else if(sw.type === 'execution_saw'){
+          g.bossShockwaves.splice(i, 1);
+          continue;
+        } else if(sw.type === 'execution_saw' || sw.type === 'bouncing_saw'){
           if(!sw.hitHeroCd || sw.hitHeroCd <= 0){
-            damagePlayer(sw.dmg || 34);
+            const dmg = Math.max(1, Math.round((sw.dmg || 34) * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
+            damagePlayer(dmg);
             g.shake = Math.max(g.shake, 0.45);
             Sfx.play('hit');
             sw.hitHeroCd = 0.45;
           }
           continue;
         } else if(sw.type === 'twin_singularity'){
-          damagePlayer(Math.round((sw.dmg || 16) * dt * 2.5));
+          const dmg = Math.max(1, Math.round((sw.dmg || 16) * dt * 2.5));
+          damagePlayer(dmg);
           p.slowT = Math.max(p.slowT || 0, 1.0);
           continue;
         } else if(sw.type === 'bone_boomerang'){
           if(!sw.hitHeroCd || sw.hitHeroCd <= 0){
-            damagePlayer(sw.dmg || 38);
+            const dmg = Math.max(1, Math.round((sw.dmg || 38) * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
+            damagePlayer(dmg);
             g.shake = Math.max(g.shake, 0.5);
             Sfx.play('hit');
             sw.hitHeroCd = 0.50;
           }
           continue;
         } else if(sw.type === 'napalm_burst'){
-          damagePlayer(sw.dmg || 24);
+          const dmg = Math.max(1, Math.round((sw.dmg || 24) * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
+          damagePlayer(dmg);
           p.poisonT = Math.max(p.poisonT || 0, 1.8);
           p.poisonDps = Math.max(p.poisonDps || 0, 3.5);
           g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 2.5, maxL: 2.5, dmg: 6, type: 'napalm_trail', col: '#f97316' });
           Sfx.play('hit');
-          sw.l = 0;
-        } else if(sw.type === 'carpet_bomb' || sw.type === 'acid_geyser' || sw.type === 'abyssal_spike_eruption'){
-          continue; // Урон наносится в момент детонации ниже
+          g.bossShockwaves.splice(i, 1);
+          continue;
         } else if(sw.type === 'chitin_toxic_nova'){
           const curRad = sw.rad || 20;
           if(Math.abs(distHero - curRad) < 26 && (!sw.hitHeroCd || sw.hitHeroCd <= 0)){
-            damagePlayer(sw.dmg || 45);
+            const dmg = Math.max(1, Math.round((sw.dmg || 45) * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
+            damagePlayer(dmg);
             p.slowT = 1.5;
             g.shake = Math.max(g.shake, 0.6);
             Sfx.play('hit');
@@ -17965,33 +17925,73 @@ if(sw.type === 'slime_glob'){
           }
           continue;
         } else if(sw.type === 'chitin_spine'){
-          damagePlayer(sw.dmg || 22);
+          const dmg = Math.max(1, Math.round((sw.dmg || 22) * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
+          damagePlayer(dmg);
           p.poisonT = Math.max(p.poisonT || 0, 2.0);
           p.poisonDps = Math.max(p.poisonDps || 0, 3.0);
           g.shake = Math.max(g.shake, 0.25);
           Sfx.play('hit');
-          sw.l = 0;
+          g.bossShockwaves.splice(i, 1);
+          continue;
         } else if(sw.type === 'psi_needle'){
-          damagePlayer(sw.dmg || 22);
+          const dmg = Math.max(1, Math.round((sw.dmg || 22) * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
+          damagePlayer(dmg);
           g.shake = Math.max(g.shake, 0.25);
           Sfx.play('hit');
-          sw.l = 0;
-
+          g.bossShockwaves.splice(i, 1);
+          continue;
+        } else {
+          const dmg = Math.max(1, Math.round((sw.dmg || 20) * (p.armor ? Math.max(0.2, 1 - p.armor) : 1)));
+          damagePlayer(dmg);
+          g.bossShockwaves.splice(i, 1);
+          continue;
         }
-        const dmg=Math.max(1,Math.round(sw.dmg*(p.armor?Math.max(0.2,1-p.armor):1)));
-        damagePlayer(dmg);
-        g.bossShockwaves.splice(i,1);
-        continue;
       }
-      if(sw.l<=0){
-        if(sw.type === 'slime_glob'){
+
+      if(sw.l <= 0){
+        if(sw.type === 'carpet_bomb'){
+          Sfx.play('anvil');
+          g.shake = Math.max(g.shake, 0.65);
+          const cDist = Math.hypot(p.x - sw.x, p.y - sw.y);
+          if(cDist < 65 && p.inv <= 0){
+            damagePlayer(sw.dmg || 46);
+            p.poisonT = 2.0; p.poisonDps = 3.5;
+          }
+          g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 3.5, maxL: 3.5, dmg: 7, type: 'napalm_trail', col: '#ef4444' });
+          for(let k = 0; k < 14; k++){
+            const ca = Math.random() * 6.283, cspd = 50 + Math.random() * 110;
+            g.fx.push({ x: sw.x, y: sw.y, vx: Math.cos(ca) * cspd, vy: Math.sin(ca) * cspd, col: Math.random() > 0.4 ? '#ef4444' : '#f59e0b', r: 3, l: 0.4 });
+          }
+        } else if(sw.type === 'acid_geyser'){
+          Sfx.play('dash');
+          g.shake = Math.max(g.shake, 0.45);
+          const gDist = Math.hypot(p.x - sw.x, p.y - sw.y);
+          if(gDist < 55 && p.inv <= 0){
+            damagePlayer(sw.dmg || 36);
+            p.slowT = 1.6; p.poisonT = 2.5; p.poisonDps = 3.0;
+          }
+          g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 4.5, maxL: 4.5, dmg: 6, type: 'puddle', col: '#22c55e' });
+          for(let k = 0; k < 12; k++){
+            g.fx.push({ x: sw.x, y: sw.y, vx: (Math.random() - 0.5) * 80, vy: -30 - Math.random() * 40, col: '#22c55e', r: 2.8, l: 0.4 });
+          }
+        } else if(sw.type === 'abyssal_spike_eruption'){
+          Sfx.play('hit');
+          g.shake = Math.max(g.shake, 0.5);
+          const spDist = Math.hypot(p.x - sw.x, p.y - sw.y);
+          if(spDist < 45 && p.inv <= 0){
+            damagePlayer(sw.dmg || 42);
+          }
+          for(let k = 0; k < 10; k++){
+            g.fx.push({ x: sw.x, y: sw.y, vx: (Math.random() - 0.5) * 60, vy: -20 - Math.random() * 30, col: '#ef4444', r: 2.5, l: 0.35 });
+          }
+        } else if(sw.type === 'slime_glob'){
           g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 4.5, maxL: 4.5, dmg: 4, type: 'puddle', col: '#22c55e' });
         } else if(sw.type === 'abom_glob'){
           g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 4.0, maxL: 4.0, dmg: 5, type: 'abom_puddle', col: '#a855f7' });
         } else if(sw.type === 'rat_salvo'){
           g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 4.5, maxL: 4.5, dmg: 6, type: 'puddle', col: '#84cc16' });
         }
-        g.bossShockwaves.splice(i,1);
+        g.bossShockwaves.splice(i, 1);
       }
     }
   }
@@ -21793,9 +21793,192 @@ function drawBossShockwaves(g, ox, oy){
       cx.strokeStyle = '#ffffff'; cx.lineWidth = 1.0;
       cx.beginPath(); cx.arc(sx, sy, 16 * pulse, 0, 6.283); cx.stroke();
 
+    } else if(sw.type === 'emp_mine'){
+      // Высокотехнологичная синяя ЭМИ-мина Кибер-Цербера
+      const pulse = 0.82 + 0.18 * Math.sin(performance.now() * 0.02 + sw.x);
+      const mRad = 16 * pulse;
+      cx.strokeStyle = `rgba(56, 189, 248, ${0.45 * swAlpha * pulse})`;
+      cx.lineWidth = 1.6;
+      cx.setLineDash([4, 4]);
+      cx.beginPath(); cx.arc(sx, sy, 32 * pulse, 0, 6.283); cx.stroke();
+      cx.setLineDash([]);
+      const eGrad = cx.createRadialGradient(sx, sy, 2, sx, sy, mRad);
+      eGrad.addColorStop(0, `rgba(224, 242, 254, ${0.95 * swAlpha})`);
+      eGrad.addColorStop(0.45, `rgba(56, 189, 248, ${0.8 * swAlpha})`);
+      eGrad.addColorStop(0.85, `rgba(2, 132, 199, ${0.4 * swAlpha})`);
+      eGrad.addColorStop(1, 'rgba(0,0,0,0)');
+      cx.fillStyle = eGrad;
+      cx.beginPath(); cx.arc(sx, sy, mRad, 0, 6.283); cx.fill();
+      cx.fillStyle = '#0f172a';
+      cx.beginPath(); cx.arc(sx, sy, 6, 0, 6.283); cx.fill();
+      cx.strokeStyle = '#38bdf8'; cx.lineWidth = 1.8; cx.stroke();
+      cx.fillStyle = (performance.now() % 300 < 150) ? '#38bdf8' : '#ef4444';
+      cx.beginPath(); cx.arc(sx, sy, 2.5, 0, 6.283); cx.fill();
+    } else if(sw.type === 'sonic_howl'){
+      // Ультразвуковой рёв Кибер-Цербера: расходящиеся звуковые дуги
+      const curRad = (sw.r || 24) + (1 - sw.l / sw.maxL) * 110;
+      cx.strokeStyle = `rgba(239, 68, 68, ${0.85 * swAlpha})`;
+      cx.lineWidth = 3.2 * swAlpha;
+      cx.beginPath(); cx.arc(sx, sy, curRad, 0, 6.283); cx.stroke();
+      cx.strokeStyle = `rgba(251, 146, 60, ${0.5 * swAlpha})`;
+      cx.lineWidth = 1.8 * swAlpha;
+      cx.beginPath(); cx.arc(sx, sy, Math.max(0, curRad - 8), 0, 6.283); cx.stroke();
+    } else if(sw.type === 'napalm_trail'){
+      // Напалмовый огонь на земле от рывка Кибер-Цербера / бомбардировки
+      const fPulse = 0.85 + 0.15 * Math.sin(performance.now() * 0.02 + sx);
+      const fRad = (sw.r || 18) * fPulse;
+      const nGrad = cx.createRadialGradient(sx, sy, 2, sx, sy, fRad);
+      nGrad.addColorStop(0, `rgba(255, 255, 255, ${0.9 * swAlpha})`);
+      nGrad.addColorStop(0.25, `rgba(254, 240, 138, ${0.85 * swAlpha})`);
+      nGrad.addColorStop(0.55, `rgba(249, 115, 22, ${0.7 * swAlpha})`);
+      nGrad.addColorStop(0.85, `rgba(220, 38, 38, ${0.4 * swAlpha})`);
+      nGrad.addColorStop(1, 'rgba(0,0,0,0)');
+      cx.fillStyle = nGrad;
+      cx.beginPath(); cx.ellipse(sx, sy, fRad, fRad * 0.65, 0, 0, 6.283); cx.fill();
+      const sPhase = performance.now() * 0.008 + sx;
+      cx.fillStyle = '#fef08a';
+      cx.beginPath(); cx.arc(sx + Math.sin(sPhase) * 6, sy - 4 - Math.cos(sPhase) * 6, 1.8, 0, 6.283); cx.fill();
+    } else if(sw.type === 'cerberus_quill'){
+      // Высокоскоростной нано-шип Кибер-Цербера
+      const qAng = (sw.angle !== undefined && !isNaN(sw.angle)) ? sw.angle : (sw.vx || sw.vy ? Math.atan2(sw.vy, sw.vx) : 0);
+      cx.translate(sx, sy);
+      cx.rotate(qAng);
+      const tGrad = cx.createLinearGradient(-24, 0, 12, 0);
+      tGrad.addColorStop(0, 'rgba(239, 68, 68, 0)');
+      tGrad.addColorStop(0.6, `rgba(249, 115, 22, ${0.75 * swAlpha})`);
+      tGrad.addColorStop(1, '#ffffff');
+      cx.strokeStyle = tGrad; cx.lineWidth = 3.2; cx.lineCap = 'round';
+      cx.beginPath(); cx.moveTo(-22, 0); cx.lineTo(10, 0); cx.stroke();
+      cx.fillStyle = '#fef08a';
+      cx.beginPath();
+      cx.moveTo(12, 0); cx.lineTo(-6, -3.5); cx.lineTo(-2, 0); cx.lineTo(-6, 3.5);
+      cx.closePath(); cx.fill();
+    } else if(sw.type === 'cyber_missile'){
+      // Самонаводящаяся микроракета «Цербер-9»
+      const mAng = (sw.angle !== undefined && !isNaN(sw.angle)) ? sw.angle : (sw.vx || sw.vy ? Math.atan2(sw.vy, sw.vx) : 0);
+      cx.translate(sx, sy);
+      cx.rotate(mAng);
+      const exGrad = cx.createLinearGradient(-18, 0, 0, 0);
+      exGrad.addColorStop(0, 'rgba(239, 68, 68, 0)');
+      exGrad.addColorStop(0.6, `rgba(249, 115, 22, ${0.85 * swAlpha})`);
+      exGrad.addColorStop(1, '#ffffff');
+      cx.strokeStyle = exGrad; cx.lineWidth = 3.6; cx.lineCap = 'round';
+      cx.beginPath(); cx.moveTo(-16, 0); cx.lineTo(0, 0); cx.stroke();
+      cx.fillStyle = '#dc2626';
+      cx.fillRect(-8, -3, 16, 6);
+      cx.fillStyle = '#fef08a';
+      cx.beginPath(); cx.moveTo(8, -3); cx.lineTo(14, 0); cx.lineTo(8, 3); cx.closePath(); cx.fill();
+      cx.fillStyle = '#1e293b';
+      cx.beginPath();
+      cx.moveTo(-8, -3); cx.lineTo(-12, -6); cx.lineTo(-6, -3);
+      cx.moveTo(-8, 3); cx.lineTo(-12, 6); cx.lineTo(-6, 3);
+      cx.fill();
+    } else if(sw.type === 'bouncing_saw'){
+      // Рикошетящая циркулярная пила Хирурга-Мясника
+      cx.translate(sx, sy);
+      const rot = (performance.now() * 0.02) % 6.283;
+      cx.rotate(rot);
+      const sRad = 16;
+      cx.fillStyle = `rgba(226, 232, 240, ${0.95 * swAlpha})`;
+      cx.beginPath();
+      const teeth = 8;
+      for(let t = 0; t < teeth; t++){
+        const ta = (t / teeth) * 6.283;
+        const outA = ta + 0.2;
+        cx.lineTo(Math.cos(ta) * (sRad + 5), Math.sin(ta) * (sRad + 5));
+        cx.lineTo(Math.cos(outA) * (sRad - 2), Math.sin(outA) * (sRad - 2));
+      }
+      cx.closePath(); cx.fill();
+      cx.strokeStyle = '#94a3b8'; cx.lineWidth = 1.4; cx.stroke();
+      cx.fillStyle = '#dc2626';
+      cx.beginPath(); cx.arc(0, 0, 5, 0, 6.283); cx.fill();
+      cx.fillStyle = '#ffffff';
+      cx.beginPath(); cx.arc(0, 0, 2, 0, 6.283); cx.fill();
+    } else if(sw.type === 'butcher_hook'){
+      // Мясницкий крюк-гарпун на цепи
+      const hAng = (sw.angle !== undefined && !isNaN(sw.angle)) ? sw.angle : (sw.vx || sw.vy ? Math.atan2(sw.vy, sw.vx) : 0);
+      const butcher = g.enemies.find(en => en.isBoss && en.bossId === 'bio_butcher' && !en.dead);
+      if(butcher){
+        const bx = butcher.x + ox, by = butcher.y + oy;
+        cx.strokeStyle = `rgba(153, 27, 27, ${0.85 * swAlpha})`;
+        cx.lineWidth = 2.4;
+        cx.setLineDash([5, 5]);
+        cx.beginPath(); cx.moveTo(bx, by); cx.lineTo(sx, sy); cx.stroke();
+        cx.setLineDash([]);
+      }
+      cx.translate(sx, sy);
+      cx.rotate(hAng);
+      cx.strokeStyle = '#e2e8f0';
+      cx.lineWidth = 3.6;
+      cx.lineCap = 'round';
+      cx.beginPath();
+      cx.moveTo(-14, 0); cx.lineTo(6, 0);
+      cx.arc(6, -8, 8, 1.57, -1.2, true);
+      cx.stroke();
+      cx.fillStyle = '#ef4444';
+      cx.beginPath();
+      cx.moveTo(12, -14); cx.lineTo(16, -18); cx.lineTo(10, -18);
+      cx.closePath(); cx.fill();
+    } else if(sw.type === 'fissure'){
+      // Подземная расщелина / лавовая трещина
+      const pulse = 0.85 + 0.15 * Math.sin(performance.now() * 0.015 + sx);
+      const fLen = (sw.r || 32) * pulse;
+      cx.strokeStyle = `rgba(220, 38, 38, ${0.9 * swAlpha})`;
+      cx.lineWidth = 3.2;
+      cx.beginPath();
+      cx.moveTo(sx - fLen, sy);
+      cx.lineTo(sx - fLen * 0.4, sy + 4);
+      cx.lineTo(sx, sy - 3);
+      cx.lineTo(sx + fLen * 0.5, sy + 5);
+      cx.lineTo(sx + fLen, sy);
+      cx.stroke();
+      cx.strokeStyle = '#fef08a'; cx.lineWidth = 1.4; cx.stroke();
+    } else if(sw.type === 'psi_bolt'){
+      // Сгусток псионической молнии Нейро-Сверхразума
+      const pPulse = 0.88 + 0.12 * Math.sin(performance.now() * 0.03 + sx);
+      const r = 11 * pPulse;
+      const pbGrad = cx.createRadialGradient(sx, sy, 1, sx, sy, r * 1.6);
+      pbGrad.addColorStop(0, `rgba(255, 255, 255, ${0.98 * swAlpha})`);
+      pbGrad.addColorStop(0.35, `rgba(216, 180, 254, ${0.9 * swAlpha})`);
+      pbGrad.addColorStop(0.7, `rgba(168, 85, 247, ${0.5 * swAlpha})`);
+      pbGrad.addColorStop(1, 'rgba(0,0,0,0)');
+      cx.fillStyle = pbGrad;
+      cx.beginPath(); cx.arc(sx, sy, r * 1.6, 0, 6.283); cx.fill();
+      cx.strokeStyle = '#ffffff'; cx.lineWidth = 1.5;
+      for(let sp = 0; sp < 3; sp++){
+        const sa = (sp * 2.094) + performance.now() * 0.01;
+        cx.beginPath();
+        cx.moveTo(sx, sy);
+        cx.lineTo(sx + Math.cos(sa) * (r * 1.3), sy + Math.sin(sa) * (r * 1.3));
+        cx.stroke();
+      }
+    } else if(sw.type === 'psi_nova'){
+      // Расширяющаяся псионическая сверхновая
+      const curRad = (sw.rad || 25) + (1 - sw.l / sw.maxL) * 120;
+      cx.strokeStyle = `rgba(168, 85, 247, ${0.9 * swAlpha})`;
+      cx.lineWidth = 3.5 * swAlpha;
+      cx.beginPath(); cx.arc(sx, sy, curRad, 0, 6.283); cx.stroke();
+      cx.strokeStyle = `rgba(244, 114, 182, ${0.6 * swAlpha})`;
+      cx.lineWidth = 1.8 * swAlpha;
+      cx.beginPath(); cx.arc(sx, sy, Math.max(0, curRad - 10), 0, 6.283); cx.stroke();
+    } else if(sw.type === 'singularity'){
+      // Гравитационная сингулярность (Черная дыра)
+      const pulse = 0.88 + 0.12 * Math.sin(performance.now() * 0.02 + sx);
+      const sRad = (sw.r || 32) * pulse;
+      const sgGrad = cx.createRadialGradient(sx, sy, 4, sx, sy, sRad * 1.5);
+      sgGrad.addColorStop(0, `rgba(15, 5, 25, ${0.98 * swAlpha})`);
+      sgGrad.addColorStop(0.35, `rgba(168, 85, 247, ${0.65 * swAlpha})`);
+      sgGrad.addColorStop(0.75, `rgba(244, 114, 182, ${0.35 * swAlpha})`);
+      sgGrad.addColorStop(1, 'rgba(0,0,0,0)');
+      cx.fillStyle = sgGrad;
+      cx.beginPath(); cx.arc(sx, sy, sRad * 1.5, 0, 6.283); cx.fill();
+      cx.fillStyle = '#05020a';
+      cx.beginPath(); cx.arc(sx, sy, sRad * 0.55, 0, 6.283); cx.fill();
+      cx.strokeStyle = '#c084fc'; cx.lineWidth = 2.0; cx.stroke();
 } else {
       cx.translate(sx, sy);
-      cx.rotate(sw.angle);
+      const ang = (sw.angle !== undefined && !isNaN(sw.angle)) ? sw.angle : (sw.vx || sw.vy ? Math.atan2(sw.vy, sw.vx) : 0);
+      cx.rotate(ang);
       const col = sw.col || '#ea580c';
       const swGrad = cx.createLinearGradient(-16, 0, 18, 0);
       swGrad.addColorStop(0, 'rgba(0,0,0,0)');
@@ -21817,7 +22000,6 @@ function drawBossShockwaves(g, ox, oy){
     cx.restore();
   }
 }
-
 function drawCraterFrontLip(ex, gy, cw, ch, lipCol='#ef4444', soilCol='#291205'){
   cx.save();
   // Вывернутый земляной бруствер по передней кромке ямы
@@ -24614,7 +24796,7 @@ function drawCyberCerberusEmergence(e, ex, ey, gy){
     return;
   }
 
-  const fw = 340, fh = 300, bw = 156, bh = 138;
+  const bw = 168, bh = 148;
   const hatchExpand = Math.min(1, prog * 2.5);
   const cw = 58 * hatchExpand + 6;
   const ch = 20 * hatchExpand + 2;
@@ -24645,36 +24827,36 @@ function drawCyberCerberusEmergence(e, ex, ey, gy){
     cx.fillStyle = `rgba(239, 68, 68, ${0.95 * sensorAlpha * pulse})`;
     cx.shadowColor = '#ef4444';
     cx.shadowBlur = 10;
-    for(const offX of [-16, 0, 16]){
-      cx.beginPath(); cx.arc(ex + offX, gy - 8, 3, 0, 6.283); cx.fill();
+    for(const offX of [-18, 0, 18]){
+      cx.beginPath(); cx.arc(ex + offX, gy - 8, 3.5, 0, 6.283); cx.fill();
     }
     cx.shadowBlur = 0;
     cx.restore();
     return;
   }
 
-  const sheet = (bossCyberCerberusWalkImg && bossCyberCerberusWalkImg.complete && bossCyberCerberusWalkImg.naturalWidth > 0) ? bossCyberCerberusWalkImg : bossCyberCerberusSheetImg;
-
-  // Фаза 2: Выход из шлюза с клиппингом по уровню земли
+  // Фаза 2: Выход из шлюза с широким клиппингом по уровню земли
   if(prog < 0.74){
     const subProg = (prog - 0.28) / (0.74 - 0.28);
-    const riseY = (1 - subProg) * 50;
-    const climbFrame = Math.min(7, Math.floor(subProg * 8));
+    const riseY = (1 - subProg) * 54;
+    const heaveY = Math.abs(Math.sin(subProg * Math.PI * 4)) * 3.0;
 
     cx.save();
     cx.beginPath();
-    cx.rect(ex - 110, gy - 200, 220, 200 + 4);
+    cx.rect(ex - 160, gy - 260, 320, 260 + 2);
     cx.clip();
 
     cx.save();
-    cx.translate(ex, ey + riseY);
+    cx.translate(ex, ey + riseY - heaveY);
     if(e.facing > 0) cx.scale(-1, 1);
+    const breath = 1 + Math.sin(subProg * Math.PI * 3) * 0.03;
+    cx.scale(breath, 2 - breath);
     cx.imageSmoothingEnabled = false;
     cx.filter = 'drop-shadow(0 0 10px rgba(239, 68, 68, 0.75))';
-    if(sheet && sheet.complete && sheet.naturalWidth > 0){
-      cx.drawImage(sheet, climbFrame * fw, 0, fw, fh, -bw / 2, -bh / 2 - 8, bw, bh);
-    } else if(bossCyberCerberusImg && bossCyberCerberusImg.complete && bossCyberCerberusImg.naturalWidth > 0){
+    if(bossCyberCerberusImg && bossCyberCerberusImg.complete && bossCyberCerberusImg.naturalWidth > 0){
       cx.drawImage(bossCyberCerberusImg, -bw / 2, -bh / 2 - 8, bw, bh);
+    } else {
+      circle(0, 0, e.c.r, '#ef4444');
     }
     cx.restore();
     cx.restore();
@@ -24704,22 +24886,23 @@ function drawCyberCerberusEmergence(e, ex, ey, gy){
   }
 
   const slamProg = (prog - 0.74) / 0.26;
-  const frame = Math.min(7, Math.floor(slamProg * 8));
+  const breath = 1 + Math.sin(slamProg * Math.PI * 3) * 0.04;
 
   cx.save();
   cx.fillStyle = 'rgba(0,0,0,0.52)';
-  cx.beginPath(); cx.ellipse(ex, gy, 52, 16, 0, 0, 6.283); cx.fill();
+  cx.beginPath(); cx.ellipse(ex, gy, 54, 16, 0, 0, 6.283); cx.fill();
   cx.restore();
 
   cx.save();
   cx.translate(ex, ey);
   if(e.facing > 0) cx.scale(-1, 1);
+  cx.scale(breath, 2 - breath);
   cx.imageSmoothingEnabled = false;
   cx.filter = 'drop-shadow(0 0 12px rgba(239, 68, 68, 0.85))';
-  if(sheet && sheet.complete && sheet.naturalWidth > 0){
-    cx.drawImage(sheet, frame * fw, 0, fw, fh, -bw / 2, -bh / 2 - 8, bw, bh);
-  } else if(bossCyberCerberusImg && bossCyberCerberusImg.complete && bossCyberCerberusImg.naturalWidth > 0){
+  if(bossCyberCerberusImg && bossCyberCerberusImg.complete && bossCyberCerberusImg.naturalWidth > 0){
     cx.drawImage(bossCyberCerberusImg, -bw / 2, -bh / 2 - 8, bw, bh);
+  } else {
+    circle(0, 0, e.c.r, '#ef4444');
   }
   cx.restore();
 
@@ -24741,7 +24924,7 @@ function drawBioButcherEmergence(e, ex, ey, gy){
     return;
   }
 
-  const fw = 360, fh = 300, bw = 192, bh = 160;
+  const bw = 192, bh = 168;
   const pitExpand = Math.min(1, prog * 2.5);
   const cw = 56 * pitExpand + 6;
   const ch = 22 * pitExpand + 2;
@@ -24782,28 +24965,28 @@ function drawBioButcherEmergence(e, ex, ey, gy){
     return;
   }
 
-  const sheet = (bossBioButcherWalkImg && bossBioButcherWalkImg.complete && bossBioButcherWalkImg.naturalWidth > 0) ? bossBioButcherWalkImg : bossBioButcherSheetImg;
-
-  // Фаза 2: Выход Мясника из коллектора с клиппингом
+  // Фаза 2: Выход Мясника из коллектора с широким клиппингом
   if(prog < 0.74){
     const subProg = (prog - 0.28) / (0.74 - 0.28);
     const riseY = (1 - subProg) * 52;
-    const climbFrame = Math.min(7, Math.floor(subProg * 8));
+    const heaveY = Math.abs(Math.sin(subProg * Math.PI * 4)) * 3.2;
 
     cx.save();
     cx.beginPath();
-    cx.rect(ex - 120, gy - 210, 240, 210 + 4);
+    cx.rect(ex - 160, gy - 260, 320, 260 + 2);
     cx.clip();
 
     cx.save();
-    cx.translate(ex, ey + riseY);
+    cx.translate(ex, ey + riseY - heaveY);
     if(e.facing > 0) cx.scale(-1, 1);
+    const breath = 1 + Math.sin(subProg * Math.PI * 3) * 0.03;
+    cx.scale(breath, 2 - breath);
     cx.imageSmoothingEnabled = false;
     cx.filter = 'drop-shadow(0 0 10px rgba(220, 38, 38, 0.75))';
-    if(sheet && sheet.complete && sheet.naturalWidth > 0){
-      cx.drawImage(sheet, climbFrame * fw, 0, fw, fh, -bw / 2, -bh / 2 - 8, bw, bh);
-    } else if(bossBioButcherImg && bossBioButcherImg.complete && bossBioButcherImg.naturalWidth > 0){
+    if(bossBioButcherImg && bossBioButcherImg.complete && bossBioButcherImg.naturalWidth > 0){
       cx.drawImage(bossBioButcherImg, -bw / 2, -bh / 2 - 8, bw, bh);
+    } else {
+      circle(0, 0, e.c.r, '#dc2626');
     }
     cx.restore();
     cx.restore();
@@ -24833,22 +25016,23 @@ function drawBioButcherEmergence(e, ex, ey, gy){
   }
 
   const slamProg = (prog - 0.74) / 0.26;
-  const frame = Math.min(7, Math.floor(slamProg * 8));
+  const breath = 1 + Math.sin(slamProg * Math.PI * 3) * 0.04;
 
   cx.save();
   cx.fillStyle = 'rgba(0,0,0,0.56)';
-  cx.beginPath(); cx.ellipse(ex, gy, 56, 18, 0, 0, 6.283); cx.fill();
+  cx.beginPath(); cx.ellipse(ex, gy, 58, 18, 0, 0, 6.283); cx.fill();
   cx.restore();
 
   cx.save();
   cx.translate(ex, ey);
   if(e.facing > 0) cx.scale(-1, 1);
+  cx.scale(breath, 2 - breath);
   cx.imageSmoothingEnabled = false;
   cx.filter = 'drop-shadow(0 0 12px rgba(220, 38, 38, 0.85))';
-  if(sheet && sheet.complete && sheet.naturalWidth > 0){
-    cx.drawImage(sheet, frame * fw, 0, fw, fh, -bw / 2, -bh / 2 - 8, bw, bh);
-  } else if(bossBioButcherImg && bossBioButcherImg.complete && bossBioButcherImg.naturalWidth > 0){
+  if(bossBioButcherImg && bossBioButcherImg.complete && bossBioButcherImg.naturalWidth > 0){
     cx.drawImage(bossBioButcherImg, -bw / 2, -bh / 2 - 8, bw, bh);
+  } else {
+    circle(0, 0, e.c.r, '#dc2626');
   }
   cx.restore();
 
@@ -24870,7 +25054,7 @@ function drawChitinReaperEmergence(e, ex, ey, gy){
     return;
   }
 
-  const fw = 280, fh = 280, bw = 156, bh = 156;
+  const bw = 168, bh = 168;
   const pitExpand = Math.min(1, prog * 2.5);
   const cw = 54 * pitExpand + 6;
   const ch = 20 * pitExpand + 2;
@@ -24908,28 +25092,29 @@ function drawChitinReaperEmergence(e, ex, ey, gy){
     return;
   }
 
-  const sheet = (bossChitinReaperWalkImg && bossChitinReaperWalkImg.complete && bossChitinReaperWalkImg.naturalWidth > 0) ? bossChitinReaperWalkImg : bossChitinReaperSheetImg;
-
-  // Фаза 2: Выползание скорпиона с клиппингом по уровню земли
+  // Фаза 2: Выползание скорпиона с широким клиппингом по уровню земли (цельный спрайт!)
   if(prog < 0.74){
     const subProg = (prog - 0.28) / (0.74 - 0.28);
     const riseY = (1 - subProg) * 48;
-    const climbFrame = Math.min(7, Math.floor(subProg * 8));
+    const heaveY = Math.abs(Math.sin(subProg * Math.PI * 4)) * 2.8;
 
     cx.save();
     cx.beginPath();
-    cx.rect(ex - 110, gy - 200, 220, 200 + 4);
+    // Широкий клип, гарантированно не срезающий боковые лапы и клешни босса!
+    cx.rect(ex - 160, gy - 260, 320, 260 + 2);
     cx.clip();
 
     cx.save();
-    cx.translate(ex, ey + riseY);
+    cx.translate(ex, ey + riseY - heaveY);
     if(e.facing > 0) cx.scale(-1, 1);
+    const breath = 1 + Math.sin(subProg * Math.PI * 3) * 0.03;
+    cx.scale(breath, 2 - breath);
     cx.imageSmoothingEnabled = false;
     cx.filter = 'drop-shadow(0 0 10px rgba(34, 197, 94, 0.75))';
-    if(sheet && sheet.complete && sheet.naturalWidth > 0){
-      cx.drawImage(sheet, climbFrame * fw, 0, fw, fh, -bw / 2, -bh / 2 - 8, bw, bh);
-    } else if(bossChitinReaperImg && bossChitinReaperImg.complete && bossChitinReaperImg.naturalWidth > 0){
+    if(bossChitinReaperImg && bossChitinReaperImg.complete && bossChitinReaperImg.naturalWidth > 0){
       cx.drawImage(bossChitinReaperImg, -bw / 2, -bh / 2 - 8, bw, bh);
+    } else {
+      circle(0, 0, e.c.r, '#22c55e');
     }
     cx.restore();
     cx.restore();
@@ -24959,22 +25144,23 @@ function drawChitinReaperEmergence(e, ex, ey, gy){
   }
 
   const slamProg = (prog - 0.74) / 0.26;
-  const frame = Math.min(7, Math.floor(slamProg * 8));
+  const breath = 1 + Math.sin(slamProg * Math.PI * 3) * 0.04;
 
   cx.save();
   cx.fillStyle = 'rgba(0,0,0,0.52)';
-  cx.beginPath(); cx.ellipse(ex, gy, 54, 16, 0, 0, 6.283); cx.fill();
+  cx.beginPath(); cx.ellipse(ex, gy, 56, 16, 0, 0, 6.283); cx.fill();
   cx.restore();
 
   cx.save();
   cx.translate(ex, ey);
   if(e.facing > 0) cx.scale(-1, 1);
+  cx.scale(breath, 2 - breath);
   cx.imageSmoothingEnabled = false;
   cx.filter = 'drop-shadow(0 0 12px rgba(34, 197, 94, 0.85))';
-  if(sheet && sheet.complete && sheet.naturalWidth > 0){
-    cx.drawImage(sheet, frame * fw, 0, fw, fh, -bw / 2, -bh / 2 - 8, bw, bh);
-  } else if(bossChitinReaperImg && bossChitinReaperImg.complete && bossChitinReaperImg.naturalWidth > 0){
+  if(bossChitinReaperImg && bossChitinReaperImg.complete && bossChitinReaperImg.naturalWidth > 0){
     cx.drawImage(bossChitinReaperImg, -bw / 2, -bh / 2 - 8, bw, bh);
+  } else {
+    circle(0, 0, e.c.r, '#22c55e');
   }
   cx.restore();
 
@@ -24996,67 +25182,67 @@ function drawNeuroOvermindEmergence(e, ex, ey, gy){
     return;
   }
 
-  const fw = 320, fh = 320, bw = 156, bh = 156;
+  const bw = 168, bh = 168;
   const vortexExpand = Math.min(1, prog * 2.5);
-  const cw = 52 * vortexExpand + 6;
+  const cw = 58 * vortexExpand + 6;
   const ch = 22 * vortexExpand + 2;
 
   cx.save();
-  const pitGrad = cx.createRadialGradient(ex, gy, 4, ex, gy, cw);
-  pitGrad.addColorStop(0, '#1e052e');
-  pitGrad.addColorStop(0.55, '#581c87');
-  pitGrad.addColorStop(0.85, '#7e22ce');
-  pitGrad.addColorStop(1, 'rgba(0,0,0,0)');
-  cx.fillStyle = pitGrad;
+  const vGrad = cx.createRadialGradient(ex, gy, 4, ex, gy, cw);
+  vGrad.addColorStop(0, '#1e052e');
+  vGrad.addColorStop(0.5, '#4a044e');
+  vGrad.addColorStop(0.85, '#701a75');
+  vGrad.addColorStop(1, 'rgba(0,0,0,0)');
+  cx.fillStyle = vGrad;
   cx.beginPath();
   cx.ellipse(ex, gy, cw, ch, 0, 0, 6.283);
   cx.fill();
 
-  cx.strokeStyle = '#c084fc';
-  cx.lineWidth = 1.6;
+  cx.strokeStyle = '#a855f7';
+  cx.lineWidth = 2.0;
   cx.beginPath();
-  cx.ellipse(ex, gy, cw, ch, performance.now() * 0.002, 0, 6.283);
+  cx.ellipse(ex, gy, cw, ch, 0, 0, 6.283);
   cx.stroke();
   cx.restore();
 
-  // Фаза 1: псионические молнии
+  // Фаза 1: Псионические лучи из центра разлома
   if(prog < 0.28){
     cx.save();
-    const pulse = 0.8 + 0.2 * Math.sin(performance.now() * 0.025);
-    cx.strokeStyle = `rgba(192, 132, 252, ${0.9 * pulse})`;
-    cx.lineWidth = 1.5;
-    for(let a = 0; a < 6.28; a += 1.25){
-      cx.beginPath();
-      cx.moveTo(ex, gy - 8);
-      cx.lineTo(ex + Math.cos(a) * 25 * (prog / 0.28), gy - 8 + Math.sin(a) * 16 * (prog / 0.28));
-      cx.stroke();
-    }
+    const beamH = (prog / 0.28) * 45;
+    const beamGrad = cx.createLinearGradient(ex, gy, ex, gy - beamH);
+    beamGrad.addColorStop(0, 'rgba(168, 85, 247, 0.8)');
+    beamGrad.addColorStop(1, 'rgba(236, 72, 153, 0)');
+    cx.fillStyle = beamGrad;
+    cx.beginPath();
+    cx.moveTo(ex - 12, gy); cx.lineTo(ex - 20, gy - beamH);
+    cx.lineTo(ex + 20, gy - beamH); cx.lineTo(ex + 12, gy);
+    cx.closePath(); cx.fill();
     cx.restore();
     return;
   }
 
-  const sheet = (bossNeuroOvermindFloatImg && bossNeuroOvermindFloatImg.complete && bossNeuroOvermindFloatImg.naturalWidth > 0) ? bossNeuroOvermindFloatImg : bossNeuroOvermindSheetImg;
-
-  // Фаза 2: Левитация из портала с клиппингом
+  // Фаза 2: Левитация ядра из воронки с широким клиппингом
   if(prog < 0.74){
     const subProg = (prog - 0.28) / (0.74 - 0.28);
-    const riseY = (1 - subProg) * 44;
-    const climbFrame = Math.min(7, Math.floor(subProg * 8));
+    const riseY = (1 - subProg) * 55;
+    const floatBob = Math.sin(subProg * Math.PI * 4) * 3.5;
 
     cx.save();
     cx.beginPath();
-    cx.rect(ex - 110, gy - 200, 220, 200 + 4);
+    cx.rect(ex - 160, gy - 260, 320, 260 + 2);
     cx.clip();
 
     cx.save();
-    cx.translate(ex, ey + riseY);
+    cx.translate(ex, ey + riseY + floatBob);
     if(e.facing > 0) cx.scale(-1, 1);
+    const breath = 1 + Math.sin(subProg * Math.PI * 3) * 0.035;
+    cx.scale(breath, 2 - breath);
     cx.imageSmoothingEnabled = false;
-    cx.filter = 'drop-shadow(0 0 12px rgba(168, 85, 247, 0.85))';
-    if(sheet && sheet.complete && sheet.naturalWidth > 0){
-      cx.drawImage(sheet, climbFrame * fw, 0, fw, fh, -bw / 2, -bh / 2 - 8, bw, bh);
-    } else if(bossNeuroOvermindImg && bossNeuroOvermindImg.complete && bossNeuroOvermindImg.naturalWidth > 0){
+    cx.filter = 'drop-shadow(0 0 14px rgba(168, 85, 247, 0.85))';
+    if(bossNeuroOvermindImg && bossNeuroOvermindImg.complete && bossNeuroOvermindImg.naturalWidth > 0){
       cx.drawImage(bossNeuroOvermindImg, -bw / 2, -bh / 2 - 8, bw, bh);
+    } else {
+      circle(0, 0, e.c.r, '#a855f7');
     }
     cx.restore();
     cx.restore();
@@ -25065,43 +25251,44 @@ function drawNeuroOvermindEmergence(e, ex, ey, gy){
     return;
   }
 
-  // Фаза 3: Пси-детонация и переход в парение
+  // Фаза 3: Псионический взрыв
   if(!e.emergeSlamDone){
     e.emergeSlamDone = true;
-    Sfx.play('hit');
-    if(g) g.shake = Math.max(g.shake || 0, 0.5);
+    Sfx.play('dash');
+    if(g) g.shake = Math.max(g.shake || 0, 0.6);
     if(g && g.fx){
-      for(let k = 0; k < 22; k++){
+      for(let k = 0; k < 20; k++){
         const ra = Math.random() * 6.283;
-        const spd = 60 + Math.random() * 90;
+        const spd = 70 + Math.random() * 110;
         g.fx.push({
-          x: e.x, y: e.y,
+          x: e.x, y: e.y + 15,
           vx: Math.cos(ra) * spd,
-          vy: Math.sin(ra) * spd - 20,
-          col: Math.random() < 0.6 ? '#c084fc' : '#e9d5ff',
-          r: 2.5, l: 0.55
+          vy: Math.sin(ra) * spd * 0.5 - 25,
+          col: Math.random() < 0.5 ? '#a855f7' : '#ec4899',
+          r: 2.8, l: 0.55
         });
       }
     }
   }
 
   const slamProg = (prog - 0.74) / 0.26;
-  const frame = Math.min(7, Math.floor(slamProg * 8));
+  const breath = 1 + Math.sin(slamProg * Math.PI * 3) * 0.04;
 
   cx.save();
   cx.fillStyle = 'rgba(0,0,0,0.52)';
-  cx.beginPath(); cx.ellipse(ex, gy, 52, 16, 0, 0, 6.283); cx.fill();
+  cx.beginPath(); cx.ellipse(ex, gy, 56, 16, 0, 0, 6.283); cx.fill();
   cx.restore();
 
   cx.save();
   cx.translate(ex, ey);
   if(e.facing > 0) cx.scale(-1, 1);
+  cx.scale(breath, 2 - breath);
   cx.imageSmoothingEnabled = false;
-  cx.filter = 'drop-shadow(0 0 14px rgba(168, 85, 247, 0.9))';
-  if(sheet && sheet.complete && sheet.naturalWidth > 0){
-    cx.drawImage(sheet, frame * fw, 0, fw, fh, -bw / 2, -bh / 2 - 8, bw, bh);
-  } else if(bossNeuroOvermindImg && bossNeuroOvermindImg.complete && bossNeuroOvermindImg.naturalWidth > 0){
+  cx.filter = 'drop-shadow(0 0 16px rgba(168, 85, 247, 0.95))';
+  if(bossNeuroOvermindImg && bossNeuroOvermindImg.complete && bossNeuroOvermindImg.naturalWidth > 0){
     cx.drawImage(bossNeuroOvermindImg, -bw / 2, -bh / 2 - 8, bw, bh);
+  } else {
+    circle(0, 0, e.c.r, '#a855f7');
   }
   cx.restore();
 
@@ -25115,7 +25302,7 @@ function drawPatientZeroEmergence(e, ex, ey, gy){
   const prog = Math.min(1, Math.max(0, 1 - (e.spawnT / emergeMax)));
   const tele = e.spawnT > emergeMax;
 
-  const tk = Math.min(1, Math.max(0, 1 - (e.spawnT - emergeMax) / (e.emergeDelay || 1.0)));
+  const tk = Math.min(1, Math.max(0, 1 - (e.spawnT - emergeMax) / (e.emergeDelay || 0.9)));
   const padProg = tele ? Math.min(0.6, tk * 4) : (prog < 0.74 ? 0.6 : 0.6 + (prog - 0.74) / 0.26 * 0.4);
   drawBossSpawnPad(e, ex, gy, padProg);
   if(tele){
@@ -25123,24 +25310,24 @@ function drawPatientZeroEmergence(e, ex, ey, gy){
     return;
   }
 
-  const fw = 280, fh = 280, bw = 172, bh = 172;
+  const bw = 184, bh = 184;
   const craterExpand = Math.min(1, prog * 2.5);
   const cw = 64 * craterExpand + 8;
   const ch = 24 * craterExpand + 3;
 
   cx.save();
-  const pitGrad = cx.createRadialGradient(ex, gy, 4, ex, gy, cw);
-  pitGrad.addColorStop(0, '#1c0303');
-  pitGrad.addColorStop(0.55, '#5c0a0a');
-  pitGrad.addColorStop(0.85, '#991b1b');
-  pitGrad.addColorStop(1, 'rgba(0,0,0,0)');
-  cx.fillStyle = pitGrad;
+  const rGrad = cx.createRadialGradient(ex, gy, 4, ex, gy, cw);
+  rGrad.addColorStop(0, '#260404');
+  rGrad.addColorStop(0.5, '#570a0a');
+  rGrad.addColorStop(0.85, '#991b1b');
+  rGrad.addColorStop(1, 'rgba(0,0,0,0)');
+  cx.fillStyle = rGrad;
   cx.beginPath();
   cx.ellipse(ex, gy, cw, ch, 0, 0, 6.283);
   cx.fill();
 
   cx.strokeStyle = '#ef4444';
-  cx.lineWidth = 2.4;
+  cx.lineWidth = 2.2;
   cx.beginPath();
   cx.ellipse(ex, gy, cw, ch, 0, 0, 6.283);
   cx.stroke();
@@ -25154,35 +25341,35 @@ function drawPatientZeroEmergence(e, ex, ey, gy){
     cx.shadowColor = '#ef4444';
     cx.shadowBlur = 12;
     cx.beginPath();
-    cx.arc(ex, gy - 6, 12 * (prog / 0.28), 0, 6.283);
+    cx.arc(ex, gy - 6, 14 * (prog / 0.28), 0, 6.283);
     cx.fill();
     cx.shadowBlur = 0;
     cx.restore();
     return;
   }
 
-  const sheet = (bossPatientZeroWalkImg && bossPatientZeroWalkImg.complete && bossPatientZeroWalkImg.naturalWidth > 0) ? bossPatientZeroWalkImg : bossPatientZeroSheetImg;
-
-  // Фаза 2: Подъем колосса из реактора с клиппингом
+  // Фаза 2: Подъем колосса из реактора с широким клиппингом
   if(prog < 0.74){
     const subProg = (prog - 0.28) / (0.74 - 0.28);
     const riseY = (1 - subProg) * 56;
-    const climbFrame = Math.min(7, Math.floor(subProg * 8));
+    const heaveY = Math.abs(Math.sin(subProg * Math.PI * 4)) * 3.4;
 
     cx.save();
     cx.beginPath();
-    cx.rect(ex - 120, gy - 220, 240, 220 + 4);
+    cx.rect(ex - 160, gy - 260, 320, 260 + 2);
     cx.clip();
 
     cx.save();
-    cx.translate(ex, ey + riseY);
+    cx.translate(ex, ey + riseY - heaveY);
     if(e.facing > 0) cx.scale(-1, 1);
+    const breath = 1 + Math.sin(subProg * Math.PI * 3) * 0.035;
+    cx.scale(breath, 2 - breath);
     cx.imageSmoothingEnabled = false;
     cx.filter = 'drop-shadow(0 0 12px rgba(239, 68, 68, 0.85))';
-    if(sheet && sheet.complete && sheet.naturalWidth > 0){
-      cx.drawImage(sheet, climbFrame * fw, 0, fw, fh, -bw / 2, -bh / 2 - 10, bw, bh);
-    } else if(bossPatientZeroImg && bossPatientZeroImg.complete && bossPatientZeroImg.naturalWidth > 0){
+    if(bossPatientZeroImg && bossPatientZeroImg.complete && bossPatientZeroImg.naturalWidth > 0){
       cx.drawImage(bossPatientZeroImg, -bw / 2, -bh / 2 - 10, bw, bh);
+    } else {
+      circle(0, 0, e.c.r, '#ef4444');
     }
     cx.restore();
     cx.restore();
@@ -25197,43 +25384,45 @@ function drawPatientZeroEmergence(e, ex, ey, gy){
     Sfx.play('anvil');
     if(g) g.shake = Math.max(g.shake || 0, 0.7);
     if(g && g.fx){
-      for(let k = 0; k < 28; k++){
+      for(let k = 0; k < 25; k++){
         const ra = Math.random() * 6.283;
-        const spd = 80 + Math.random() * 140;
+        const spd = 80 + Math.random() * 130;
         g.fx.push({
-          x: e.x, y: e.y + 20,
+          x: e.x, y: e.y + 25,
           vx: Math.cos(ra) * spd,
-          vy: Math.sin(ra) * spd * 0.5 - 45,
-          col: Math.random() < 0.6 ? '#ef4444' : '#facc15',
-          r: 3.4, l: 0.65
+          vy: Math.sin(ra) * spd * 0.5 - 40,
+          col: Math.random() < 0.5 ? '#ef4444' : '#b91c1c',
+          r: 3.2, l: 0.6
         });
       }
     }
   }
 
   const slamProg = (prog - 0.74) / 0.26;
-  const frame = Math.min(7, Math.floor(slamProg * 8));
+  const breath = 1 + Math.sin(slamProg * Math.PI * 3) * 0.04;
 
   cx.save();
   cx.fillStyle = 'rgba(0,0,0,0.56)';
-  cx.beginPath(); cx.ellipse(ex, gy, 58, 18, 0, 0, 6.283); cx.fill();
+  cx.beginPath(); cx.ellipse(ex, gy, 62, 20, 0, 0, 6.283); cx.fill();
   cx.restore();
 
   cx.save();
   cx.translate(ex, ey);
   if(e.facing > 0) cx.scale(-1, 1);
+  cx.scale(breath, 2 - breath);
   cx.imageSmoothingEnabled = false;
   cx.filter = 'drop-shadow(0 0 14px rgba(239, 68, 68, 0.9))';
-  if(sheet && sheet.complete && sheet.naturalWidth > 0){
-    cx.drawImage(sheet, frame * fw, 0, fw, fh, -bw / 2, -bh / 2 - 10, bw, bh);
-  } else if(bossPatientZeroImg && bossPatientZeroImg.complete && bossPatientZeroImg.naturalWidth > 0){
+  if(bossPatientZeroImg && bossPatientZeroImg.complete && bossPatientZeroImg.naturalWidth > 0){
     cx.drawImage(bossPatientZeroImg, -bw / 2, -bh / 2 - 10, bw, bh);
+  } else {
+    circle(0, 0, e.c.r, '#ef4444');
   }
   cx.restore();
 
   drawPatientZeroCraterLip(ex, gy, cw, ch);
 }
 
+// ===== ОТРИСОВКА БОССА 1: КИБЕР-ЦЕРБЕР (CYBER-CERBERUS) =====
 function drawCyberCerberusBoss(e, ox, oy){
   const ex = e.x + ox, ey = e.y + oy;
   const shadowY = ey + 52;
@@ -25298,15 +25487,12 @@ function drawCyberCerberusBoss(e, ox, oy){
     cx.restore();
   }
 
-  // 4. УЛУЧШЕННЫЙ ТЕЛЕГРАФ ОГНЕМЁТНОГО ЗАЛПА (Flamethrower Sweep)
+  // 4. Телеграф огнеметного залпа (Flamethrower Sweep)
   if(e.action === 'flame_prep'){
     cx.save();
     const fAng = e.flameAng !== undefined ? e.flameAng : Math.atan2(G.p.y - e.y, G.p.x - e.x);
     const fRad = 270;
-    const pulse = 0.88 + 0.12 * Math.sin(performance.now() * 0.04);
     cx.translate(ex, ey - 4);
-    
-    // Внутренний раскаленный сектор
     const fGrad = cx.createRadialGradient(0, 0, 10, 0, 0, fRad);
     fGrad.addColorStop(0, 'rgba(254, 240, 138, 0.45)');
     fGrad.addColorStop(0.35, 'rgba(249, 115, 22, 0.35)');
@@ -25317,43 +25503,16 @@ function drawCyberCerberusBoss(e, ox, oy){
     cx.moveTo(0, 0);
     cx.arc(0, 0, fRad, fAng - 0.45, fAng + 0.45);
     cx.closePath(); cx.fill();
-
-    // 3 лазерных луча наведения от трёх голов Цербера
-    const headOffsets = [-14, 0, 14];
-    for(const off of headOffsets){
-      const lAng = fAng + off * 0.02;
-      cx.strokeStyle = 'rgba(254, 240, 138, 0.9)';
-      cx.lineWidth = 1.6;
-      cx.beginPath();
-      cx.moveTo(0, off * 0.4);
-      cx.lineTo(Math.cos(lAng) * fRad, Math.sin(lAng) * fRad);
-      cx.stroke();
-    }
-
-    // Волнообразная пульсирующая граница огня
-    cx.strokeStyle = `rgba(249, 115, 22, ${0.95 * pulse})`;
-    cx.lineWidth = 2.4;
-    cx.beginPath();
-    const numSteps = 16;
-    for(let i = 0; i <= numSteps; i++){
-      const a = (fAng - 0.45) + (i / numSteps) * 0.9;
-      const wav = Math.sin(performance.now() * 0.02 + i * 1.2) * 8;
-      const rx = Math.cos(a) * (fRad + wav), ry = Math.sin(a) * (fRad + wav);
-      if(i === 0) cx.moveTo(rx, ry); else cx.lineTo(rx, ry);
-    }
-    cx.stroke();
     cx.restore();
   }
 
-  // 5. УЛУЧШЕННЫЙ АКТИВНЫЙ ОГНЕМЁТНЫЙ ПОТОК (Flamethrower Fire)
+  // 5. Огнеметный поток
   if(e.action === 'flame_fire'){
     cx.save();
     const sweep = Math.sin(performance.now() * 0.012) * 0.45;
     const curA = (e.flameAng || 0) + sweep;
     const fLen = 290;
     cx.translate(ex, ey - 6);
-    
-    // Тройной раскаленный конус пламени
     const fGrad = cx.createRadialGradient(0, 0, 15, 0, 0, fLen);
     fGrad.addColorStop(0, '#ffffff');
     fGrad.addColorStop(0.2, '#facc15');
@@ -25365,24 +25524,14 @@ function drawCyberCerberusBoss(e, ox, oy){
     cx.moveTo(0, 0);
     cx.arc(0, 0, fLen, curA - 0.35, curA + 0.35);
     cx.closePath(); cx.fill();
-
-    // Яркое термоядерное ядро струи
-    cx.strokeStyle = '#ffffff';
-    cx.lineWidth = 4.0;
-    cx.beginPath();
-    cx.moveTo(0, 0);
-    cx.lineTo(Math.cos(curA) * (fLen * 0.75), Math.sin(curA) * (fLen * 0.75));
-    cx.stroke();
     cx.restore();
   }
 
-  // 6. УЛУЧШЕННЫЙ ТЕЛЕГРАФ УЛЬТИМЕЙТА: «ПРОТОКОЛ: СУДНЫЙ ШКВАЛ» (Carpet Bombardment)
+  // 6. Телеграф ультимейта
   if(e.action === 'overdrive_prep'){
     cx.save();
     const pulse = 0.82 + 0.18 * Math.sin(performance.now() * 0.04);
     const spin = performance.now() * 0.004;
-
-    // Вращающийся тактический восьмиугольник перегрузки вокруг Цербера
     cx.translate(ex, ey);
     cx.rotate(spin);
     cx.strokeStyle = `rgba(239, 68, 68, ${0.95 * pulse})`;
@@ -25394,133 +25543,43 @@ function drawCyberCerberusBoss(e, ox, oy){
       if(o === 0) cx.moveTo(orx, ory); else cx.lineTo(orx, ory);
     }
     cx.closePath(); cx.stroke();
-
-    // Внутренний светящийся щит
     cx.fillStyle = `rgba(239, 68, 68, ${0.16 * pulse})`;
     cx.fill();
-
-    // Предупреждающие маркеры по углам
-    for(let o = 0; o < 8; o++){
-      const oa = o * (6.283 / 8);
-      cx.fillStyle = '#fef08a';
-      cx.beginPath(); cx.arc(Math.cos(oa) * 78, Math.sin(oa) * 78, 3.5, 0, 6.283); cx.fill();
-    }
-    cx.restore();
-
-    // Голографическая стробоскопическая надпись тревоги
-    cx.save();
-    cx.fillStyle = '#ef4444';
-    cx.font = 'bold 12px monospace';
-    cx.textAlign = 'center';
-    cx.shadowColor = '#ef4444';
-    cx.shadowBlur = 10;
-    cx.fillText('⚠️ ORBITAL ARTILLERY // CARPET BOMBARDMENT', ex, ey - 88);
     cx.restore();
   }
 
   // 7. Тень под лапами
   const isDashing = (e.action === 'dash_run' || e.action === 'dash_rebound');
-  const isHowling = (e.action === 'howl' || e.action === 'overdrive_prep');
-  const shadowScale = isDashing ? 1.25 : (isHowling ? 0.9 : 1.0);
   cx.save();
   cx.fillStyle = 'rgba(0,0,0,0.52)';
-  cx.beginPath(); cx.ellipse(ex, shadowY, 52 * shadowScale, 16, 0, 0, 6.283); cx.fill();
+  cx.beginPath(); cx.ellipse(ex, shadowY, isDashing ? 65 : 52, 16, 0, 0, 6.283); cx.fill();
   cx.restore();
 
-  // 8. Выбор покадрового спрайта
-  const fw = 340, fh = 300;
-  const bw = 156, bh = 138;
-  let currentSheet = bossCyberCerberusWalkImg;
-  let frame = 0;
-  let bobY = 0;
+  // 8. Отрисовка спрайта Цербера с органической анимацией
+  const bw = 168, bh = 148;
+  const breath = 1 + Math.sin(performance.now() * 0.005) * 0.03;
+  const dashStretch = isDashing ? 1.2 : 1.0;
+  const bobY = Math.sin(performance.now() * 0.008) * 3;
 
-  if(e.action === 'dash_prep'){
-    currentSheet = bossCyberCerberusAttackImg;
-    const windProg = Math.max(0, Math.min(1, 1 - (e.actionT / 0.70)));
-    frame = Math.min(2, Math.floor(windProg * 3));
-    bobY = 4 * windProg;
-  } else if(isDashing){
-    currentSheet = bossCyberCerberusAttackImg;
-    const runProg = Math.max(0, Math.min(1, 1 - (e.actionT / 0.45)));
-    frame = Math.min(5, 3 + Math.floor(runProg * 3));
-    bobY = -2;
-  } else if(isHowling){
-    currentSheet = bossCyberCerberusAttackImg;
-    const howlProg = Math.max(0, Math.min(1, 1 - (e.actionT / 0.8)));
-    frame = Math.min(7, 6 + Math.floor(howlProg * 2));
-    bobY = -4;
-  } else if(e.action === 'tail_swipe'){
-    currentSheet = bossCyberCerberusAttackImg;
-    const swipeProg = Math.max(0, Math.min(1, 1 - (e.actionT / 0.5)));
-    frame = Math.min(5, 3 + Math.floor(swipeProg * 3));
-  } else if(e.action === 'missile_salvo'){
-    currentSheet = bossCyberCerberusAttackImg;
-    frame = 1;
-    bobY = 3;
-  } else if(e.action === 'flame_prep'){
-    currentSheet = bossCyberCerberusAttackImg;
-    frame = 2;
-    bobY = -3;
-  } else if(e.action === 'flame_fire'){
-    currentSheet = bossCyberCerberusAttackImg;
-    frame = 3;
-    bobY = -2;
-  } else if(e.action === 'overdrive_prep'){
-    currentSheet = bossCyberCerberusAttackImg;
-    frame = 7;
-    bobY = -6;
-  } else {
-    currentSheet = bossCyberCerberusWalkImg;
-    frame = Math.floor(e.animT || 0) % 8;
-  }
-  e.frame = frame;
-
-  // 9. Полупрозрачные шлейфы скорости при рывке
-  if(isDashing){
-    for(let ghost = 2; ghost >= 1; ghost--){
-      cx.save();
-      const ghostDist = ghost * 22;
-      const gx = ex - Math.cos(e.chargeAng || 0) * ghostDist;
-      const gy = ey - Math.sin(e.chargeAng || 0) * ghostDist;
-      cx.translate(gx, gy + bobY);
-      if(e.facing > 0) cx.scale(-1, 1);
-      cx.globalAlpha = 0.28 / ghost;
-      cx.filter = 'drop-shadow(0 0 14px #ef4444) brightness(1.5)';
-      if(currentSheet && currentSheet.complete && currentSheet.naturalWidth > 0){
-        cx.imageSmoothingEnabled = false;
-        cx.drawImage(currentSheet, frame * fw, 0, fw, fh, -bw / 2, -bh / 2 - 4, bw, bh);
-      }
-      cx.restore();
-    }
-  }
-
-  // 10. Основная отрисовка покадрового спрайта
   cx.save();
   cx.translate(ex, ey + bobY);
   if(e.facing > 0) cx.scale(-1, 1);
+  cx.scale(breath * dashStretch, (2 - breath) / dashStretch);
 
-  if(e.fl > 0) cx.filter = 'brightness(1.75) contrast(1.15)';
+  if(e.fl > 0) cx.filter = 'brightness(1.8) contrast(1.2)';
   else if(e.enraged) cx.filter = 'drop-shadow(0 0 16px rgba(239, 68, 68, 0.95)) contrast(1.25)';
-  else cx.filter = 'drop-shadow(0 0 8px rgba(239, 68, 68, 0.5))';
+  else cx.filter = 'drop-shadow(0 0 8px rgba(239, 68, 68, 0.55))';
 
-  if(currentSheet && currentSheet.complete && currentSheet.naturalWidth > 0){
+  if(bossCyberCerberusImg && bossCyberCerberusImg.complete && bossCyberCerberusImg.naturalWidth > 0){
     cx.imageSmoothingEnabled = false;
-    cx.drawImage(currentSheet, frame * fw, 0, fw, fh, -bw / 2, -bh / 2 - 4, bw, bh);
-  } else if(bossCyberCerberusSheetImg && bossCyberCerberusSheetImg.complete && bossCyberCerberusSheetImg.naturalWidth > 0){
-    cx.imageSmoothingEnabled = false;
-    cx.drawImage(bossCyberCerberusSheetImg, frame * fw, 0, fw, fh, -bw / 2, -bh / 2 - 4, bw, bh);
-  } else if(bossCyberCerberusImg && bossCyberCerberusImg.complete && bossCyberCerberusImg.naturalWidth > 0){
-    cx.imageSmoothingEnabled = false;
-    cx.drawImage(bossCyberCerberusImg, -bw / 2, -bh / 2 - 4, bw, bh);
+    cx.drawImage(bossCyberCerberusImg, -bw / 2, -bh / 2 - 6, bw, bh);
   } else {
-    cx.fillStyle = '#ef4444';
-    cx.beginPath(); cx.arc(0, 0, e.c.r, 0, 6.283); cx.fill();
+    circle(0, 0, e.c.r, '#ef4444');
   }
-  cx.filter = 'none';
-
   cx.restore();
 }
 
+// ===== ОТРИСОВКА БОССА 2: ХИРУРГ-МЯСНИК (BIO-BUTCHER) =====
 function drawBioButcherBoss(e, ox, oy){
   const ex = e.x + ox, ey = e.y + oy;
   const shadowY = ey + 56;
@@ -25530,274 +25589,94 @@ function drawBioButcherBoss(e, ox, oy){
     return;
   }
 
-  // 1. Телеграф пневматического гарпуна
-  if(e.action === 'hook_prep'){
+  // 1. Телеграф броска гарпуна
+  if(e.action === 'hook_windup'){
     cx.save();
-    const hLen = 340;
-    const hAng = Math.atan2((e.hookTargetY || G.p.y) - e.y, (e.hookTargetX || G.p.x) - e.x);
-    cx.translate(ex, ey - 6);
+    const hLen = 320;
+    const hAng = Math.atan2(G.p.y - e.y, G.p.x - e.x);
+    cx.translate(ex, ey);
     cx.rotate(hAng);
-    const pulse = 0.8 + 0.2 * Math.sin(performance.now() * 0.025);
-    
-    cx.strokeStyle = `rgba(220, 38, 38, ${0.9 * pulse})`;
-    cx.lineWidth = 2.2;
-    cx.setLineDash([10, 6]);
-    cx.lineDashOffset = -performance.now() * 0.05;
+    const pulse = 0.85 + 0.15 * Math.sin(performance.now() * 0.03);
+    cx.fillStyle = `rgba(220, 38, 38, ${0.16 * pulse})`;
+    cx.fillRect(0, -18, hLen, 36);
+    cx.strokeStyle = `rgba(239, 68, 68, ${0.92 * pulse})`;
+    cx.lineWidth = 2.4;
+    cx.setLineDash([8, 6]);
     cx.beginPath(); cx.moveTo(0, 0); cx.lineTo(hLen, 0); cx.stroke();
     cx.setLineDash([]);
-
-    const tx = (e.hookTargetX || G.p.x) + ox, ty = (e.hookTargetY || G.p.y) + oy;
     cx.restore();
+  }
+
+  // 2. Телеграф сокрушительного удара тесаком
+  if(e.action === 'cleaver_windup'){
     cx.save();
-    cx.translate(tx, ty);
+    const cRad = 110;
+    const pulse = 0.85 + 0.15 * Math.sin(performance.now() * 0.03);
+    cx.fillStyle = `rgba(220, 38, 38, ${0.25 * pulse})`;
+    cx.beginPath(); cx.arc(ex, ey, cRad, 0, 6.283); cx.fill();
     cx.strokeStyle = `rgba(239, 68, 68, ${0.95 * pulse})`;
-    cx.lineWidth = 1.8;
-    cx.beginPath(); cx.arc(0, 0, 14 * pulse, 0, 6.283); cx.stroke();
-    cx.beginPath(); cx.moveTo(-18, 0); cx.lineTo(18, 0); cx.stroke();
-    cx.beginPath(); cx.moveTo(0, -18); cx.lineTo(0, 18); cx.stroke();
+    cx.lineWidth = 2.4; cx.stroke();
     cx.restore();
   }
 
-  // 2. Телеграф казнящего разруба тесаком
-  if(e.action === 'cleaver_prep'){
-    cx.save();
-    const cAng = Math.atan2(G.p.y - e.y, G.p.x - e.x);
-    const cRad = 135;
-    const halfA = 0.55;
-    const pulse = 0.8 + 0.2 * Math.sin(performance.now() * 0.025);
-    cx.fillStyle = `rgba(220, 38, 38, ${0.28 * pulse})`;
-    cx.beginPath();
-    cx.moveTo(ex, ey + 10);
-    cx.arc(ex, ey + 10, cRad, cAng - halfA, cAng + halfA);
-    cx.closePath(); cx.fill();
-    cx.strokeStyle = `rgba(239, 68, 68, ${0.95 * pulse})`;
-    cx.lineWidth = 2.2;
-    cx.stroke();
-    cx.strokeStyle = '#fef08a';
-    cx.lineWidth = 1.8;
-    cx.beginPath();
-    cx.moveTo(ex, ey + 10);
-    cx.lineTo(ex + Math.cos(cAng) * 220, ey + 10 + Math.sin(cAng) * 220);
-    cx.stroke();
-    cx.restore();
-  }
-
-  // 3. Вихрь мясорубки: опасный вращающийся ореол
-  if(e.action === 'spin_cleaver'){
-    cx.save();
-    const sRad = 75;
-    const pulse = 0.85 + 0.15 * Math.sin(performance.now() * 0.04);
-    cx.fillStyle = `rgba(220, 38, 38, ${0.32 * pulse})`;
-    cx.beginPath(); cx.arc(ex, ey, sRad, 0, 6.283); cx.fill();
-    cx.strokeStyle = `rgba(239, 68, 68, ${0.95 * pulse})`;
-    cx.lineWidth = 3.0;
-    cx.setLineDash([12, 6]);
-    cx.lineDashOffset = performance.now() * 0.05;
-    cx.stroke();
-    cx.restore();
-  }
-
-  // 4. УЛУЧШЕННЫЙ ТЕЛЕГРАФ БЕШЕНОГО РЫВКА С БЕНЗОПИЛОЙ (Chainsaw Rush)
-  if(e.action === 'rush_prep'){
-    cx.save();
-    const rAng = e.rushAng !== undefined ? e.rushAng : Math.atan2(G.p.y - e.y, G.p.x - e.x);
-    const rLen = 380;
-    const rWidth = 52;
-    cx.translate(ex, ey);
-    cx.rotate(rAng);
-
-    // Аварийный коридор с анимированными шевронами опасности
-    const hGrad = cx.createLinearGradient(0, -rWidth/2, 0, rWidth/2);
-    hGrad.addColorStop(0, 'rgba(239, 68, 68, 0.4)');
-    hGrad.addColorStop(0.5, 'rgba(220, 38, 38, 0.18)');
-    hGrad.addColorStop(1, 'rgba(239, 68, 68, 0.4)');
-    cx.fillStyle = hGrad;
-    cx.fillRect(0, -rWidth/2, rLen, rWidth);
-
-    // Боковые лазерные рельсы
-    cx.strokeStyle = '#ef4444';
-    cx.lineWidth = 2.4;
-    cx.beginPath();
-    cx.moveTo(0, -rWidth/2); cx.lineTo(rLen, -rWidth/2);
-    cx.moveTo(0, rWidth/2); cx.lineTo(rLen, rWidth/2);
-    cx.stroke();
-
-    // Быстро бегущие косые полосы предупреждения (Hazard stripes)
-    const stripeOff = (performance.now() * 0.18) % 36;
-    cx.strokeStyle = 'rgba(254, 240, 138, 0.85)';
-    cx.lineWidth = 2.2;
-    for(let s = stripeOff; s < rLen; s += 36){
-      cx.beginPath();
-      cx.moveTo(s, -rWidth/2);
-      cx.lineTo(s + 18, rWidth/2);
-      cx.stroke();
-    }
-
-    // Вращающаяся голографическая дисковая пила на конце коридора
-    cx.save();
-    cx.translate(rLen, 0);
-    cx.rotate(performance.now() * 0.03);
-    cx.strokeStyle = '#fef08a';
-    cx.lineWidth = 2.4;
-    cx.beginPath(); cx.arc(0, 0, 16, 0, 6.283); cx.stroke();
-    for(let z = 0; z < 8; z++){
-      const za = z * 0.785;
-      cx.fillStyle = '#ef4444';
-      cx.beginPath();
-      cx.moveTo(Math.cos(za)*16, Math.sin(za)*16);
-      cx.lineTo(Math.cos(za+0.25)*22, Math.sin(za+0.25)*22);
-      cx.lineTo(Math.cos(za+0.35)*16, Math.sin(za+0.35)*16);
-      cx.fill();
-    }
-    cx.restore();
-
-    cx.restore();
-  }
-
-  // 5. УЛУЧШЕННЫЙ ТЕЛЕГРАФ УЛЬТИМЕЙТА: «СТАЛЬНОЙ КАПКАН» (Execution Cage)
+  // 3. Телеграф «Стальной капкан» (Execution Cage)
   if(e.action === 'cage_prep'){
     cx.save();
-    const arena = G.bossArena || { cx: ex, cy: ey, rad: 220 };
+    const arena = G.bossArena || { x: G.p.x - 220, y: G.p.y - 220, size: 440, cx: G.p.x, cy: G.p.y, rad: 220 };
+    const acx = arena.cx !== undefined ? arena.cx : (arena.x + arena.size / 2);
+    const acy = arena.cy !== undefined ? arena.cy : (arena.y + arena.size / 2);
+    const arad = arena.rad !== undefined ? arena.rad : (arena.size / 2);
     const pulse = 0.82 + 0.18 * Math.sin(performance.now() * 0.035);
     const corners = [0, 1.5708, 3.1416, 4.7124];
-
-    // 4 лазерных луча-растяжки от стен арены к Мяснику
     for(const ang of corners){
-      const cx1 = arena.cx + Math.cos(ang) * (arena.rad - 25);
-      const cy1 = arena.cy + Math.sin(ang) * (arena.rad - 25);
-      
-      // Тяжелый красный лазер
+      const cx1 = acx + Math.cos(ang) * (arad - 25);
+      const cy1 = acy + Math.sin(ang) * (arad - 25);
       cx.strokeStyle = `rgba(239, 68, 68, ${0.95 * pulse})`;
       cx.lineWidth = 2.8;
       cx.beginPath();
       cx.moveTo(cx1 + ox, cy1 + oy);
       cx.lineTo(ex, ey);
       cx.stroke();
-
-      // Пилы-индикаторы на стенах перед пуском
       cx.fillStyle = '#ef4444';
       cx.beginPath(); cx.arc(cx1 + ox, cy1 + oy, 14 * pulse, 0, 6.283); cx.fill();
-      cx.strokeStyle = '#ffffff'; cx.lineWidth = 2; cx.stroke();
     }
-
-    // Голографический череп и надпись в центре
-    cx.fillStyle = '#dc2626';
-    cx.font = 'bold 12px monospace';
-    cx.textAlign = 'center';
-    cx.shadowColor = '#ef4444';
-    cx.shadowBlur = 10;
-    cx.fillText('⛓️ STEEL EXECUTION CAGE // 4 SAWS', ex, ey - 74);
     cx.restore();
   }
 
-  // 6. Тень под сапогами
+  // 4. Тень под ногами
   cx.save();
-  cx.fillStyle = 'rgba(0,0,0,0.55)';
-  cx.beginPath(); cx.ellipse(ex, shadowY, 56, 16, 0, 0, 6.283); cx.fill();
+  cx.fillStyle = 'rgba(0,0,0,0.52)';
+  cx.beginPath(); cx.ellipse(ex, shadowY, 58, 18, 0, 0, 6.283); cx.fill();
   cx.restore();
 
-  // 7. Выбор покадрового спрайта
-  const fw = 360, fh = 300;
-  const bw = 192, bh = 160;
-  let currentSheet = bossBioButcherWalkImg;
-  let frame = 0;
-  let bobY = 0;
+  // 5. Отрисовка спрайта Мясника
+  const bw = 192, bh = 168;
+  const breath = 1 + Math.sin(performance.now() * 0.005) * 0.03;
+  const isSpinning = (e.action === 'spin_cleaver');
+  const bobY = Math.sin(performance.now() * 0.007) * 3;
 
-  if(e.action === 'cleaver_prep'){
-    currentSheet = bossBioButcherAttackImg;
-    const windProg = Math.max(0, Math.min(1, 1 - (e.actionT / 0.65)));
-    frame = Math.min(3, Math.floor(windProg * 4));
-    bobY = -6 * windProg;
-  } else if(e.action === 'cleaver_strike'){
-    currentSheet = bossBioButcherAttackImg;
-    frame = 4 + (Math.floor(performance.now() / 80) % 2);
-    bobY = 4;
-  } else if(e.action === 'hook_prep'){
-    currentSheet = bossBioButcherAttackImg;
-    const prepProg = Math.max(0, Math.min(1, 1 - (e.actionT / 0.60)));
-    frame = Math.min(5, 4 + Math.floor(prepProg * 2));
-    bobY = 2;
-  } else if(e.action === 'hook_throw'){
-    currentSheet = bossBioButcherAttackImg;
-    const throwProg = Math.max(0, Math.min(1, 1 - (e.actionT / 0.55)));
-    frame = Math.min(7, 6 + Math.floor(throwProg * 2));
-    bobY = 0;
-  } else if(e.action === 'saw_scatter'){
-    currentSheet = bossBioButcherAttackImg;
-    frame = 2;
-    bobY = -2;
-  } else if(e.action === 'rush_prep'){
-    currentSheet = bossBioButcherAttackImg;
-    frame = 1;
-    bobY = -3;
-  } else if(e.action === 'rush_dash'){
-    currentSheet = bossBioButcherWalkImg;
-    frame = Math.floor(performance.now() / 60) % 8;
-    bobY = 0;
-  } else if(e.action === 'cage_prep'){
-    currentSheet = bossBioButcherAttackImg;
-    frame = 0;
-    bobY = -6;
-  } else if(e.action === 'spin_cleaver'){
-    currentSheet = bossBioButcherWalkImg;
-    frame = Math.floor(performance.now() / 60) % 8;
-  } else {
-    currentSheet = bossBioButcherWalkImg;
-    frame = Math.floor(e.animT || 0) % 8;
-    bobY = (frame === 1 || frame === 5) ? 3 : 0;
-  }
-  e.frame = frame;
-
-  // 8. Кровавые шлейфы скорости при таране (Chainsaw Rush Dash)
-  if(e.action === 'rush_dash'){
-    for(let g = 2; g >= 1; g--){
-      cx.save();
-      const dist = g * 24;
-      const gx = ex - Math.cos(e.rushAng || 0) * dist;
-      const gy = ey - Math.sin(e.rushAng || 0) * dist;
-      cx.translate(gx, gy);
-      if(e.facing > 0) cx.scale(-1, 1);
-      cx.globalAlpha = 0.32 / g;
-      cx.filter = 'drop-shadow(0 0 16px #dc2626) contrast(1.4)';
-      if(currentSheet && currentSheet.complete && currentSheet.naturalWidth > 0){
-        cx.imageSmoothingEnabled = false;
-        cx.drawImage(currentSheet, frame * fw, 0, fw, fh, -bw / 2, -bh / 2 - 8, bw, bh);
-      }
-      cx.restore();
-    }
-  }
-
-  // 9. Отрисовка спрайта Мясника
   cx.save();
   cx.translate(ex, ey + bobY);
-  if(e.action === 'spin_cleaver'){
-    cx.rotate(performance.now() * 0.02);
-  } else if(e.facing > 0){
-    cx.scale(-1, 1);
+  if(e.facing > 0) cx.scale(-1, 1);
+  if(isSpinning){
+    cx.rotate(Math.sin(performance.now() * 0.03) * 0.15);
   }
+  cx.scale(breath, 2 - breath);
 
-  if(e.fl > 0) cx.filter = 'brightness(1.75) contrast(1.15)';
-  else if(e.enraged) cx.filter = 'drop-shadow(0 0 16px rgba(220, 38, 38, 0.95)) contrast(1.2)';
-  else cx.filter = 'drop-shadow(0 0 8px rgba(185, 28, 28, 0.6))';
+  if(e.fl > 0) cx.filter = 'brightness(1.8) contrast(1.2)';
+  else if(e.enraged) cx.filter = 'drop-shadow(0 0 16px rgba(220, 38, 38, 0.95)) contrast(1.25)';
+  else cx.filter = 'drop-shadow(0 0 8px rgba(185, 28, 28, 0.55))';
 
-  if(currentSheet && currentSheet.complete && currentSheet.naturalWidth > 0){
-    cx.imageSmoothingEnabled = false;
-    cx.drawImage(currentSheet, frame * fw, 0, fw, fh, -bw / 2, -bh / 2 - 8, bw, bh);
-  } else if(bossBioButcherSheetImg && bossBioButcherSheetImg.complete && bossBioButcherSheetImg.naturalWidth > 0){
-    cx.imageSmoothingEnabled = false;
-    cx.drawImage(bossBioButcherSheetImg, frame * fw, 0, fw, fh, -bw / 2, -bh / 2 - 8, bw, bh);
-  } else if(bossBioButcherImg && bossBioButcherImg.complete && bossBioButcherImg.naturalWidth > 0){
+  if(bossBioButcherImg && bossBioButcherImg.complete && bossBioButcherImg.naturalWidth > 0){
     cx.imageSmoothingEnabled = false;
     cx.drawImage(bossBioButcherImg, -bw / 2, -bh / 2 - 8, bw, bh);
   } else {
-    cx.fillStyle = '#dc2626';
-    cx.beginPath(); cx.arc(0, 0, e.c.r, 0, 6.283); cx.fill();
+    circle(0, 0, e.c.r, '#dc2626');
   }
-  cx.filter = 'none';
-
   cx.restore();
 }
 
+// ===== ОТРИСОВКА БОССА 3: ХИТИНОВЫЙ ЖНЕЦ (CHITINOUS REAPER) =====
 function drawChitinReaperBoss(e, ox, oy){
   const ex = e.x + ox, ey = e.y + oy;
   const shadowY = ey + 54;
@@ -25854,107 +25733,28 @@ function drawChitinReaperBoss(e, ox, oy){
     cx.restore();
   }
 
-  // 4. УЛУЧШЕННЫЙ ТЕЛЕГРАФ КИСЛОТНЫХ ГЕЙЗЕРОВ (Geyser Cast)
-  if(e.action === 'geyser_cast'){
-    cx.save();
-    const pulse = 0.85 + 0.15 * Math.sin(performance.now() * 0.04);
-    // Светящаяся радиоактивная аура вокруг хвоста Жнеца
-    const gGrad = cx.createRadialGradient(ex, ey - 25, 4, ex, ey - 25, 48);
-    gGrad.addColorStop(0, '#facc15');
-    gGrad.addColorStop(0.4, 'rgba(163, 230, 53, 0.85)');
-    gGrad.addColorStop(1, 'rgba(34, 197, 94, 0)');
-    cx.fillStyle = gGrad;
-    cx.beginPath(); cx.arc(ex, ey - 25, 48 * pulse, 0, 6.283); cx.fill();
-
-    // Сейсмические кислотные трещины в земле
-    cx.strokeStyle = `rgba(163, 230, 53, ${0.95 * pulse})`;
-    cx.lineWidth = 2.4;
-    for(let c = 0; c < 6; c++){
-      const ca = c * 1.047;
-      cx.beginPath();
-      cx.moveTo(ex, ey + 15);
-      cx.lineTo(ex + Math.cos(ca) * 60, ey + 15 + Math.sin(ca) * 30);
-      cx.stroke();
-    }
-    cx.restore();
-  }
-
-  // 5. УЛУЧШЕННЫЙ ТЕЛЕГРАФ УЛЬТИМЕЙТА: «РОЖДЕНИЕ УЛЬЯ» (Brood Infestation)
-  if(e.action === 'brood_prep'){
-    cx.save();
-    const pulse = 0.82 + 0.18 * Math.sin(performance.now() * 0.035);
-    // Пульсирующие зеленые сейсмические кольца улья
-    cx.strokeStyle = `rgba(34, 197, 94, ${0.95 * pulse})`;
-    cx.lineWidth = 3.2;
-    cx.beginPath(); cx.ellipse(ex, ey + 10, 85 * pulse, 45 * pulse, 0, 0, 6.283); cx.stroke();
-    cx.strokeStyle = `rgba(250, 204, 21, ${0.8 * pulse})`;
-    cx.lineWidth = 1.8;
-    cx.beginPath(); cx.ellipse(ex, ey + 10, 60 * pulse, 30 * pulse, 0, 0, 6.283); cx.stroke();
-
-    cx.fillStyle = '#22c55e';
-    cx.font = 'bold 12px monospace';
-    cx.textAlign = 'center';
-    cx.shadowColor = '#22c55e';
-    cx.shadowBlur = 10;
-    cx.fillText('🦂 BROOD INFESTATION // ACID NOVA', ex, ey - 68);
-    cx.restore();
-  }
-
-  // 6. Тень под ногами
+  // 4. Тень под ногами
   cx.save();
   cx.fillStyle = 'rgba(0,0,0,0.52)';
-  cx.beginPath(); cx.ellipse(ex, shadowY, 54, 16, 0, 0, 6.283); cx.fill();
+  cx.beginPath(); cx.ellipse(ex, shadowY, 56, 16, 0, 0, 6.283); cx.fill();
   cx.restore();
 
-  // 7. Выбор покадрового спрайта (Ходьба vs Атаки)
-  const fw = 280, fh = 280;
-  const bw = 156, bh = 156;
-  let currentSheet = (bossChitinReaperWalkImg && bossChitinReaperWalkImg.complete && bossChitinReaperWalkImg.naturalWidth > 0) ? bossChitinReaperWalkImg : bossChitinReaperSheetImg;
-  let frame = Math.floor(e.animT || 0) % 8;
-  let bobY = 0;
+  // 5. Отрисовка цельного спрайта Жнеца (без расчленения и артефактов!)
+  const bw = 168, bh = 168;
+  const breath = 1 + Math.sin(performance.now() * 0.005) * 0.03;
+  const attackStretch = (e.action === 'slash_strike') ? 1.15 : 1.0;
+  const bobY = Math.sin(performance.now() * 0.007) * 3;
 
-  if(e.action === 'burrow_dig' || e.action === 'brood_prep'){
-    if(bossChitinReaperAttackImg && bossChitinReaperAttackImg.complete && bossChitinReaperAttackImg.naturalWidth > 0) currentSheet = bossChitinReaperAttackImg;
-    frame = 0;
-    bobY = 6;
-  } else if(e.action === 'burrow_erupt' || e.action === 'brood_erupt'){
-    if(bossChitinReaperAttackImg && bossChitinReaperAttackImg.complete && bossChitinReaperAttackImg.naturalWidth > 0) currentSheet = bossChitinReaperAttackImg;
-    const eruptProg = Math.max(0, Math.min(1, 1 - (e.actionT / 0.55)));
-    frame = eruptProg < 0.5 ? 1 : 2;
-    bobY = eruptProg < 0.5 ? -14 : 2;
-  } else if(e.action === 'slash_windup'){
-    if(bossChitinReaperAttackImg && bossChitinReaperAttackImg.complete && bossChitinReaperAttackImg.naturalWidth > 0) currentSheet = bossChitinReaperAttackImg;
-    frame = 3;
-    bobY = -3;
-  } else if(e.action === 'slash_strike'){
-    if(bossChitinReaperAttackImg && bossChitinReaperAttackImg.complete && bossChitinReaperAttackImg.naturalWidth > 0) currentSheet = bossChitinReaperAttackImg;
-    const strikeProg = Math.max(0, Math.min(1, 1 - (e.actionT / 0.35)));
-    frame = strikeProg < 0.6 ? 4 : 5;
-    bobY = 4;
-  } else if(e.action === 'acid_spit' || e.action === 'geyser_cast'){
-    if(bossChitinReaperAttackImg && bossChitinReaperAttackImg.complete && bossChitinReaperAttackImg.naturalWidth > 0) currentSheet = bossChitinReaperAttackImg;
-    const spitProg = Math.max(0, Math.min(1, 1 - (e.actionT / 0.50)));
-    frame = spitProg < 0.5 ? 6 : 7;
-    bobY = 0;
-  } else {
-    frame = Math.floor(e.animT || 0) % 8;
-    bobY = (frame === 1 || frame === 5) ? 3 : 0;
-  }
-  e.frame = frame;
-
-  // 8. Отрисовка спрайта Жнеца
   cx.save();
   cx.translate(ex, ey + bobY);
   if(e.facing > 0) cx.scale(-1, 1);
+  cx.scale(breath * attackStretch, (2 - breath) / attackStretch);
 
   if(e.fl > 0) cx.filter = 'brightness(1.75) contrast(1.15)';
   else if(e.enraged) cx.filter = 'drop-shadow(0 0 16px rgba(34, 197, 94, 0.95)) contrast(1.25)';
   else cx.filter = 'drop-shadow(0 0 8px rgba(22, 163, 74, 0.6))';
 
-  if(currentSheet && currentSheet.complete && currentSheet.naturalWidth > 0){
-    cx.imageSmoothingEnabled = false;
-    cx.drawImage(currentSheet, frame * fw, 0, fw, fh, -bw / 2, -bh / 2 - 8, bw, bh);
-  } else if(bossChitinReaperImg && bossChitinReaperImg.complete && bossChitinReaperImg.naturalWidth > 0){
+  if(bossChitinReaperImg && bossChitinReaperImg.complete && bossChitinReaperImg.naturalWidth > 0){
     cx.imageSmoothingEnabled = false;
     cx.drawImage(bossChitinReaperImg, -bw / 2, -bh / 2 - 8, bw, bh);
   } else {
@@ -25964,6 +25764,7 @@ function drawChitinReaperBoss(e, ox, oy){
   cx.restore();
 }
 
+// ===== ОТРИСОВКА БОССА 4: НЕЙРО-СВЕРХРАЗУМ (NEURO-OVERMIND) =====
 function drawNeuroOvermindBoss(e, ox, oy){
   const ex = e.x + ox, ey = e.y + oy;
   const shadowY = ey + 52;
@@ -25973,202 +25774,58 @@ function drawNeuroOvermindBoss(e, ox, oy){
     return;
   }
 
-  // 1. Телеграф прицельного лазерного луча «Око Судного Дня»
-  if(e.action === 'beam_prep'){
-    cx.save();
-    const bAng = e.beamAngle || Math.atan2(G.p.y - (e.y - 12), G.p.x - e.x);
-    const bLen = 420;
-    const pulse = 0.85 + 0.15 * Math.sin(performance.now() * 0.03);
-    cx.translate(ex, ey - 12);
-    cx.rotate(bAng);
-    cx.strokeStyle = `rgba(239, 68, 68, ${0.9 * pulse})`;
-    cx.lineWidth = 1.8;
-    cx.setLineDash([8, 4]);
-    cx.lineDashOffset = -performance.now() * 0.05;
-    cx.beginPath(); cx.moveTo(0, 0); cx.lineTo(bLen, 0); cx.stroke();
-    cx.setLineDash([]);
-    cx.fillStyle = '#fef08a';
-    cx.beginPath(); cx.arc(bLen, 0, 4, 0, 6.283); cx.fill();
-    cx.restore();
-  }
-
-  // 2. Отрисовка активного луча смерти (Beam Fire)
-  if(e.action === 'beam_fire'){
-    cx.save();
-    const bAng = e.beamAngle;
-    const bLen = 440;
-    const pulse = 0.90 + 0.10 * Math.sin(performance.now() * 0.04);
-    cx.translate(ex, ey - 12);
-    cx.rotate(bAng);
-
-    const beamW = 22 * pulse;
-    const bGrad = cx.createLinearGradient(0, -beamW, 0, beamW);
-    bGrad.addColorStop(0, 'rgba(168, 85, 247, 0)');
-    bGrad.addColorStop(0.5, 'rgba(168, 85, 247, 0.7)');
-    bGrad.addColorStop(1, 'rgba(168, 85, 247, 0)');
-    cx.fillStyle = bGrad;
-    cx.fillRect(0, -beamW, bLen, beamW * 2);
-
-    cx.strokeStyle = '#ffffff';
-    cx.lineWidth = 6 * pulse;
-    cx.beginPath(); cx.moveTo(0, 0); cx.lineTo(bLen, 0); cx.stroke();
-
-    cx.strokeStyle = '#f472b6';
-    cx.lineWidth = 12 * pulse;
-    cx.beginPath(); cx.moveTo(0, 0); cx.lineTo(bLen, 0); cx.stroke();
-
-    cx.fillStyle = '#ffffff';
-    cx.beginPath(); cx.arc(0, 0, 14 * pulse, 0, 6.283); cx.fill();
-    cx.fillStyle = '#c084fc';
-    cx.beginPath(); cx.arc(0, 0, 20 * pulse, 0, 6.283); cx.fill();
-    cx.restore();
-  }
-
-  // 3. УЛУЧШЕННЫЙ ВРАЩАЮЩИЙСЯ КВАДРО-ЛУЧ СМЕРТИ (Supernova Quad Beam)
+  // 1. Вращающийся квадро-луч в ярости (Supernova fire)
   if(e.action === 'supernova_fire'){
     cx.save();
+    const rot = e.supernovaRot || 0;
+    const bLen = 380;
     cx.translate(ex, ey - 12);
     for(let arm = 0; arm < 4; arm++){
-      const aAng = (e.supernovaRot || 0) + arm * (Math.PI / 2);
-      const bLen = 400;
-      const pulse = 0.88 + 0.12 * Math.sin(performance.now() * 0.04 + arm);
-      cx.save();
-      cx.rotate(aAng);
-
-      // Внешняя фиолетовая корональная плазма
-      cx.strokeStyle = `rgba(168, 85, 247, ${0.85 * pulse})`;
-      cx.lineWidth = 26 * pulse;
-      cx.beginPath(); cx.moveTo(0, 0); cx.lineTo(bLen, 0); cx.stroke();
-
-      // Неоновый пурпурный средний луч
-      cx.strokeStyle = `rgba(244, 114, 182, ${0.95 * pulse})`;
-      cx.lineWidth = 14 * pulse;
-      cx.beginPath(); cx.moveTo(0, 0); cx.lineTo(bLen, 0); cx.stroke();
-
-      // Бело-горячее термоядерное ядро
+      const bAng = rot + arm * (Math.PI / 2);
+      const bGrad = cx.createLinearGradient(0, 0, Math.cos(bAng) * bLen, Math.sin(bAng) * bLen);
+      bGrad.addColorStop(0, '#ffffff');
+      bGrad.addColorStop(0.3, 'rgba(168, 85, 247, 0.85)');
+      bGrad.addColorStop(1, 'rgba(236, 72, 153, 0)');
+      cx.strokeStyle = bGrad;
+      cx.lineWidth = 10;
+      cx.beginPath(); cx.moveTo(0, 0); cx.lineTo(Math.cos(bAng) * bLen, Math.sin(bAng) * bLen); cx.stroke();
       cx.strokeStyle = '#ffffff';
-      cx.lineWidth = 6 * pulse;
-      cx.beginPath(); cx.moveTo(0, 0); cx.lineTo(bLen, 0); cx.stroke();
-      cx.restore();
+      cx.lineWidth = 3;
+      cx.beginPath(); cx.moveTo(0, 0); cx.lineTo(Math.cos(bAng) * bLen, Math.sin(bAng) * bLen); cx.stroke();
     }
-    // Сверхновая вспышка в центре
-    cx.fillStyle = '#ffffff'; cx.beginPath(); cx.arc(0, 0, 18, 0, 6.283); cx.fill();
-    cx.fillStyle = '#c084fc'; cx.beginPath(); cx.arc(0, 0, 28, 0, 6.283); cx.fill();
     cx.restore();
   }
 
-  // 4. Телеграф сингулярности
-  if(e.action === 'singularity_cast'){
-    cx.save();
-    const pulse = 0.85 + 0.15 * Math.sin(performance.now() * 0.03);
-    const sRad = 110;
-    const spin = performance.now() * 0.008;
-    cx.translate(G.p.x + ox, G.p.y + oy);
-    cx.rotate(spin);
-    cx.strokeStyle = `rgba(168, 85, 247, ${0.9 * pulse})`;
-    cx.lineWidth = 2.4;
-    cx.setLineDash([12, 6]);
-    cx.beginPath(); cx.arc(0, 0, sRad, 0, 6.283); cx.stroke();
-    cx.setLineDash([]);
-    cx.restore();
-  }
-
-  // 5. УЛУЧШЕННЫЙ ПСИОНИЧЕСКИЙ ЩИТ «ЭГИДА» (Psi-Shield Aegis)
-  if(e.action === 'psi_shield_active'){
-    cx.save();
-    cx.translate(ex, ey);
-    const sRad = 62;
-    const pulse = 0.88 + 0.12 * Math.sin(performance.now() * 0.03);
-
-    // Внешняя вращающаяся кристаллическая сфера
-    cx.save();
-    cx.rotate(performance.now() * 0.003);
-    cx.strokeStyle = `rgba(56, 189, 248, ${0.92 * pulse})`;
-    cx.lineWidth = 2.6;
-    cx.beginPath();
-    for(let h = 0; h < 6; h++){
-      const ha = h * 1.047;
-      const hx = Math.cos(ha) * sRad, hy = Math.sin(ha) * sRad;
-      if(h === 0) cx.moveTo(hx, hy); else cx.lineTo(hx, hy);
-    }
-    cx.closePath(); cx.stroke();
-    cx.fillStyle = `rgba(56, 189, 248, ${0.16 * pulse})`; cx.fill();
-    cx.restore();
-
-    // Внутреннее контр-вращающееся фиолетовое кольцо рун
-    cx.save();
-    cx.rotate(-performance.now() * 0.004);
-    cx.strokeStyle = `rgba(192, 132, 252, ${0.85 * pulse})`;
-    cx.lineWidth = 1.8;
-    for(let r = 0; r < 6; r++){
-      const ra = r * 1.047;
-      cx.beginPath();
-      cx.arc(Math.cos(ra) * (sRad - 10), Math.sin(ra) * (sRad - 10), 4, 0, 6.283);
-      cx.stroke();
-    }
-    cx.restore();
-
-    cx.restore();
-  }
-
-  // 6. Плавная невесомость и тень на земле
-  const floatY = Math.sin(performance.now() * 0.003) * 6.5;
-  const shadowPulse = 1.0 - (floatY / 30);
+  // 2. Тень под левитирующим ядром
+  const hoverY = Math.sin(performance.now() * 0.0035) * 6;
   cx.save();
-  cx.fillStyle = 'rgba(0,0,0,0.48)';
-  cx.beginPath(); cx.ellipse(ex, shadowY, 48 * shadowPulse, 16 * shadowPulse, 0, 0, 6.283); cx.fill();
-  const ringPulse = 0.75 + 0.25 * Math.sin(performance.now() * 0.006);
-  cx.strokeStyle = `rgba(168, 85, 247, ${0.65 * ringPulse})`;
-  cx.lineWidth = 2.2;
-  cx.beginPath(); cx.ellipse(ex, ey + floatY + 16, 46, 18, 0, 0, 6.283); cx.stroke();
+  cx.fillStyle = 'rgba(0,0,0,0.45)';
+  cx.beginPath(); cx.ellipse(ex, shadowY, 52, 15, 0, 0, 6.283); cx.fill();
   cx.restore();
 
-  // 7. Выбор покадрового спрайта
-  const fw = 320, fh = 320;
-  const bw = 156, bh = 156;
-  let currentSheet = bossNeuroOvermindFloatImg;
-  let frame = 0;
+  // 3. Отрисовка ядра
+  const bw = 168, bh = 168;
+  const breath = 1 + Math.sin(performance.now() * 0.006) * 0.035;
 
-  if(e.action === 'singularity_cast' || e.action === 'beam_prep' || e.action === 'beam_fire' || e.action === 'supernova_fire' || e.action === 'psi_shield_active'){
-    currentSheet = bossNeuroOvermindAttackImg;
-    const prog = Math.max(0, Math.min(1, 1 - (e.actionT / 0.85)));
-    frame = Math.min(7, Math.floor(prog * 8));
-  } else {
-    currentSheet = bossNeuroOvermindFloatImg;
-    frame = Math.floor(e.animT || 0) % 8;
-  }
-  e.frame = frame;
-
-  // 8. Отрисовка покадрового спрайта капсулы и мозга
   cx.save();
-  cx.translate(ex, ey + floatY);
-  if(e.action === 'teleport_phase'){
-    cx.globalAlpha = 0.35 + 0.35 * Math.sin(performance.now() * 0.05);
-  }
+  cx.translate(ex, ey - 8 + hoverY);
   if(e.facing > 0) cx.scale(-1, 1);
+  cx.scale(breath, 2 - breath);
 
-  if(e.fl > 0) cx.filter = 'brightness(1.75) contrast(1.15)';
+  if(e.fl > 0) cx.filter = 'brightness(1.8) contrast(1.2)';
   else if(e.enraged) cx.filter = 'drop-shadow(0 0 18px rgba(168, 85, 247, 0.95)) contrast(1.25)';
   else cx.filter = 'drop-shadow(0 0 10px rgba(168, 85, 247, 0.65))';
 
-  if(currentSheet && currentSheet.complete && currentSheet.naturalWidth > 0){
-    cx.imageSmoothingEnabled = false;
-    cx.drawImage(currentSheet, frame * fw, 0, fw, fh, -bw / 2, -bh / 2 - 8, bw, bh);
-  } else if(bossNeuroOvermindSheetImg && bossNeuroOvermindSheetImg.complete && bossNeuroOvermindSheetImg.naturalWidth > 0){
-    cx.imageSmoothingEnabled = false;
-    cx.drawImage(bossNeuroOvermindSheetImg, frame * fw, 0, fw, fh, -bw / 2, -bh / 2 - 8, bw, bh);
-  } else if(bossNeuroOvermindImg && bossNeuroOvermindImg.complete && bossNeuroOvermindImg.naturalWidth > 0){
+  if(bossNeuroOvermindImg && bossNeuroOvermindImg.complete && bossNeuroOvermindImg.naturalWidth > 0){
     cx.imageSmoothingEnabled = false;
     cx.drawImage(bossNeuroOvermindImg, -bw / 2, -bh / 2 - 8, bw, bh);
   } else {
-    cx.fillStyle = '#a855f7';
-    cx.beginPath(); cx.arc(0, 0, e.c.r, 0, 6.283); cx.fill();
+    circle(0, 0, e.c.r, '#a855f7');
   }
-  cx.filter = 'none';
-
   cx.restore();
 }
 
+// ===== ОТРИСОВКА БОССА 5: НУЛЕВОЙ ПАЦИЕНТ (PATIENT ZERO) =====
 function drawPatientZeroBoss(e, ox, oy){
   const ex = e.x + ox, ey = e.y + oy;
   const shadowY = ey + 58;
@@ -26178,200 +25835,54 @@ function drawPatientZeroBoss(e, ox, oy){
     return;
   }
 
-  // 1. Телеграф лазерного луча скверны из плечевого глаза
-  if(e.action === 'laser_charge'){
-    cx.save();
-    const lAng = e.laserAng !== undefined ? e.laserAng : Math.atan2(G.p.y - e.y, G.p.x - e.x);
-    const lLen = 420;
-    const pulse = 0.8 + 0.2 * Math.sin(performance.now() * 0.035);
-
-    const eyeOffX = (e.facing > 0 ? 46 : -46);
-    const eyeOffY = -66;
-    cx.translate(ex + eyeOffX, ey + eyeOffY);
-    cx.rotate(lAng);
-
-    cx.strokeStyle = `rgba(239, 68, 68, ${0.95 * pulse})`;
-    cx.lineWidth = 2.4;
-    cx.setLineDash([8, 6]);
-    cx.lineDashOffset = -performance.now() * 0.08;
-    cx.beginPath(); cx.moveTo(0, 0); cx.lineTo(lLen, 0); cx.stroke();
-    cx.setLineDash([]);
-
-    const cRad = 18 * Math.max(0, e.actionT / 0.8);
-    cx.strokeStyle = '#facc15';
-    cx.lineWidth = 1.8;
-    cx.beginPath(); cx.arc(0, 0, cRad, 0, 6.283); cx.stroke();
-    cx.restore();
-  }
-
-  // 2. Выстрел лазерного луча из глаза
-  if(e.action === 'laser_fire'){
-    cx.save();
-    const lAng = e.laserAng !== undefined ? e.laserAng : Math.atan2(G.p.y - e.y, G.p.x - e.x);
-    const lLen = 440;
-    const eyeOffX = (e.facing > 0 ? 46 : -46);
-    const eyeOffY = -66;
-    cx.translate(ex + eyeOffX, ey + eyeOffY);
-    cx.rotate(lAng);
-
-    cx.fillStyle = 'rgba(239, 68, 68, 0.45)';
-    cx.fillRect(0, -10, lLen, 20);
-
-    cx.strokeStyle = '#ef4444';
-    cx.lineWidth = 8.0;
-    cx.beginPath(); cx.moveTo(0, 0); cx.lineTo(lLen, 0); cx.stroke();
-
-    cx.strokeStyle = '#ffffff';
-    cx.lineWidth = 3.5;
-    cx.beginPath(); cx.moveTo(0, 0); cx.lineTo(lLen, 0); cx.stroke();
-    cx.restore();
-  }
-
-  // 3. Телеграф взмаха костяными косами
-  if(e.action === 'scythe_windup'){
-    cx.save();
-    const sAng = Math.atan2(G.p.y - e.y, G.p.x - e.x);
-    const pulse = 0.85 + 0.15 * Math.sin(performance.now() * 0.03);
-    cx.fillStyle = `rgba(239, 68, 68, ${0.3 * pulse})`;
-    cx.beginPath();
-    cx.moveTo(ex, ey);
-    cx.arc(ex, ey, 140, sAng - 0.75, sAng + 0.75);
-    cx.closePath(); cx.fill();
-    cx.strokeStyle = `rgba(248, 113, 113, ${0.95 * pulse})`;
-    cx.lineWidth = 2.4;
-    cx.stroke();
-    cx.restore();
-  }
-
-  // 4. УЛУЧШЕННЫЙ ТЕЛЕГРАФ И ВЗРЫВ УЛЬТИМЕЙТА: «АПОКАЛИПСИС СКВЕРНЫ»
-  if(e.action === 'apocalypse_prep'){
-    cx.save();
-    const pulse = 0.85 + 0.15 * Math.sin(performance.now() * 0.04);
-    // Кровавая воронка бездны, сходящаяся к грудной клетке
-    cx.translate(ex, ey - 10);
-    const mGrad = cx.createRadialGradient(0, 0, 4, 0, 0, 85);
-    mGrad.addColorStop(0, '#fef08a');
-    mGrad.addColorStop(0.3, 'rgba(239, 68, 68, 0.9)');
-    mGrad.addColorStop(0.7, 'rgba(153, 27, 27, 0.4)');
-    mGrad.addColorStop(1, 'rgba(0,0,0,0)');
-    cx.fillStyle = mGrad;
-    cx.beginPath(); cx.arc(0, 0, 85 * pulse, 0, 6.283); cx.fill();
-
-    cx.fillStyle = '#ef4444';
-    cx.font = 'bold 12px monospace';
-    cx.textAlign = 'center';
-    cx.shadowColor = '#ef4444';
-    cx.shadowBlur = 10;
-    cx.fillText('☠️ APOCALYPSE OF CONTAGION // 8-BEAM STAR', 0, -82);
-    cx.restore();
-  }
-
-  // 5. УЛУЧШЕННАЯ 8-ЛУЧЕВАЯ ЗВЕЗДА СМЕРТИ (Apocalypse Channel)
+  // 1. Апокалипсис скверны: 8 вращающихся лучей в ярости
   if(e.action === 'apocalypse_channel'){
     cx.save();
+    const rot = e.apocalypseRot || 0;
+    const bLen = 360;
     cx.translate(ex, ey - 10);
     for(let arm = 0; arm < 8; arm++){
-      const aAng = (e.apocalypseRot || 0) + arm * 0.785398;
-      const bLen = 380;
-      const pulse = 0.88 + 0.12 * Math.sin(performance.now() * 0.04 + arm);
-      cx.save();
-      cx.rotate(aAng);
-
-      // Внешняя кровавая аура
-      cx.strokeStyle = `rgba(239, 68, 68, ${0.85 * pulse})`;
-      cx.lineWidth = 14.0 * pulse;
-      cx.beginPath(); cx.moveTo(0, 0); cx.lineTo(bLen, 0); cx.stroke();
-
-      // Золотисто-красный режущий стержень
-      cx.strokeStyle = '#fef08a';
-      cx.lineWidth = 3.8 * pulse;
-      cx.beginPath(); cx.moveTo(0, 0); cx.lineTo(bLen, 0); cx.stroke();
-
-      // Ослепительное белое ядро
+      const bAng = rot + arm * (Math.PI / 4);
+      const bGrad = cx.createLinearGradient(0, 0, Math.cos(bAng) * bLen, Math.sin(bAng) * bLen);
+      bGrad.addColorStop(0, '#ffffff');
+      bGrad.addColorStop(0.3, 'rgba(239, 68, 68, 0.85)');
+      bGrad.addColorStop(1, 'rgba(153, 27, 27, 0)');
+      cx.strokeStyle = bGrad;
+      cx.lineWidth = 8;
+      cx.beginPath(); cx.moveTo(0, 0); cx.lineTo(Math.cos(bAng) * bLen, Math.sin(bAng) * bLen); cx.stroke();
       cx.strokeStyle = '#ffffff';
-      cx.lineWidth = 1.6 * pulse;
-      cx.beginPath(); cx.moveTo(0, 0); cx.lineTo(bLen * 0.8, 0); cx.stroke();
-      cx.restore();
+      cx.lineWidth = 2.4;
+      cx.beginPath(); cx.moveTo(0, 0); cx.lineTo(Math.cos(bAng) * bLen, Math.sin(bAng) * bLen); cx.stroke();
     }
-    // Сияющее ядро в распахнутой грудине
-    cx.fillStyle = '#ffffff'; cx.beginPath(); cx.arc(0, 0, 16, 0, 6.283); cx.fill();
-    cx.fillStyle = '#facc15'; cx.beginPath(); cx.arc(0, 0, 24, 0, 6.283); cx.fill();
     cx.restore();
   }
 
-  // 6. Тень под ногами
+  // 2. Тень под ногами
   cx.save();
-  cx.fillStyle = 'rgba(0,0,0,0.58)';
-  cx.beginPath(); cx.ellipse(ex, shadowY, 60, 18, 0, 0, 6.283); cx.fill();
+  cx.fillStyle = 'rgba(0,0,0,0.54)';
+  cx.beginPath(); cx.ellipse(ex, shadowY, 62, 18, 0, 0, 6.283); cx.fill();
   cx.restore();
 
-  // 7. Выбор покадрового спрайта (Ходьба vs Атаки)
-  const fw = 280, fh = 280;
-  const bw = 172, bh = 172;
-  let currentSheet = (bossPatientZeroWalkImg && bossPatientZeroWalkImg.complete && bossPatientZeroWalkImg.naturalWidth > 0) ? bossPatientZeroWalkImg : bossPatientZeroSheetImg;
-  let frame = Math.floor(e.animT || 0) % 8;
-  let bobY = 0;
+  // 3. Отрисовка колосса
+  const bw = 184, bh = 184;
+  const breath = 1 + Math.sin(performance.now() * 0.005) * 0.035;
+  const bobY = Math.sin(performance.now() * 0.007) * 3;
 
-  if(e.action === 'scythe_windup'){
-    if(bossPatientZeroAttackImg && bossPatientZeroAttackImg.complete && bossPatientZeroAttackImg.naturalWidth > 0) currentSheet = bossPatientZeroAttackImg;
-    frame = 0;
-    bobY = -4;
-  } else if(e.action === 'scythe_strike'){
-    if(bossPatientZeroAttackImg && bossPatientZeroAttackImg.complete && bossPatientZeroAttackImg.naturalWidth > 0) currentSheet = bossPatientZeroAttackImg;
-    const strikeProg = Math.max(0, Math.min(1, 1 - (e.actionT / 0.45)));
-    frame = strikeProg < 0.6 ? 1 : 2;
-    bobY = 4;
-  } else if(e.action === 'laser_charge'){
-    if(bossPatientZeroAttackImg && bossPatientZeroAttackImg.complete && bossPatientZeroAttackImg.naturalWidth > 0) currentSheet = bossPatientZeroAttackImg;
-    frame = 3;
-    bobY = -2;
-  } else if(e.action === 'laser_fire'){
-    if(bossPatientZeroAttackImg && bossPatientZeroAttackImg.complete && bossPatientZeroAttackImg.naturalWidth > 0) currentSheet = bossPatientZeroAttackImg;
-    const laserProg = Math.max(0, Math.min(1, 1 - (e.actionT / 0.90)));
-    frame = laserProg < 0.8 ? 4 : 5;
-    bobY = 0;
-  } else if(e.action === 'roar'){
-    if(bossPatientZeroAttackImg && bossPatientZeroAttackImg.complete && bossPatientZeroAttackImg.naturalWidth > 0) currentSheet = bossPatientZeroAttackImg;
-    const roarProg = Math.max(0, Math.min(1, 1 - (e.actionT / 0.80)));
-    frame = roarProg < 0.5 ? 6 : 7;
-    bobY = -5;
-  } else if(e.action === 'apocalypse_prep' || e.action === 'apocalypse_channel'){
-    if(bossPatientZeroAttackImg && bossPatientZeroAttackImg.complete && bossPatientZeroAttackImg.naturalWidth > 0) currentSheet = bossPatientZeroAttackImg;
-    frame = 6;
-    bobY = -6;
-  } else if(e.action === 'boomerang_throw'){
-    if(bossPatientZeroAttackImg && bossPatientZeroAttackImg.complete && bossPatientZeroAttackImg.naturalWidth > 0) currentSheet = bossPatientZeroAttackImg;
-    frame = 1;
-    bobY = 2;
-  } else if(e.action === 'spike_stamp'){
-    if(bossPatientZeroAttackImg && bossPatientZeroAttackImg.complete && bossPatientZeroAttackImg.naturalWidth > 0) currentSheet = bossPatientZeroAttackImg;
-    frame = 2;
-    bobY = 6;
-  } else {
-    frame = Math.floor(e.animT || 0) % 8;
-    bobY = (frame === 1 || frame === 5) ? 4 : 0;
-  }
-  e.frame = frame;
-
-  // 8. Отрисовка спрайта Нулевого Пациента
   cx.save();
   cx.translate(ex, ey + bobY);
   if(e.facing > 0) cx.scale(-1, 1);
+  cx.scale(breath, 2 - breath);
 
-  if(e.fl > 0) cx.filter = 'brightness(1.75) contrast(1.15)';
-  else if(e.phase3) cx.filter = 'drop-shadow(0 0 20px rgba(239, 68, 68, 0.98)) contrast(1.22) saturate(1.2)';
-  else if(e.enraged) cx.filter = 'drop-shadow(0 0 14px rgba(239, 68, 68, 0.85)) contrast(1.2)';
-  else cx.filter = 'drop-shadow(0 0 8px rgba(185, 28, 28, 0.6))';
+  if(e.fl > 0) cx.filter = 'brightness(1.8) contrast(1.2)';
+  else if(e.phase3) cx.filter = 'drop-shadow(0 0 20px rgba(239, 68, 68, 1)) contrast(1.35)';
+  else if(e.enraged) cx.filter = 'drop-shadow(0 0 16px rgba(239, 68, 68, 0.95)) contrast(1.25)';
+  else cx.filter = 'drop-shadow(0 0 8px rgba(220, 38, 38, 0.6))';
 
-  if(currentSheet && currentSheet.complete && currentSheet.naturalWidth > 0){
-    cx.imageSmoothingEnabled = false;
-    cx.drawImage(currentSheet, frame * fw, 0, fw, fh, -bw / 2, -bh / 2 - 10, bw, bh);
-  } else if(bossPatientZeroImg && bossPatientZeroImg.complete && bossPatientZeroImg.naturalWidth > 0){
+  if(bossPatientZeroImg && bossPatientZeroImg.complete && bossPatientZeroImg.naturalWidth > 0){
     cx.imageSmoothingEnabled = false;
     cx.drawImage(bossPatientZeroImg, -bw / 2, -bh / 2 - 10, bw, bh);
   } else {
-    cx.fillStyle = '#ef4444';
-    cx.beginPath(); cx.arc(0, 0, e.c.r, 0, 6.283); cx.fill();
+    circle(0, 0, e.c.r, '#ef4444');
   }
   cx.restore();
 }
