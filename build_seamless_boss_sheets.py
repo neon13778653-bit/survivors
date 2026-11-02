@@ -134,12 +134,17 @@ def rotation_field(px, py, angle_deg, base_dx=0.0, base_dy=0.0, size=WORK_S):
     return dx, dy
 
 
+SAFE_INNER_W = 256
+SAFE_INNER_H = 256
+PAD_X = (CANVAS_W - SAFE_INNER_W) // 2
+PAD_Y = (CANVAS_H - SAFE_INNER_H) // 2
+
 def finalize_frame(work_img, canvas_dx=0, canvas_dy=0):
-    scaled = work_img.resize((CANVAS_W, CANVAS_H), Image.Resampling.NEAREST)
-    if canvas_dx == 0 and canvas_dy == 0:
-        return scaled
+    scaled = work_img.resize((SAFE_INNER_W, SAFE_INNER_H), Image.Resampling.BILINEAR)
     out = Image.new("RGBA", (CANVAS_W, CANVAS_H), (0, 0, 0, 0))
-    out.alpha_composite(scaled, (int(round(canvas_dx)), int(round(canvas_dy))))
+    px = int(round(PAD_X + canvas_dx))
+    py = int(round(PAD_Y + canvas_dy))
+    out.paste(scaled, (px, py), scaled)
     return out
 
 
