@@ -3510,10 +3510,10 @@ const LEVELS=[
     id:2,badge:'★ ГЛАВА 2 ★',badgeEn:'★ CHAPTER 2 ★',name:'КЛАДБИЩЕ МУТАНТОВ',nameEn:'MUTANT GRAVEYARD',sub:'Скелеты, Паучата и Летучие мыши • 40 волн',
     diffText:'НОРМАЛЬНО',diffTextEn:'NORMAL',diffColor:'#fb923c',
     bgColor:'#100a18',gridColor:'#2e1938',pedColor:'#a855f7',
-    multHp:1.5,multSpeed:1.15,multGold:1.4,multXp:1.45,multCrystals:1.2,
+    multHp:1.5,multSpeed:1.15,multGold:1.4,multXp:1.45,multCrystals:1.4,
     maxWaves:40,
     bonusText:'Золото ×1.4',bonusTextEn:'Gold ×1.4',
-    bonusCrystalsText:'Кристаллы ×1.2',bonusCrystalsTextEn:'Crystals ×1.2',
+    bonusCrystalsText:'Кристаллы ×1.4',bonusCrystalsTextEn:'Crystals ×1.4',
     reqLv:2,cost:150,
     emberCols:['rgba(168,85,247,0.7)','rgba(192,132,252,0.55)','rgba(74,222,128,0.55)']
   },
@@ -3521,10 +3521,10 @@ const LEVELS=[
     id:3,badge:'★ ГЛАВА 3 ★',badgeEn:'★ CHAPTER 3 ★',name:'СЕКРЕТНЫЙ БУНКЕР',nameEn:'SECRET BUNKER',sub:'Кибер-мутанты и био-оружие • 50 волн',subEn:'Cyber-Mutants & Bio-Weapons • 50 Waves',
     diffText:'СЛОЖНО',diffTextEn:'HARD',diffColor:'#ef4444',
     bgColor:'#0d0f16',gridColor:'#1a2333',pedColor:'#f97316',
-    multHp:1.85,multSpeed:1.25,multGold:2.0,multXp:1.8,multCrystals:1.6,
+    multHp:1.85,multSpeed:1.25,multGold:2.0,multXp:1.8,multCrystals:1.9,
     maxWaves:50,
     bonusText:'Золото ×2.0',bonusTextEn:'Gold ×2.0',
-    bonusCrystalsText:'Кристаллы ×1.6',bonusCrystalsTextEn:'Crystals ×1.6',
+    bonusCrystalsText:'Кристаллы ×1.9',bonusCrystalsTextEn:'Crystals ×1.9',
     reqLv:5,cost:600,
     emberCols:['rgba(249,115,22,0.55)','rgba(251,191,36,0.45)','rgba(148,163,184,0.35)']
   }
@@ -3534,32 +3534,32 @@ const CHAPTER_LOOT_CONFIG={
   1:{
     weapons:['w_rebel','m_rune','m_bone','w_python','w_vector','m_frost','m_storm','w_marauder','w_vepr_auto'],
     waves:{
-      10:{chance:0.40,preferNewChance:0.75,gearChance:0.30,gearTier:1,pool:['w_rebel','m_rune','m_bone','w_python','w_vector'],missCrystals:4,missCoins:12},
-      20:{chance:0.50,preferNewChance:0.75,gearChance:0.40,gearTier:2,pool:['w_python','w_vector','m_frost','m_storm','w_marauder'],missCrystals:6,missCoins:16},
-      30:{chance:0.65,preferNewChance:0.75,gearChance:0.50,gearTier:3,pool:['m_frost','m_storm','w_marauder','w_vepr_auto'],missCrystals:8,missCoins:22}
+      10:{chance:0.22,preferNewChance:0.40,gearChance:0.18,gearTier:1,pool:['w_rebel','m_rune','m_bone','w_python','w_vector','m_frost'],missCrystals:6,missCoins:14},
+      20:{chance:0.28,preferNewChance:0.40,gearChance:0.24,gearTier:2,pool:['w_rebel','m_rune','m_bone','w_python','w_vector','m_frost','m_storm','w_marauder'],missCrystals:8,missCoins:18},
+      30:{chance:0.38,preferNewChance:0.40,gearChance:0.32,gearTier:3,pool:['w_rebel','m_rune','m_bone','w_python','w_vector','m_frost','m_storm','w_marauder','w_vepr_auto'],missCrystals:12,missCoins:26}
     },
-    minibossChance:0.25
+    minibossChance:0.14
   },
   2:{
     weapons:['w_python','m_storm','w_jericho','w_vepr_auto','m_hellfire','m_scepter','w_nova','w_aa12','m_heaven'],
     waves:{
-      10:{chance:0.42,preferNewChance:0.75,gearChance:0.32,gearTier:2,pool:['w_python','m_storm','w_jericho','m_hellfire'],missCrystals:5,missCoins:14},
-      20:{chance:0.52,preferNewChance:0.75,gearChance:0.40,gearTier:3,pool:['w_jericho','w_vepr_auto','m_hellfire','m_scepter'],missCrystals:7,missCoins:18},
-      30:{chance:0.62,preferNewChance:0.75,gearChance:0.48,gearTier:3,pool:['m_hellfire','m_scepter','w_vepr_auto','w_nova','m_heaven'],missCrystals:9,missCoins:22},
-      40:{chance:0.72,preferNewChance:0.75,gearChance:0.55,gearTier:4,pool:['w_nova','w_aa12','m_heaven'],missCrystals:12,missCoins:28}
+      10:{chance:0.22,preferNewChance:0.40,gearChance:0.20,gearTier:2,pool:['w_python','m_storm','w_jericho','w_vepr_auto','m_hellfire','m_scepter'],missCrystals:7,missCoins:16},
+      20:{chance:0.28,preferNewChance:0.40,gearChance:0.25,gearTier:3,pool:['w_python','m_storm','w_jericho','w_vepr_auto','m_hellfire','m_scepter','w_nova'],missCrystals:10,missCoins:20},
+      30:{chance:0.34,preferNewChance:0.40,gearChance:0.30,gearTier:3,pool:['w_jericho','w_vepr_auto','m_hellfire','m_scepter','w_nova','w_aa12','m_heaven'],missCrystals:12,missCoins:25},
+      40:{chance:0.42,preferNewChance:0.40,gearChance:0.36,gearTier:4,pool:['w_python','m_storm','w_jericho','w_vepr_auto','m_hellfire','m_scepter','w_nova','w_aa12','m_heaven'],missCrystals:16,missCoins:34}
     },
-    minibossChance:0.28
+    minibossChance:0.15
   },
   3:{
     weapons:['w_jericho','m_scepter','w_nova','w_aa12','m_heaven','m_void','w_laser','w_phantom','m_astral'],
     waves:{
-      10:{chance:0.40,preferNewChance:0.75,gearChance:0.40,gearTier:3,pool:['w_jericho','m_scepter','w_nova'],missCrystals:8,missCoins:18},
-      20:{chance:0.50,preferNewChance:0.75,gearChance:0.45,gearTier:3,pool:['w_jericho','m_scepter','w_nova','w_aa12'],missCrystals:10,missCoins:22},
-      30:{chance:0.62,preferNewChance:0.75,gearChance:0.50,gearTier:4,pool:['w_nova','w_aa12','m_heaven','m_void'],missCrystals:12,missCoins:26},
-      40:{chance:0.72,preferNewChance:0.75,gearChance:0.55,gearTier:4,pool:['w_aa12','m_heaven','m_void','w_laser','m_astral'],missCrystals:15,missCoins:30},
-      50:{chance:0.85,preferNewChance:0.75,gearChance:0.65,gearTier:5,pool:['m_void','w_laser','w_phantom','m_astral'],missCrystals:20,missCoins:40}
+      10:{chance:0.20,preferNewChance:0.40,gearChance:0.20,gearTier:3,pool:['w_jericho','m_scepter','w_nova','w_aa12','m_heaven'],missCrystals:10,missCoins:20},
+      20:{chance:0.26,preferNewChance:0.40,gearChance:0.25,gearTier:3,pool:['w_jericho','m_scepter','w_nova','w_aa12','m_heaven','m_void'],missCrystals:13,missCoins:25},
+      30:{chance:0.32,preferNewChance:0.40,gearChance:0.30,gearTier:4,pool:['w_jericho','m_scepter','w_nova','w_aa12','m_heaven','m_void','w_laser','m_astral'],missCrystals:16,missCoins:30},
+      40:{chance:0.38,preferNewChance:0.40,gearChance:0.35,gearTier:4,pool:['w_nova','w_aa12','m_heaven','m_void','w_laser','w_phantom','m_astral'],missCrystals:20,missCoins:36},
+      50:{chance:0.46,preferNewChance:0.40,gearChance:0.42,gearTier:5,pool:['w_jericho','m_scepter','w_nova','w_aa12','m_heaven','m_void','w_laser','w_phantom','m_astral'],missCrystals:26,missCoins:48}
     },
-    minibossChance:0.30
+    minibossChance:0.16
   }
 };
 
@@ -3584,48 +3584,48 @@ const CHARACTERS=[
     portrait:'img/heroes/hero_portrait.webp?v=2',sheet:'img/heroes/hero_sheet.webp?v=2'
   },
   {
-    id:'marcus',name:'МАРКУС',title:'Штурмовик Пустошей',cost:1500,
+    id:'marcus',name:'МАРКУС',title:'Штурмовик Пустошей',cost:3500,
     desc:'Тяжёлая броня и огневая мощь. Стреляет сразу 2 пулями!',
-    bonus:'135 HP (+35%), 135 Скорость (-10%), 7.8 Урон, 2 снаряда',
-    trait:'Двойной выстрел: 2 пули за залп (+35% HP)',
-    traitEn:'Double volley: 2 bullets per shot (+35% HP)',
-    hpMod:1.35,spdMod:0.9,dmgMod:0.78,projMod:2,coolMod:1.08,
+    bonus:'140 HP (+40%), 138 Скорость (-8%), 8.4 Урон, 2 снаряда',
+    trait:'Двойной выстрел: 2 пули за залп (+40% HP)',
+    traitEn:'Double volley: 2 bullets per shot (+40% HP)',
+    hpMod:1.40,spdMod:0.92,dmgMod:0.84,projMod:2,coolMod:1.04,
     portrait:'img/heroes/hero_marcus_portrait.webp?v=15',sheet:'img/heroes/hero_marcus_sheet.webp?v=14'
   },
   {
-    id:'leon',name:'ЛЕОН',title:'Призрак Разведчик',cost:3500,
+    id:'leon',name:'ЛЕОН',title:'Призрак Разведчик',cost:9500,
     desc:'Сверхбыстрый боец с ураганным темпом стрельбы.',
-    bonus:'95 HP (-5%), 183 Скорость (+22%), 10.5 Урон (+5%), +40% скорострельность',
-    trait:'Ураганная скорострельность (+40%) и манёвренность',
-    traitEn:'Hurricane fire rate (+40%) and high mobility',
-    hpMod:0.95,spdMod:1.22,dmgMod:1.05,projMod:1,coolMod:(1/1.40),
+    bonus:'98 HP (-2%), 188 Скорость (+25%), 11.5 Урон (+15%), +45% скорострельность',
+    trait:'Ураганная скорострельность (+45%) и манёвренность (+25%)',
+    traitEn:'Hurricane fire rate (+45%) and high mobility (+25%)',
+    hpMod:0.98,spdMod:1.25,dmgMod:1.15,projMod:1,coolMod:(1/1.45),
     portrait:'img/heroes/hero_leon_portrait.webp?v=13',sheet:'img/heroes/hero_leon_sheet.webp?v=12'
   },
   {
-    id:'viktor',name:'ВИКТОР',title:'Чумной Доктор',cost:4500,
-    desc:'Одинокий алхимик в маске. Бьёт медленно, но очень сильно.',
-    bonus:'95 HP (-5%), 147 Скорость (-2%), 16.5 Урон (+65%), -5% скорострельность',
-    trait:'Сокрушительный урон (+65%) каждым выстрелом',
-    traitEn:'Crushing shot damage (+65%) on every bullet',
-    hpMod:0.95,spdMod:0.98,dmgMod:1.65,projMod:1,coolMod:1.05,
+    id:'viktor',name:'ВИКТОР',title:'Чумной Доктор',cost:15000,
+    desc:'Алхимик в маске с сокрушительным уроном каждого выстрела.',
+    bonus:'100 HP, 147 Скорость (-2%), 18.5 Урон (+85%)',
+    trait:'Сокрушительный урон (+85%) каждым выстрелом без потери темпа',
+    traitEn:'Crushing shot damage (+85%) on every bullet with zero fire-rate penalty',
+    hpMod:1.0,spdMod:0.98,dmgMod:1.85,projMod:1,coolMod:1.0,
     portrait:'img/heroes/hero_viktor_portrait.webp?v=1',sheet:'img/heroes/hero_viktor_sheet.webp?v=1'
   },
   {
-    id:'rex',name:'РЕКС',title:'Киборг-Зомби',cost:6000,
-    desc:'Воскрешённый киборг, которого трудно остановить.',
-    bonus:'175 HP (+75%), 138 Скорость (-8%), 13.5 Урон (+35%), +12% броня',
-    trait:'Максимальная живучесть (+75% HP, +12% броня) и мощь (+35% урон)',
-    traitEn:'Maximum survivability (+75% HP, +12% armor) and power (+35% damage)',
-    hpMod:1.75,spdMod:0.92,dmgMod:1.35,projMod:1,coolMod:0.92,
+    id:'rex',name:'РЕКС',title:'Киборг-Зомби',cost:22000,
+    desc:'Тяжёлый киборг с усиленной бронёй и ускоренной подачей огня.',
+    bonus:'190 HP (+90%), 141 Скорость (-6%), 15 Урон (+50%), +16% броня, +14% темп',
+    trait:'Максимальная живучесть (+90% HP, +16% броня) и мощь (+50% урон)',
+    traitEn:'Maximum survivability (+90% HP, +16% armor) and power (+50% damage)',
+    hpMod:1.90,spdMod:0.94,dmgMod:1.50,projMod:1,coolMod:0.88,
     portrait:'img/heroes/hero_rex_portrait.webp?v=1',sheet:'img/heroes/hero_rex_sheet.webp?v=1'
   },
   {
-    id:'kael',name:'КАЭЛЬ',title:'Багровая Тень',cost:7500,
-    desc:'Бесшумный киберниндзя: быстрый и смертоносный.',
-    bonus:'90 HP (-10%), 195 Скорость (+30%), 15 Урон (+50%), +25% скорострельность, +12% крит',
-    trait:'Наивысшая скорость (+30%), урон (+50%), +25% темп и +12% крит',
-    traitEn:'Highest move speed (+30%), damage (+50%), +25% fire rate and +12% crit',
-    hpMod:0.90,spdMod:1.3,dmgMod:1.50,projMod:1,coolMod:0.80,
+    id:'kael',name:'КАЭЛЬ',title:'Багровая Тень',cost:28000,
+    desc:'Легендарный киберниндзя: молниеносный и смертоносный.',
+    bonus:'95 HP (-5%), 198 Скорость (+32%), 17 Урон (+70%), +33% скорострельность, +16% крит',
+    trait:'Наивысшая скорость (+32%), урон (+70%), +33% темп и +16% крит',
+    traitEn:'Highest move speed (+32%), damage (+70%), +33% fire rate and +16% crit',
+    hpMod:0.95,spdMod:1.32,dmgMod:1.70,projMod:1,coolMod:0.75,
     portrait:'img/heroes/hero_kael_portrait.webp?v=2',sheet:'img/heroes/hero_kael_sheet.webp?v=2'
   }
 ];
@@ -4252,6 +4252,36 @@ const ABILITY_TR = {
     nameEn: 'Astral Twilight',
     descEn: 'Adds extra astral spheres per volley and +10% damage per level.',
     getDescEn: lv => 'Extra astral spheres: +' + Math.ceil(lv * 0.6) + ', damage +' + (lv * 10) + '%.'
+  },
+  wep_vector_ap: {
+    nameRu: "Бронебойная лента",
+    nameEn: 'AP Belt',
+    descEn: '+11% Vector SMG damage, +8% bullet speed and +1 piercing on levels 1, 3, 5.',
+    getDescEn: lv => 'Vector damage +' + (lv * 11) + '%, bullet speed +' + (lv * 8) + '%, piercing +' + Math.ceil(lv / 2) + '.'
+  },
+  wep_nova_cryo: {
+    nameRu: "Ионное поле",
+    nameEn: 'Ion Containment',
+    descEn: '+11% plasma damage and plasma bolts slow survivors.',
+    getDescEn: lv => 'Plasma damage +' + (lv * 11) + '%, hit slow +' + (lv * 12) + '%.'
+  },
+  wep_phantom_overload: {
+    nameRu: "Конденсатор рельсы",
+    nameEn: 'Rail Capacitor',
+    descEn: '+12% Gauss fire rate and +10% damage per level.',
+    getDescEn: lv => 'Gauss fire rate +' + (lv * 12) + '%, damage +' + (lv * 10) + '%.'
+  },
+  wep_laser_overheat: {
+    nameRu: "Фокус-линза",
+    nameEn: 'Focusing Lens',
+    descEn: '+10% laser damage, +6% crit chance and +0.20x crit multiplier per level.',
+    getDescEn: lv => 'Laser damage +' + (lv * 10) + '%, crit chance +' + (lv * 6) + '%, crit mult +' + (lv * 0.20).toFixed(2) + 'x.'
+  },
+  wep_scepter_overcharge: {
+    nameRu: "Преломление спектра",
+    nameEn: 'Spectral Criticality',
+    descEn: '+10% beam damage, +6% crit chance and +0.18x crit multiplier per level.',
+    getDescEn: lv => 'Beam damage +' + (lv * 10) + '%, crit chance +' + (lv * 6) + '%, crit mult +' + (lv * 0.18).toFixed(2) + 'x.'
   }
 };
 
@@ -5246,6 +5276,21 @@ const WEAPON_ABILITIES = {
         p.dmg *= abStepDamage(p, 'wep_vector_hollow', lv => lv * 12);
         p.critChance = Math.min(0.90, (p.critChance || 0) + abStepAdd(p, 'wep_vector_hollow', lv => (lv * 5) / 100));
       }
+    },
+    {
+      id: 'wep_vector_ap',
+      name: 'Бронебойная лента',
+      cat: 'weapon',
+      reqStars: 2,
+      max: 5,
+      desc: '+11% урон Вектора, +8% скорость пуль и +1 пробитие (на 1, 3, 5 ур.).',
+      getDesc: lv => 'Урон Вектора +' + (lv * 11) + '%, скорость пуль +' + (lv * 8) + '%, пробитие +' + Math.ceil(lv / 2) + '.',
+      apply: p => {
+        const lv = (p.got['wep_vector_ap'] || 0) + 1;
+        p.dmg *= abStepDamage(p, 'wep_vector_ap', k => k * 11);
+        p.bulletSpdMult = (p.bulletSpdMult || 1) * abStepMult(p, 'wep_vector_ap', k => k * 8);
+        if(lv % 2 === 1) p.pierce = (p.pierce || 0) + 1;
+      }
     }
   ],
   w_jericho: [
@@ -5388,6 +5433,19 @@ const WEAPON_ABILITIES = {
         p.pierce = (p.pierce || 0) + 2;
         p.laser_sight = (p.laser_sight || 0) + 1;
       }
+    },
+    {
+      id: 'wep_nova_cryo',
+      name: 'Ионное поле',
+      cat: 'weapon',
+      reqStars: 4,
+      max: 5,
+      desc: '+11% урон плазмы и плазменные сгустки замедляют врагов на +12% за уровень.',
+      getDesc: lv => 'Урон плазмы +' + (lv * 11) + '%, замедление от попаданий +' + (lv * 12) + '%.',
+      apply: p => {
+        p.dmg *= abStepDamage(p, 'wep_nova_cryo', k => k * 11);
+        p.shotSlow = Math.min(0.75, (p.shotSlow || 0) + abStepAdd(p, 'wep_nova_cryo', k => (k * 12) / 100));
+      }
     }
   ],
   w_phantom: [
@@ -5417,6 +5475,19 @@ const WEAPON_ABILITIES = {
         p.critChance = Math.min(0.90, (p.critChance || 0) + abStepAdd(p, 'wep_phantom_rail', lv => (lv * 7) / 100));
         p.critMult = (p.critMult || 2.0) + 0.25;
       }
+    },
+    {
+      id: 'wep_phantom_overload',
+      name: 'Конденсатор рельсы',
+      cat: 'weapon',
+      reqStars: 5,
+      max: 5,
+      desc: '+12% скорострельность и +10% урон Гаусса за уровень.',
+      getDesc: lv => 'Скорострельность Гаусса +' + (lv * 12) + '%, урон +' + (lv * 10) + '%.',
+      apply: p => {
+        abStepRate(p, 'wep_phantom_overload', k => k * 12);
+        p.dmg *= abStepDamage(p, 'wep_phantom_overload', k => k * 10);
+      }
     }
   ],
   w_laser: [
@@ -5445,6 +5516,20 @@ const WEAPON_ABILITIES = {
       apply: p => {
         p.dmg *= abStepDamage(p, 'wep_laser_burn', lv => lv * 12);
         abStepRate(p, 'wep_laser_burn', lv => lv * 9);
+      }
+    },
+    {
+      id: 'wep_laser_overheat',
+      name: 'Фокус-линза',
+      cat: 'weapon',
+      reqStars: 5,
+      max: 5,
+      desc: '+10% урон лазера, +6% шанс крита и +0.20x множитель крита за уровень.',
+      getDesc: lv => 'Урон лазера +' + (lv * 10) + '%, шанс крита +' + (lv * 6) + '%, крит. урон +' + (lv * 0.20).toFixed(2) + 'x.',
+      apply: p => {
+        p.dmg *= abStepDamage(p, 'wep_laser_overheat', k => k * 10);
+        p.critChance = Math.min(0.90, (p.critChance || 0) + abStepAdd(p, 'wep_laser_overheat', k => (k * 6) / 100));
+        p.critMult = (p.critMult || 2.0) + abStepAdd(p, 'wep_laser_overheat', k => k * 0.20);
       }
     }
   ],
@@ -5634,6 +5719,21 @@ const WEAPON_ABILITIES = {
         p.dmg *= abStepDamage(p, 'wep_scepter_refraction', lv => lv * 12);
         abStepRate(p, 'wep_scepter_refraction', lv => lv * 9);
       }
+    },
+    {
+      id: 'wep_scepter_overcharge',
+      name: 'Преломление спектра',
+      cat: 'magic',
+      reqStars: 3,
+      max: 5,
+      icon: '🔮',
+      desc: '+10% урон скипетра, +6% шанс крита и +0.18x крит. урон за уровень.',
+      getDesc: lv => 'Урон луча +' + (lv * 10) + '%, шанс крита +' + (lv * 6) + '%, крит. урон +' + (lv * 0.18).toFixed(2) + 'x.',
+      apply: p => {
+        p.dmg *= abStepDamage(p, 'wep_scepter_overcharge', k => k * 10);
+        p.critChance = Math.min(0.90, (p.critChance || 0) + abStepAdd(p, 'wep_scepter_overcharge', k => (k * 6) / 100));
+        p.critMult = (p.critMult || 2.0) + abStepAdd(p, 'wep_scepter_overcharge', k => k * 0.18);
+      }
     }
   ],
   m_heaven: [
@@ -5763,6 +5863,49 @@ WEAPON_ABILITIES.w_smg = WEAPON_ABILITIES.w_vector;
 WEAPON_ABILITIES.w_shotgun = WEAPON_ABILITIES.w_vepr_auto;
 WEAPON_ABILITIES.w_plasma = WEAPON_ABILITIES.w_nova;
 WEAPON_ABILITIES.w_minigun = WEAPON_ABILITIES.w_laser;
+if(Array.isArray(WEAPON_ABILITIES.m_grimoire)){
+  WEAPON_ABILITIES.m_bone.push(WEAPON_ABILITIES.m_grimoire[0], WEAPON_ABILITIES.m_grimoire[1]);
+  WEAPON_ABILITIES.m_void.push(WEAPON_ABILITIES.m_grimoire[1]);
+}
+
+const WEAPON_ABILITY_RULES = {
+  // Огнестрельное оружие: строго по архетипу (без шрапнели 360 и неработающих статов)
+  w_pistol:   new Set(['fmj_ammo','fast_reload','laser_pointer','ricochet_rounds','piercing_slugs','sniper_crit']),
+  w_python:   new Set(['fmj_ammo','fast_reload','laser_pointer','stopping_power','piercing_slugs','ricochet_rounds','sniper_crit']),
+  w_jericho:  new Set(['fmj_ammo','fast_reload','laser_pointer','stopping_power','piercing_slugs','ricochet_rounds','sniper_crit','explosive_ammo']),
+  w_vector:   new Set(['fmj_ammo','fast_reload','laser_pointer','piercing_slugs','ricochet_rounds','shock_rounds','leadstorm']),
+  w_marauder: new Set(['fmj_ammo','fast_reload','laser_pointer','piercing_slugs','ricochet_rounds','sniper_crit','shock_rounds','leadstorm']),
+  w_rebel:    new Set(['fmj_ammo','fast_reload','laser_pointer','stopping_power','extra_projectile','shrapnel_burst','piercing_slugs']),
+  w_vepr_auto:new Set(['fmj_ammo','fast_reload','laser_pointer','stopping_power','extra_projectile','shrapnel_burst','piercing_slugs','explosive_ammo']),
+  w_aa12:     new Set(['fmj_ammo','fast_reload','laser_pointer','stopping_power','extra_projectile','shrapnel_burst','piercing_slugs','explosive_ammo','leadstorm']),
+  w_nova:     new Set(['fmj_ammo','fast_reload','laser_pointer','explosive_ammo','piercing_slugs','shock_rounds','sniper_crit','hyperbeam']),
+  w_phantom:  new Set(['fmj_ammo','fast_reload','laser_pointer','sniper_crit','shock_rounds','hyperbeam','orbital_strike']),
+  w_laser:    new Set(['fmj_ammo','fast_reload','laser_pointer','sniper_crit','shock_rounds','hyperbeam','leadstorm','orbital_strike']),
+  // Магическое оружие: строго по стихии и механике посоха
+  m_rune:     new Set(['arcane_power','quick_cast','arcane_focus','arcane_multicast','spell_pierce','chain_lightning']),
+  m_bone:     new Set(['arcane_power','quick_cast','arcane_focus','toxic_miasma','spell_pierce','arcane_multicast']),
+  m_frost:    new Set(['arcane_power','quick_cast','arcane_focus','frost_nova','spell_pierce','arcane_multicast','astral_vortex']),
+  m_storm:    new Set(['arcane_power','quick_cast','arcane_focus','chain_lightning','celestial_thunder','spell_pierce']),
+  m_hellfire: new Set(['arcane_power','quick_cast','arcane_focus','fireball_burst','meteor_rain','supernova_blast']),
+  m_scepter:  new Set(['arcane_power','quick_cast','arcane_focus','chain_lightning','celestial_thunder','arcane_cataclysm']),
+  m_heaven:   new Set(['arcane_power','quick_cast','arcane_focus','celestial_thunder','chain_lightning','meteor_rain','arcane_cataclysm']),
+  m_void:     new Set(['arcane_power','quick_cast','arcane_focus','astral_vortex','supernova_blast','arcane_cataclysm']),
+  m_astral:   new Set(['arcane_power','quick_cast','arcane_focus','astral_vortex','meteor_rain','supernova_blast','arcane_cataclysm','arcane_multicast'])
+};
+WEAPON_ABILITY_RULES.w_smg = WEAPON_ABILITY_RULES.w_vector;
+WEAPON_ABILITY_RULES.w_shotgun = WEAPON_ABILITY_RULES.w_vepr_auto;
+WEAPON_ABILITY_RULES.w_plasma = WEAPON_ABILITY_RULES.w_nova;
+WEAPON_ABILITY_RULES.w_minigun = WEAPON_ABILITY_RULES.w_laser;
+
+function isAbilityAllowedForWeapon(ab, wepId){
+  if(!ab) return false;
+  if(ab.cat === 'defense') return true;
+  const sigList = WEAPON_ABILITIES[wepId];
+  if(Array.isArray(sigList) && sigList.some(sa => sa.id === ab.id)) return true;
+  const ruleSet = WEAPON_ABILITY_RULES[wepId];
+  if(!ruleSet) return true;
+  return ruleSet.has(ab.id);
+}
 
 
 // ===== ИНКОГНИТО-БЕЗОПАСНОЕ ХРАНИЛИЩЕ (SAFARI PRIVATE / INCOGNITO RESILIENT) =====
@@ -5804,6 +5947,42 @@ let save={
 try{Object.assign(save,JSON.parse(SafeStorage.getItem('surv_save')||'{}'))}catch(e){}
 const MAX_STAT_LVL=20;
 let gameDataReady = !window.Platform;
+function getShieldEffectiveUpgrades(up){
+  if(!up || typeof up !== 'object') return { shield: 0, shieldRegen: 0, armor: 0 };
+  const legacyHp = Math.max(0, Math.floor(Number(up.hp) || 0));
+  const curArmor = Math.max(0, Math.floor(Number(up.armor) || 0));
+  return {
+    shield: Math.max(0, Math.floor(Number(up.shield) || 0)),
+    shieldRegen: Math.max(0, Math.floor(Number(up.shieldRegen) || 0)),
+    armor: Math.min(10, curArmor + legacyHp)
+  };
+}
+function normalizeLegacyShieldUpgrades(saveObj){
+  if(!saveObj || !saveObj.itemUpgrades) return;
+  const shIds = ['sh_buckler','sh_riot','sh_plasma','sh_titan','sh_aegis'];
+  const shRar = { sh_buckler:1, sh_riot:2, sh_plasma:3, sh_titan:4, sh_aegis:5 };
+  const baseCosts = [12, 18, 26, 36, 48, 64, 84, 108, 136, 170];
+  const costSum = (n, id) => {
+    const rar = shRar[id] || 1;
+    const rarMult = rar === 5 ? 1.9 : (rar === 4 ? 1.6 : (rar === 3 ? 1.35 : (rar === 2 ? 1.15 : 1.0)));
+    let tot = 0;
+    const clamped = Math.min(10, Math.max(0, Math.floor(Number(n) || 0)));
+    for(let i = 0; i < clamped; i++) tot += Math.round((baseCosts[i] || 170) * rarMult);
+    return tot;
+  };
+  for(const shId of shIds){
+    const shUp = saveObj.itemUpgrades[shId];
+    if(shUp && typeof shUp === 'object' && shUp.hp !== undefined){
+      const oldHp = Math.max(0, Math.floor(Number(shUp.hp) || 0));
+      const oldArmor = Math.max(0, Math.floor(Number(shUp.armor) || 0));
+      const newArmor = Math.min(10, oldArmor + oldHp);
+      const overflowDelta = Math.max(0, (costSum(oldHp, shId) + costSum(oldArmor, shId)) - costSum(newArmor, shId));
+      if(overflowDelta > 0) saveObj.gems = (saveObj.gems || 0) + overflowDelta;
+      shUp.armor = newArmor;
+      delete shUp.hp;
+    }
+  }
+}
 function normalizeSave(){
   ['hpLv','dmgLv','spdLv','pickLv','rateLv'].forEach(k=>{
     save[k]=Number.isFinite(save[k])?Math.min(MAX_STAT_LVL,Math.max(0,Math.floor(save[k]))):0;
@@ -5822,13 +6001,7 @@ function normalizeSave(){
     save.itemUpgrades.pet_bat.spd = save.itemUpgrades.pet_bat.pick;
     delete save.itemUpgrades.pet_bat.pick;
   }
-  for(const shId of ['sh_buckler','sh_riot','sh_plasma','sh_titan','sh_aegis']){
-    const shUp = save.itemUpgrades[shId];
-    if(shUp && typeof shUp === 'object' && shUp.hp !== undefined){
-      shUp.armor = Math.min(10, (shUp.armor || 0) + (Number(shUp.hp) || 0));
-      delete shUp.hp;
-    }
-  }
+  normalizeLegacyShieldUpgrades(save);
   const charIds=CHARACTERS.map(c=>c.id);
   save.unlockedChars=Array.isArray(save.unlockedChars)?save.unlockedChars.filter(id=>charIds.includes(id)):[];
   if(!save.unlockedChars.includes('john'))save.unlockedChars.unshift('john');
@@ -7283,7 +7456,7 @@ const ITEMS={
   pet_bat:     {s:'pet',r:2,n:'Ручной нетопырь',img:'img/pets/pet_bat_icon.webp',sprite:'img/monsters/monster_bat.webp',sheet:'img/monsters/monster_bat_sheet.webp',frameW:280,frameH:200,frames:8,animRate:9,flying:true,spriteW:46,spriteH:33,ic:'🦇',active:'Эхо-метка (+12% урон) + Мега-крик',d:'Пустошная летучая мышь [2★]. Цепь до 4–5 врагов с эхо-меткой (+12% входящего урона); каждый 3-й каст — широкий конус мега-крика. Бонусы: +12% скорость, +10% сбор, +6% урон.',petType:'bat',m:{spd:.12,pick:.10,dmg:.06}},
   pet_mimic:   {s:'pet',r:3,n:'Карманный мимик',img:'img/pets/pet_mimic_icon.webp',sprite:'img/monsters/monster_mimic.webp',sheet:'img/monsters/monster_mimic_sheet.webp',frameW:260,frameH:240,frames:8,animRate:9,spriteW:42,spriteH:40,ic:'📦',active:'Золотой Джекпот-удар и Магнит 🪙',d:'Одомашненный зубастый сундучок [3★]. Яростный кусь с золотом; каждый 3-й удар — Джекпот-хлопок по площади, россыпь монет и притягивание лута. Бонусы: +18% сбор, +10% скорость, +12% урон.',petType:'mimic',m:{pick:.18,spd:.10,dmg:.12}},
   pet_gargoyle:{s:'pet',r:4,n:'Страж-гаргулья',img:'img/pets/pet_gargoyle_icon.webp',sprite:'img/monsters/monster_gargoyle.webp',sheet:'img/monsters/monster_gargoyle_sheet.webp',frameW:240,frameH:240,frames:8,animRate:8,flying:true,spriteW:42,spriteH:44,ic:'🗿',active:'Таран, Окаменение и Залп осколков',d:'Каменный крылатый защитник [4★]. Пикирующий таран с окаменением и веерным залпом 6–8 обсидиановых осколков. Бонусы: +24% HP, +15% броня, +14% темп, +18% урон.',petType:'gargoyle',m:{hp:.24,armor:.15,cool:.86,dmg:.18}},
-  pet_treant:  {s:'pet',r:5,n:'Древень-хранитель',img:'img/pets/pet_treant_icon.webp',sprite:'img/monsters/monster_treant.webp',sheet:'img/monsters/monster_treant_sheet.webp',frameW:300,frameH:320,frames:8,animRate:6,spriteW:50,spriteH:54,ic:'🌲',active:'Корни, Соло-сокрушение и Очищение',d:'Древний лесной гигант [5★ Реликвия]. Опутывает до 5 врагов (или вбивает доп. удары по боссу), исцеляет героя (+5% HP/щит) и снимает яд/замедление. Бонусы: +42% HP, +20% броня, +22% сбор, +15% скорость, +28% урон.',petType:'treant',m:{hp:.42,armor:.20,pick:.22,spd:.15,dmg:.28}},
+  pet_treant:  {s:'pet',r:5,n:'Древень-хранитель',img:'img/pets/pet_treant_icon.webp',sprite:'img/monsters/monster_treant.webp',sheet:'img/monsters/monster_treant_sheet.webp',frameW:300,frameH:320,frames:8,animRate:6,spriteW:50,spriteH:54,ic:'🌲',active:'Корни, Соло-сокрушение и Очищение',d:'Древний лесной гигант [5★ Реликвия]. Опутывает до 5 врагов (или вбивает доп. удары по боссу), исцеляет до +5% HP (кап 28 ед.) / +6% щит и снимает яд/замедление. Бонусы: +42% HP, +20% броня, +22% сбор, +15% скорость, +28% урон.',petType:'treant',m:{hp:.42,armor:.20,pick:.22,spd:.15,dmg:.28}},
   // Монстры-компаньоны (1★ - 5★):
   pet_mushroom: {s:'pet',r:1,n:'Грибной споровик',img:'img/pets/pet_mushroom_icon.webp',sprite:'img/monsters/monster_mushroom.webp',sheet:'img/monsters/monster_mushroom_sheet.webp',frameW:220,frameH:220,frames:8,animRate:8,spriteW:44,spriteH:44,ic:'🍄',active:'Залп спор + Детонация при смерти',d:'Одомашненный грибной мутант [1★]. Залп 3–4 споровых бомб с токсичными зонами и заражением: убитые враги взрываются облаком спор. Бонусы: +8% урон, +6% HP.',petType:'mushroom',m:{dmg:.08,hp:.06}},
   pet_spider:   {s:'pet',r:2,n:'Пещерный паучок',img:'img/pets/pet_spider_icon.webp',sprite:'img/monsters/monster_spiderling.webp',sheet:'img/monsters/monster_spiderling_sheet.webp',frameW:240,frameH:200,frames:8,animRate:12,spriteW:46,spriteH:40,ic:'🕷️',active:'Паутина, Кунаи и Взрыв кокона',d:'Проворный паучок-мутант [2★]. Затягивает цель в ядовитый кокон (взрывается при гибели жертвы) и выпускает веер из 2–3 паутинных кунаев. Бонусы: +10% скорость бега, +8% темп, +8% урон.',petType:'spider',m:{spd:.10,cool:.92,dmg:.08}},
@@ -7294,7 +7467,7 @@ const ITEMS={
   art_compass:    {s:'artifact',r:1,n:'Компас выжившего',img:'img/artifacts/art_compass_icon.webp',ic:'🧭',d:'Облегчает навигацию: увеличивает скорость бега на +10% и радиус сбора на +8%.',m:{spd:.10,pick:.08}},
   art_magnet:     {s:'artifact',r:2,n:'Неодимовое кольцо',img:'img/artifacts/art_magnet_icon.webp',ic:'🧲',d:'Мощный магнит притягивает кристаллы и опыт издалека.',m:{pick:.20}},
   art_crystal:    {s:'artifact',r:3,n:'Кристалл ярости',img:'img/artifacts/art_crystal_icon.webp',ic:'💎',d:'Концентрирует боевую энергию, усиливая урон оружия.',m:{dmg:.30}},
-  art_chronos:    {s:'artifact',r:4,n:'Хроно-песочные часы',img:'img/artifacts/art_chronos_icon.webp',ic:'⌛',d:'Искажает время: резко ускоряет темп огня, перезарядку щита и точность критических выстрелов.',m:{cool:.75,spd:.12,shieldRegen:3.0,critChance:.12}},
+  art_chronos:    {s:'artifact',r:4,n:'Хроно-песочные часы',img:'img/artifacts/art_chronos_icon.webp',ic:'⌛',d:'Искажает время: даёт сильнейшее ускорение темпа огня, бега, зарядки щита и шанса крита.',m:{cool:.72,spd:.16,shieldRegen:4.5,critChance:.16}},
   art_heart:      {s:'artifact',r:5,n:'Сердце Титана',img:'img/artifacts/art_heart_icon.webp',ic:'❤️‍🔥',d:'Реликтовое ядро колоссально усиливает здоровье и силу.',m:{hp:.70,dmg:.35,regen:3.5}},
 
   // 1★ (Обычные)
@@ -7793,16 +7966,13 @@ function equipMods(){
       if(up.rate)upgCoolDiv *= (1 + rateStep * (up.rate || 0));
       if(up.range)m.range=(m.range||0)+up.range*rangeStep;
     }else if(it.s==='shield'){
-      if(up.hp !== undefined && save.itemUpgrades && save.itemUpgrades[id]){
-        up.armor = Math.min(10, (up.armor || 0) + (Number(up.hp) || 0));
-        delete up.hp;
-      }
+      const shUp=getShieldEffectiveUpgrades(up);
       const baseS=it.shield||50;
       const shSteps=getShieldUpgradeSteps(r);
       const shieldPerLv=Math.max(2,Math.round(baseS*shSteps.shieldStepPct));
-      if(up.shield)m.maxShield=(m.maxShield||0)+up.shield*shieldPerLv;
-      if(up.shieldRegen)m.shieldRegen=(m.shieldRegen||0)+up.shieldRegen*shSteps.regenPerLv;
-      if(up.armor)m.armor=(m.armor||0)+up.armor*shSteps.armorStep;
+      if(shUp.shield)m.maxShield=(m.maxShield||0)+shUp.shield*shieldPerLv;
+      if(shUp.shieldRegen)m.shieldRegen=(m.shieldRegen||0)+shUp.shieldRegen*shSteps.regenPerLv;
+      if(shUp.armor)m.armor=(m.armor||0)+shUp.armor*shSteps.armorStep;
     }else if(it.s==='pet'){
       const pCfg = (typeof PET_UPGRADE_CONFIG !== 'undefined' && (PET_UPGRADE_CONFIG[id] || (typeof LEGACY_ITEM_MIGRATIONS !== 'undefined' && LEGACY_ITEM_MIGRATIONS[id] && PET_UPGRADE_CONFIG[LEGACY_ITEM_MIGRATIONS[id]]) || PET_UPGRADE_CONFIG.pet_slime)) || null;
       if(pCfg && up[pCfg.thirdKey]){
@@ -7829,7 +7999,7 @@ function equipMods(){
       }
     }
   }
-  baseCool = Math.max(0.48, baseCool);
+  baseCool = Math.max(0.42, baseCool);
   m.cool = baseCool / upgCoolDiv;
   return m;
 }
@@ -8571,12 +8741,16 @@ let craftViewMode='upgrade';
 let craftCategory='all';
 
 function getItemUpgradeRefund(id){
-  const upgrades=(save.itemUpgrades&&save.itemUpgrades[id])||{};
-  if(ITEMS[id]&&ITEMS[id].s==='shield'&&upgrades.hp!==undefined){
-    upgrades.armor=Math.min(10,(upgrades.armor||0)+(Number(upgrades.hp)||0));
-    delete upgrades.hp;
+  const raw=(save.itemUpgrades&&save.itemUpgrades[id])||{};
+  if(ITEMS[id]&&ITEMS[id].s==='shield'){
+    const rawHp=Math.max(0,Math.floor(Number(raw.hp)||0));
+    const rawArmor=Math.max(0,Math.floor(Number(raw.armor)||0));
+    const sh=Math.max(0,Math.floor(Number(raw.shield)||0));
+    const sr=Math.max(0,Math.floor(Number(raw.shieldRegen)||0));
+    const sumCost=lv=>Array.from({length:Math.min(10,lv)},(_,i)=>getUpgradeCrystalCost(i,id)).reduce((a,b)=>a+b,0);
+    return sumCost(sh)+sumCost(sr)+sumCost(rawArmor)+sumCost(rawHp);
   }
-  return Object.values(upgrades).reduce((sum,level)=>sum+Array.from({length:Math.min(10,Math.max(0,Math.floor(Number(level)||0)))},(_,i)=>getUpgradeCrystalCost(i,id)).reduce((a,b)=>a+b,0),0);
+  return Object.values(raw).reduce((sum,level)=>sum+Array.from({length:Math.min(10,Math.max(0,Math.floor(Number(level)||0)))},(_,i)=>getUpgradeCrystalCost(i,id)).reduce((a,b)=>a+b,0),0);
 }
 function refundItemUpgrades(id){
   if(!ITEMS[id] || !save.inv.includes(id))return;
@@ -8587,6 +8761,53 @@ function refundItemUpgrades(id){
 }
 function forgeStatIcon(src){
   return `<img src="${src}" class="craft-stat-img-ico" alt="">`;
+}
+function checkForgeRateCap(itemId, curLv){
+  const it = ITEMS[itemId];
+  if(!it || curLv >= 10) return { capped: false };
+  const targetWep = (it.s === 'weapon') ? it : (ITEMS[save.equip?.weapon] || ITEMS.w_pistol);
+  const hero = CHARACTERS.find(c => c.id === save.selectedChar) || CHARACTERS[0];
+  const rateBonus = 1 + (CONFIG.meta.rateStep || 0.015) * Math.min(20, save.rateLv || 0);
+  let passiveCool = 1;
+  let otherUpgDiv = 1;
+  const eq = save.equip || {};
+  const equippedPassiveIds = new Set([eq.shield, eq.pet, eq.art1, eq.art2, eq.art3].filter(Boolean));
+  if(it.s === 'artifact') equippedPassiveIds.add(itemId);
+  for(const pid of equippedPassiveIds){
+    const pit = ITEMS[pid];
+    if(!pit) continue;
+    if(pit.m && pit.m.cool) passiveCool *= pit.m.cool;
+    if(pid !== itemId){
+      const pup = (save.itemUpgrades && save.itemUpgrades[pid]) || {};
+      const pr = pit.r || 1;
+      if(pit.s === 'artifact' && pup.rate){
+        const rIdx = Math.max(0, Math.min(4, pr - 1));
+        otherUpgDiv *= (1 + (ARTIFACT_STAT_TABLE.rate.steps[rIdx] || 0) * pup.rate);
+      } else if(pit.s === 'pet' && typeof PET_UPGRADE_CONFIG !== 'undefined'){
+        const pCfg = PET_UPGRADE_CONFIG[pid];
+        if(pCfg && pCfg.thirdKey === 'rate' && pup.rate) otherUpgDiv *= (1 + (pCfg.step / 100) * pup.rate);
+      }
+    }
+  }
+  const wepId = (it.s === 'weapon') ? itemId : ((save.equip && save.equip.weapon) || 'w_pistol');
+  const wr = (ITEMS[wepId] && ITEMS[wepId].r) || 1;
+  const wepRateStep = wr === 5 ? 0.032 : (wr === 4 ? 0.025 : (wr === 3 ? 0.020 : (wr === 2 ? 0.015 : 0.012)));
+  if(it.s !== 'weapon'){
+    const wup = (save.itemUpgrades && save.itemUpgrades[wepId]) || {};
+    if(wup.rate) otherUpgDiv *= (1 + wepRateStep * wup.rate);
+  }
+  let stepForItem = wepRateStep;
+  if(it.s === 'artifact'){
+    const rIdx = Math.max(0, Math.min(4, (it.r || 1) - 1));
+    stepForItem = ARTIFACT_STAT_TABLE.rate.steps[rIdx] || 0.02;
+  }
+  const effPassiveCool = Math.max(0.42, passiveCool);
+  const wepBaseCool = 1 / (parseFloat(targetWep.fireRate) || 1.5);
+  const curRaw = (wepBaseCool * (hero.coolMod || 1) * effPassiveCool) / (otherUpgDiv * (1 + stepForItem * curLv) * rateBonus);
+  const nextRaw = (wepBaseCool * (hero.coolMod || 1) * effPassiveCool) / (otherUpgDiv * (1 + stepForItem * (curLv + 1)) * rateBonus);
+  const curRate = 1 / clampPlayerCooldown(curRaw, targetWep, null);
+  const nextRate = 1 / clampPlayerCooldown(nextRaw, targetWep, null);
+  return { capped: (nextRate - curRate) < 0.005, curRate };
 }
 function getItemUpgradeDefs(id){
   const it=ITEMS[id];
@@ -8601,25 +8822,25 @@ function getItemUpgradeDefs(id){
     const curDmgLv=up.dmg||0;
     const curRateLv=up.rate||0;
     const curRangeLv=up.range||0;
+    const rateCapInfo = checkForgeRateCap(id, curRateLv);
     const curDmgVal = '+' + (curDmgLv * dmgStep).toFixed(1) + '%';
     const nextDmgVal = '+' + ((curDmgLv + 1) * dmgStep).toFixed(1) + '%';
     const curRateVal = '+' + (curRateLv * rateStep).toFixed(1) + '%';
-    const nextRateVal = '+' + ((curRateLv + 1) * rateStep).toFixed(1) + '%';
+    const nextRateVal = rateCapInfo.capped
+      ? `${T('CAP','ЛИМИТ')} (${rateCapInfo.curRate.toFixed(1)}/с)`
+      : '+' + ((curRateLv + 1) * rateStep).toFixed(1) + '%';
     const baseRange=parseInt(it.range)||CONFIG.weapon.range;
     const curRange=baseRange+curRangeLv*rangeStep;
     const nextRange=baseRange+(curRangeLv+1)*rangeStep;
     const rangeIco=forgeStatIcon('img/abilities/style2/laser_pointer.webp');
     return [
       {key:'dmg',name:'Урон',nameEn:'Damage',ico:forgeStatIcon(STAT_ICONS.dmg),curLv:curDmgLv,maxLv:10,curVal:curDmgVal,nextVal:nextDmgVal,cost:getUpgradeCrystalCost(curDmgLv, id)},
-      {key:'rate',name:'Скорострельность',nameEn:'Fire rate',ico:forgeStatIcon(STAT_ICONS.rate),curLv:curRateLv,maxLv:10,curVal:curRateVal,nextVal:nextRateVal,cost:getUpgradeCrystalCost(curRateLv, id)},
+      {key:'rate',name:'Скорострельность',nameEn:'Fire rate',ico:forgeStatIcon(STAT_ICONS.rate),curLv:curRateLv,maxLv:10,curVal:curRateVal,nextVal:nextRateVal,isCapped:rateCapInfo.capped,capRate:rateCapInfo.curRate,cost:getUpgradeCrystalCost(curRateLv, id)},
       {key:'range',name:'Дальность',nameEn:'Range',ico:rangeIco,curLv:curRangeLv,maxLv:10,curVal:curRange+T(' m',' м'),nextVal:nextRange+T(' m',' м'),cost:getUpgradeCrystalCost(curRangeLv, id)}
     ];
   }else if(it.s==='shield'){
-    if(up.hp !== undefined && save.itemUpgrades && save.itemUpgrades[id]){
-      up.armor = Math.min(10, (up.armor || 0) + (Number(up.hp) || 0));
-      delete up.hp;
-    }
-    const curShieldLv=up.shield||0,curRegenLv=up.shieldRegen||0,curArmorLv=up.armor||0;
+    const shUp = getShieldEffectiveUpgrades(up);
+    const curShieldLv=shUp.shield,curRegenLv=shUp.shieldRegen,curArmorLv=shUp.armor;
     const baseShield=it.shield||50;
     const shSteps=getShieldUpgradeSteps(r);
     const shieldPerLv=Math.max(2,Math.round(baseShield*shSteps.shieldStepPct));
@@ -8646,6 +8867,7 @@ function getItemUpgradeDefs(id){
       const spec = ARTIFACT_STAT_TABLE[key] || ARTIFACT_STAT_TABLE.dmg;
       const step = spec.steps[rIdx];
       const curLv = up[key] || 0;
+      const rateCapInfo = (key === 'rate') ? checkForgeRateCap(id, curLv) : { capped: false };
       return {
         key,
         name: spec.name,
@@ -8654,7 +8876,9 @@ function getItemUpgradeDefs(id){
         curLv,
         maxLv: 10,
         curVal: spec.fmt(curLv * step),
-        nextVal: spec.fmt((curLv + 1) * step),
+        nextVal: rateCapInfo.capped ? `${T('CAP','ЛИМИТ')} (${rateCapInfo.curRate.toFixed(1)}/с)` : spec.fmt((curLv + 1) * step),
+        isCapped: rateCapInfo.capped,
+        capRate: rateCapInfo.curRate,
         cost: getUpgradeCrystalCost(curLv, id)
       };
     });
@@ -8835,10 +9059,11 @@ function renderCraft(){
       h += `<div class="craft-stats-list">`;
       defs.forEach(def=>{
         const isMax=def.curLv>=def.maxLv;
+        const isCapped=!isMax && !!def.isCapped;
         const canPay=(save.gems||0)>=def.cost;
         const pct=Math.round((def.curLv/def.maxLv)*100);
         const need = Math.max(0, def.cost - (save.gems||0));
-        const nextCost = isMax ? null : getUpgradeCrystalCost(def.curLv+1, craftSelectedId);
+        const nextCost = (isMax || isCapped) ? null : getUpgradeCrystalCost(def.curLv+1, craftSelectedId);
         const dots = Array.from({length:def.maxLv},(_,i)=>`<span class="craft-dot${i<def.curLv?' on':''}"></span>`).join('');
 
         h+=`
@@ -8854,15 +9079,18 @@ function renderCraft(){
                 <span class="c-val">${def.curVal}</span>
                 ${isMax?'<span class="max-tag">MAX</span>':`<span class="c-arr">➔</span><span class="n-val">${def.nextVal}</span>`}
               </div>
-              ${(!isMax && nextCost) ? `<div style="font-size:10.5px;color:#94a3b8;margin-top:2px;display:inline-flex;align-items:center;gap:4px;">${T('Next level','След. уровень')}: ${nextCost} ${gemIco(11,13)}</div>` : ''}
-              ${(!isMax && !canPay) ? `<div style="font-size:10.5px;color:#f87171;margin-top:2px;">${T('Need','Нужно ещё')} ${need} ${T('more crystals','кристаллов')}</div>` : ''}
+              ${isCapped ? `<div style="font-size:10.5px;color:#fbbf24;margin-top:2px;">${T('Fire-rate cap reached for current build','Достигнут лимит скорости текущей сборки')}</div>` : ''}
+              ${(!isMax && !isCapped && nextCost) ? `<div style="font-size:10.5px;color:#94a3b8;margin-top:2px;display:inline-flex;align-items:center;gap:4px;">${T('Next level','След. уровень')}: ${nextCost} ${gemIco(11,13)}</div>` : ''}
+              ${(!isMax && !isCapped && !canPay) ? `<div style="font-size:10.5px;color:#f87171;margin-top:2px;">${T('Need','Нужно ещё')} ${need} ${T('more crystals','кристаллов')}</div>` : ''}
             </div>
             <div class="craft-stat-action">
               ${isMax
                 ? `<button class="craft-up-btn is-max" disabled>${T('MAX','MAX')}</button>`
-                : `<button class="craft-up-btn${canPay?'':' is-locked'}" data-upstat="${def.key}" data-cost="${def.cost}" data-statname="${T(def.nameEn,def.name)}" ${canPay?'':'disabled aria-label="'+T('Not enough crystals','Not enough crystals')+'"'} aria-label="${T('Upgrade','Upgrade')} ${T(def.nameEn,def.name)} — ${def.cost}">
-                    ${canPay?`${gemIco(12)} <span>${def.cost}</span>`:`🔒 <span>${def.cost}</span>`}
-                  </button>`
+                : isCapped
+                  ? `<button class="craft-up-btn is-max" disabled title="${T('Rate capped for current build','Лимит скорости для текущей сборки')}">${T('CAP','ЛИМИТ')}</button>`
+                  : `<button class="craft-up-btn${canPay?'':' is-locked'}" data-upstat="${def.key}" data-cost="${def.cost}" data-statname="${T(def.nameEn,def.name)}" ${canPay?'':'disabled aria-label="'+T('Not enough crystals','Not enough crystals')+'"'} aria-label="${T('Upgrade','Upgrade')} ${T(def.nameEn,def.name)} — ${def.cost}">
+                      ${canPay?`${gemIco(12)} <span>${def.cost}</span>`:`🔒 <span>${def.cost}</span>`}
+                    </button>`
               }
             </div>
           </div>
@@ -8949,15 +9177,17 @@ function renderCraft(){
       const statKey=btn.dataset.upstat;
       const cost=parseInt(btn.dataset.cost);
       if(!statKey||isNaN(cost)||(save.gems||0)<cost)return;
+      if(!save.itemUpgrades)save.itemUpgrades={};
+      normalizeLegacyShieldUpgrades(save);
+      if(!save.itemUpgrades[craftSelectedId])save.itemUpgrades[craftSelectedId]={};
+      const curLv=save.itemUpgrades[craftSelectedId][statKey]||0;
+      if(statKey==='rate'&&checkForgeRateCap(craftSelectedId,curLv).capped){
+        renderCraft();
+        return;
+      }
       btn.disabled=true;
       save.gems-=cost;
-      if(!save.itemUpgrades)save.itemUpgrades={};
-      if(!save.itemUpgrades[craftSelectedId])save.itemUpgrades[craftSelectedId]={};
-      if(ITEMS[craftSelectedId]&&ITEMS[craftSelectedId].s==='shield'&&save.itemUpgrades[craftSelectedId].hp!==undefined){
-        save.itemUpgrades[craftSelectedId].armor=Math.min(10,(save.itemUpgrades[craftSelectedId].armor||0)+(Number(save.itemUpgrades[craftSelectedId].hp)||0));
-        delete save.itemUpgrades[craftSelectedId].hp;
-      }
-      save.itemUpgrades[craftSelectedId][statKey]=(save.itemUpgrades[craftSelectedId][statKey]||0)+1;
+      save.itemUpgrades[craftSelectedId][statKey]=curLv+1;
       persist();
       Sfx.play('anvil');
       setTimeout(()=>Sfx.play('levelup'),140);
@@ -9157,7 +9387,7 @@ function renderCharacters(){
         <!-- HP -->
         <div class="char-stat-bar-row">
           <div class="csb-label"><span class="csb-ico-box hp"><svg viewBox="0 0 24 24" width="12" height="12" fill="#ef4444"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span> <span>${T('Health','Здоровье')}</span></div>
-          <div class="csb-bar-track"><div class="csb-bar-fill hp" style="width: ${Math.min(100, Math.round((hpVal / 180) * 100))}%"></div></div>
+          <div class="csb-bar-track"><div class="csb-bar-fill hp" style="width: ${Math.min(100, Math.round((hpVal / 195) * 100))}%"></div></div>
           <div class="csb-val"><b>${hpVal}</b> <small>HP</small></div>
         </div>
 
@@ -9171,7 +9401,7 @@ function renderCharacters(){
         <!-- Damage -->
         <div class="char-stat-bar-row">
           <div class="csb-label"><span class="csb-ico-box dmg"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#fbbf24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5L3 6V3h3l11.5 11.5M13 19l6 2 2-6-4.5-4.5M9.5 6.5L21 18v3h-3L6.5 9.5M5 13l-2 6 6 2 4.5-4.5"/></svg></span> <span>${T('Damage','Урон')}</span></div>
-          <div class="csb-bar-track"><div class="csb-bar-fill dmg" style="width: ${Math.min(100, Math.round((dmgVal / 18) * 100))}%"></div></div>
+          <div class="csb-bar-track"><div class="csb-bar-fill dmg" style="width: ${Math.min(100, Math.round((dmgVal / 20) * 100))}%"></div></div>
           <div class="csb-val"><b>${dmgVal}</b></div>
         </div>
       </div>
@@ -9355,7 +9585,7 @@ function openCrate(c, idx){
     t: 0
   });
   // 3. Фиолетовые кристаллы
-  dropPurpleCrystals(c.x, c.y, 3, 1);
+  dropPurpleCrystals(c.x, c.y, 4, 1);
 
   if(idx !== undefined && G.crates[idx] === c){
     G.crates.splice(idx, 1);
@@ -9397,7 +9627,7 @@ function getLootItemImage(itemId){
 
 function rollWeaponId(tier, preferNew = true, opts = null){
   const pool = (opts && Array.isArray(opts.pool) && opts.pool.length) ? opts.pool : (WEAPONS_BY_TIER[tier] || WEAPONS_BY_TIER[1]);
-  const newBias = (opts && typeof opts.preferNewChance === 'number') ? opts.preferNewChance : 0.75;
+  const newBias = (opts && typeof opts.preferNewChance === 'number') ? opts.preferNewChance : 0.40;
   if(preferNew && typeof save !== 'undefined' && save && save.inv && Math.random() < newBias){
     const unownedThisPool = pool.filter(id => !save.inv.includes(id));
     if(unownedThisPool.length > 0){
@@ -9407,15 +9637,14 @@ function rollWeaponId(tier, preferNew = true, opts = null){
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
-function rollGearId(tier, preferNew = true){
+function rollGearId(tier, preferNew = true, opts = null){
   const list = GEAR_BY_TIER[tier] || GEAR_BY_TIER[1];
-  if(preferNew && typeof save !== 'undefined' && save && save.inv){
-    // 1. Приоритет: 100% гарантия неполученного снаряжения запрошенного тира
+  const newBias = (opts && typeof opts.preferNewChance === 'number') ? opts.preferNewChance : 0.45;
+  if(preferNew && typeof save !== 'undefined' && save && save.inv && Math.random() < newBias){
     const unownedThisTier = list.filter(id => !save.inv.includes(id));
     if(unownedThisTier.length > 0){
       return unownedThisTier[Math.floor(Math.random() * unownedThisTier.length)];
     }
-
   }
   return list[Math.floor(Math.random() * list.length)];
 }
@@ -9471,7 +9700,7 @@ function spawnLootDrop(itemId, x, y){
 
 function openAirdrop(a, idx){
   Sfx.play('dash');
-  for(let k=0; k<24; k++){
+  for(let k=0; k<20; k++){
     G.fx.push({
       x: a.x, y: a.y,
       vx: (Math.random() - 0.5) * 220,
@@ -9481,79 +9710,123 @@ function openAirdrop(a, idx){
     });
   }
 
-  // 1. Гарантированные ресурсы: монеты и кристаллы
   const goldMult = G.lvlConfig?.multGold || 1;
-  dropCoins(a.x, a.y, 4 + Math.floor(Math.random() * 4), Math.max(1, Math.round(1.5 * goldMult)));
-  dropPurpleCrystals(a.x, a.y, 1 + Math.floor(Math.random() * 2), 1);
+  const curWave = G.wave || 1;
+  const baseCry = 2 + Math.floor(Math.random() * 2);
 
-  // 2. Полевая аптечка: восстанавливает 40 HP или щит
+  // 1. Полевая аптечка: восстанавливает 40 HP или 50 щита (нижняя строка попапа)
   if(G.p){
     const healVal = Math.min(40, G.p.maxHp - G.p.hp);
     if(healVal > 0){
       G.p.hp += healVal;
       G.fx.push({
         type: 'popup_text',
-        txt: '+' + Math.round(healVal) + ' HP 💚',
-        x: a.x, y: a.y - 32,
-        vx: 0, vy: -25,
+        txt: '+' + Math.round(healVal) + ' HP',
+        x: a.x, y: a.y - 10,
+        vx: 0, vy: -22,
         col: '#4ade80',
-        font: '900 16px Russo One, sans-serif',
-        l: 1.4, maxL: 1.4, fadeTime: 0.4
+        font: '900 14px Russo One, sans-serif',
+        l: 1.5, maxL: 1.5, fadeTime: 0.45
       });
     } else if(G.p.shield !== undefined && G.p.maxShield > 0 && G.p.shield < G.p.maxShield){
       G.p.shield = Math.min(G.p.maxShield, G.p.shield + 50);
       G.fx.push({
         type: 'popup_text',
-        txt: '+50 ' + T('SHIELD 🛡️', 'ЩИТ 🛡️'),
-        x: a.x, y: a.y - 32,
-        vx: 0, vy: -25,
+        txt: '+50 ' + T('SHIELD', 'ЩИТ'),
+        x: a.x, y: a.y - 10,
+        vx: 0, vy: -22,
         col: '#38bdf8',
-        font: '900 16px Russo One, sans-serif',
-        l: 1.4, maxL: 1.4, fadeTime: 0.4
+        font: '900 14px Russo One, sans-serif',
+        l: 1.5, maxL: 1.5, fadeTime: 0.45
       });
     }
   }
 
-  // 3. Ролл лута: тактическое снаряжение, боеприпасы и джекпот (оружие убрано)
+  // 2. Ролл награды аирдропа: авто-магнитящиеся монеты и кристаллы с точным отображением суммы
   const roll = Math.random();
-  const curWave = G.wave || 1;
-
-  if(roll < 0.40){
+  if(roll < 0.22){
     const tier = rollAirdropTier(curWave);
-    const gearId = rollGearId(tier);
+    const gearId = rollGearId(tier, true, { preferNewChance: 0.45 });
     spawnLootDrop(gearId, a.x, a.y);
+    const coinCount = 5;
+    const coinVal = Math.max(2, Math.round(5 * goldMult));
+    const totalCoins = coinCount * coinVal;
+    dropCoins(a.x, a.y, coinCount, coinVal, true);
+    dropPurpleCrystals(a.x, a.y, baseCry, 1, true);
     const gIt = ITEMS[gearId];
     const gRc = gIt ? RAR[gIt.r] : null;
-    showGameToast('📦 '+T('AIRDROP: Gear capsule dropped!','АИРДРОП: Сброшена капсула со снаряжением!'), gRc ? gRc.col : '#f59e0b', 3.2);
-  } else if(roll < 0.75){
-    const suppliesGold = Math.round((65 + Math.random() * 45 + curWave * 3.5) * goldMult);
-    dropCoins(a.x, a.y, 6, Math.max(1, Math.round(suppliesGold / 6)));
-    dropPurpleCrystals(a.x, a.y, 2, 1);
+    const itName = gIt ? T(EN[gIt.n] || gIt.n, gIt.n) : T('Gear', 'Снаряжение');
+    G.fx.push({
+      type: 'popup_text',
+      txt: `${itName}: +${totalCoins} ${T('gold', 'монет')}`,
+      x: a.x, y: a.y - 46,
+      vx: 0, vy: -24,
+      col: gRc ? gRc.col : '#f59e0b',
+      font: '900 16px Russo One, sans-serif',
+      l: 1.9, maxL: 1.9, fadeTime: 0.5
+    });
+    G.fx.push({
+      type: 'popup_text',
+      txt: `+${baseCry} ${T('crystals', 'крист.')}`,
+      x: a.x, y: a.y - 28,
+      vx: 0, vy: -23,
+      col: '#c084fc',
+      font: '900 14px Russo One, sans-serif',
+      l: 1.7, maxL: 1.7, fadeTime: 0.45
+    });
+  } else if(roll < 0.68){
+    const rawGold = (75 + Math.random() * 50 + curWave * 4) * goldMult;
+    const coinCount = 6;
+    const coinVal = Math.max(2, Math.round(rawGold / coinCount));
+    const totalCoins = coinCount * coinVal;
+    const supCry = baseCry + 2;
+    dropCoins(a.x, a.y, coinCount, coinVal, true);
+    dropPurpleCrystals(a.x, a.y, supCry, 1, true);
     if(G.p) G.p.hp = Math.min(G.p.maxHp, G.p.hp + G.p.maxHp * 0.4);
     G.fx.push({
       type: 'popup_text',
-      txt: '+' + suppliesGold + ' 🪙 ' + T('SUPPLIES!', 'ПРИПАСЫ!'),
-      x: a.x, y: a.y - 18,
-      vx: 0, vy: -30,
+      txt: `${T('SUPPLIES:', 'ПРИПАСЫ:')} +${totalCoins} ${T('gold', 'монет')}`,
+      x: a.x, y: a.y - 48,
+      vx: 0, vy: -24,
       col: '#38bdf8',
-      font: '900 18px Russo One, sans-serif',
-      l: 1.5, maxL: 1.5, fadeTime: 0.4
+      font: '900 17px Russo One, sans-serif',
+      l: 2.0, maxL: 2.0, fadeTime: 0.55
     });
-    showGameToast('📦 '+T('AIRDROP: Tactical supplies +'+suppliesGold+' 🪙 +2 💎 +Heal!','АИРДРОП: Припасы +'+suppliesGold+' 🪙 +2 💎 +Лечение!'), '#38bdf8', 3.2);
-  } else {
-    const jackpotGold = Math.round((140 + Math.random() * 80 + curWave * 6) * goldMult);
-    dropCoins(a.x, a.y, 10, Math.max(1, Math.round(jackpotGold / 10)));
-    dropPurpleCrystals(a.x, a.y, 4, 1);
     G.fx.push({
       type: 'popup_text',
-      txt: '+' + jackpotGold + ' 🪙 ' + T('JACKPOT! 💰', 'ДЖЕКПОТ! 💰'),
-      x: a.x, y: a.y - 18,
-      vx: 0, vy: -30,
-      col: '#facc15',
-      font: '900 20px Russo One, sans-serif',
-      l: 1.6, maxL: 1.6, fadeTime: 0.5
+      txt: `+${supCry} ${T('crystals', 'крист.')}`,
+      x: a.x, y: a.y - 29,
+      vx: 0, vy: -23,
+      col: '#c084fc',
+      font: '900 14px Russo One, sans-serif',
+      l: 1.8, maxL: 1.8, fadeTime: 0.5
     });
-    showGameToast('💰 '+T('AIRDROP: Super Jackpot +'+jackpotGold+' 🪙!','АИРДРОП: Супер-Джекпот +'+jackpotGold+' 🪙!'), '#facc15', 3.5);
+  } else {
+    const rawGold = (160 + Math.random() * 90 + curWave * 6) * goldMult;
+    const coinCount = 10;
+    const coinVal = Math.max(3, Math.round(rawGold / coinCount));
+    const totalCoins = coinCount * coinVal;
+    const jpCry = baseCry + 4;
+    dropCoins(a.x, a.y, coinCount, coinVal, true);
+    dropPurpleCrystals(a.x, a.y, jpCry, 1, true);
+    G.fx.push({
+      type: 'popup_text',
+      txt: `${T('JACKPOT:', 'ДЖЕКПОТ:')} +${totalCoins} ${T('gold', 'монет')}`,
+      x: a.x, y: a.y - 48,
+      vx: 0, vy: -24,
+      col: '#facc15',
+      font: '900 18px Russo One, sans-serif',
+      l: 2.2, maxL: 2.2, fadeTime: 0.6
+    });
+    G.fx.push({
+      type: 'popup_text',
+      txt: `+${jpCry} ${T('crystals', 'крист.')}`,
+      x: a.x, y: a.y - 29,
+      vx: 0, vy: -23,
+      col: '#c084fc',
+      font: '900 14px Russo One, sans-serif',
+      l: 2.0, maxL: 2.0, fadeTime: 0.55
+    });
   }
 
   if(idx !== undefined && G.airdrops[idx] === a){
@@ -9563,7 +9836,7 @@ function openAirdrop(a, idx){
     if(i !== -1) G.airdrops.splice(i, 1);
   }
 }
-function dropPurpleCrystals(x,y,count=6,val=1){
+function dropPurpleCrystals(x,y,count=6,val=1,mag=false){
   if(!G||!G.gems)return;
   const baseAng = Math.random() * 6.283;
   for(let i=0;i<count;i++){
@@ -9576,7 +9849,7 @@ function dropPurpleCrystals(x,y,count=6,val=1){
       vy: Math.sin(ang) * spd,
       v: val,
       type: 'purple',
-      mag: false
+      mag: !!mag
     });
   }
 }
@@ -9586,7 +9859,7 @@ function collectCoinValue(value){
   G.coinRemainder=amount-whole;
   return whole;
 }
-function dropCoins(x,y,count=1,val=1){
+function dropCoins(x,y,count=1,val=1,mag=false){
   if(!G||!G.gems)return;
   const baseAng = Math.random() * 6.283;
   for(let i=0;i<count;i++){
@@ -9599,7 +9872,7 @@ function dropCoins(x,y,count=1,val=1){
       vy: Math.sin(ang) * spd,
       v: val,
       type: 'coin',
-      mag: false
+      mag: !!mag
     });
   }
 }
@@ -9702,48 +9975,52 @@ function dropMonsterRewards(e){
   const goldMult = G.lvlConfig?.multGold || 1;
   const hp = (e.c && e.c.hp) || 12;
   const xp = (e.c && e.c.xp) || 1;
+  const rollScaledCoin = v => {
+    const base = Math.floor(v);
+    return Math.max(1, base + (Math.random() < (v - base) ? 1 : 0));
+  };
 
   let coinCount = 1;
-  let coinVal = Math.max(1, Math.round(1 * goldMult));
+  let coinVal = rollScaledCoin(1 * goldMult);
 
   if(e.isMiniBoss){
-    // Мини-босс: клад монет
+    // Мини-босс: клад монет и кристаллы
     const baseCount = 5 + Math.floor(Math.random() * 3);
     coinCount = Math.round(baseCount * (locId === 1 ? 1 : (locId === 2 ? 1.2 : 1.35)));
-    coinVal = Math.max(2, Math.round(2 * goldMult));
+    coinVal = rollScaledCoin(2 * goldMult);
   } else if(e.c === CONFIG.enemies.mimic){
     // Золотой сундук-мимик: призовой дроп
     const baseCount = 4 + Math.floor(Math.random() * 3);
     coinCount = Math.round(baseCount * (locId === 1 ? 1 : (locId === 2 ? 1.2 : 1.35)));
-    coinVal = Math.max(2, Math.round(1.5 * goldMult));
-    if(Math.random() < 0.65) dropPurpleCrystals(e.x, e.y, 1, 1);
+    coinVal = rollScaledCoin(1.5 * goldMult);
+    if(Math.random() < 0.80) dropPurpleCrystals(e.x, e.y, 1, 1);
   } else if(xp >= 16 || hp >= 300){
     // Супер-элита (Древень-мутант, Паучиха-праматерь, Радиоактивный Колосс)
     const baseCount = 2 + Math.floor(Math.random() * 2);
     coinCount = Math.round(baseCount * (locId === 1 ? 1 : (locId === 2 ? 1.15 : 1.25)));
-    coinVal = Math.max(1, Math.round(1.5 * goldMult));
-    if(Math.random() < 0.14) dropPurpleCrystals(e.x, e.y, 1, 1);
+    coinVal = rollScaledCoin(1.5 * goldMult);
+    if(Math.random() < 0.20) dropPurpleCrystals(e.x, e.y, 1, 1);
   } else if(xp >= 10 || hp >= 175){
     // Элита (Каменная гаргулья, Подопытный мясник, Бионический штурмовик, Аберрация)
     const baseCount = 1 + (Math.random() < 0.65 ? 1 : 0);
     coinCount = Math.round(baseCount * (locId === 1 ? 1 : (locId === 2 ? 1.15 : 1.25)));
-    coinVal = Math.max(1, Math.round(1.25 * goldMult));
-    if(Math.random() < 0.07) dropPurpleCrystals(e.x, e.y, 1, 1);
+    coinVal = rollScaledCoin(1.25 * goldMult);
+    if(Math.random() < 0.11) dropPurpleCrystals(e.x, e.y, 1, 1);
   } else if(xp >= 6 || hp >= 85){
     // Крепкие мутанты (Пустошный гуль, Токсичный слизень, Хим-огнемётчик, Кокон паука, Теневой ловчий)
     coinCount = 1 + (Math.random() < 0.35 ? 1 : 0);
-    coinVal = Math.max(1, Math.round(1 * goldMult));
-    if(Math.random() < 0.03) dropPurpleCrystals(e.x, e.y, 1, 1);
+    coinVal = rollScaledCoin(1 * goldMult);
+    if(Math.random() < 0.05) dropPurpleCrystals(e.x, e.y, 1, 1);
   } else if(xp >= 3 || hp >= 38){
     // Средние мобы (Скелет, Паук, Зомби-мутант, Грибной мутант, Кибер-трупоед, Плевальщик, Скаттлер, Кибер-гончая)
     if(Math.random() > 0.80) return;
     coinCount = 1;
-    coinVal = locId === 1 ? 1 : (locId === 2 ? (Math.random() < 0.45 ? 2 : 1) : 2);
+    coinVal = rollScaledCoin(1 * goldMult);
   } else {
     // Рядовые базовые мобы (Зомби, Радиоактивная крыса, Паучонок, Гончая, Мышь, Чумная пиявка) — 55% шанс дропа монеты
     if(Math.random() > 0.55) return;
     coinCount = 1;
-    coinVal = locId === 1 ? 1 : (locId === 2 ? (Math.random() < 0.40 ? 2 : 1) : 2);
+    coinVal = rollScaledCoin(1 * goldMult);
   }
 
   dropCoins(e.x, e.y, coinCount, coinVal);
@@ -9955,14 +10232,14 @@ function startGame(){
       x:0,y:0,r:15,maxHp:maxHp,hp:maxHp,speed:spd,pickup:pick,
       maxShield:EM.maxShield||0,shield:EM.maxShield||0,shieldRegen:EM.shieldRegen||0,shieldCooldown:0,shieldHitT:0,combatTimer:0,
       dmg:dmg,cool:cool,proj:proj,pierce:EM.pierce,orbs:0,orbA:0,chain:0,
-      ricochet:0,shrapnel:0,critChance:(EM.critChance||0)+(curChar.id==='kael'?.12:0),critMult:2.0,leadstorm:0,leadstormActive:0,leadstormCd:6,
+      ricochet:0,shrapnel:0,critChance:(EM.critChance||0)+(curChar.id==='kael'?.16:0),critMult:2.0,leadstorm:0,leadstormActive:0,leadstormCd:6,
       laser_sight:0,explosive_ammo:0,hyperbeam:0,hyperbeamCount:0,orbital_strike:0,orbitalCd:3.8,
       knockback:0,spreadMult:1,bulletSpdMult:1,shotSlow:0,poisonMult:1,poisonDurAdd:0,shotChain:0,shock_rounds:0,
       aoeMult:1,lavaRadMult:1,heavenTargets:0,heavenRadMult:1,heavenStunAdd:0,voidRadMult:1,voidSingularity:false,
       frost:0,frostCd:3.5,meteor:0,meteorCd:4.0,toxic:0,toxicTick:0.35,vortex:0,vortexCd:5.0,
       fireball:0,fireballCd:2.8,arcanebeam:0,arcaneCd:4.2,arcaneActive:0,arcaneAng:0,arcaneTick:0,
       thunder:0,thunderCd:2.6,supernova:0,supernovaCd:5.5,
-      regen:EM.regen||0,armor:Math.min(.8,(EM.armor||0)+(curChar.id==='rex'?.12:0)),webStunT:0,
+      regen:EM.regen||0,armor:Math.min(.8,(EM.armor||0)+(curChar.id==='rex'?.16:0)),webStunT:0,
       goldBonus:EM.goldBonus||0,
       cd:0,chainCd:0,inv:1.2,got:{},facing:1,frame:8,animT:0,aimA:.35,recoil:0,
       chainEvolved:false,leadstormEvolved:false,critEvolved:false,explosiveEvolved:false,stimEvolved:false,
@@ -10655,19 +10932,41 @@ function awardBossKillRewards(e){
   G.gems.push({ x: e.x, y: e.y, v: 300, type: 'xp', isBoss: true, bossLevels: 3, mag: false });
 
   const rule = getChapterBossLootRule(locId, curWave);
-  const droppedWeapon = Math.random() < (rule?.chance ?? 0.5);
+  const droppedWeapon = Math.random() < (rule?.chance ?? 0.30);
   if(droppedWeapon){
-    const wId = rollWeaponId(1, true, { pool: rule?.pool, preferNewChance: rule?.preferNewChance ?? 0.75 });
+    const wId = rollWeaponId(1, true, { pool: rule?.pool, preferNewChance: rule?.preferNewChance ?? 0.40 });
     spawnLootDrop(wId, e.x, e.y);
+    if(G.fx){
+      G.fx.push({
+        type: 'popup_text',
+        txt: T('WEAPON DROPPED!', 'ВЫПАЛО ОРУЖИЕ!'),
+        x: e.x, y: e.y - 38,
+        vx: 0, vy: -24,
+        col: '#facc15',
+        font: '900 17px Russo One, sans-serif',
+        l: 1.9, maxL: 1.9, fadeTime: 0.55
+      });
+    }
   } else {
-    const bonusCry = rule?.missCrystals || 6;
-    const bonusCoins = rule?.missCoins || 14;
+    const bonusCry = rule?.missCrystals || 8;
+    const bonusCoins = rule?.missCoins || 16;
     dropPurpleCrystals(e.x, e.y, bonusCry, 1);
     dropCoins(e.x, e.y, bonusCoins, Math.max(1, Math.round(meta.coinMult * goldMult)));
+    if(G.fx){
+      G.fx.push({
+        type: 'popup_text',
+        txt: `+${bonusCry} ${T('CRYSTALS', 'КРИСТ.')}`,
+        x: e.x, y: e.y - 38,
+        vx: 0, vy: -24,
+        col: '#c084fc',
+        font: '900 16px Russo One, sans-serif',
+        l: 1.7, maxL: 1.7, fadeTime: 0.5
+      });
+    }
   }
 
-  if(Math.random() < (rule?.gearChance ?? 0.40)){
-    spawnLootDrop(rollGearId(rule?.gearTier || 2), e.x, e.y);
+  if(Math.random() < (rule?.gearChance ?? 0.25)){
+    spawnLootDrop(rollGearId(rule?.gearTier || 2, true, { preferNewChance: 0.45 }), e.x, e.y);
   }
 
   const titleEn = isPlague ? (meta.plagueEn || meta.en) : meta.en;
@@ -10837,13 +11136,13 @@ function hurt(e,d,opts){
       const locId = G.lvlConfig?.id || 1;
       const mbCfg = CHAPTER_LOOT_CONFIG[locId] || CHAPTER_LOOT_CONFIG[1];
       const mbRule = getChapterBossLootRule(locId, curWave);
-      const mbWepChance = mbCfg.minibossChance || 0.25;
+      const mbWepChance = mbCfg.minibossChance || 0.14;
       if(mbRoll < mbWepChance && mbRule && Array.isArray(mbRule.pool)){
-        spawnLootDrop(rollWeaponId(1, true, { pool: mbRule.pool, preferNewChance: 0.75 }), e.x, e.y);
+        spawnLootDrop(rollWeaponId(1, true, { pool: mbRule.pool, preferNewChance: 0.40 }), e.x, e.y);
         showGameToast('⚡ '+T('MINI-BOSS DEFEATED! Weapon Dropped! +40 XP','МИНИ-БОСС ПОВЕРЖЕН! Выпало оружие! +40 XP'),'#fb923c',3.0);
-      } else if(mbRoll < mbWepChance + 0.35){
+      } else if(mbRoll < mbWepChance + 0.22){
         const mbTier = curWave <= 12 ? 1 : (curWave <= 22 ? 2 : 3);
-        spawnLootDrop(rollGearId(mbTier), e.x, e.y);
+        spawnLootDrop(rollGearId(mbTier, true, { preferNewChance: 0.45 }), e.x, e.y);
         showGameToast('⚡ '+T('MINI-BOSS DEFEATED! Gear Dropped! +40 XP','МИНИ-БОСС ПОВЕРЖЕН! Выпало снаряжение! +40 XP'),'#fb923c',3.0);
       } else {
         showGameToast('⚡ '+T('MINI-BOSS DEFEATED! +40 XP','МИНИ-БОСС ПОВЕРЖЕН! +40 XP'),'#fb923c',3.0);
@@ -11696,6 +11995,40 @@ const ABILITY_VECTOR_SVGS = {
     <line x1="4" y1="22" x2="26" y2="22" stroke="#22d3ee" stroke-width="4" stroke-linecap="round"/>
     <path d="M24 22 C 27 16, 33 14, 36 18 C 39 22, 38 28, 33 30 C 29 32, 26 28, 24 22 Z" fill="#f97316" stroke="#facc15" stroke-width="2"/>
     <circle cx="31" cy="22" r="3.5" fill="#facc15"/>
+  </svg>`,
+
+  wep_vector_ap: `<svg viewBox="0 0 44 44" width="44" height="44" fill="none">
+    <path d="M6 16 H26 L36 22 L26 28 H6 Z" fill="#0ea5e9" stroke="#e0f2fe" stroke-width="2.2" stroke-linejoin="round"/>
+    <line x1="12" y1="22" x2="40" y2="22" stroke="#facc15" stroke-width="2.5" stroke-linecap="round"/>
+  </svg>`,
+
+  wep_nova_cryo: `<svg viewBox="0 0 44 44" width="44" height="44" fill="none">
+    <circle cx="22" cy="22" r="14" stroke="#38bdf8" stroke-width="2.6" stroke-dasharray="5 3"/>
+    <circle cx="22" cy="22" r="6" fill="#7dd3fc" stroke="#0284c7" stroke-width="2"/>
+  </svg>`,
+
+  wep_phantom_overload: `<svg viewBox="0 0 44 44" width="44" height="44" fill="none">
+    <rect x="8" y="13" width="24" height="18" rx="4" fill="#1e3a8a" stroke="#60a5fa" stroke-width="2.4"/>
+    <path d="M21 8 L15 22 H23 L19 36 L31 19 H22 Z" fill="#facc15"/>
+  </svg>`,
+
+  wep_laser_overheat: `<svg viewBox="0 0 44 44" width="44" height="44" fill="none">
+    <circle cx="22" cy="22" r="14" stroke="#22d3ee" stroke-width="2.4"/>
+    <circle cx="22" cy="22" r="6" stroke="#facc15" stroke-width="2.2"/>
+    <line x1="22" y1="4" x2="22" y2="12" stroke="#22d3ee" stroke-width="2.4"/>
+    <line x1="22" y1="32" x2="22" y2="40" stroke="#22d3ee" stroke-width="2.4"/>
+    <line x1="4" y1="22" x2="12" y2="22" stroke="#22d3ee" stroke-width="2.4"/>
+    <line x1="32" y1="22" x2="40" y2="22" stroke="#22d3ee" stroke-width="2.4"/>
+  </svg>`,
+
+  wep_scepter_refraction: `<svg viewBox="0 0 44 44" width="44" height="44" fill="none">
+    <polygon points="22,6 36,22 22,38 8,22" fill="#7c3aed" stroke="#e879f9" stroke-width="2.5"/>
+    <line x1="22" y1="10" x2="22" y2="34" stroke="#f0abfc" stroke-width="2"/>
+  </svg>`,
+
+  wep_scepter_overcharge: `<svg viewBox="0 0 44 44" width="44" height="44" fill="none">
+    <polygon points="22,5 37,33 7,33" fill="#4c1d95" stroke="#e879f9" stroke-width="2.5" stroke-linejoin="round"/>
+    <circle cx="22" cy="24" r="5" fill="#facc15"/>
   </svg>`
 };
 
@@ -11752,10 +12085,17 @@ function triggerLevelUp(){
   const wepAbils = (WEAPON_ABILITIES[curWepId] || []).filter(a => {
     return isMagicWep ? (a.cat === 'magic' || a.cat === 'defense') : (a.cat === 'weapon' || a.cat === 'defense');
   });
-  const wepSpecificPool = wepAbils.concat(basePool);
+  const sigIds = new Set(wepAbils.map(a => a.id));
+  const seenPoolIds = new Set();
+  const wepSpecificPool = [];
+  for(const ab of wepAbils.concat(basePool)){
+    if(ab && ab.id && !seenPoolIds.has(ab.id)){
+      seenPoolIds.add(ab.id);
+      wepSpecificPool.push(ab);
+    }
+  }
 
   // 2. Ограничение активных модификаторов: максимум 4 модификатора оружия и 3 навыка выживания!
-  // Это исключает нагромождение 10+ модификаторов на одном стволе, оптимизирует эффекты и балансирует билд.
   const MAX_WEAPON_MODS = 4;
   const MAX_DEFENSE_MODS = 3;
 
@@ -11769,19 +12109,18 @@ function triggerLevelUp(){
     }
   }
 
-  // Стандартные способности до 5 звёзд, доступные для текущего ранга оружия и с учетом свободных слотов
+  // Стандартные способности до 5 звёзд с жёсткой фильтрацией по архетипу и типу оружия
   const regPool = wepSpecificPool.filter(a=>{
-    // Строгий карантин: исключаем любые магические способности при огнестреле, и наоборот
     if(isMagicWep && a.cat === 'weapon') return false;
     if(!isMagicWep && a.cat === 'magic') return false;
     if(!isMagicWep && (a.id.startsWith('m_') || a.id.startsWith('magic_') || a.id.startsWith('arcane_') || a.id.startsWith('astral_'))) return false;
     if(isMagicWep && (a.id.startsWith('w_') || a.id.startsWith('tac_') || a.id.startsWith('fmj_') || a.id.startsWith('stopping_'))) return false;
+    if(!isAbilityAllowedForWeapon(a, curWepId)) return false;
 
     const curLv = G.p.got[a.id||a.name] || 0;
     const req = a.reqStars || 1;
     if(curLv >= (a.max || 5)) return false;
     if(curWeaponStars < req) return false;
-    // Если способность новая (curLv === 0), проверяем наличие свободного слота
     if(curLv === 0){
       const isDef = (a.cat === 'defense');
       if(isDef && activeDefenseAbils.size >= MAX_DEFENSE_MODS) return false;
@@ -11808,6 +12147,15 @@ function triggerLevelUp(){
     for(const ev of evoPool){
       if(ev !== pickedEvo) pool.push(ev);
     }
+  }
+
+  // Приоритет профильных способностей выбранного оружия, чтобы билд собирался осмысленно
+  const sigCandidates = pool.filter(a => sigIds.has(a.id));
+  if(ch.length < 3 && sigCandidates.length > 0 && Math.random() < 0.72){
+    const pickedSig = sigCandidates[Math.floor(Math.random() * sigCandidates.length)];
+    ch.push(pickedSig);
+    const sIdx = pool.indexOf(pickedSig);
+    if(sIdx !== -1) pool.splice(sIdx, 1);
   }
 
   while(ch.length < 3 && pool.length){
@@ -12068,11 +12416,29 @@ function die(isVictory){
   const formulaGold = Math.floor((G.kills * 0.5 + G.t / 6) * (G.lvlConfig?.multGold || 1));
   const collectedGold = G.coinsCollected || 0;
   const earned = collectedGold > 0
-    ? Math.max(formulaGold + Math.min(collectedGold, Math.ceil(formulaGold * 0.5)), collectedGold)
+    ? Math.max(formulaGold + Math.floor(collectedGold * 0.5), collectedGold)
     : formulaGold;
+  let endDupeLootGold = 0;
+  if(G && G.lootDrops){
+    for(const d of G.lootDrops){
+      if(d.itemId && ITEMS[d.itemId]){
+        if(d.lootRef) d.lootRef.picked = true;
+        const it = ITEMS[d.itemId];
+        if(!save.inv.includes(d.itemId)){
+          save.inv.push(d.itemId);
+        } else {
+          const dGold = 100 * (it.r || 1);
+          endDupeLootGold += dGold;
+          if(d.lootRef) d.lootRef.dupeGold = (d.lootRef.dupeGold || 0) + dGold;
+        }
+      }
+    }
+    G.lootDrops = [];
+  }
   G.banked=earned;
-  save.gold+=earned;
-  save.totalGoldEarned=(save.totalGoldEarned||0)+earned;
+  save.gold+=earned + endDupeLootGold;
+  save.totalGoldEarned=(save.totalGoldEarned||0)+earned + endDupeLootGold;
+  G.endDupeLootGold = endDupeLootGold;
   save.totalKills=(save.totalKills||0)+Math.max(0,G.kills-(G.killsBanked||0));
   G.killsBanked=G.kills;
   if(G.t>(save.bestTime||0))save.bestTime=Math.floor(G.t);
@@ -12162,7 +12528,7 @@ function die(isVictory){
   if(waveFill) waveFill.style.width = Math.round(finalWave / maxW * 100) + '%';
 
   // Награды (Золото и Кристаллы)
-  document.getElementById('go-gold').textContent = earned;
+  document.getElementById('go-gold').textContent = earned + (G.endDupeLootGold || 0);
   const goGemsEl = document.getElementById('go-gems');
   if(goGemsEl) goGemsEl.textContent = earnedCrystals;
 
@@ -12171,21 +12537,6 @@ function die(isVictory){
   const gemsLbl = document.getElementById('go-gems-lbl');
   if(gemsLbl) gemsLbl.textContent = T('CRYSTALS','КРИСТАЛЛЫ');
 
-  // При завершении боя (победа или поражение) весь выпавший лут на поле автоматически собирается игроку
-  if(G && G.lootDrops){
-    for(const d of G.lootDrops){
-      if(d.itemId && ITEMS[d.itemId]){
-        if(d.lootRef) d.lootRef.picked = true;
-        const it = ITEMS[d.itemId];
-        if(!save.inv.includes(d.itemId)){
-          save.inv.push(d.itemId);
-        } else {
-          save.gold = (save.gold || 0) + (100 * (it.r || 1));
-        }
-      }
-    }
-    G.lootDrops = [];
-  }
   if(G && G.sessionLoot){
     G.sessionLoot.forEach(e => { if(e) e.picked = true; });
   }
@@ -12204,9 +12555,10 @@ function die(isVictory){
     const it = ITEMS[e.id];
     // агрегация по имени (алиасы id с одинаковым названием сливаются в один чип)
     const key = it ? ('n:' + it.n) : ('id:' + e.id);
-    if(!lootAgg.has(key)) lootAgg.set(key, {id: e.id, picked: true, count: 0});
+    if(!lootAgg.has(key)) lootAgg.set(key, {id: e.id, picked: true, count: 0, dupeGold: 0});
     const a = lootAgg.get(key);
     a.count++;
+    if(e.dupeGold) a.dupeGold += e.dupeGold;
   });
   const lootList = Array.from(lootAgg.values());
 
@@ -12226,7 +12578,8 @@ function die(isVictory){
         const icoSrc = getItemIconUrl(it);
         const ico = icoSrc ? `<img src="${icoSrc}" class="it-img-ico" alt="${it.n}">` : (it.ic||'📦');
         const cnt = a.count > 1 ? `<span class="lc-x">×${a.count}</span>` : '';
-        return `<div class="loot-chip" style="--rc:${rc.col}"><span>${ico}</span><b>${trText(it.n)} <small style="color:${rc.col};margin-left:2px">${rc.s}</small></b>${cnt}</div>`;
+        const dupeBadge = a.dupeGold > 0 ? `<small style="color:#facc15;margin-left:3px">+${a.dupeGold}🪙</small>` : '';
+        return `<div class="loot-chip" style="--rc:${rc.col}"><span>${ico}</span><b>${trText(it.n)} <small style="color:${rc.col};margin-left:2px">${rc.s}</small>${dupeBadge}</b>${cnt}</div>`;
       }).filter(Boolean).join('') + (lootList.length > MAXC ? `<div class="loot-chip lc-more">+${lootList.length - MAXC}</div>` : '');
     } else {
       lootSec.style.display = 'none';
@@ -14036,13 +14389,12 @@ function executePetAttack(g, pet, p, petAtkDmg, petCoolMult, petUp){
       hurt(pri, petAtkDmg * 0.55 * focusSlams);
       g.fx.push({ type: 'groundQuake', x: pri.x, y: pri.y, r: 85, col: '#22c55e', l: 0.42, maxL: 0.42 });
     }
-    const healVal = Math.max(4, Math.min(24, p.maxHp * 0.03));
+    const healVal = Math.max(4, Math.min(28, p.maxHp * 0.05));
     const healed = Math.round(healFromPet(p, healVal));
     if(p.maxShield > 0 && p.shield < p.maxShield){
       p.shield = Math.min(p.maxShield, (p.shield || 0) + Math.max(4, Math.round(p.maxShield * 0.06)));
     }
     if(p.poisonT > 0) p.poisonT = Math.max(0, p.poisonT - 0.8);
-    if(p.slowT > 0) p.slowT = Math.max(0, p.slowT - 0.8);
     if(p.slowT > 0) p.slowT = Math.max(0, p.slowT - 0.8);
     if(healed > 0 && opt('dmg')) g.fx.push({ type: 'dmg', x: p.x, y: p.y - 34, vx: 0, vy: -40, l: .65, txt: '+' + healed + ' HP 💚', col: '#4ade80' });
     for(let k = 0; k < 8; k++) g.fx.push({ x: p.x + (Math.random() - .5) * 22, y: p.y + (Math.random() - .5) * 22, vx: (Math.random() - .5) * 45, vy: -35 - Math.random() * 25, col: '#4ade80', l: .40 });
@@ -16887,15 +17239,15 @@ function update(dt){
         Sfx.play('anvil');
         g.shake = Math.max(g.shake, 0.6);
         showGameToast('⚠️ ' + T('PROTOCOL: JUDGEMENT CARPET BOMBARDMENT!', 'ПРОТОКОЛ: СУДНЫЙ ШКВАЛ! КОВРОВАЯ БОМБАРДИРОВКА!'), '#ef4444', 3.8);
-        for(let k = 0; k < 10; k++){
-          const ba = (k / 10) * 6.283 + Math.random() * 0.4;
-          const bd = 30 + Math.random() * 155;
+        for(let k = 0; k < 8; k++){
+          const ba = (k / 8) * 6.283 + Math.random() * 0.45;
+          const bd = 40 + Math.random() * 145;
           g.bossShockwaves.push({
             x: p.x + Math.cos(ba) * bd,
             y: p.y + Math.sin(ba) * bd,
             vx: 0, vy: 0,
-            l: 1.25 + (k * 0.11), maxL: 1.25 + (k * 0.11),
-            dmg: 72,
+            l: 1.45 + (k * 0.16), maxL: 1.45 + (k * 0.16),
+            dmg: 56,
             type: 'carpet_bomb',
             col: '#ef4444'
           });
@@ -19302,8 +19654,8 @@ function update(dt){
           Sfx.play('anvil');
           g.shake = Math.max(g.shake, 0.65);
           const cDist = Math.hypot(p.x - sw.x, p.y - sw.y);
-          if(cDist < 76 && p.inv <= 0){
-            damagePlayer(sw.dmg || 72);
+          if(cDist < 64 && p.inv <= 0){
+            damagePlayer(sw.dmg || 56);
             p.poisonT = 2.4; p.poisonDps = 6.0;
           }
           g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 3.5, maxL: 3.5, dmg: 18, type: 'napalm_trail', col: '#ef4444' });
@@ -19940,8 +20292,10 @@ function update(dt){
             const dmgPct = 0.34 + s.shrapnel * 0.06;
             const volleyScale = s.projCount > 1 ? Math.min(2.6, 1 + (s.projCount - 1) * 0.25) : 1;
             const shardDmg = Math.max(1, (s.dmg * volleyScale) * dmgPct);
+            const impactForwardA = Math.atan2(s.vy, s.vx);
+            const fanStep = Math.min(0.42, 1.35 / Math.max(2, count));
             for(let sh=0;sh<count;sh++){
-              const shA=sh*(6.283/count)+(Math.random()-0.5)*0.3;
+              const shA = impactForwardA + (sh - (count - 1) / 2) * fanStep + (Math.random() - 0.5) * 0.14;
               g.shots.push({
                 x:e.x,y:e.y,
                 vx:Math.cos(shA)*CONFIG.weapon.speed*0.82,
@@ -20685,7 +21039,7 @@ function update(dt){
             font:'900 16px Russo One, sans-serif',l:1.5,maxL:1.5,fadeTime:0.45
           });
         }else{
-          const bonusGold=100*it.r;save.gold+=bonusGold;if(d.lootRef)d.lootRef.picked=true;persist();Sfx.play('gem');
+          const bonusGold=100*it.r;save.gold+=bonusGold;save.totalGoldEarned=(save.totalGoldEarned||0)+bonusGold;if(d.lootRef){d.lootRef.picked=true;d.lootRef.dupeGold=(d.lootRef.dupeGold||0)+bonusGold;}persist();Sfx.play('gem');
           showGameToast(it.ic+' '+itName+': '+T('Duplicate! +','Дубликат! +')+bonusGold+' 🪙','#facc15',2.8);
           g.fx.push({
             type:'popup_text',
@@ -22735,7 +23089,7 @@ function drawBossShockwaves(g, ox, oy){
         } else if(sw.type === 'carpet_bomb'){
       // ВЫСОКОТЕХНОЛОГИЧНЫЙ ОРБИТАЛЬНЫЙ МАРКЕР БОМБАРДИРОВКИ (Cyber-Cerberus)
       const prog = 1 - (sw.l / sw.maxL);
-      const rad = 52 * (1 - prog * 0.35);
+      const rad = 64;
       const pulse = 0.82 + 0.18 * Math.sin(performance.now() * 0.035);
       const spin = performance.now() * 0.003;
       
@@ -26738,18 +27092,6 @@ function drawCyberCerberusBoss(e, ox, oy){
     cx.restore();
   }
 
-  // 2. Телеграф хвоста-хлыста (360-градусный круг в ярости)
-  if(e.action === 'tail_swipe'){
-    cx.save();
-    const r = 95;
-    const pulse = 0.85 + 0.15 * Math.sin(performance.now() * 0.03);
-    cx.fillStyle = `rgba(239, 68, 68, ${0.28 * pulse})`;
-    cx.beginPath(); cx.arc(ex, ey, r, 0, 6.283); cx.fill();
-    cx.strokeStyle = `rgba(239, 68, 68, ${0.95 * pulse})`;
-    cx.lineWidth = 2.2; cx.stroke();
-    cx.restore();
-  }
-
   // 3. Телеграф ракетного залпа: перекрестие вокруг игрока
   if(e.action === 'missile_salvo'){
     cx.save();
@@ -26808,10 +27150,10 @@ function drawCyberCerberusBoss(e, ox, oy){
   if(e.action === 'tail_swipe'){
     cx.save();
     const pulse = 0.85 + 0.15 * Math.sin(performance.now() * 0.035);
-    cx.fillStyle = `rgba(239, 68, 68, ${0.18 * pulse})`;
-    cx.beginPath(); cx.arc(ex, ey, 120, 0, 6.283); cx.fill();
-    cx.strokeStyle = `rgba(239, 68, 68, ${0.88 * pulse})`;
-    cx.lineWidth = 2.2; cx.stroke();
+    cx.fillStyle = `rgba(239, 68, 68, ${0.22 * pulse})`;
+    cx.beginPath(); cx.arc(ex, ey, 125, 0, 6.283); cx.fill();
+    cx.strokeStyle = `rgba(239, 68, 68, ${0.92 * pulse})`;
+    cx.lineWidth = 2.4; cx.stroke();
     cx.restore();
   }
 
