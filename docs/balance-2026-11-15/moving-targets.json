@@ -1,0 +1,230 @@
+[
+  {
+    "spacing": 26,
+    "weapon": "m_astral",
+    "seed": 101,
+    "count": 9,
+    "seconds": 20.000000000000146,
+    "initial": {
+      "dmg": 116.10000000000001,
+      "cool": 0.819047619047619,
+      "proj": 1,
+      "speed": 150,
+      "armor": 0,
+      "regen": 0,
+      "weapon": "m_astral"
+    },
+    "dps": 873.0720000982285,
+    "primaryDps": 161.3790000319481,
+    "volleys": 25
+  },
+  {
+    "spacing": 26,
+    "weapon": "m_astral",
+    "seed": 202,
+    "count": 9,
+    "seconds": 20.000000000000146,
+    "initial": {
+      "dmg": 116.10000000000001,
+      "cool": 0.819047619047619,
+      "proj": 1,
+      "speed": 150,
+      "armor": 0,
+      "regen": 0,
+      "weapon": "m_astral"
+    },
+    "dps": 968.8545001089573,
+    "primaryDps": 178.79400003552436,
+    "volleys": 25
+  },
+  {
+    "spacing": 26,
+    "weapon": "w_phantom",
+    "seed": 101,
+    "count": 9,
+    "seconds": 20.000000000000146,
+    "initial": {
+      "dmg": 148.5,
+      "cool": 1.035294117647059,
+      "proj": 1,
+      "speed": 150,
+      "armor": 0,
+      "regen": 0,
+      "weapon": "w_phantom"
+    },
+    "dps": 772.2,
+    "primaryDps": 29.7,
+    "volleys": 20
+  },
+  {
+    "spacing": 26,
+    "weapon": "w_phantom",
+    "seed": 202,
+    "count": 9,
+    "seconds": 20.000000000000146,
+    "initial": {
+      "dmg": 148.5,
+      "cool": 1.035294117647059,
+      "proj": 1,
+      "speed": 150,
+      "armor": 0,
+      "regen": 0,
+      "weapon": "w_phantom"
+    },
+    "dps": 772.2,
+    "primaryDps": 29.7,
+    "volleys": 20
+  },
+  {
+    "spacing": 26,
+    "weapon": "w_laser",
+    "seed": 101,
+    "count": 9,
+    "seconds": 20.000000000000146,
+    "initial": {
+      "dmg": 9.9,
+      "cool": 0.1433333333333333,
+      "proj": 2,
+      "speed": 150,
+      "armor": 0,
+      "regen": 0,
+      "weapon": "w_laser"
+    },
+    "dps": 628.1549984872341,
+    "primaryDps": 22.769999945163725,
+    "volleys": 140
+  },
+  {
+    "spacing": 26,
+    "weapon": "w_laser",
+    "seed": 202,
+    "count": 9,
+    "seconds": 20.000000000000146,
+    "initial": {
+      "dmg": 9.9,
+      "cool": 0.1433333333333333,
+      "proj": 2,
+      "speed": 150,
+      "armor": 0,
+      "regen": 0,
+      "weapon": "w_laser"
+    },
+    "dps": 618.254998511076,
+    "primaryDps": 23.264999943971635,
+    "volleys": 140
+  },
+  {
+    "spacing": 65,
+    "weapon": "m_astral",
+    "seed": 101,
+    "count": 9,
+    "seconds": 20.000000000000146,
+    "initial": {
+      "dmg": 116.10000000000001,
+      "cool": 0.819047619047619,
+      "proj": 1,
+      "speed": 150,
+      "armor": 0,
+      "regen": 0,
+      "weapon": "m_astral"
+    },
+    "dps": 906.7410001039505,
+    "primaryDps": 99.2655000090599,
+    "volleys": 25
+  },
+  {
+    "spacing": 65,
+    "weapon": "m_astral",
+    "seed": 202,
+    "count": 9,
+    "seconds": 20.000000000000146,
+    "initial": {
+      "dmg": 116.10000000000001,
+      "cool": 0.819047619047619,
+      "proj": 1,
+      "speed": 150,
+      "armor": 0,
+      "regen": 0,
+      "weapon": "m_astral"
+    },
+    "dps": 917.1900001049041,
+    "primaryDps": 99.2655000090599,
+    "volleys": 25
+  },
+  {
+    "spacing": 65,
+    "weapon": "w_phantom",
+    "seed": 101,
+    "count": 9,
+    "seconds": 20.000000000000146,
+    "initial": {
+      "dmg": 148.5,
+      "cool": 1.035294117647059,
+      "proj": 1,
+      "speed": 150,
+      "armor": 0,
+      "regen": 0,
+      "weapon": "w_phantom"
+    },
+    "dps": 512.325,
+    "primaryDps": 44.55,
+    "volleys": 20
+  },
+  {
+    "spacing": 65,
+    "weapon": "w_phantom",
+    "seed": 202,
+    "count": 9,
+    "seconds": 20.000000000000146,
+    "initial": {
+      "dmg": 148.5,
+      "cool": 1.035294117647059,
+      "proj": 1,
+      "speed": 150,
+      "armor": 0,
+      "regen": 0,
+      "weapon": "w_phantom"
+    },
+    "dps": 571.725,
+    "primaryDps": 51.975,
+    "volleys": 20
+  },
+  {
+    "spacing": 65,
+    "weapon": "w_laser",
+    "seed": 101,
+    "count": 9,
+    "seconds": 20.000000000000146,
+    "initial": {
+      "dmg": 9.9,
+      "cool": 0.1433333333333333,
+      "proj": 2,
+      "speed": 150,
+      "armor": 0,
+      "regen": 0,
+      "weapon": "w_laser"
+    },
+    "dps": 514.3049987614155,
+    "primaryDps": 55.43999986648559,
+    "volleys": 140
+  },
+  {
+    "spacing": 65,
+    "weapon": "w_laser",
+    "seed": 202,
+    "count": 9,
+    "seconds": 20.000000000000146,
+    "initial": {
+      "dmg": 9.9,
+      "cool": 0.1433333333333333,
+      "proj": 2,
+      "speed": 150,
+      "armor": 0,
+      "regen": 0,
+      "weapon": "w_laser"
+    },
+    "dps": 500.939998793602,
+    "primaryDps": 54.44999986886978,
+    "volleys": 140
+  }
+]

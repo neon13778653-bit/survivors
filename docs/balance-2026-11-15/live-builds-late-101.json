@@ -1,0 +1,1764 @@
+[
+ {
+  "seed": 101,
+  "chapter": 2,
+  "weapon": "w_laser",
+  "priority": [
+   "extra_projectile",
+   "wep_laser_bifurcation",
+   "fmj_ammo",
+   "fast_reload",
+   "sniper_crit"
+  ],
+  "seconds": 194.2,
+  "stopped": true,
+  "alive": false,
+  "wave": 20,
+  "level": 20,
+  "kills": 793,
+  "hp": -11.3,
+  "gold": 1445,
+  "crystals": 70,
+  "accountXp": 1126,
+  "got": {
+   "fmj_ammo": 5,
+   "shrapnel_burst": 1,
+   "reactive_armor": 1,
+   "tac_magnet": 2,
+   "nanite_repair": 1,
+   "wep_laser_bifurcation": 5,
+   "sniper_crit": 4
+  },
+  "choices": [
+   "fmj_ammo",
+   "shrapnel_burst",
+   "reactive_armor",
+   "tac_magnet",
+   "tac_magnet",
+   "fmj_ammo",
+   "nanite_repair",
+   "wep_laser_bifurcation",
+   "sniper_crit",
+   "sniper_crit",
+   "wep_laser_bifurcation",
+   "wep_laser_bifurcation",
+   "wep_laser_bifurcation",
+   "wep_laser_bifurcation",
+   "fmj_ammo",
+   "sniper_crit",
+   "fmj_ammo",
+   "fmj_ammo",
+   "sniper_crit"
+  ],
+  "waves": [
+   {
+    "wave": 1,
+    "time": 0,
+    "level": 1,
+    "hp": 132.5
+   },
+   {
+    "wave": 2,
+    "time": 4.1,
+    "level": 3,
+    "hp": 132.5
+   },
+   {
+    "wave": 3,
+    "time": 12.4,
+    "level": 6,
+    "hp": 162.5
+   },
+   {
+    "wave": 4,
+    "time": 19.6,
+    "level": 7,
+    "hp": 162.5
+   },
+   {
+    "wave": 5,
+    "time": 27.8,
+    "level": 8,
+    "hp": 187.5
+   },
+   {
+    "wave": 6,
+    "time": 34.4,
+    "level": 9,
+    "hp": 187.5
+   },
+   {
+    "wave": 7,
+    "time": 41.3,
+    "level": 10,
+    "hp": 187.5
+   },
+   {
+    "wave": 8,
+    "time": 48,
+    "level": 11,
+    "hp": 186.2
+   },
+   {
+    "wave": 9,
+    "time": 56.1,
+    "level": 12,
+    "hp": 187.5
+   },
+   {
+    "wave": 10,
+    "time": 64.6,
+    "level": 13,
+    "hp": 187.5
+   },
+   {
+    "wave": 11,
+    "time": 97,
+    "level": 16,
+    "hp": 127.6
+   },
+   {
+    "wave": 12,
+    "time": 105.3,
+    "level": 16,
+    "hp": 187.5
+   },
+   {
+    "wave": 13,
+    "time": 113.3,
+    "level": 17,
+    "hp": 187.5
+   },
+   {
+    "wave": 14,
+    "time": 122.3,
+    "level": 17,
+    "hp": 187.5
+   },
+   {
+    "wave": 15,
+    "time": 132.6,
+    "level": 17,
+    "hp": 187.5
+   },
+   {
+    "wave": 16,
+    "time": 140,
+    "level": 18,
+    "hp": 187.5
+   },
+   {
+    "wave": 17,
+    "time": 150.8,
+    "level": 18,
+    "hp": 187.5
+   },
+   {
+    "wave": 18,
+    "time": 158.6,
+    "level": 19,
+    "hp": 187.5
+   },
+   {
+    "wave": 19,
+    "time": 167.3,
+    "level": 19,
+    "hp": 187.5
+   },
+   {
+    "wave": 20,
+    "time": 176.4,
+    "level": 20,
+    "hp": 187.5
+   }
+  ],
+  "profile": "damage",
+  "boss": {
+   "id": "toxic_slime",
+   "hp": 23675.599914867016,
+   "maxHp": 42300
+  }
+ },
+ {
+  "seed": 101,
+  "chapter": 2,
+  "weapon": "w_laser",
+  "priority": [
+   "explosive_ammo",
+   "ricochet_rounds",
+   "shrapnel_burst",
+   "piercing_slugs",
+   "shock_rounds"
+  ],
+  "seconds": 212.5,
+  "stopped": true,
+  "alive": false,
+  "wave": 20,
+  "level": 20,
+  "kills": 803,
+  "hp": -31.8,
+  "gold": 1672,
+  "crystals": 82,
+  "accountXp": 1129,
+  "got": {
+   "ricochet_rounds": 3,
+   "kevlar_vest": 3,
+   "shrapnel_burst": 5,
+   "tac_magnet": 1,
+   "explosive_ammo": 3,
+   "tac_sprint": 1,
+   "shock_rounds": 3
+  },
+  "choices": [
+   "ricochet_rounds",
+   "kevlar_vest",
+   "shrapnel_burst",
+   "shrapnel_burst",
+   "shrapnel_burst",
+   "ricochet_rounds",
+   "tac_magnet",
+   "shrapnel_burst",
+   "explosive_ammo",
+   "kevlar_vest",
+   "tac_sprint",
+   "kevlar_vest",
+   "explosive_ammo",
+   "shock_rounds",
+   "explosive_ammo",
+   "ricochet_rounds",
+   "shrapnel_burst",
+   "shock_rounds",
+   "shock_rounds"
+  ],
+  "waves": [
+   {
+    "wave": 1,
+    "time": 0,
+    "level": 1,
+    "hp": 132.5
+   },
+   {
+    "wave": 2,
+    "time": 4.1,
+    "level": 3,
+    "hp": 150.5
+   },
+   {
+    "wave": 3,
+    "time": 11.2,
+    "level": 6,
+    "hp": 150.5
+   },
+   {
+    "wave": 4,
+    "time": 17.4,
+    "level": 7,
+    "hp": 150.5
+   },
+   {
+    "wave": 5,
+    "time": 25.2,
+    "level": 8,
+    "hp": 150.5
+   },
+   {
+    "wave": 6,
+    "time": 32.5,
+    "level": 9,
+    "hp": 150.5
+   },
+   {
+    "wave": 7,
+    "time": 41,
+    "level": 10,
+    "hp": 150.5
+   },
+   {
+    "wave": 8,
+    "time": 48.5,
+    "level": 11,
+    "hp": 167.2
+   },
+   {
+    "wave": 9,
+    "time": 55,
+    "level": 12,
+    "hp": 165.8
+   },
+   {
+    "wave": 10,
+    "time": 62.3,
+    "level": 13,
+    "hp": 183.8
+   },
+   {
+    "wave": 11,
+    "time": 108.7,
+    "level": 16,
+    "hp": 186
+   },
+   {
+    "wave": 12,
+    "time": 117.4,
+    "level": 16,
+    "hp": 186
+   },
+   {
+    "wave": 13,
+    "time": 125,
+    "level": 17,
+    "hp": 186
+   },
+   {
+    "wave": 14,
+    "time": 135.9,
+    "level": 17,
+    "hp": 186
+   },
+   {
+    "wave": 15,
+    "time": 146.3,
+    "level": 18,
+    "hp": 186.5
+   },
+   {
+    "wave": 16,
+    "time": 154.1,
+    "level": 18,
+    "hp": 186.5
+   },
+   {
+    "wave": 17,
+    "time": 162,
+    "level": 18,
+    "hp": 186.5
+   },
+   {
+    "wave": 18,
+    "time": 172.5,
+    "level": 19,
+    "hp": 186.5
+   },
+   {
+    "wave": 19,
+    "time": 182.4,
+    "level": 19,
+    "hp": 186.5
+   },
+   {
+    "wave": 20,
+    "time": 189.8,
+    "level": 20,
+    "hp": 186.5
+   }
+  ],
+  "profile": "crowd",
+  "boss": {
+   "id": "toxic_slime",
+   "hp": 30707.516053440348,
+   "maxHp": 42300
+  }
+ },
+ {
+  "seed": 101,
+  "chapter": 2,
+  "weapon": "w_laser",
+  "priority": [
+   "kevlar_vest",
+   "nanite_repair",
+   "combat_stim",
+   "tac_heal",
+   "tac_sprint"
+  ],
+  "seconds": 233.7,
+  "stopped": true,
+  "alive": false,
+  "wave": 20,
+  "level": 20,
+  "kills": 799,
+  "hp": -22.1,
+  "gold": 1756,
+  "crystals": 72,
+  "accountXp": 1125,
+  "got": {
+   "ricochet_rounds": 1,
+   "kevlar_vest": 5,
+   "combat_stim": 4,
+   "tac_heal": 4,
+   "shock_rounds": 2,
+   "extra_projectile": 2,
+   "sniper_crit": 1
+  },
+  "choices": [
+   "ricochet_rounds",
+   "kevlar_vest",
+   "combat_stim",
+   "tac_heal",
+   "shock_rounds",
+   "shock_rounds",
+   "kevlar_vest",
+   "kevlar_vest",
+   "extra_projectile",
+   "sniper_crit",
+   "combat_stim",
+   "tac_heal",
+   "kevlar_vest",
+   "tac_heal",
+   "tac_heal",
+   "combat_stim",
+   "kevlar_vest",
+   "extra_projectile",
+   "combat_stim"
+  ],
+  "waves": [
+   {
+    "wave": 1,
+    "time": 0,
+    "level": 1,
+    "hp": 132.5
+   },
+   {
+    "wave": 2,
+    "time": 4.1,
+    "level": 3,
+    "hp": 150.5
+   },
+   {
+    "wave": 3,
+    "time": 11.8,
+    "level": 5,
+    "hp": 170.5
+   },
+   {
+    "wave": 4,
+    "time": 19.8,
+    "level": 7,
+    "hp": 170.5
+   },
+   {
+    "wave": 5,
+    "time": 28.2,
+    "level": 8,
+    "hp": 188.5
+   },
+   {
+    "wave": 6,
+    "time": 36.7,
+    "level": 9,
+    "hp": 206.5
+   },
+   {
+    "wave": 7,
+    "time": 45.4,
+    "level": 10,
+    "hp": 206.5
+   },
+   {
+    "wave": 8,
+    "time": 53.2,
+    "level": 11,
+    "hp": 205.5
+   },
+   {
+    "wave": 9,
+    "time": 60.4,
+    "level": 12,
+    "hp": 206.5
+   },
+   {
+    "wave": 10,
+    "time": 67.3,
+    "level": 13,
+    "hp": 226.5
+   },
+   {
+    "wave": 11,
+    "time": 106.6,
+    "level": 16,
+    "hp": 284.5
+   },
+   {
+    "wave": 12,
+    "time": 114.7,
+    "level": 16,
+    "hp": 284.5
+   },
+   {
+    "wave": 13,
+    "time": 124.2,
+    "level": 17,
+    "hp": 284.5
+   },
+   {
+    "wave": 14,
+    "time": 134.3,
+    "level": 17,
+    "hp": 284.5
+   },
+   {
+    "wave": 15,
+    "time": 144.9,
+    "level": 17,
+    "hp": 284.5
+   },
+   {
+    "wave": 16,
+    "time": 151.5,
+    "level": 18,
+    "hp": 302.5
+   },
+   {
+    "wave": 17,
+    "time": 159,
+    "level": 18,
+    "hp": 302.5
+   },
+   {
+    "wave": 18,
+    "time": 169.6,
+    "level": 19,
+    "hp": 302.5
+   },
+   {
+    "wave": 19,
+    "time": 179.9,
+    "level": 19,
+    "hp": 302.5
+   },
+   {
+    "wave": 20,
+    "time": 190.5,
+    "level": 20,
+    "hp": 302.5
+   }
+  ],
+  "profile": "defense",
+  "boss": {
+   "id": "toxic_slime",
+   "hp": 19432.96762930473,
+   "maxHp": 42300
+  }
+ },
+ {
+  "seed": 101,
+  "chapter": 2,
+  "weapon": "m_astral",
+  "priority": [
+   "arcane_multicast",
+   "arcane_power",
+   "quick_cast",
+   "wep_astral_nova_blast",
+   "arcane_focus"
+  ],
+  "seconds": 172.1,
+  "stopped": true,
+  "alive": false,
+  "wave": 20,
+  "level": 20,
+  "kills": 797,
+  "hp": -24.4,
+  "gold": 1895,
+  "crystals": 68,
+  "accountXp": 1130,
+  "got": {
+   "astral_haste": 1,
+   "arcane_focus": 2,
+   "arcane_cataclysm": 3,
+   "immortal_phoenix": 1,
+   "arcane_multicast": 5,
+   "arcane_power": 5,
+   "essence_regen": 1,
+   "arcane_multicast_evo": 1
+  },
+  "choices": [
+   "astral_haste",
+   "arcane_focus",
+   "arcane_cataclysm",
+   "immortal_phoenix",
+   "arcane_cataclysm",
+   "arcane_multicast",
+   "arcane_power",
+   "arcane_power",
+   "arcane_cataclysm",
+   "arcane_multicast",
+   "arcane_multicast",
+   "essence_regen",
+   "arcane_multicast",
+   "arcane_focus",
+   "arcane_multicast",
+   "arcane_multicast_evo",
+   "arcane_power",
+   "arcane_power",
+   "arcane_power"
+  ],
+  "waves": [
+   {
+    "wave": 1,
+    "time": 0,
+    "level": 1,
+    "hp": 132.5
+   },
+   {
+    "wave": 2,
+    "time": 4.1,
+    "level": 3,
+    "hp": 132.5
+   },
+   {
+    "wave": 3,
+    "time": 11.2,
+    "level": 5,
+    "hp": 172.5
+   },
+   {
+    "wave": 4,
+    "time": 18.4,
+    "level": 7,
+    "hp": 172.5
+   },
+   {
+    "wave": 5,
+    "time": 26.7,
+    "level": 8,
+    "hp": 172.5
+   },
+   {
+    "wave": 6,
+    "time": 34.4,
+    "level": 9,
+    "hp": 172.5
+   },
+   {
+    "wave": 7,
+    "time": 40.7,
+    "level": 10,
+    "hp": 172.5
+   },
+   {
+    "wave": 8,
+    "time": 47.2,
+    "level": 11,
+    "hp": 172.5
+   },
+   {
+    "wave": 9,
+    "time": 53,
+    "level": 12,
+    "hp": 171.1
+   },
+   {
+    "wave": 10,
+    "time": 60.5,
+    "level": 13,
+    "hp": 172.5
+   },
+   {
+    "wave": 11,
+    "time": 80.7,
+    "level": 16,
+    "hp": 172.5
+   },
+   {
+    "wave": 12,
+    "time": 88.9,
+    "level": 16,
+    "hp": 172.5
+   },
+   {
+    "wave": 13,
+    "time": 97.9,
+    "level": 17,
+    "hp": 172.5
+   },
+   {
+    "wave": 14,
+    "time": 106,
+    "level": 17,
+    "hp": 172.5
+   },
+   {
+    "wave": 15,
+    "time": 113.6,
+    "level": 17,
+    "hp": 172.5
+   },
+   {
+    "wave": 16,
+    "time": 122.7,
+    "level": 18,
+    "hp": 172.5
+   },
+   {
+    "wave": 17,
+    "time": 131.2,
+    "level": 18,
+    "hp": 172.5
+   },
+   {
+    "wave": 18,
+    "time": 138.8,
+    "level": 19,
+    "hp": 172.5
+   },
+   {
+    "wave": 19,
+    "time": 148,
+    "level": 19,
+    "hp": 172.5
+   },
+   {
+    "wave": 20,
+    "time": 155.7,
+    "level": 20,
+    "hp": 172.5
+   }
+  ],
+  "profile": "damage",
+  "boss": {
+   "id": "toxic_slime",
+   "hp": 4707.341198548702,
+   "maxHp": 42300
+  }
+ },
+ {
+  "seed": 101,
+  "chapter": 2,
+  "weapon": "m_astral",
+  "priority": [
+   "chain_lightning",
+   "frost_nova",
+   "toxic_miasma",
+   "fireball_burst",
+   "spell_pierce"
+  ],
+  "seconds": 215.8,
+  "stopped": true,
+  "alive": false,
+  "wave": 20,
+  "level": 20,
+  "kills": 801,
+  "hp": -17,
+  "gold": 1822,
+  "crystals": 78,
+  "accountXp": 1126,
+  "got": {
+   "chain_lightning": 5,
+   "immortal_phoenix": 2,
+   "barrier_reflection": 2,
+   "soul_magnet": 2,
+   "frost_nova": 4,
+   "spell_pierce": 2,
+   "toxic_miasma": 2
+  },
+  "choices": [
+   "chain_lightning",
+   "immortal_phoenix",
+   "barrier_reflection",
+   "immortal_phoenix",
+   "barrier_reflection",
+   "soul_magnet",
+   "frost_nova",
+   "spell_pierce",
+   "chain_lightning",
+   "soul_magnet",
+   "toxic_miasma",
+   "frost_nova",
+   "frost_nova",
+   "chain_lightning",
+   "chain_lightning",
+   "spell_pierce",
+   "toxic_miasma",
+   "frost_nova",
+   "chain_lightning"
+  ],
+  "waves": [
+   {
+    "wave": 1,
+    "time": 0,
+    "level": 1,
+    "hp": 132.5
+   },
+   {
+    "wave": 2,
+    "time": 4.8,
+    "level": 3,
+    "hp": 172.5
+   },
+   {
+    "wave": 3,
+    "time": 11.9,
+    "level": 5,
+    "hp": 242.5
+   },
+   {
+    "wave": 4,
+    "time": 19.1,
+    "level": 7,
+    "hp": 272.5
+   },
+   {
+    "wave": 5,
+    "time": 26.7,
+    "level": 8,
+    "hp": 272.5
+   },
+   {
+    "wave": 6,
+    "time": 33.4,
+    "level": 9,
+    "hp": 272.5
+   },
+   {
+    "wave": 7,
+    "time": 40.9,
+    "level": 10,
+    "hp": 272.5
+   },
+   {
+    "wave": 8,
+    "time": 47.9,
+    "level": 11,
+    "hp": 272.5
+   },
+   {
+    "wave": 9,
+    "time": 55.2,
+    "level": 12,
+    "hp": 272.5
+   },
+   {
+    "wave": 10,
+    "time": 63.1,
+    "level": 13,
+    "hp": 272.5
+   },
+   {
+    "wave": 11,
+    "time": 110.5,
+    "level": 16,
+    "hp": 241.7
+   },
+   {
+    "wave": 12,
+    "time": 118.5,
+    "level": 16,
+    "hp": 267.4
+   },
+   {
+    "wave": 13,
+    "time": 126.9,
+    "level": 17,
+    "hp": 272.5
+   },
+   {
+    "wave": 14,
+    "time": 134.5,
+    "level": 17,
+    "hp": 272.5
+   },
+   {
+    "wave": 15,
+    "time": 142.2,
+    "level": 17,
+    "hp": 272.5
+   },
+   {
+    "wave": 16,
+    "time": 150.2,
+    "level": 18,
+    "hp": 272.5
+   },
+   {
+    "wave": 17,
+    "time": 159.4,
+    "level": 18,
+    "hp": 272.5
+   },
+   {
+    "wave": 18,
+    "time": 168.3,
+    "level": 19,
+    "hp": 272.5
+   },
+   {
+    "wave": 19,
+    "time": 178.3,
+    "level": 19,
+    "hp": 272.5
+   },
+   {
+    "wave": 20,
+    "time": 186.8,
+    "level": 20,
+    "hp": 272.5
+   }
+  ],
+  "profile": "crowd",
+  "boss": {
+   "id": "toxic_slime",
+   "hp": 26438.44307759997,
+   "maxHp": 42300
+  }
+ },
+ {
+  "seed": 101,
+  "chapter": 2,
+  "weapon": "m_astral",
+  "priority": [
+   "mana_shield",
+   "essence_regen",
+   "magic_vitality",
+   "rejuvenation_aura",
+   "astral_haste"
+  ],
+  "seconds": 228.9,
+  "stopped": true,
+  "alive": false,
+  "wave": 20,
+  "level": 20,
+  "kills": 818,
+  "hp": -5.6,
+  "gold": 1782,
+  "crystals": 73,
+  "accountXp": 1127,
+  "got": {
+   "astral_haste": 4,
+   "toxic_miasma": 2,
+   "soul_magnet": 4,
+   "wep_astral_twilight": 2,
+   "rejuvenation_aura": 5,
+   "chain_lightning": 1,
+   "arcane_multicast": 1
+  },
+  "choices": [
+   "astral_haste",
+   "toxic_miasma",
+   "soul_magnet",
+   "astral_haste",
+   "wep_astral_twilight",
+   "rejuvenation_aura",
+   "wep_astral_twilight",
+   "toxic_miasma",
+   "rejuvenation_aura",
+   "rejuvenation_aura",
+   "astral_haste",
+   "chain_lightning",
+   "arcane_multicast",
+   "astral_haste",
+   "rejuvenation_aura",
+   "rejuvenation_aura",
+   "soul_magnet",
+   "soul_magnet",
+   "soul_magnet"
+  ],
+  "waves": [
+   {
+    "wave": 1,
+    "time": 0,
+    "level": 1,
+    "hp": 132.5
+   },
+   {
+    "wave": 2,
+    "time": 4.8,
+    "level": 3,
+    "hp": 132.5
+   },
+   {
+    "wave": 3,
+    "time": 11.5,
+    "level": 5,
+    "hp": 132.5
+   },
+   {
+    "wave": 4,
+    "time": 17.9,
+    "level": 7,
+    "hp": 157.5
+   },
+   {
+    "wave": 5,
+    "time": 26.1,
+    "level": 8,
+    "hp": 157.5
+   },
+   {
+    "wave": 6,
+    "time": 33.6,
+    "level": 9,
+    "hp": 156.7
+   },
+   {
+    "wave": 7,
+    "time": 40.7,
+    "level": 10,
+    "hp": 182.5
+   },
+   {
+    "wave": 8,
+    "time": 49.3,
+    "level": 11,
+    "hp": 207.5
+   },
+   {
+    "wave": 9,
+    "time": 56.7,
+    "level": 12,
+    "hp": 207.5
+   },
+   {
+    "wave": 10,
+    "time": 63.8,
+    "level": 13,
+    "hp": 207.5
+   },
+   {
+    "wave": 11,
+    "time": 102.6,
+    "level": 16,
+    "hp": 232.5
+   },
+   {
+    "wave": 12,
+    "time": 110.8,
+    "level": 16,
+    "hp": 232.5
+   },
+   {
+    "wave": 13,
+    "time": 119.5,
+    "level": 17,
+    "hp": 257.5
+   },
+   {
+    "wave": 14,
+    "time": 128.3,
+    "level": 17,
+    "hp": 257.5
+   },
+   {
+    "wave": 15,
+    "time": 136.6,
+    "level": 18,
+    "hp": 257.5
+   },
+   {
+    "wave": 16,
+    "time": 144.1,
+    "level": 18,
+    "hp": 257.5
+   },
+   {
+    "wave": 17,
+    "time": 152.8,
+    "level": 18,
+    "hp": 257.5
+   },
+   {
+    "wave": 18,
+    "time": 162.1,
+    "level": 19,
+    "hp": 257.5
+   },
+   {
+    "wave": 19,
+    "time": 171,
+    "level": 19,
+    "hp": 257.5
+   },
+   {
+    "wave": 20,
+    "time": 179.5,
+    "level": 20,
+    "hp": 257.5
+   }
+  ],
+  "profile": "defense",
+  "boss": {
+   "id": "toxic_slime",
+   "hp": 10075.211975862805,
+   "maxHp": 42300
+  }
+ },
+ {
+  "seed": 101,
+  "chapter": 3,
+  "weapon": "w_laser",
+  "priority": [
+   "extra_projectile",
+   "wep_laser_bifurcation",
+   "fmj_ammo",
+   "fast_reload",
+   "sniper_crit"
+  ],
+  "seconds": 69.8,
+  "stopped": true,
+  "alive": false,
+  "wave": 10,
+  "level": 14,
+  "kills": 227,
+  "hp": -16.5,
+  "gold": 1484,
+  "crystals": 26,
+  "accountXp": 499,
+  "got": {
+   "kevlar_vest": 1,
+   "aegis_protocol": 2,
+   "fast_reload": 1,
+   "combat_stim": 1,
+   "extra_projectile": 3,
+   "wep_laser_bifurcation": 4,
+   "hyperbeam": 1
+  },
+  "choices": [
+   "kevlar_vest",
+   "aegis_protocol",
+   "fast_reload",
+   "combat_stim",
+   "aegis_protocol",
+   "extra_projectile",
+   "wep_laser_bifurcation",
+   "wep_laser_bifurcation",
+   "extra_projectile",
+   "hyperbeam",
+   "extra_projectile",
+   "wep_laser_bifurcation",
+   "wep_laser_bifurcation"
+  ],
+  "waves": [
+   {
+    "wave": 1,
+    "time": 0,
+    "level": 1,
+    "hp": 132.5
+   },
+   {
+    "wave": 2,
+    "time": 7.2,
+    "level": 4,
+    "hp": 190.5
+   },
+   {
+    "wave": 3,
+    "time": 12.5,
+    "level": 5,
+    "hp": 190.5
+   },
+   {
+    "wave": 4,
+    "time": 18.8,
+    "level": 7,
+    "hp": 230.5
+   },
+   {
+    "wave": 5,
+    "time": 25.2,
+    "level": 8,
+    "hp": 230.5
+   },
+   {
+    "wave": 6,
+    "time": 31.7,
+    "level": 9,
+    "hp": 230.5
+   },
+   {
+    "wave": 7,
+    "time": 38.9,
+    "level": 11,
+    "hp": 230.5
+   },
+   {
+    "wave": 8,
+    "time": 46.3,
+    "level": 12,
+    "hp": 230.5
+   },
+   {
+    "wave": 9,
+    "time": 53.4,
+    "level": 13,
+    "hp": 230.5
+   },
+   {
+    "wave": 10,
+    "time": 60.5,
+    "level": 14,
+    "hp": 228.7
+   }
+  ],
+  "profile": "damage",
+  "boss": {
+   "id": "cyber_cerberus",
+   "hp": 192138.1815967465,
+   "maxHp": 199800
+  }
+ },
+ {
+  "seed": 101,
+  "chapter": 3,
+  "weapon": "w_laser",
+  "priority": [
+   "explosive_ammo",
+   "ricochet_rounds",
+   "shrapnel_burst",
+   "piercing_slugs",
+   "shock_rounds"
+  ],
+  "seconds": 64.9,
+  "stopped": true,
+  "alive": false,
+  "wave": 10,
+  "level": 14,
+  "kills": 227,
+  "hp": -6.5,
+  "gold": 1274,
+  "crystals": 25,
+  "accountXp": 499,
+  "got": {
+   "shock_rounds": 3,
+   "explosive_ammo": 4,
+   "ricochet_rounds": 4,
+   "shrapnel_burst": 1,
+   "tac_magnet": 1
+  },
+  "choices": [
+   "shock_rounds",
+   "explosive_ammo",
+   "ricochet_rounds",
+   "ricochet_rounds",
+   "shrapnel_burst",
+   "explosive_ammo",
+   "shock_rounds",
+   "ricochet_rounds",
+   "ricochet_rounds",
+   "explosive_ammo",
+   "explosive_ammo",
+   "tac_magnet",
+   "shock_rounds"
+  ],
+  "waves": [
+   {
+    "wave": 1,
+    "time": 0,
+    "level": 1,
+    "hp": 132.5
+   },
+   {
+    "wave": 2,
+    "time": 6.7,
+    "level": 4,
+    "hp": 132.5
+   },
+   {
+    "wave": 3,
+    "time": 11.2,
+    "level": 5,
+    "hp": 132.5
+   },
+   {
+    "wave": 4,
+    "time": 17,
+    "level": 7,
+    "hp": 132.5
+   },
+   {
+    "wave": 5,
+    "time": 24.8,
+    "level": 8,
+    "hp": 132.5
+   },
+   {
+    "wave": 6,
+    "time": 31.7,
+    "level": 9,
+    "hp": 132.5
+   },
+   {
+    "wave": 7,
+    "time": 37.2,
+    "level": 11,
+    "hp": 132.5
+   },
+   {
+    "wave": 8,
+    "time": 42.9,
+    "level": 12,
+    "hp": 132.5
+   },
+   {
+    "wave": 9,
+    "time": 48.7,
+    "level": 12,
+    "hp": 132.5
+   },
+   {
+    "wave": 10,
+    "time": 56.9,
+    "level": 13,
+    "hp": 132.5
+   }
+  ],
+  "profile": "crowd",
+  "boss": {
+   "id": "cyber_cerberus",
+   "hp": 196689.35861999917,
+   "maxHp": 199800
+  }
+ },
+ {
+  "seed": 101,
+  "chapter": 3,
+  "weapon": "w_laser",
+  "priority": [
+   "kevlar_vest",
+   "nanite_repair",
+   "combat_stim",
+   "tac_heal",
+   "tac_sprint"
+  ],
+  "seconds": 76.1,
+  "stopped": true,
+  "alive": false,
+  "wave": 10,
+  "level": 14,
+  "kills": 227,
+  "hp": -21.7,
+  "gold": 1545,
+  "crystals": 25,
+  "accountXp": 499,
+  "got": {
+   "kevlar_vest": 4,
+   "aegis_protocol": 3,
+   "orbital_strike": 2,
+   "combat_stim": 1,
+   "shock_rounds": 1,
+   "ricochet_rounds": 1,
+   "wep_laser_bifurcation": 1
+  },
+  "choices": [
+   "kevlar_vest",
+   "aegis_protocol",
+   "orbital_strike",
+   "combat_stim",
+   "orbital_strike",
+   "shock_rounds",
+   "kevlar_vest",
+   "ricochet_rounds",
+   "aegis_protocol",
+   "kevlar_vest",
+   "wep_laser_bifurcation",
+   "kevlar_vest",
+   "aegis_protocol"
+  ],
+  "waves": [
+   {
+    "wave": 1,
+    "time": 0,
+    "level": 1,
+    "hp": 132.5
+   },
+   {
+    "wave": 2,
+    "time": 7.5,
+    "level": 4,
+    "hp": 190.5
+   },
+   {
+    "wave": 3,
+    "time": 13.8,
+    "level": 6,
+    "hp": 190.5
+   },
+   {
+    "wave": 4,
+    "time": 21,
+    "level": 7,
+    "hp": 190.5
+   },
+   {
+    "wave": 5,
+    "time": 27.1,
+    "level": 8,
+    "hp": 208.5
+   },
+   {
+    "wave": 6,
+    "time": 34.6,
+    "level": 9,
+    "hp": 208.5
+   },
+   {
+    "wave": 7,
+    "time": 41.9,
+    "level": 11,
+    "hp": 266.5
+   },
+   {
+    "wave": 8,
+    "time": 49.7,
+    "level": 12,
+    "hp": 266.5
+   },
+   {
+    "wave": 9,
+    "time": 56.3,
+    "level": 13,
+    "hp": 284.5
+   },
+   {
+    "wave": 10,
+    "time": 64.5,
+    "level": 14,
+    "hp": 324.5
+   }
+  ],
+  "profile": "defense",
+  "boss": {
+   "id": "cyber_cerberus",
+   "hp": 194749.1134560003,
+   "maxHp": 199800
+  }
+ },
+ {
+  "seed": 101,
+  "chapter": 3,
+  "weapon": "m_astral",
+  "priority": [
+   "arcane_multicast",
+   "arcane_power",
+   "quick_cast",
+   "wep_astral_nova_blast",
+   "arcane_focus"
+  ],
+  "seconds": 67.6,
+  "stopped": true,
+  "alive": false,
+  "wave": 10,
+  "level": 14,
+  "kills": 227,
+  "hp": -10.7,
+  "gold": 1679,
+  "crystals": 39,
+  "accountXp": 499,
+  "got": {
+   "magic_vitality": 1,
+   "immortal_phoenix": 1,
+   "mana_shield": 2,
+   "wep_astral_nova_blast": 1,
+   "quick_cast": 4,
+   "arcane_focus": 2,
+   "arcane_multicast": 2
+  },
+  "choices": [
+   "magic_vitality",
+   "immortal_phoenix",
+   "mana_shield",
+   "mana_shield",
+   "wep_astral_nova_blast",
+   "quick_cast",
+   "arcane_focus",
+   "arcane_focus",
+   "quick_cast",
+   "quick_cast",
+   "arcane_multicast",
+   "arcane_multicast",
+   "quick_cast"
+  ],
+  "waves": [
+   {
+    "wave": 1,
+    "time": 0,
+    "level": 1,
+    "hp": 132.5
+   },
+   {
+    "wave": 2,
+    "time": 6,
+    "level": 4,
+    "hp": 210.5
+   },
+   {
+    "wave": 3,
+    "time": 11.8,
+    "level": 6,
+    "hp": 228.5
+   },
+   {
+    "wave": 4,
+    "time": 18.7,
+    "level": 7,
+    "hp": 228.5
+   },
+   {
+    "wave": 5,
+    "time": 25.5,
+    "level": 8,
+    "hp": 228.5
+   },
+   {
+    "wave": 6,
+    "time": 31.7,
+    "level": 9,
+    "hp": 228.5
+   },
+   {
+    "wave": 7,
+    "time": 38.2,
+    "level": 10,
+    "hp": 228.5
+   },
+   {
+    "wave": 8,
+    "time": 44.6,
+    "level": 12,
+    "hp": 226.7
+   },
+   {
+    "wave": 9,
+    "time": 52,
+    "level": 13,
+    "hp": 228.5
+   },
+   {
+    "wave": 10,
+    "time": 58.3,
+    "level": 13,
+    "hp": 228.5
+   }
+  ],
+  "profile": "damage",
+  "boss": {
+   "id": "cyber_cerberus",
+   "hp": 194119.33888108493,
+   "maxHp": 199800
+  }
+ },
+ {
+  "seed": 101,
+  "chapter": 3,
+  "weapon": "m_astral",
+  "priority": [
+   "chain_lightning",
+   "frost_nova",
+   "toxic_miasma",
+   "fireball_burst",
+   "spell_pierce"
+  ],
+  "seconds": 73.7,
+  "stopped": true,
+  "alive": false,
+  "wave": 10,
+  "level": 14,
+  "kills": 227,
+  "hp": -28.7,
+  "gold": 1482,
+  "crystals": 33,
+  "accountXp": 499,
+  "got": {
+   "frost_nova": 3,
+   "immortal_phoenix": 3,
+   "mana_shield": 1,
+   "magic_vitality": 2,
+   "wep_astral_nova_blast": 1,
+   "toxic_miasma": 2,
+   "chain_lightning": 1
+  },
+  "choices": [
+   "frost_nova",
+   "immortal_phoenix",
+   "mana_shield",
+   "magic_vitality",
+   "wep_astral_nova_blast",
+   "magic_vitality",
+   "immortal_phoenix",
+   "toxic_miasma",
+   "toxic_miasma",
+   "chain_lightning",
+   "immortal_phoenix",
+   "frost_nova",
+   "frost_nova"
+  ],
+  "waves": [
+   {
+    "wave": 1,
+    "time": 0,
+    "level": 1,
+    "hp": 132.5
+   },
+   {
+    "wave": 2,
+    "time": 6,
+    "level": 4,
+    "hp": 190.5
+   },
+   {
+    "wave": 3,
+    "time": 11.8,
+    "level": 6,
+    "hp": 210.5
+   },
+   {
+    "wave": 4,
+    "time": 18.7,
+    "level": 7,
+    "hp": 230.5
+   },
+   {
+    "wave": 5,
+    "time": 24.9,
+    "level": 8,
+    "hp": 270.5
+   },
+   {
+    "wave": 6,
+    "time": 31.2,
+    "level": 9,
+    "hp": 270.5
+   },
+   {
+    "wave": 7,
+    "time": 38.6,
+    "level": 11,
+    "hp": 270.5
+   },
+   {
+    "wave": 8,
+    "time": 46.3,
+    "level": 12,
+    "hp": 310.5
+   },
+   {
+    "wave": 9,
+    "time": 53.8,
+    "level": 13,
+    "hp": 310.5
+   },
+   {
+    "wave": 10,
+    "time": 60.7,
+    "level": 14,
+    "hp": 310.5
+   }
+  ],
+  "profile": "crowd",
+  "boss": {
+   "id": "cyber_cerberus",
+   "hp": 193492.58653799954,
+   "maxHp": 199800
+  }
+ },
+ {
+  "seed": 101,
+  "chapter": 3,
+  "weapon": "m_astral",
+  "priority": [
+   "mana_shield",
+   "essence_regen",
+   "magic_vitality",
+   "rejuvenation_aura",
+   "astral_haste"
+  ],
+  "seconds": 82,
+  "stopped": true,
+  "alive": false,
+  "wave": 10,
+  "level": 14,
+  "kills": 227,
+  "hp": -11.8,
+  "gold": 1478,
+  "crystals": 28,
+  "accountXp": 499,
+  "got": {
+   "magic_vitality": 2,
+   "immortal_phoenix": 2,
+   "mana_shield": 5,
+   "wep_astral_nova_blast": 2,
+   "mana_shield_evo": 1,
+   "wep_astral_twilight": 1
+  },
+  "choices": [
+   "magic_vitality",
+   "immortal_phoenix",
+   "mana_shield",
+   "mana_shield",
+   "wep_astral_nova_blast",
+   "magic_vitality",
+   "immortal_phoenix",
+   "mana_shield",
+   "mana_shield",
+   "mana_shield",
+   "mana_shield_evo",
+   "wep_astral_nova_blast",
+   "wep_astral_twilight"
+  ],
+  "waves": [
+   {
+    "wave": 1,
+    "time": 0,
+    "level": 1,
+    "hp": 132.5
+   },
+   {
+    "wave": 2,
+    "time": 6,
+    "level": 4,
+    "hp": 210.5
+   },
+   {
+    "wave": 3,
+    "time": 11.8,
+    "level": 6,
+    "hp": 228.5
+   },
+   {
+    "wave": 4,
+    "time": 18.7,
+    "level": 7,
+    "hp": 248.5
+   },
+   {
+    "wave": 5,
+    "time": 24.9,
+    "level": 8,
+    "hp": 288.5
+   },
+   {
+    "wave": 6,
+    "time": 31.2,
+    "level": 9,
+    "hp": 306.5
+   },
+   {
+    "wave": 7,
+    "time": 38.2,
+    "level": 11,
+    "hp": 341.8
+   },
+   {
+    "wave": 8,
+    "time": 45.3,
+    "level": 12,
+    "hp": 422.5
+   },
+   {
+    "wave": 9,
+    "time": 52.8,
+    "level": 13,
+    "hp": 422.5
+   },
+   {
+    "wave": 10,
+    "time": 61.6,
+    "level": 14,
+    "hp": 422.5
+   }
+  ],
+  "profile": "defense",
+  "boss": {
+   "id": "cyber_cerberus",
+   "hp": 190864.0141550994,
+   "maxHp": 199800
+  }
+ }
+]

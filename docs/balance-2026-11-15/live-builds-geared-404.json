@@ -1,0 +1,1482 @@
+[
+ {
+  "seed": 404,
+  "chapter": 3,
+  "weapon": "w_laser",
+  "priority": [
+   "extra_projectile",
+   "wep_laser_bifurcation",
+   "fmj_ammo",
+   "fast_reload",
+   "sniper_crit"
+  ],
+  "geared": true,
+  "seconds": 690.3,
+  "stopped": true,
+  "alive": true,
+  "wave": 50,
+  "level": 40,
+  "kills": 3107,
+  "hp": 884,
+  "gold": 40895,
+  "crystals": 922,
+  "accountXp": 5932,
+  "got": {
+   "wep_laser_bifurcation": 5,
+   "aegis_protocol": 5,
+   "reactive_armor": 5,
+   "explosive_ammo": 5,
+   "kevlar_vest": 5,
+   "sniper_crit": 5,
+   "shock_rounds": 5,
+   "sniper_crit_evo": 1,
+   "explosive_ammo_evo": 1
+  },
+  "choices": [
+   "wep_laser_bifurcation",
+   "wep_laser_bifurcation",
+   "aegis_protocol",
+   "reactive_armor",
+   "explosive_ammo",
+   "kevlar_vest",
+   "sniper_crit",
+   "shock_rounds",
+   "aegis_protocol",
+   "aegis_protocol",
+   "wep_laser_bifurcation",
+   "wep_laser_bifurcation",
+   "reactive_armor",
+   "wep_laser_bifurcation",
+   "aegis_protocol",
+   "reactive_armor",
+   "kevlar_vest",
+   "kevlar_vest",
+   "aegis_protocol",
+   "sniper_crit",
+   "sniper_crit",
+   "kevlar_vest",
+   "kevlar_vest",
+   "sniper_crit",
+   "sniper_crit",
+   "sniper_crit_evo",
+   "reactive_armor",
+   "reactive_armor",
+   "shock_rounds",
+   "shock_rounds",
+   "shock_rounds",
+   "explosive_ammo",
+   "explosive_ammo",
+   "explosive_ammo",
+   "shock_rounds",
+   "explosive_ammo",
+   "explosive_ammo_evo"
+  ],
+  "waves": [
+   {
+    "wave": 1,
+    "time": 0,
+    "level": 1,
+    "hp": 444
+   },
+   {
+    "wave": 2,
+    "time": 5,
+    "level": 4,
+    "hp": 484
+   },
+   {
+    "wave": 3,
+    "time": 10.6,
+    "level": 6,
+    "hp": 514
+   },
+   {
+    "wave": 4,
+    "time": 15,
+    "level": 7,
+    "hp": 532
+   },
+   {
+    "wave": 5,
+    "time": 21.2,
+    "level": 8,
+    "hp": 532
+   },
+   {
+    "wave": 6,
+    "time": 28.7,
+    "level": 10,
+    "hp": 572
+   },
+   {
+    "wave": 7,
+    "time": 34.3,
+    "level": 11,
+    "hp": 612
+   },
+   {
+    "wave": 8,
+    "time": 40.8,
+    "level": 12,
+    "hp": 612
+   },
+   {
+    "wave": 9,
+    "time": 47.4,
+    "level": 13,
+    "hp": 612
+   },
+   {
+    "wave": 10,
+    "time": 54.2,
+    "level": 14,
+    "hp": 642
+   },
+   {
+    "wave": 11,
+    "time": 121.7,
+    "level": 17,
+    "hp": 712
+   },
+   {
+    "wave": 12,
+    "time": 129.8,
+    "level": 18,
+    "hp": 730
+   },
+   {
+    "wave": 13,
+    "time": 137.9,
+    "level": 18,
+    "hp": 730
+   },
+   {
+    "wave": 14,
+    "time": 145.5,
+    "level": 19,
+    "hp": 748
+   },
+   {
+    "wave": 15,
+    "time": 153.6,
+    "level": 20,
+    "hp": 788
+   },
+   {
+    "wave": 16,
+    "time": 159.9,
+    "level": 20,
+    "hp": 788
+   },
+   {
+    "wave": 17,
+    "time": 168.3,
+    "level": 21,
+    "hp": 788
+   },
+   {
+    "wave": 18,
+    "time": 176.6,
+    "level": 22,
+    "hp": 788
+   },
+   {
+    "wave": 19,
+    "time": 184.2,
+    "level": 23,
+    "hp": 806
+   },
+   {
+    "wave": 20,
+    "time": 192.2,
+    "level": 24,
+    "hp": 824
+   },
+   {
+    "wave": 21,
+    "time": 276.5,
+    "level": 27,
+    "hp": 824
+   },
+   {
+    "wave": 22,
+    "time": 284.2,
+    "level": 28,
+    "hp": 854
+   },
+   {
+    "wave": 23,
+    "time": 290.8,
+    "level": 28,
+    "hp": 854
+   },
+   {
+    "wave": 24,
+    "time": 297.4,
+    "level": 29,
+    "hp": 884
+   },
+   {
+    "wave": 25,
+    "time": 302.8,
+    "level": 29,
+    "hp": 884
+   },
+   {
+    "wave": 26,
+    "time": 308.1,
+    "level": 29,
+    "hp": 884
+   },
+   {
+    "wave": 27,
+    "time": 313.8,
+    "level": 30,
+    "hp": 884
+   },
+   {
+    "wave": 28,
+    "time": 319.5,
+    "level": 31,
+    "hp": 884
+   },
+   {
+    "wave": 29,
+    "time": 325.6,
+    "level": 31,
+    "hp": 884
+   },
+   {
+    "wave": 30,
+    "time": 330.5,
+    "level": 32,
+    "hp": 884
+   },
+   {
+    "wave": 31,
+    "time": 400.8,
+    "level": 35,
+    "hp": 884
+   },
+   {
+    "wave": 32,
+    "time": 406.7,
+    "level": 35,
+    "hp": 884
+   },
+   {
+    "wave": 33,
+    "time": 413,
+    "level": 36,
+    "hp": 884
+   },
+   {
+    "wave": 34,
+    "time": 418.8,
+    "level": 36,
+    "hp": 884
+   },
+   {
+    "wave": 35,
+    "time": 424.2,
+    "level": 37,
+    "hp": 884
+   },
+   {
+    "wave": 36,
+    "time": 430.1,
+    "level": 37,
+    "hp": 884
+   },
+   {
+    "wave": 37,
+    "time": 435.5,
+    "level": 38,
+    "hp": 884
+   },
+   {
+    "wave": 38,
+    "time": 441.6,
+    "level": 38,
+    "hp": 884
+   },
+   {
+    "wave": 39,
+    "time": 447.6,
+    "level": 39,
+    "hp": 884
+   },
+   {
+    "wave": 40,
+    "time": 453.9,
+    "level": 39,
+    "hp": 884
+   },
+   {
+    "wave": 41,
+    "time": 528,
+    "level": 40,
+    "hp": 884
+   },
+   {
+    "wave": 42,
+    "time": 533.7,
+    "level": 40,
+    "hp": 884
+   },
+   {
+    "wave": 43,
+    "time": 540.1,
+    "level": 40,
+    "hp": 884
+   },
+   {
+    "wave": 44,
+    "time": 545.8,
+    "level": 40,
+    "hp": 884
+   },
+   {
+    "wave": 45,
+    "time": 550.9,
+    "level": 40,
+    "hp": 883.2
+   },
+   {
+    "wave": 46,
+    "time": 556.6,
+    "level": 40,
+    "hp": 884
+   },
+   {
+    "wave": 47,
+    "time": 564,
+    "level": 40,
+    "hp": 884
+   },
+   {
+    "wave": 48,
+    "time": 569.7,
+    "level": 40,
+    "hp": 884
+   },
+   {
+    "wave": 49,
+    "time": 574.9,
+    "level": 40,
+    "hp": 884
+   },
+   {
+    "wave": 50,
+    "time": 580.8,
+    "level": 40,
+    "hp": 884
+   }
+  ],
+  "profile": "damage",
+  "boss": null
+ },
+ {
+  "seed": 404,
+  "chapter": 3,
+  "weapon": "w_laser",
+  "priority": [
+   "explosive_ammo",
+   "ricochet_rounds",
+   "shrapnel_burst",
+   "piercing_slugs",
+   "shock_rounds"
+  ],
+  "geared": true,
+  "seconds": 112,
+  "stopped": true,
+  "alive": false,
+  "wave": 10,
+  "level": 14,
+  "kills": 227,
+  "hp": -3,
+  "gold": 1222,
+  "crystals": 23,
+  "accountXp": 499,
+  "got": {
+   "kevlar_vest": 1,
+   "sniper_crit": 2,
+   "explosive_ammo": 5,
+   "tac_heal": 1,
+   "nanite_repair": 1,
+   "explosive_ammo_evo": 1,
+   "shrapnel_burst": 1,
+   "ricochet_rounds": 1
+  },
+  "choices": [
+   "kevlar_vest",
+   "sniper_crit",
+   "explosive_ammo",
+   "sniper_crit",
+   "tac_heal",
+   "explosive_ammo",
+   "explosive_ammo",
+   "explosive_ammo",
+   "nanite_repair",
+   "explosive_ammo",
+   "explosive_ammo_evo",
+   "shrapnel_burst",
+   "ricochet_rounds"
+  ],
+  "waves": [
+   {
+    "wave": 1,
+    "time": 0,
+    "level": 1,
+    "hp": 444
+   },
+   {
+    "wave": 2,
+    "time": 4.9,
+    "level": 4,
+    "hp": 462
+   },
+   {
+    "wave": 3,
+    "time": 10,
+    "level": 6,
+    "hp": 482
+   },
+   {
+    "wave": 4,
+    "time": 13.8,
+    "level": 7,
+    "hp": 482
+   },
+   {
+    "wave": 5,
+    "time": 20.4,
+    "level": 8,
+    "hp": 482
+   },
+   {
+    "wave": 6,
+    "time": 26.8,
+    "level": 9,
+    "hp": 482
+   },
+   {
+    "wave": 7,
+    "time": 33.2,
+    "level": 11,
+    "hp": 507
+   },
+   {
+    "wave": 8,
+    "time": 39.1,
+    "level": 12,
+    "hp": 507
+   },
+   {
+    "wave": 9,
+    "time": 45.7,
+    "level": 13,
+    "hp": 507
+   },
+   {
+    "wave": 10,
+    "time": 52.5,
+    "level": 14,
+    "hp": 507
+   }
+  ],
+  "profile": "crowd",
+  "boss": {
+   "id": "cyber_cerberus",
+   "hp": 56694.22920000486,
+   "maxHp": 199800
+  }
+ },
+ {
+  "seed": 404,
+  "chapter": 3,
+  "weapon": "w_laser",
+  "priority": [
+   "kevlar_vest",
+   "nanite_repair",
+   "combat_stim",
+   "tac_heal",
+   "tac_sprint"
+  ],
+  "geared": true,
+  "seconds": 826.4,
+  "stopped": true,
+  "alive": false,
+  "wave": 50,
+  "level": 40,
+  "kills": 3114,
+  "hp": -11.6,
+  "gold": 41843,
+  "crystals": 860,
+  "accountXp": 5904,
+  "got": {
+   "kevlar_vest": 5,
+   "sniper_crit": 5,
+   "combat_stim": 5,
+   "fmj_ammo": 5,
+   "tac_sprint": 5,
+   "shock_rounds": 5,
+   "fast_reload": 5,
+   "combat_stim_evo": 1,
+   "sniper_crit_evo": 1
+  },
+  "choices": [
+   "kevlar_vest",
+   "sniper_crit",
+   "sniper_crit",
+   "kevlar_vest",
+   "combat_stim",
+   "fmj_ammo",
+   "tac_sprint",
+   "sniper_crit",
+   "shock_rounds",
+   "fast_reload",
+   "kevlar_vest",
+   "combat_stim",
+   "combat_stim",
+   "tac_sprint",
+   "combat_stim",
+   "tac_sprint",
+   "kevlar_vest",
+   "kevlar_vest",
+   "combat_stim",
+   "combat_stim_evo",
+   "tac_sprint",
+   "tac_sprint",
+   "shock_rounds",
+   "fmj_ammo",
+   "fast_reload",
+   "sniper_crit",
+   "sniper_crit",
+   "sniper_crit_evo",
+   "shock_rounds",
+   "shock_rounds",
+   "fmj_ammo",
+   "fast_reload",
+   "shock_rounds",
+   "fmj_ammo",
+   "fmj_ammo",
+   "fast_reload",
+   "fast_reload"
+  ],
+  "waves": [
+   {
+    "wave": 1,
+    "time": 0,
+    "level": 1,
+    "hp": 444
+   },
+   {
+    "wave": 2,
+    "time": 4.9,
+    "level": 4,
+    "hp": 462
+   },
+   {
+    "wave": 3,
+    "time": 9.7,
+    "level": 5,
+    "hp": 480
+   },
+   {
+    "wave": 4,
+    "time": 14.5,
+    "level": 7,
+    "hp": 480
+   },
+   {
+    "wave": 5,
+    "time": 21,
+    "level": 8,
+    "hp": 480
+   },
+   {
+    "wave": 6,
+    "time": 27.2,
+    "level": 9,
+    "hp": 480
+   },
+   {
+    "wave": 7,
+    "time": 34,
+    "level": 11,
+    "hp": 480
+   },
+   {
+    "wave": 8,
+    "time": 40,
+    "level": 12,
+    "hp": 498
+   },
+   {
+    "wave": 9,
+    "time": 46.1,
+    "level": 13,
+    "hp": 498
+   },
+   {
+    "wave": 10,
+    "time": 53.5,
+    "level": 14,
+    "hp": 498
+   },
+   {
+    "wave": 11,
+    "time": 146.9,
+    "level": 17,
+    "hp": 498
+   },
+   {
+    "wave": 12,
+    "time": 155.6,
+    "level": 18,
+    "hp": 516
+   },
+   {
+    "wave": 13,
+    "time": 163,
+    "level": 19,
+    "hp": 534
+   },
+   {
+    "wave": 14,
+    "time": 170.8,
+    "level": 19,
+    "hp": 534
+   },
+   {
+    "wave": 15,
+    "time": 179.1,
+    "level": 20,
+    "hp": 534
+   },
+   {
+    "wave": 16,
+    "time": 185.8,
+    "level": 21,
+    "hp": 614
+   },
+   {
+    "wave": 17,
+    "time": 195.6,
+    "level": 22,
+    "hp": 614
+   },
+   {
+    "wave": 18,
+    "time": 205.1,
+    "level": 23,
+    "hp": 614
+   },
+   {
+    "wave": 19,
+    "time": 214.6,
+    "level": 23,
+    "hp": 614
+   },
+   {
+    "wave": 20,
+    "time": 224.4,
+    "level": 24,
+    "hp": 614
+   },
+   {
+    "wave": 21,
+    "time": 360.1,
+    "level": 27,
+    "hp": 614
+   },
+   {
+    "wave": 22,
+    "time": 367.2,
+    "level": 28,
+    "hp": 614
+   },
+   {
+    "wave": 23,
+    "time": 373.4,
+    "level": 28,
+    "hp": 614
+   },
+   {
+    "wave": 24,
+    "time": 380,
+    "level": 29,
+    "hp": 614
+   },
+   {
+    "wave": 25,
+    "time": 386.8,
+    "level": 29,
+    "hp": 614
+   },
+   {
+    "wave": 26,
+    "time": 392.6,
+    "level": 30,
+    "hp": 614
+   },
+   {
+    "wave": 27,
+    "time": 400.3,
+    "level": 30,
+    "hp": 614
+   },
+   {
+    "wave": 28,
+    "time": 406.3,
+    "level": 31,
+    "hp": 614
+   },
+   {
+    "wave": 29,
+    "time": 412.2,
+    "level": 31,
+    "hp": 614
+   },
+   {
+    "wave": 30,
+    "time": 418,
+    "level": 32,
+    "hp": 614
+   },
+   {
+    "wave": 31,
+    "time": 519.6,
+    "level": 35,
+    "hp": 614
+   },
+   {
+    "wave": 32,
+    "time": 526.2,
+    "level": 36,
+    "hp": 614
+   },
+   {
+    "wave": 33,
+    "time": 532.3,
+    "level": 36,
+    "hp": 614
+   },
+   {
+    "wave": 34,
+    "time": 538.1,
+    "level": 37,
+    "hp": 614
+   },
+   {
+    "wave": 35,
+    "time": 543.2,
+    "level": 37,
+    "hp": 614
+   },
+   {
+    "wave": 36,
+    "time": 548.9,
+    "level": 38,
+    "hp": 614
+   },
+   {
+    "wave": 37,
+    "time": 555.3,
+    "level": 38,
+    "hp": 614
+   },
+   {
+    "wave": 38,
+    "time": 562.5,
+    "level": 39,
+    "hp": 614
+   },
+   {
+    "wave": 39,
+    "time": 568.4,
+    "level": 39,
+    "hp": 614
+   },
+   {
+    "wave": 40,
+    "time": 577.5,
+    "level": 40,
+    "hp": 614
+   },
+   {
+    "wave": 41,
+    "time": 691.3,
+    "level": 40,
+    "hp": 614
+   },
+   {
+    "wave": 42,
+    "time": 698,
+    "level": 40,
+    "hp": 614
+   },
+   {
+    "wave": 43,
+    "time": 704.8,
+    "level": 40,
+    "hp": 614
+   },
+   {
+    "wave": 44,
+    "time": 712.1,
+    "level": 40,
+    "hp": 614
+   },
+   {
+    "wave": 45,
+    "time": 718.7,
+    "level": 40,
+    "hp": 614
+   },
+   {
+    "wave": 46,
+    "time": 725.6,
+    "level": 40,
+    "hp": 614
+   },
+   {
+    "wave": 47,
+    "time": 733.5,
+    "level": 40,
+    "hp": 614
+   },
+   {
+    "wave": 48,
+    "time": 740.7,
+    "level": 40,
+    "hp": 614
+   },
+   {
+    "wave": 49,
+    "time": 748.1,
+    "level": 40,
+    "hp": 614
+   },
+   {
+    "wave": 50,
+    "time": 755.2,
+    "level": 40,
+    "hp": 614
+   }
+  ],
+  "profile": "defense",
+  "boss": {
+   "id": "patient_zero",
+   "hp": 500138.4881250101,
+   "maxHp": 932400
+  }
+ },
+ {
+  "seed": 404,
+  "chapter": 3,
+  "weapon": "m_astral",
+  "priority": [
+   "arcane_multicast",
+   "arcane_power",
+   "quick_cast",
+   "wep_astral_nova_blast",
+   "arcane_focus"
+  ],
+  "geared": true,
+  "seconds": 102.3,
+  "stopped": true,
+  "alive": false,
+  "wave": 10,
+  "level": 14,
+  "kills": 227,
+  "hp": -14,
+  "gold": 1497,
+  "crystals": 25,
+  "accountXp": 499,
+  "got": {
+   "meteor_rain": 4,
+   "quick_cast": 3,
+   "arcane_multicast": 1,
+   "astral_haste": 4,
+   "arcane_power": 1
+  },
+  "choices": [
+   "meteor_rain",
+   "quick_cast",
+   "arcane_multicast",
+   "astral_haste",
+   "quick_cast",
+   "arcane_power",
+   "meteor_rain",
+   "quick_cast",
+   "meteor_rain",
+   "meteor_rain",
+   "astral_haste",
+   "astral_haste",
+   "astral_haste"
+  ],
+  "waves": [
+   {
+    "wave": 1,
+    "time": 0,
+    "level": 1,
+    "hp": 444
+   },
+   {
+    "wave": 2,
+    "time": 4.5,
+    "level": 4,
+    "hp": 444
+   },
+   {
+    "wave": 3,
+    "time": 9.6,
+    "level": 6,
+    "hp": 444
+   },
+   {
+    "wave": 4,
+    "time": 14.2,
+    "level": 7,
+    "hp": 444
+   },
+   {
+    "wave": 5,
+    "time": 21.2,
+    "level": 8,
+    "hp": 444
+   },
+   {
+    "wave": 6,
+    "time": 28,
+    "level": 9,
+    "hp": 444
+   },
+   {
+    "wave": 7,
+    "time": 34.1,
+    "level": 11,
+    "hp": 444
+   },
+   {
+    "wave": 8,
+    "time": 40.6,
+    "level": 12,
+    "hp": 444
+   },
+   {
+    "wave": 9,
+    "time": 48.4,
+    "level": 13,
+    "hp": 444
+   },
+   {
+    "wave": 10,
+    "time": 55.5,
+    "level": 14,
+    "hp": 444
+   }
+  ],
+  "profile": "damage",
+  "boss": {
+   "id": "cyber_cerberus",
+   "hp": 45081.673174573436,
+   "maxHp": 199800
+  }
+ },
+ {
+  "seed": 404,
+  "chapter": 3,
+  "weapon": "m_astral",
+  "priority": [
+   "chain_lightning",
+   "frost_nova",
+   "toxic_miasma",
+   "fireball_burst",
+   "spell_pierce"
+  ],
+  "geared": true,
+  "seconds": 135,
+  "stopped": true,
+  "alive": false,
+  "wave": 10,
+  "level": 14,
+  "kills": 227,
+  "hp": -0.1,
+  "gold": 1551,
+  "crystals": 28,
+  "accountXp": 499,
+  "got": {
+   "frost_nova": 2,
+   "toxic_miasma": 2,
+   "celestial_thunder": 2,
+   "immortal_phoenix": 2,
+   "spell_pierce": 3,
+   "magic_vitality": 2
+  },
+  "choices": [
+   "frost_nova",
+   "toxic_miasma",
+   "celestial_thunder",
+   "celestial_thunder",
+   "immortal_phoenix",
+   "spell_pierce",
+   "toxic_miasma",
+   "spell_pierce",
+   "immortal_phoenix",
+   "magic_vitality",
+   "frost_nova",
+   "spell_pierce",
+   "magic_vitality"
+  ],
+  "waves": [
+   {
+    "wave": 1,
+    "time": 0,
+    "level": 1,
+    "hp": 444
+   },
+   {
+    "wave": 2,
+    "time": 4.7,
+    "level": 4,
+    "hp": 444
+   },
+   {
+    "wave": 3,
+    "time": 9.8,
+    "level": 5,
+    "hp": 444
+   },
+   {
+    "wave": 4,
+    "time": 14.2,
+    "level": 6,
+    "hp": 484
+   },
+   {
+    "wave": 5,
+    "time": 20.3,
+    "level": 8,
+    "hp": 484
+   },
+   {
+    "wave": 6,
+    "time": 26.8,
+    "level": 10,
+    "hp": 524
+   },
+   {
+    "wave": 7,
+    "time": 32.6,
+    "level": 11,
+    "hp": 544
+   },
+   {
+    "wave": 8,
+    "time": 38.7,
+    "level": 12,
+    "hp": 544
+   },
+   {
+    "wave": 9,
+    "time": 44.6,
+    "level": 13,
+    "hp": 544
+   },
+   {
+    "wave": 10,
+    "time": 51.3,
+    "level": 13,
+    "hp": 544
+   }
+  ],
+  "profile": "crowd",
+  "boss": {
+   "id": "cyber_cerberus",
+   "hp": 5155.1688915362865,
+   "maxHp": 199800
+  }
+ },
+ {
+  "seed": 404,
+  "chapter": 3,
+  "weapon": "m_astral",
+  "priority": [
+   "mana_shield",
+   "essence_regen",
+   "magic_vitality",
+   "rejuvenation_aura",
+   "astral_haste"
+  ],
+  "geared": true,
+  "seconds": 709.7,
+  "stopped": true,
+  "alive": true,
+  "wave": 50,
+  "level": 40,
+  "kills": 3105,
+  "hp": 914,
+  "gold": 42315,
+  "crystals": 981,
+  "accountXp": 5942,
+  "got": {
+   "meteor_rain": 5,
+   "immortal_phoenix": 5,
+   "celestial_thunder": 5,
+   "magic_vitality": 5,
+   "wep_astral_nova_blast": 5,
+   "mana_shield": 5,
+   "chain_lightning": 5,
+   "mana_shield_evo": 1,
+   "meteor_rain_evo": 1,
+   "celestial_thunder_evo": 1
+  },
+  "choices": [
+   "meteor_rain",
+   "immortal_phoenix",
+   "celestial_thunder",
+   "magic_vitality",
+   "magic_vitality",
+   "wep_astral_nova_blast",
+   "mana_shield",
+   "meteor_rain",
+   "meteor_rain",
+   "mana_shield",
+   "mana_shield",
+   "magic_vitality",
+   "immortal_phoenix",
+   "chain_lightning",
+   "mana_shield",
+   "magic_vitality",
+   "mana_shield",
+   "mana_shield_evo",
+   "chain_lightning",
+   "magic_vitality",
+   "celestial_thunder",
+   "immortal_phoenix",
+   "immortal_phoenix",
+   "immortal_phoenix",
+   "wep_astral_nova_blast",
+   "chain_lightning",
+   "meteor_rain",
+   "wep_astral_nova_blast",
+   "celestial_thunder",
+   "wep_astral_nova_blast",
+   "chain_lightning",
+   "wep_astral_nova_blast",
+   "chain_lightning",
+   "meteor_rain",
+   "meteor_rain_evo",
+   "celestial_thunder",
+   "celestial_thunder",
+   "celestial_thunder_evo"
+  ],
+  "waves": [
+   {
+    "wave": 1,
+    "time": 0,
+    "level": 1,
+    "hp": 444
+   },
+   {
+    "wave": 2,
+    "time": 4.7,
+    "level": 4,
+    "hp": 484
+   },
+   {
+    "wave": 3,
+    "time": 9.3,
+    "level": 5,
+    "hp": 504
+   },
+   {
+    "wave": 4,
+    "time": 13.7,
+    "level": 7,
+    "hp": 524
+   },
+   {
+    "wave": 5,
+    "time": 18.9,
+    "level": 8,
+    "hp": 542
+   },
+   {
+    "wave": 6,
+    "time": 24.4,
+    "level": 9,
+    "hp": 542
+   },
+   {
+    "wave": 7,
+    "time": 31,
+    "level": 11,
+    "hp": 560
+   },
+   {
+    "wave": 8,
+    "time": 36.5,
+    "level": 12,
+    "hp": 578
+   },
+   {
+    "wave": 9,
+    "time": 42.9,
+    "level": 13,
+    "hp": 598
+   },
+   {
+    "wave": 10,
+    "time": 49.5,
+    "level": 14,
+    "hp": 638
+   },
+   {
+    "wave": 11,
+    "time": 140.6,
+    "level": 17,
+    "hp": 676
+   },
+   {
+    "wave": 12,
+    "time": 147.5,
+    "level": 18,
+    "hp": 694
+   },
+   {
+    "wave": 13,
+    "time": 155.7,
+    "level": 19,
+    "hp": 774
+   },
+   {
+    "wave": 14,
+    "time": 164,
+    "level": 19,
+    "hp": 774
+   },
+   {
+    "wave": 15,
+    "time": 171.5,
+    "level": 20,
+    "hp": 774
+   },
+   {
+    "wave": 16,
+    "time": 177.2,
+    "level": 20,
+    "hp": 774
+   },
+   {
+    "wave": 17,
+    "time": 184.6,
+    "level": 22,
+    "hp": 794
+   },
+   {
+    "wave": 18,
+    "time": 193.1,
+    "level": 23,
+    "hp": 834
+   },
+   {
+    "wave": 19,
+    "time": 200.8,
+    "level": 23,
+    "hp": 834
+   },
+   {
+    "wave": 20,
+    "time": 210.1,
+    "level": 24,
+    "hp": 874
+   },
+   {
+    "wave": 21,
+    "time": 334.5,
+    "level": 27,
+    "hp": 914
+   },
+   {
+    "wave": 22,
+    "time": 340.8,
+    "level": 28,
+    "hp": 914
+   },
+   {
+    "wave": 23,
+    "time": 347.4,
+    "level": 28,
+    "hp": 914
+   },
+   {
+    "wave": 24,
+    "time": 353.9,
+    "level": 29,
+    "hp": 914
+   },
+   {
+    "wave": 25,
+    "time": 359.8,
+    "level": 29,
+    "hp": 914
+   },
+   {
+    "wave": 26,
+    "time": 364.9,
+    "level": 30,
+    "hp": 914
+   },
+   {
+    "wave": 27,
+    "time": 371.6,
+    "level": 30,
+    "hp": 914
+   },
+   {
+    "wave": 28,
+    "time": 377.9,
+    "level": 31,
+    "hp": 914
+   },
+   {
+    "wave": 29,
+    "time": 382.8,
+    "level": 31,
+    "hp": 914
+   },
+   {
+    "wave": 30,
+    "time": 389.4,
+    "level": 32,
+    "hp": 914
+   },
+   {
+    "wave": 31,
+    "time": 504.3,
+    "level": 35,
+    "hp": 914
+   },
+   {
+    "wave": 32,
+    "time": 511.1,
+    "level": 36,
+    "hp": 914
+   },
+   {
+    "wave": 33,
+    "time": 516.4,
+    "level": 36,
+    "hp": 914
+   },
+   {
+    "wave": 34,
+    "time": 522.1,
+    "level": 36,
+    "hp": 914
+   },
+   {
+    "wave": 35,
+    "time": 527.6,
+    "level": 37,
+    "hp": 914
+   },
+   {
+    "wave": 36,
+    "time": 532.1,
+    "level": 37,
+    "hp": 914
+   },
+   {
+    "wave": 37,
+    "time": 537.2,
+    "level": 38,
+    "hp": 914
+   },
+   {
+    "wave": 38,
+    "time": 542.2,
+    "level": 38,
+    "hp": 914
+   },
+   {
+    "wave": 39,
+    "time": 547.9,
+    "level": 39,
+    "hp": 914
+   },
+   {
+    "wave": 40,
+    "time": 553.2,
+    "level": 39,
+    "hp": 914
+   },
+   {
+    "wave": 41,
+    "time": 598.9,
+    "level": 40,
+    "hp": 914
+   },
+   {
+    "wave": 42,
+    "time": 604.1,
+    "level": 40,
+    "hp": 914
+   },
+   {
+    "wave": 43,
+    "time": 609.4,
+    "level": 40,
+    "hp": 914
+   },
+   {
+    "wave": 44,
+    "time": 613.4,
+    "level": 40,
+    "hp": 914
+   },
+   {
+    "wave": 45,
+    "time": 617.7,
+    "level": 40,
+    "hp": 914
+   },
+   {
+    "wave": 46,
+    "time": 622.6,
+    "level": 40,
+    "hp": 914
+   },
+   {
+    "wave": 47,
+    "time": 626.4,
+    "level": 40,
+    "hp": 914
+   },
+   {
+    "wave": 48,
+    "time": 631.8,
+    "level": 40,
+    "hp": 914
+   },
+   {
+    "wave": 49,
+    "time": 638.5,
+    "level": 40,
+    "hp": 914
+   },
+   {
+    "wave": 50,
+    "time": 643.7,
+    "level": 40,
+    "hp": 914
+   }
+  ],
+  "profile": "defense",
+  "boss": null
+ }
+]

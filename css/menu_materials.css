@@ -1,0 +1,149 @@
+/* Surface detail is confined to the lobby; all lettering stays above the grain. */
+#screen-menu{--panel-grain:url('../img/ui/materials/panel-grain.svg');}
+#screen-menu .player-profile-badge,#screen-menu .currency-chip,#screen-menu .tactical-icon-btn{
+ background-image:var(--panel-grain),linear-gradient(160deg,#2b3038,#171c24 46%,#11161d)!important;
+ border-color:#68717e59!important;
+ box-shadow:inset 0 1px 0 #ffffff24,inset 0 -2px 0 #0007,0 3px 7px #0005!important;
+}
+#screen-menu .profile-avatar-hex{
+ background:radial-gradient(circle at 35% 25%,#9c7a43,#47361d 62%,#201d19)!important;
+ box-shadow:inset 0 0 0 2px #171b22,inset 0 0 0 3px #c0a37466,0 1px 3px #0008;
+ color:#f4d59d;
+}
+#screen-menu .tactical-icon-btn{position:relative;}
+#screen-menu .tactical-icon-btn::after{content:'';position:absolute;bottom:4px;left:11px;right:11px;height:1px;background:#808c9d50;box-shadow:0 1px 0 #0009;pointer-events:none;}
+#screen-menu .prof-xp{background:#080b10;box-shadow:0 1px 0 #ffffff12;}
+#screen-menu .prof-xp i{background:linear-gradient(90deg,#a36d32,#e9be7b);}
+#screen-menu .lvl-selector-wrap{
+ position:relative;isolation:isolate;
+ background-image:var(--panel-grain),radial-gradient(ellipse at 85% 0%,#84735c19,transparent 65%),linear-gradient(135deg,#30343c,#1b2028 45%,#12171e)!important;
+ border:1px solid #6d74817a;
+ box-shadow:inset 0 1px 0 #d8dfeb36,inset 0 -3px 0 #080b12,0 7px 0 #080b1155,0 12px 24px #0005;
+}
+#screen-menu .lvl-selector-wrap::before{
+ content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:inherit;
+ background:
+  radial-gradient(circle at 10px 10px,#b0b5bb 0 1px,#171c23 1.3px 2px,#686e77 2.3px 3px,transparent 3.6px),
+  radial-gradient(circle at calc(100% - 10px) 10px,#b0b5bb 0 1px,#171c23 1.3px 2px,#686e77 2.3px 3px,transparent 3.6px),
+  radial-gradient(circle at 10px calc(100% - 10px),#747a84 0 1px,#11151b 1.3px 2px,#4c535f 2.3px 3px,transparent 3.6px),
+  radial-gradient(circle at calc(100% - 10px) calc(100% - 10px),#747a84 0 1px,#11151b 1.3px 2px,#4c535f 2.3px 3px,transparent 3.6px);
+}
+#screen-menu .lvl-selector-wrap::after{content:'';position:absolute;inset:4px;border:1px solid #ffffff09;border-radius:14px;pointer-events:none;box-shadow:inset 0 0 0 1px #0003;}
+#screen-menu .lvl-info-card{z-index:1;}
+#screen-menu .lvl-header-row{padding:0 2px;}
+#screen-menu .lvl-info-card .lvl-header-row{
+ align-self:stretch;width:calc(100% + 60px);margin-left:-30px;padding:0;
+ justify-content:space-between;
+}
+#screen-menu .wave-complete-icon{width:12px;height:12px;flex:none;color:#b2dfad;filter:drop-shadow(0 0 3px #71ae6033);}
+@media(max-width:370px){#screen-menu .lvl-info-card .lvl-header-row{width:calc(100% + 48px);margin-left:-24px;}}
+#screen-menu .lvl-badge::before{content:none;display:none;}
+#screen-menu .lvl-diff-tag{display:inline-flex;align-items:center;gap:5px;box-shadow:inset 0 1px 3px #0005;background:#090e1459!important;}
+#screen-menu .lvl-diff-tag::before{content:'';width:3px;height:3px;background:currentColor;box-shadow:0 0 5px currentColor;}
+#screen-menu .lvl-name-wrap{
+ padding:7px 3px;border-top:1px solid #ffffff08;border-bottom:1px solid #0008;
+ background:linear-gradient(90deg,transparent,#070c1470 20%,#070c1470 80%,transparent);
+}
+#screen-menu .lvl-name{color:#f5f1e7;text-shadow:0 2px 1px #0009!important;}
+#screen-menu .tactical-arrow-btn{z-index:2;box-shadow:inset 0 0 0 1px #ffffff09!important;background:linear-gradient(180deg,#31374180,#12171f80)!important;}
+#screen-menu .tactical-arrow-btn:hover{box-shadow:inset 0 0 0 1px #d6ad6d66!important;}
+#screen-menu .lvl-wave-wrap{z-index:1;box-shadow:0 -1px 0 #0005;border-top-color:#ffffff13;}
+#screen-menu .lvl-wave-badge-bar{letter-spacing:.8px;}
+#screen-menu .dock-play-btn{
+ position:relative;isolation:isolate;overflow:hidden;
+ background-image:var(--panel-grain),linear-gradient(175deg,#f1c283 0%,#dda254 42%,#c7893e 80%,#ac6b2e)!important;
+ border-color:#ffdc9bba!important;
+ box-shadow:inset 0 2px 0 #fff6,inset 0 -3px 0 #794f2977,0 4px 0 #654122,0 6px 0 #1a1511,0 10px 22px #0005!important;
+}
+#screen-menu .dock-play-btn::before{content:'';position:absolute;inset:4px;border:1px solid #6740174d;border-radius:9px;box-shadow:0 1px 0 #ffe1a54d;pointer-events:none;}
+#screen-menu .dock-play-btn::after{content:'';position:absolute;right:15px;top:17px;bottom:17px;width:24px;opacity:.28;background:repeating-linear-gradient(125deg,transparent 0 4px,#62401d 4px 6px,transparent 6px 10px);pointer-events:none;}
+#screen-menu .dock-play-text,#screen-menu .dock-play-icon{position:relative;z-index:1;}
+#screen-menu .dock-play-text{text-shadow:0 1px 0 #ffe4ab80!important;}
+#screen-menu .dock-play-btn.is-locked{background-image:var(--panel-grain),linear-gradient(#343a43,#20252d)!important;}
+#screen-menu .menu-bottom-dock{
+ position:relative;background-image:var(--panel-grain),linear-gradient(180deg,#272d36,#151b24 42%,#10151d)!important;
+ border-color:#69758566!important;box-shadow:inset 0 1px 0 #ffffff20,inset 0 -2px 0 #080c12,0 6px 16px #0005!important;
+}
+#screen-menu .menu-bottom-dock::after{content:'';position:absolute;left:12px;right:12px;top:4px;height:1px;background:linear-gradient(90deg,transparent,#bac5d344,transparent);pointer-events:none;}
+#screen-menu .dock-btn{position:relative;}
+#screen-menu .dock-btn:not(:last-child)::after{content:'';position:absolute;right:0;top:10px;bottom:10px;width:1px;background:linear-gradient(transparent,#ffffff12,transparent);box-shadow:1px 0 0 #0005;pointer-events:none;}
+#screen-menu .dock-icon-box{width:48px!important;height:44px!important;border-radius:0;border:0!important;background:none!important;box-shadow:none!important;}
+#screen-menu .dock-icon-box::before,#screen-menu .dock-icon-box::after{display:none!important;}
+#screen-menu .dock-icon-img{width:44px!important;height:44px!important;filter:drop-shadow(0 3px 4px #0009)!important;}
+.menu-hero-name{text-shadow:0 2px 2px #000;}
+.menu-hero-title{color:#b7a88e;}
+.menu-hero-caption::before{content:'';position:absolute;left:calc(50% - 70px);right:calc(50% - 70px);top:-9px;height:1px;background:linear-gradient(90deg,transparent,#b4945c66,transparent);}
+@media(max-height:720px){#screen-menu .lvl-name-wrap{padding-top:4px;padding-bottom:4px;}#screen-menu .dock-play-btn::after{top:14px;bottom:14px;}}
+@media(max-height:480px){#screen-menu .dock-icon-box{height:26px!important;width:32px!important;}#screen-menu .lvl-name-wrap{padding:2px;}}
+
+@media(max-height:480px){#screen-menu .dock-icon-img{height:26px!important;width:26px!important;}}
+
+/* Chapter artwork belongs to the mission panel, independently of the scene. */
+#screen-menu .lvl-selector-wrap{
+ background-image:linear-gradient(180deg,#070b1726,#050a1359),var(--chapter-art),var(--panel-grain)!important;
+ background-size:100% 100%,100% 100%,128px 128px;
+ background-repeat:no-repeat,no-repeat,repeat;
+ border-color:color-mix(in srgb,var(--chapter-accent,#bc874e) 55%,#4a5160);
+}
+#screen-menu .lvl-name-wrap{background:linear-gradient(90deg,transparent,#060812b3 16%,#060812b3 84%,transparent);border-top-color:#ffffff09;}
+#screen-menu .lvl-badge{color:#e0b681!important;}
+#screen-menu .lvl-diff-tag{background:#090b16bf!important;}
+#screen-menu .lvl-footer-row{padding:3px 0;background:linear-gradient(90deg,transparent,#080b14a6,transparent);}
+#screen-menu .lvl-wave-wrap{background:linear-gradient(90deg,transparent,#070a12ad,transparent);}
+#screen-menu .menu-bottom-dock{background-image:var(--panel-grain),linear-gradient(180deg,#27354e,#151e30 45%,#0d1421)!important;border-color:#5d708866!important;}
+#screen-menu .currency-chip,#screen-menu .tactical-icon-btn,#screen-menu .player-profile-badge{background-image:var(--panel-grain),linear-gradient(155deg,#28354b,#192334 55%,#101825)!important;}
+
+/* A single instrument rail ties the account, resources and controls together. */
+#screen-menu .menu-top-bar{
+ position:relative;isolation:isolate;min-height:64px!important;padding:6px 7px 18px;gap:6px!important;
+ border:1px solid #64718866;border-radius:16px;
+ background-image:var(--panel-grain),linear-gradient(130deg,#35415799,transparent 40%),linear-gradient(180deg,#222d3e,#111a28);
+ box-shadow:inset 0 1px 0 #d2e2ff26,inset 0 -2px 0 #070c14,0 6px 12px #0004;
+}
+#screen-menu .menu-top-bar::before{content:'';position:absolute;inset:3px;border:1px solid #ffffff08;border-radius:12px;pointer-events:none;}
+#screen-menu .menu-top-bar::after{content:'';position:absolute;top:3px;left:18px;right:18px;height:1px;background:linear-gradient(90deg,#cba86b66,transparent 35%,transparent 65%,#a3b6d355);pointer-events:none;}
+#screen-menu .menu-top-bar .player-profile-badge,#screen-menu .menu-top-bar .currency-chip,#screen-menu .menu-top-bar .tactical-icon-btn{height:38px!important;border-color:#ffffff0f!important;box-shadow:inset 0 1px 0 #ffffff13,inset 0 -1px 0 #0006!important;}
+#screen-menu .menu-top-bar .currency-chip{padding-left:6px!important;padding-right:6px!important;}
+#screen-menu .menu-top-bar .tactical-icon-btn{width:36px!important;min-width:36px!important;}
+#screen-menu .menu-top-section{gap:16px!important;}
+.menu-account-progress{position:absolute;left:12px;right:12px;bottom:5px;display:flex;align-items:center;gap:7px;pointer-events:none;font:700 9px/1 'Rajdhani',system-ui,sans-serif;letter-spacing:.5px;color:#acb6c4;}
+.menu-account-progress .account-xp-mark{color:#d5b17a;font-size:8px;}
+#screen-menu .menu-account-progress .prof-xp{position:relative;flex:1;height:3px;margin:0;border-radius:1px;background:#080e18;box-shadow:0 1px 0 #ffffff10;}
+#screen-menu .menu-account-progress .prof-xp::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 15px,#101825bb 15px 16px);}
+#screen-menu .menu-account-progress .prof-xp i{height:100%;background:linear-gradient(90deg,#8d6837,#e5b96e);box-shadow:0 0 5px #dea85c33;}
+#menu-account-xp-label{min-width:49px;text-align:right;font-variant-numeric:tabular-nums;color:#b7c0ce;}
+@media(max-width:370px){#screen-menu .menu-top-bar{padding-left:5px;padding-right:5px;}#screen-menu .menu-top-bar .tactical-icon-btn{width:32px!important;min-width:32px!important;}}
+@media(max-height:480px){#screen-menu .menu-top-bar{min-height:54px!important;padding-top:3px;padding-bottom:13px;}#screen-menu .menu-top-bar .player-profile-badge,#screen-menu .menu-top-bar .currency-chip,#screen-menu .menu-top-bar .tactical-icon-btn{height:34px!important;}.menu-account-progress{bottom:3px;}}
+
+#screen-menu .currency-chip .ui-coin-ico{width:18px;height:18px;filter:drop-shadow(0 1px 1px #0006);}
+#screen-menu .lvl-info-pill .ui-coin-ico{width:13px;height:13px;}
+
+/* Explicit difficulty plate and high-contrast chapter controls. */
+#screen-menu .lvl-info-card .lvl-diff-tag{
+ min-height:25px;padding:4px 9px!important;gap:7px;border-radius:7px!important;
+ color:var(--difficulty-color,#d5b17b)!important;
+ font-size:10px!important;letter-spacing:1.1px!important;
+ border:1px solid color-mix(in srgb,var(--difficulty-color,#d5b17b) 50%,#263341)!important;
+ background:linear-gradient(180deg,#25303d,#111a26)!important;
+ box-shadow:inset 0 1px 0 #ffffff1a,0 2px 4px #0006;
+}
+#screen-menu .lvl-info-card .lvl-diff-tag::before{
+ width:3px;height:11px;border-radius:1px;background:var(--difficulty-color,#d5b17b);
+ box-shadow:0 0 5px color-mix(in srgb,var(--difficulty-color,#d5b17b) 35%,transparent);
+}
+#screen-menu .tactical-arrow-btn{
+ position:relative;justify-self:center;width:40px!important;height:58px!important;
+ padding:0;border-radius:10px!important;color:#ffe0a1!important;
+ background:linear-gradient(155deg,#3d4d63,#253348 55%,#162235)!important;
+ border:1px solid #b7a47bba!important;
+ box-shadow:inset 0 1px 0 #e8f0ff40,inset 0 -2px 0 #07111d99,0 3px 8px #0008!important;
+}
+#screen-menu .tactical-arrow-btn svg{display:block;filter:drop-shadow(0 1px 1px #0008);}
+#screen-menu .tactical-arrow-btn:hover{
+ color:#fff1ce!important;border-color:#ffe0a1!important;
+ background:linear-gradient(155deg,#50647e,#30455e 60%,#23344b)!important;
+ box-shadow:inset 0 1px 0 #ffffff4d,0 0 10px #e1b56333,0 3px 8px #0008!important;
+}
+#screen-menu .tactical-arrow-btn:active{transform:translateY(1px) scale(.96);}
+@media(max-width:370px){#screen-menu .tactical-arrow-btn{width:34px!important;height:52px!important;}}
+@media(max-height:480px){#screen-menu .lvl-info-card .lvl-diff-tag{min-height:20px;padding:2px 7px!important;}#screen-menu .tactical-arrow-btn{height:44px!important;}}

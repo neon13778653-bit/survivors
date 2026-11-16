@@ -25,22 +25,31 @@ const mockCv = {
   addEventListener: ()=>{}
 };
 
+const makeMockEl = () => ({
+  style: { setProperty: ()=>{} },
+  classList: { add: ()=>{}, remove: ()=>{}, toggle: ()=>{}, contains: ()=>false },
+  textContent: '',
+  innerHTML: '',
+  dataset: {},
+  remove: ()=>{},
+  appendChild: ()=>{},
+  setAttribute: ()=>{},
+  getAttribute: ()=>null,
+  addEventListener: ()=>{},
+  querySelector: () => makeMockEl(),
+  querySelectorAll: () => [],
+  getBoundingClientRect: () => ({ left: 0, top: 0, width: 800, height: 600 })
+});
+
 const mockDoc = {
-  documentElement: {},
-  body: {},
+  documentElement: makeMockEl(),
+  body: makeMockEl(),
   createTreeWalker: () => ({ nextNode: () => null }),
   getElementById: (id) => {
     if(id === 'c') return mockCv;
-    return {
-      style: {},
-      classList: { add: ()=>{}, remove: ()=>{}, toggle: ()=>{}, contains: ()=>false },
-      textContent: '',
-      innerHTML: '',
-      addEventListener: ()=>{},
-      getBoundingClientRect: () => ({ left: 0, top: 0, width: 800, height: 600 })
-    };
+    return makeMockEl();
   },
-  querySelector: () => null,
+  querySelector: () => makeMockEl(),
   querySelectorAll: () => [],
   addEventListener: (evt, fn) => { listeners[evt] = fn; }
 };
@@ -92,8 +101,8 @@ console.log("Environment initialized successfully.");
 
 // Check Levels
 console.log("Level 3 check:", env.LEVELS.find(l => l.id === 3)?.name);
-if(!env.save.unlockedLvls.includes(3)){
-  console.error("FAIL: Chapter 3 is not in save.unlockedLvls!");
+if(JSON.stringify(env.save.unlockedLvls) !== '[1]'){
+  console.error("FAIL: A fresh release save must only unlock Chapter 1!");
   process.exit(1);
 }
 console.log("save.unlockedLvls:", env.save.unlockedLvls);
@@ -108,7 +117,10 @@ function setupGame(){
     enemies: [],
     bullets: [],
     airdrops: [],
+    gems: [],
+    txt: [],
     fx: [],
+    kills: 0,
     p: { x: 500, y: 500, hp: 100, maxHp: 100 },
     activeBoss: null,
     bossArena: null,

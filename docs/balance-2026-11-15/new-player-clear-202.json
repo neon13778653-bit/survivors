@@ -1,0 +1,3955 @@
+{
+ "seed": 202,
+ "policy": "clear",
+ "initial": {
+  "gold": 0,
+  "gems": 15,
+  "level": 1,
+  "xp": 0,
+  "inv": [
+   "w_pistol",
+   "w_rebel",
+   "m_rune",
+   "m_bone",
+   "sh_buckler",
+   "pet_slime"
+  ],
+  "equip": {
+   "weapon": "w_pistol",
+   "shield": "sh_buckler",
+   "pet": "pet_slime",
+   "art1": null,
+   "art2": null,
+   "art3": null
+  },
+  "hero": "john",
+  "open": [
+   1
+  ],
+  "cleared": [],
+  "stats": {
+   "hp": 0,
+   "dmg": 0,
+   "spd": 0,
+   "pick": 0,
+   "rate": 0
+  },
+  "up": {}
+ },
+ "runs": [
+  {
+   "attempt": 1,
+   "chapter": 1,
+   "purchases": [
+    {
+     "type": "pet",
+     "id": "pet_slime/dmg",
+     "gold": 0,
+     "gems": 14
+    }
+   ],
+   "start": {
+    "gold": 0,
+    "gems": 1,
+    "level": 1,
+    "xp": 0,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime"
+    ],
+    "equip": {
+     "weapon": "w_pistol",
+     "shield": "sh_buckler",
+     "pet": "pet_slime",
+     "art1": null,
+     "art2": null,
+     "art3": null
+    },
+    "hero": "john",
+    "open": [
+     1
+    ],
+    "cleared": [],
+    "stats": {
+     "hp": 0,
+     "dmg": 0,
+     "spd": 0,
+     "pick": 0,
+     "rate": 0
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 1
+     }
+    }
+   },
+   "end": {
+    "gold": 1472,
+    "gems": 50,
+    "level": 2,
+    "xp": 462,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python"
+    ],
+    "equip": {
+     "weapon": "w_pistol",
+     "shield": "sh_buckler",
+     "pet": "pet_slime",
+     "art1": null,
+     "art2": null,
+     "art3": null
+    },
+    "hero": "john",
+    "open": [
+     1
+    ],
+    "cleared": [],
+    "stats": {
+     "hp": 0,
+     "dmg": 0,
+     "spd": 0,
+     "pick": 0,
+     "rate": 0
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 1
+     }
+    }
+   },
+   "wave": 20,
+   "seconds": 287.5,
+   "level": 14,
+   "kills": 720,
+   "won": false,
+   "boss": {
+    "id": "gravedigger",
+    "hp": 6079.492268750031,
+    "maxHp": 9200
+   },
+   "got": {
+    "wep_pistol_pointblank": 5,
+    "fast_reload": 2,
+    "fmj_ammo": 4,
+    "wep_pistol_rapid": 1,
+    "tac_sprint": 1
+   }
+  },
+  {
+   "attempt": 2,
+   "chapter": 1,
+   "purchases": [
+    {
+     "type": "hero stat",
+     "id": "hp",
+     "gold": 120,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "spd",
+     "gold": 140,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "hp",
+     "gold": 151,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "dmg",
+     "gold": 160,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "spd",
+     "gold": 176,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "hp",
+     "gold": 190,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "dmg",
+     "gold": 201,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "spd",
+     "gold": 222,
+     "gems": 0
+    },
+    {
+     "type": "pet",
+     "id": "pet_slime/cool",
+     "gold": 0,
+     "gems": 14
+    },
+    {
+     "type": "pet",
+     "id": "pet_slime/dmg",
+     "gold": 0,
+     "gems": 20
+    }
+   ],
+   "start": {
+    "gold": 112,
+    "gems": 16,
+    "level": 2,
+    "xp": 462,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python"
+    ],
+    "equip": {
+     "weapon": "w_python",
+     "shield": "sh_buckler",
+     "pet": "pet_slime",
+     "art1": "art_battery",
+     "art2": "art_bandage",
+     "art3": null
+    },
+    "hero": "john",
+    "open": [
+     1
+    ],
+    "cleared": [],
+    "stats": {
+     "hp": 3,
+     "dmg": 2,
+     "spd": 3,
+     "pick": 0,
+     "rate": 0
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     }
+    }
+   },
+   "end": {
+    "gold": 1404,
+    "gems": 55,
+    "level": 3,
+    "xp": 770,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider"
+    ],
+    "equip": {
+     "weapon": "w_python",
+     "shield": "sh_buckler",
+     "pet": "pet_slime",
+     "art1": "art_battery",
+     "art2": "art_bandage",
+     "art3": null
+    },
+    "hero": "john",
+    "open": [
+     1
+    ],
+    "cleared": [],
+    "stats": {
+     "hp": 3,
+     "dmg": 2,
+     "spd": 3,
+     "pick": 0,
+     "rate": 0
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     }
+    }
+   },
+   "wave": 20,
+   "seconds": 292.9,
+   "level": 14,
+   "kills": 723,
+   "won": false,
+   "boss": {
+    "id": "gravedigger",
+    "hp": 4838.279013371994,
+    "maxHp": 9660
+   },
+   "got": {
+    "fast_reload": 5,
+    "tac_heal": 2,
+    "fmj_ammo": 3,
+    "tac_magnet": 1,
+    "tac_sprint": 2
+   }
+  },
+  {
+   "attempt": 3,
+   "chapter": 1,
+   "purchases": [
+    {
+     "type": "hero stat",
+     "id": "pick",
+     "gold": 100,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "pick",
+     "gold": 126,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "pick",
+     "gold": 158,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "pick",
+     "gold": 200,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "hp",
+     "gold": 240,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "pick",
+     "gold": 252,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "dmg",
+     "gold": 254,
+     "gems": 0
+    },
+    {
+     "type": "pet",
+     "id": "pet_spider/dmg",
+     "gold": 0,
+     "gems": 16
+    },
+    {
+     "type": "pet",
+     "id": "pet_spider/cool",
+     "gold": 0,
+     "gems": 16
+    },
+    {
+     "type": "pet",
+     "id": "pet_spider/dmg",
+     "gold": 0,
+     "gems": 23
+    }
+   ],
+   "start": {
+    "gold": 74,
+    "gems": 0,
+    "level": 3,
+    "xp": 770,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider"
+    ],
+    "equip": {
+     "weapon": "w_python",
+     "shield": "sh_buckler",
+     "pet": "pet_spider",
+     "art1": "art_battery",
+     "art2": "art_bandage",
+     "art3": "art_boots"
+    },
+    "hero": "john",
+    "open": [
+     1
+    ],
+    "cleared": [],
+    "stats": {
+     "hp": 4,
+     "dmg": 3,
+     "spd": 3,
+     "pick": 5,
+     "rate": 0
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 2,
+      "cool": 1
+     }
+    }
+   },
+   "end": {
+    "gold": 1797,
+    "gems": 51,
+    "level": 4,
+    "xp": 876,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector"
+    ],
+    "equip": {
+     "weapon": "w_python",
+     "shield": "sh_buckler",
+     "pet": "pet_spider",
+     "art1": "art_battery",
+     "art2": "art_bandage",
+     "art3": "art_boots"
+    },
+    "hero": "john",
+    "open": [
+     1
+    ],
+    "cleared": [],
+    "stats": {
+     "hp": 4,
+     "dmg": 3,
+     "spd": 3,
+     "pick": 5,
+     "rate": 0
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 2,
+      "cool": 1
+     }
+    }
+   },
+   "wave": 20,
+   "seconds": 329.5,
+   "level": 14,
+   "kills": 717,
+   "won": false,
+   "boss": {
+    "id": "gravedigger",
+    "hp": 5572.026458634059,
+    "maxHp": 9660
+   },
+   "got": {
+    "kevlar_vest": 3,
+    "fast_reload": 4,
+    "tac_heal": 2,
+    "stopping_power": 1,
+    "tac_sprint": 1,
+    "laser_pointer": 1,
+    "fmj_ammo": 1
+   }
+  },
+  {
+   "attempt": 4,
+   "chapter": 1,
+   "purchases": [
+    {
+     "type": "hero",
+     "id": "marcus",
+     "gold": 1500,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "rate",
+     "gold": 180,
+     "gems": 0
+    },
+    {
+     "type": "pet",
+     "id": "pet_spider/cool",
+     "gold": 0,
+     "gems": 23
+    }
+   ],
+   "start": {
+    "gold": 117,
+    "gems": 28,
+    "level": 4,
+    "xp": 876,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector"
+    ],
+    "equip": {
+     "weapon": "w_python",
+     "shield": "sh_buckler",
+     "pet": "pet_spider",
+     "art1": "art_battery",
+     "art2": "art_magnet",
+     "art3": "art_bandage"
+    },
+    "hero": "marcus",
+    "open": [
+     1
+    ],
+    "cleared": [],
+    "stats": {
+     "hp": 4,
+     "dmg": 3,
+     "spd": 3,
+     "pick": 5,
+     "rate": 1
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 2,
+      "cool": 2
+     }
+    }
+   },
+   "end": {
+    "gold": 1703,
+    "gems": 66,
+    "level": 5,
+    "xp": 714,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma"
+    ],
+    "equip": {
+     "weapon": "w_python",
+     "shield": "sh_buckler",
+     "pet": "pet_spider",
+     "art1": "art_battery",
+     "art2": "art_magnet",
+     "art3": "art_bandage"
+    },
+    "hero": "marcus",
+    "open": [
+     1
+    ],
+    "cleared": [],
+    "stats": {
+     "hp": 4,
+     "dmg": 3,
+     "spd": 3,
+     "pick": 5,
+     "rate": 1
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 2,
+      "cool": 2
+     }
+    }
+   },
+   "wave": 20,
+   "seconds": 312.5,
+   "level": 14,
+   "kills": 717,
+   "won": false,
+   "boss": {
+    "id": "gravedigger",
+    "hp": 4394.665171796331,
+    "maxHp": 9660
+   },
+   "got": {
+    "tac_sprint": 2,
+    "tac_magnet": 2,
+    "combat_stim": 2,
+    "fast_reload": 5,
+    "fmj_ammo": 2
+   }
+  },
+  {
+   "attempt": 5,
+   "chapter": 1,
+   "purchases": [
+    {
+     "type": "hero stat",
+     "id": "rate",
+     "gold": 226,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "spd",
+     "gold": 280,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "rate",
+     "gold": 285,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "hp",
+     "gold": 302,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "pick",
+     "gold": 317,
+     "gems": 0
+    },
+    {
+     "type": "pet",
+     "id": "pet_spider/dmg",
+     "gold": 0,
+     "gems": 35
+    }
+   ],
+   "start": {
+    "gold": 293,
+    "gems": 31,
+    "level": 5,
+    "xp": 714,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma"
+    ],
+    "equip": {
+     "weapon": "w_python",
+     "shield": "sh_plasma",
+     "pet": "pet_spider",
+     "art1": "art_battery",
+     "art2": "art_magnet",
+     "art3": "art_bandage"
+    },
+    "hero": "marcus",
+    "open": [
+     1
+    ],
+    "cleared": [],
+    "stats": {
+     "hp": 5,
+     "dmg": 3,
+     "spd": 4,
+     "pick": 6,
+     "rate": 3
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 2
+     }
+    }
+   },
+   "end": {
+    "gold": 2223,
+    "gems": 81,
+    "level": 6,
+    "xp": 199,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma"
+    ],
+    "equip": {
+     "weapon": "w_python",
+     "shield": "sh_plasma",
+     "pet": "pet_spider",
+     "art1": "art_battery",
+     "art2": "art_magnet",
+     "art3": "art_bandage"
+    },
+    "hero": "marcus",
+    "open": [
+     1
+    ],
+    "cleared": [],
+    "stats": {
+     "hp": 5,
+     "dmg": 3,
+     "spd": 4,
+     "pick": 6,
+     "rate": 3
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 2
+     }
+    }
+   },
+   "wave": 20,
+   "seconds": 317.5,
+   "level": 14,
+   "kills": 717,
+   "won": false,
+   "boss": {
+    "id": "gravedigger",
+    "hp": 3611.57054938538,
+    "maxHp": 9660
+   },
+   "got": {
+    "tac_sprint": 3,
+    "fmj_ammo": 3,
+    "fast_reload": 5,
+    "kevlar_vest": 1,
+    "tac_heal": 1
+   }
+  },
+  {
+   "attempt": 6,
+   "chapter": 1,
+   "purchases": [
+    {
+     "type": "hero stat",
+     "id": "dmg",
+     "gold": 320,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "spd",
+     "gold": 352,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "rate",
+     "gold": 360,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "hp",
+     "gold": 381,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "pick",
+     "gold": 400,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "dmg",
+     "gold": 403,
+     "gems": 0
+    },
+    {
+     "type": "pet",
+     "id": "pet_spider/cool",
+     "gold": 0,
+     "gems": 35
+    }
+   ],
+   "start": {
+    "gold": 7,
+    "gems": 46,
+    "level": 6,
+    "xp": 199,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma"
+    ],
+    "equip": {
+     "weapon": "w_python",
+     "shield": "sh_plasma",
+     "pet": "pet_spider",
+     "art1": "art_battery",
+     "art2": "art_magnet",
+     "art3": "art_bandage"
+    },
+    "hero": "marcus",
+    "open": [
+     1
+    ],
+    "cleared": [],
+    "stats": {
+     "hp": 6,
+     "dmg": 5,
+     "spd": 5,
+     "pick": 7,
+     "rate": 4
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 3
+     }
+    }
+   },
+   "end": {
+    "gold": 3483,
+    "gems": 175,
+    "level": 7,
+    "xp": 37,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma",
+     "m_frost",
+     "pet_mimic",
+     "m_storm",
+     "art_plate",
+     "art_crystal",
+     "sh_riot"
+    ],
+    "equip": {
+     "weapon": "w_python",
+     "shield": "sh_plasma",
+     "pet": "pet_spider",
+     "art1": "art_battery",
+     "art2": "art_magnet",
+     "art3": "art_bandage"
+    },
+    "hero": "marcus",
+    "open": [
+     1
+    ],
+    "cleared": [],
+    "stats": {
+     "hp": 6,
+     "dmg": 5,
+     "spd": 5,
+     "pick": 7,
+     "rate": 4
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 3
+     }
+    }
+   },
+   "wave": 30,
+   "seconds": 543.3,
+   "level": 21,
+   "kills": 1417,
+   "won": false,
+   "boss": {
+    "id": "rat_king",
+    "hp": 15158.661982752117,
+    "maxHp": 28350
+   },
+   "got": {
+    "tac_magnet": 3,
+    "fast_reload": 5,
+    "kevlar_vest": 1,
+    "fmj_ammo": 5,
+    "tac_heal": 4,
+    "stopping_power": 1,
+    "wep_python_quickdraw": 1
+   }
+  },
+  {
+   "attempt": 7,
+   "chapter": 1,
+   "purchases": [
+    {
+     "type": "hero stat",
+     "id": "spd",
+     "gold": 444,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "rate",
+     "gold": 453,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "hp",
+     "gold": 480,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "pick",
+     "gold": 504,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "dmg",
+     "gold": 508,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "spd",
+     "gold": 560,
+     "gems": 0
+    },
+    {
+     "type": "pet",
+     "id": "pet_mimic/dmg",
+     "gold": 0,
+     "gems": 19
+    },
+    {
+     "type": "pet",
+     "id": "pet_mimic/cool",
+     "gold": 0,
+     "gems": 19
+    },
+    {
+     "type": "pet",
+     "id": "pet_mimic/dmg",
+     "gold": 0,
+     "gems": 27
+    },
+    {
+     "type": "pet",
+     "id": "pet_mimic/cool",
+     "gold": 0,
+     "gems": 27
+    },
+    {
+     "type": "pet",
+     "id": "pet_mimic/dmg",
+     "gold": 0,
+     "gems": 41
+    },
+    {
+     "type": "pet",
+     "id": "pet_mimic/cool",
+     "gold": 0,
+     "gems": 41
+    }
+   ],
+   "start": {
+    "gold": 534,
+    "gems": 1,
+    "level": 7,
+    "xp": 37,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma",
+     "m_frost",
+     "pet_mimic",
+     "m_storm",
+     "art_plate",
+     "art_crystal",
+     "sh_riot"
+    ],
+    "equip": {
+     "weapon": "w_python",
+     "shield": "sh_plasma",
+     "pet": "pet_mimic",
+     "art1": "art_crystal",
+     "art2": "art_battery",
+     "art3": "art_magnet"
+    },
+    "hero": "marcus",
+    "open": [
+     1
+    ],
+    "cleared": [],
+    "stats": {
+     "hp": 7,
+     "dmg": 6,
+     "spd": 7,
+     "pick": 8,
+     "rate": 5
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 3
+     },
+     "pet_mimic": {
+      "dmg": 3,
+      "cool": 3
+     }
+    }
+   },
+   "end": {
+    "gold": 6275,
+    "gems": 157,
+    "level": 7,
+    "xp": 1799,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma",
+     "m_frost",
+     "pet_mimic",
+     "m_storm",
+     "art_plate",
+     "art_crystal",
+     "sh_riot",
+     "art_ammo_box",
+     "art_generator",
+     "art_gloves"
+    ],
+    "equip": {
+     "weapon": "w_python",
+     "shield": "sh_plasma",
+     "pet": "pet_mimic",
+     "art1": "art_crystal",
+     "art2": "art_battery",
+     "art3": "art_magnet"
+    },
+    "hero": "marcus",
+    "open": [
+     1
+    ],
+    "cleared": [],
+    "stats": {
+     "hp": 7,
+     "dmg": 6,
+     "spd": 7,
+     "pick": 8,
+     "rate": 5
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 3
+     },
+     "pet_mimic": {
+      "dmg": 3,
+      "cool": 3
+     }
+    }
+   },
+   "wave": 30,
+   "seconds": 672.7,
+   "level": 21,
+   "kills": 1400,
+   "won": false,
+   "boss": {
+    "id": "rat_king",
+    "hp": 23556.545123193373,
+    "maxHp": 28350
+   },
+   "got": {
+    "tac_sprint": 5,
+    "wep_python_quickdraw": 5,
+    "fast_reload": 4,
+    "combat_stim": 3,
+    "fmj_ammo": 3
+   }
+  },
+  {
+   "attempt": 8,
+   "chapter": 1,
+   "purchases": [
+    {
+     "type": "hero stat",
+     "id": "rate",
+     "gold": 571,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "hp",
+     "gold": 605,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "pick",
+     "gold": 635,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "dmg",
+     "gold": 640,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "spd",
+     "gold": 705,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "rate",
+     "gold": 720,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "hp",
+     "gold": 762,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "pick",
+     "gold": 800,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "dmg",
+     "gold": 806,
+     "gems": 0
+    },
+    {
+     "type": "pet",
+     "id": "pet_mimic/dmg",
+     "gold": 0,
+     "gems": 57
+    },
+    {
+     "type": "pet",
+     "id": "pet_mimic/cool",
+     "gold": 0,
+     "gems": 57
+    }
+   ],
+   "start": {
+    "gold": 31,
+    "gems": 43,
+    "level": 7,
+    "xp": 1799,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma",
+     "m_frost",
+     "pet_mimic",
+     "m_storm",
+     "art_plate",
+     "art_crystal",
+     "sh_riot",
+     "art_ammo_box",
+     "art_generator",
+     "art_gloves"
+    ],
+    "equip": {
+     "weapon": "w_python",
+     "shield": "sh_plasma",
+     "pet": "pet_mimic",
+     "art1": "art_crystal",
+     "art2": "art_ammo_box",
+     "art3": "art_generator"
+    },
+    "hero": "marcus",
+    "open": [
+     1
+    ],
+    "cleared": [],
+    "stats": {
+     "hp": 9,
+     "dmg": 8,
+     "spd": 8,
+     "pick": 10,
+     "rate": 7
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 3
+     },
+     "pet_mimic": {
+      "dmg": 4,
+      "cool": 4
+     }
+    }
+   },
+   "end": {
+    "gold": 5899,
+    "gems": 188,
+    "level": 8,
+    "xp": 1022,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma",
+     "m_frost",
+     "pet_mimic",
+     "m_storm",
+     "art_plate",
+     "art_crystal",
+     "sh_riot",
+     "art_ammo_box",
+     "art_generator",
+     "art_gloves"
+    ],
+    "equip": {
+     "weapon": "w_python",
+     "shield": "sh_plasma",
+     "pet": "pet_mimic",
+     "art1": "art_crystal",
+     "art2": "art_ammo_box",
+     "art3": "art_generator"
+    },
+    "hero": "marcus",
+    "open": [
+     1
+    ],
+    "cleared": [],
+    "stats": {
+     "hp": 9,
+     "dmg": 8,
+     "spd": 8,
+     "pick": 10,
+     "rate": 7
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 3
+     },
+     "pet_mimic": {
+      "dmg": 4,
+      "cool": 4
+     }
+    }
+   },
+   "wave": 30,
+   "seconds": 554.1,
+   "level": 21,
+   "kills": 1411,
+   "won": false,
+   "boss": {
+    "id": "rat_king",
+    "hp": 14468.425913176978,
+    "maxHp": 28350
+   },
+   "got": {
+    "tac_sprint": 2,
+    "fast_reload": 5,
+    "tac_magnet": 5,
+    "fmj_ammo": 3,
+    "kevlar_vest": 3,
+    "laser_pointer": 1,
+    "ricochet_rounds": 1
+   }
+  },
+  {
+   "attempt": 9,
+   "chapter": 1,
+   "purchases": [
+    {
+     "type": "hero stat",
+     "id": "spd",
+     "gold": 889,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "rate",
+     "gold": 907,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "hp",
+     "gold": 960,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "pick",
+     "gold": 1008,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "dmg",
+     "gold": 1016,
+     "gems": 0
+    },
+    {
+     "type": "pet",
+     "id": "pet_mimic/dmg",
+     "gold": 0,
+     "gems": 76
+    },
+    {
+     "type": "pet",
+     "id": "pet_mimic/cool",
+     "gold": 0,
+     "gems": 76
+    }
+   ],
+   "start": {
+    "gold": 1119,
+    "gems": 36,
+    "level": 8,
+    "xp": 1022,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma",
+     "m_frost",
+     "pet_mimic",
+     "m_storm",
+     "art_plate",
+     "art_crystal",
+     "sh_riot",
+     "art_ammo_box",
+     "art_generator",
+     "art_gloves"
+    ],
+    "equip": {
+     "weapon": "w_python",
+     "shield": "sh_plasma",
+     "pet": "pet_mimic",
+     "art1": "art_crystal",
+     "art2": "art_ammo_box",
+     "art3": "art_generator"
+    },
+    "hero": "marcus",
+    "open": [
+     1
+    ],
+    "cleared": [],
+    "stats": {
+     "hp": 10,
+     "dmg": 9,
+     "spd": 9,
+     "pick": 11,
+     "rate": 8
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 3
+     },
+     "pet_mimic": {
+      "dmg": 5,
+      "cool": 5
+     }
+    }
+   },
+   "end": {
+    "gold": 6411,
+    "gems": 183,
+    "level": 8,
+    "xp": 2784,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma",
+     "m_frost",
+     "pet_mimic",
+     "m_storm",
+     "art_plate",
+     "art_crystal",
+     "sh_riot",
+     "art_ammo_box",
+     "art_generator",
+     "art_gloves",
+     "m_scepter",
+     "art_stim"
+    ],
+    "equip": {
+     "weapon": "w_python",
+     "shield": "sh_plasma",
+     "pet": "pet_mimic",
+     "art1": "art_crystal",
+     "art2": "art_ammo_box",
+     "art3": "art_generator"
+    },
+    "hero": "marcus",
+    "open": [
+     1
+    ],
+    "cleared": [],
+    "stats": {
+     "hp": 10,
+     "dmg": 9,
+     "spd": 9,
+     "pick": 11,
+     "rate": 8
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 3
+     },
+     "pet_mimic": {
+      "dmg": 5,
+      "cool": 5
+     }
+    }
+   },
+   "wave": 30,
+   "seconds": 455.7,
+   "level": 21,
+   "kills": 1396,
+   "won": false,
+   "boss": {
+    "id": "rat_king",
+    "hp": 21757.59178870804,
+    "maxHp": 28350
+   },
+   "got": {
+    "fmj_ammo": 5,
+    "kevlar_vest": 2,
+    "fast_reload": 4,
+    "tac_sprint": 4,
+    "combat_stim": 3,
+    "wep_python_magnum": 1,
+    "wep_python_quickdraw": 1
+   }
+  },
+  {
+   "attempt": 10,
+   "chapter": 1,
+   "purchases": [
+    {
+     "type": "hero stat",
+     "id": "spd",
+     "gold": 1120,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "rate",
+     "gold": 1143,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "hp",
+     "gold": 1210,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "pick",
+     "gold": 1270,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "dmg",
+     "gold": 1280,
+     "gems": 0
+    },
+    {
+     "type": "pet",
+     "id": "pet_mimic/dmg",
+     "gold": 0,
+     "gems": 101
+    }
+   ],
+   "start": {
+    "gold": 388,
+    "gems": 82,
+    "level": 8,
+    "xp": 2784,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma",
+     "m_frost",
+     "pet_mimic",
+     "m_storm",
+     "art_plate",
+     "art_crystal",
+     "sh_riot",
+     "art_ammo_box",
+     "art_generator",
+     "art_gloves",
+     "m_scepter",
+     "art_stim"
+    ],
+    "equip": {
+     "weapon": "m_scepter",
+     "shield": "sh_plasma",
+     "pet": "pet_mimic",
+     "art1": "art_crystal",
+     "art2": "art_ammo_box",
+     "art3": "art_generator"
+    },
+    "hero": "marcus",
+    "open": [
+     1
+    ],
+    "cleared": [],
+    "stats": {
+     "hp": 11,
+     "dmg": 10,
+     "spd": 10,
+     "pick": 12,
+     "rate": 9
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 3
+     },
+     "pet_mimic": {
+      "dmg": 6,
+      "cool": 5
+     }
+    }
+   },
+   "end": {
+    "gold": 5123,
+    "gems": 231,
+    "level": 9,
+    "xp": 1194,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma",
+     "m_frost",
+     "pet_mimic",
+     "m_storm",
+     "art_plate",
+     "art_crystal",
+     "sh_riot",
+     "art_ammo_box",
+     "art_generator",
+     "art_gloves",
+     "m_scepter",
+     "art_stim"
+    ],
+    "equip": {
+     "weapon": "m_scepter",
+     "shield": "sh_plasma",
+     "pet": "pet_mimic",
+     "art1": "art_crystal",
+     "art2": "art_ammo_box",
+     "art3": "art_generator"
+    },
+    "hero": "marcus",
+    "open": [
+     1
+    ],
+    "cleared": [],
+    "stats": {
+     "hp": 11,
+     "dmg": 10,
+     "spd": 10,
+     "pick": 12,
+     "rate": 9
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 3
+     },
+     "pet_mimic": {
+      "dmg": 6,
+      "cool": 5
+     }
+    }
+   },
+   "wave": 30,
+   "seconds": 330.7,
+   "level": 21,
+   "kills": 1399,
+   "won": false,
+   "boss": {
+    "id": "rat_king",
+    "hp": 13303.125011839305,
+    "maxHp": 29700
+   },
+   "got": {
+    "quick_cast": 5,
+    "magic_vitality": 5,
+    "frost_nova": 3,
+    "arcane_power": 3,
+    "rejuvenation_aura": 3,
+    "essence_regen": 1
+   }
+  },
+  {
+   "attempt": 11,
+   "chapter": 1,
+   "purchases": [
+    {
+     "type": "hero stat",
+     "id": "spd",
+     "gold": 1411,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "rate",
+     "gold": 1440,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "hp",
+     "gold": 1524,
+     "gems": 0
+    },
+    {
+     "type": "pet",
+     "id": "pet_mimic/cool",
+     "gold": 0,
+     "gems": 101
+    }
+   ],
+   "start": {
+    "gold": 748,
+    "gems": 130,
+    "level": 9,
+    "xp": 1194,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma",
+     "m_frost",
+     "pet_mimic",
+     "m_storm",
+     "art_plate",
+     "art_crystal",
+     "sh_riot",
+     "art_ammo_box",
+     "art_generator",
+     "art_gloves",
+     "m_scepter",
+     "art_stim"
+    ],
+    "equip": {
+     "weapon": "m_scepter",
+     "shield": "sh_plasma",
+     "pet": "pet_mimic",
+     "art1": "art_crystal",
+     "art2": "art_ammo_box",
+     "art3": "art_generator"
+    },
+    "hero": "marcus",
+    "open": [
+     1
+    ],
+    "cleared": [],
+    "stats": {
+     "hp": 12,
+     "dmg": 10,
+     "spd": 11,
+     "pick": 12,
+     "rate": 10
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 3
+     },
+     "pet_mimic": {
+      "dmg": 6,
+      "cool": 6
+     }
+    }
+   },
+   "end": {
+    "gold": 5748,
+    "gems": 284,
+    "level": 9,
+    "xp": 3001,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma",
+     "m_frost",
+     "pet_mimic",
+     "m_storm",
+     "art_plate",
+     "art_crystal",
+     "sh_riot",
+     "art_ammo_box",
+     "art_generator",
+     "art_gloves",
+     "m_scepter",
+     "art_stim",
+     "pet_rat",
+     "m_void",
+     "art_overdrive"
+    ],
+    "equip": {
+     "weapon": "m_scepter",
+     "shield": "sh_plasma",
+     "pet": "pet_mimic",
+     "art1": "art_crystal",
+     "art2": "art_ammo_box",
+     "art3": "art_generator"
+    },
+    "hero": "marcus",
+    "open": [
+     1,
+     2
+    ],
+    "cleared": [
+     1
+    ],
+    "stats": {
+     "hp": 12,
+     "dmg": 10,
+     "spd": 11,
+     "pick": 12,
+     "rate": 10
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 3
+     },
+     "pet_mimic": {
+      "dmg": 6,
+      "cool": 6
+     }
+    }
+   },
+   "wave": 30,
+   "seconds": 341.6,
+   "level": 24,
+   "kills": 1412,
+   "won": true,
+   "boss": null,
+   "got": {
+    "mana_shield": 4,
+    "soul_magnet": 1,
+    "magic_vitality": 5,
+    "arcane_multicast": 5,
+    "arcane_power": 4,
+    "arcane_focus": 2,
+    "quick_cast": 1,
+    "arcane_multicast_evo": 1
+   }
+  },
+  {
+   "attempt": 12,
+   "chapter": 2,
+   "purchases": [
+    {
+     "type": "hero stat",
+     "id": "pick",
+     "gold": 1601,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "dmg",
+     "gold": 1613,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "spd",
+     "gold": 1779,
+     "gems": 0
+    },
+    {
+     "type": "pet",
+     "id": "pet_mimic/dmg",
+     "gold": 0,
+     "gems": 132
+    },
+    {
+     "type": "pet",
+     "id": "pet_mimic/cool",
+     "gold": 0,
+     "gems": 132
+    }
+   ],
+   "start": {
+    "gold": 755,
+    "gems": 20,
+    "level": 9,
+    "xp": 3001,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma",
+     "m_frost",
+     "pet_mimic",
+     "m_storm",
+     "art_plate",
+     "art_crystal",
+     "sh_riot",
+     "art_ammo_box",
+     "art_generator",
+     "art_gloves",
+     "m_scepter",
+     "art_stim",
+     "pet_rat",
+     "m_void",
+     "art_overdrive"
+    ],
+    "equip": {
+     "weapon": "m_void",
+     "shield": "sh_plasma",
+     "pet": "pet_mimic",
+     "art1": "art_overdrive",
+     "art2": "art_crystal",
+     "art3": "art_ammo_box"
+    },
+    "hero": "marcus",
+    "open": [
+     1,
+     2
+    ],
+    "cleared": [
+     1
+    ],
+    "stats": {
+     "hp": 12,
+     "dmg": 11,
+     "spd": 12,
+     "pick": 13,
+     "rate": 10
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 3
+     },
+     "pet_mimic": {
+      "dmg": 7,
+      "cool": 7
+     }
+    }
+   },
+   "end": {
+    "gold": 20538,
+    "gems": 1016,
+    "level": 10,
+    "xp": 2472,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma",
+     "m_frost",
+     "pet_mimic",
+     "m_storm",
+     "art_plate",
+     "art_crystal",
+     "sh_riot",
+     "art_ammo_box",
+     "art_generator",
+     "art_gloves",
+     "m_scepter",
+     "art_stim",
+     "pet_rat",
+     "m_void",
+     "art_overdrive",
+     "w_nova",
+     "w_aa12",
+     "m_heaven",
+     "sh_titan",
+     "art_skull"
+    ],
+    "equip": {
+     "weapon": "m_void",
+     "shield": "sh_plasma",
+     "pet": "pet_mimic",
+     "art1": "art_overdrive",
+     "art2": "art_crystal",
+     "art3": "art_ammo_box"
+    },
+    "hero": "marcus",
+    "open": [
+     1,
+     2,
+     3
+    ],
+    "cleared": [
+     1,
+     2
+    ],
+    "stats": {
+     "hp": 12,
+     "dmg": 11,
+     "spd": 12,
+     "pick": 13,
+     "rate": 10
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 3
+     },
+     "pet_mimic": {
+      "dmg": 7,
+      "cool": 7
+     }
+    }
+   },
+   "wave": 40,
+   "seconds": 381.5,
+   "level": 40,
+   "kills": 2342,
+   "won": true,
+   "boss": null,
+   "got": {
+    "barrier_reflection": 5,
+    "arcane_multicast": 5,
+    "soul_magnet": 5,
+    "quick_cast": 5,
+    "mana_shield": 5,
+    "arcane_power": 5,
+    "celestial_thunder": 5,
+    "arcane_multicast_evo": 1,
+    "mana_shield_evo": 1,
+    "celestial_thunder_evo": 1
+   }
+  },
+  {
+   "attempt": 13,
+   "chapter": 3,
+   "purchases": [
+    {
+     "type": "hero stat",
+     "id": "rate",
+     "gold": 1815,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "hp",
+     "gold": 1921,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "pick",
+     "gold": 2017,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "dmg",
+     "gold": 2033,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "spd",
+     "gold": 2241,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "rate",
+     "gold": 2287,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "hp",
+     "gold": 2421,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "pick",
+     "gold": 2542,
+     "gems": 0
+    },
+    {
+     "type": "hero stat",
+     "id": "dmg",
+     "gold": 2561,
+     "gems": 0
+    },
+    {
+     "type": "pet",
+     "id": "pet_mimic/dmg",
+     "gold": 0,
+     "gems": 169
+    },
+    {
+     "type": "pet",
+     "id": "pet_mimic/cool",
+     "gold": 0,
+     "gems": 169
+    },
+    {
+     "type": "pet",
+     "id": "pet_mimic/dmg",
+     "gold": 0,
+     "gems": 213
+    },
+    {
+     "type": "pet",
+     "id": "pet_mimic/cool",
+     "gold": 0,
+     "gems": 213
+    }
+   ],
+   "start": {
+    "gold": 700,
+    "gems": 252,
+    "level": 10,
+    "xp": 2472,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma",
+     "m_frost",
+     "pet_mimic",
+     "m_storm",
+     "art_plate",
+     "art_crystal",
+     "sh_riot",
+     "art_ammo_box",
+     "art_generator",
+     "art_gloves",
+     "m_scepter",
+     "art_stim",
+     "pet_rat",
+     "m_void",
+     "art_overdrive",
+     "w_nova",
+     "w_aa12",
+     "m_heaven",
+     "sh_titan",
+     "art_skull"
+    ],
+    "equip": {
+     "weapon": "m_void",
+     "shield": "sh_titan",
+     "pet": "pet_mimic",
+     "art1": "art_overdrive",
+     "art2": "art_skull",
+     "art3": "art_crystal"
+    },
+    "hero": "marcus",
+    "open": [
+     1,
+     2,
+     3
+    ],
+    "cleared": [
+     1,
+     2
+    ],
+    "stats": {
+     "hp": 14,
+     "dmg": 13,
+     "spd": 13,
+     "pick": 15,
+     "rate": 12
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 3
+     },
+     "pet_mimic": {
+      "dmg": 9,
+      "cool": 9
+     }
+    }
+   },
+   "end": {
+    "gold": 2486,
+    "gems": 297,
+    "level": 10,
+    "xp": 2971,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma",
+     "m_frost",
+     "pet_mimic",
+     "m_storm",
+     "art_plate",
+     "art_crystal",
+     "sh_riot",
+     "art_ammo_box",
+     "art_generator",
+     "art_gloves",
+     "m_scepter",
+     "art_stim",
+     "pet_rat",
+     "m_void",
+     "art_overdrive",
+     "w_nova",
+     "w_aa12",
+     "m_heaven",
+     "sh_titan",
+     "art_skull"
+    ],
+    "equip": {
+     "weapon": "m_void",
+     "shield": "sh_titan",
+     "pet": "pet_mimic",
+     "art1": "art_overdrive",
+     "art2": "art_skull",
+     "art3": "art_crystal"
+    },
+    "hero": "marcus",
+    "open": [
+     1,
+     2,
+     3
+    ],
+    "cleared": [
+     1,
+     2
+    ],
+    "stats": {
+     "hp": 14,
+     "dmg": 13,
+     "spd": 13,
+     "pick": 15,
+     "rate": 12
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 3
+     },
+     "pet_mimic": {
+      "dmg": 9,
+      "cool": 9
+     }
+    }
+   },
+   "wave": 10,
+   "seconds": 126.3,
+   "level": 14,
+   "kills": 227,
+   "won": false,
+   "boss": {
+    "id": "cyber_cerberus",
+    "hp": 76885.51203983335,
+    "maxHp": 191475
+   },
+   "got": {
+    "barrier_reflection": 2,
+    "essence_regen": 1,
+    "arcane_multicast": 3,
+    "arcane_power": 3,
+    "astral_haste": 1,
+    "toxic_miasma": 2,
+    "meteor_rain": 1
+   }
+  },
+  {
+   "attempt": 14,
+   "chapter": 3,
+   "purchases": [
+    {
+     "type": "pet",
+     "id": "pet_mimic/dmg",
+     "gold": 0,
+     "gems": 270
+    }
+   ],
+   "start": {
+    "gold": 2486,
+    "gems": 27,
+    "level": 10,
+    "xp": 2971,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma",
+     "m_frost",
+     "pet_mimic",
+     "m_storm",
+     "art_plate",
+     "art_crystal",
+     "sh_riot",
+     "art_ammo_box",
+     "art_generator",
+     "art_gloves",
+     "m_scepter",
+     "art_stim",
+     "pet_rat",
+     "m_void",
+     "art_overdrive",
+     "w_nova",
+     "w_aa12",
+     "m_heaven",
+     "sh_titan",
+     "art_skull"
+    ],
+    "equip": {
+     "weapon": "m_void",
+     "shield": "sh_titan",
+     "pet": "pet_mimic",
+     "art1": "art_overdrive",
+     "art2": "art_skull",
+     "art3": "art_crystal"
+    },
+    "hero": "marcus",
+    "open": [
+     1,
+     2,
+     3
+    ],
+    "cleared": [
+     1,
+     2
+    ],
+    "stats": {
+     "hp": 14,
+     "dmg": 13,
+     "spd": 13,
+     "pick": 15,
+     "rate": 12
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 3
+     },
+     "pet_mimic": {
+      "dmg": 10,
+      "cool": 9
+     }
+    }
+   },
+   "end": {
+    "gold": 4243,
+    "gems": 69,
+    "level": 10,
+    "xp": 3470,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma",
+     "m_frost",
+     "pet_mimic",
+     "m_storm",
+     "art_plate",
+     "art_crystal",
+     "sh_riot",
+     "art_ammo_box",
+     "art_generator",
+     "art_gloves",
+     "m_scepter",
+     "art_stim",
+     "pet_rat",
+     "m_void",
+     "art_overdrive",
+     "w_nova",
+     "w_aa12",
+     "m_heaven",
+     "sh_titan",
+     "art_skull"
+    ],
+    "equip": {
+     "weapon": "m_void",
+     "shield": "sh_titan",
+     "pet": "pet_mimic",
+     "art1": "art_overdrive",
+     "art2": "art_skull",
+     "art3": "art_crystal"
+    },
+    "hero": "marcus",
+    "open": [
+     1,
+     2,
+     3
+    ],
+    "cleared": [
+     1,
+     2
+    ],
+    "stats": {
+     "hp": 14,
+     "dmg": 13,
+     "spd": 13,
+     "pick": 15,
+     "rate": 12
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 3
+     },
+     "pet_mimic": {
+      "dmg": 10,
+      "cool": 9
+     }
+    }
+   },
+   "wave": 10,
+   "seconds": 116.6,
+   "level": 14,
+   "kills": 227,
+   "won": false,
+   "boss": {
+    "id": "cyber_cerberus",
+    "hp": 78093.95190460868,
+    "maxHp": 191475
+   },
+   "got": {
+    "essence_regen": 1,
+    "arcane_multicast": 4,
+    "magic_vitality": 2,
+    "spell_pierce": 1,
+    "arcane_power": 2,
+    "astral_haste": 2,
+    "quick_cast": 1
+   }
+  },
+  {
+   "attempt": 15,
+   "chapter": 3,
+   "purchases": [
+    {
+     "type": "hero stat",
+     "id": "spd",
+     "gold": 2824,
+     "gems": 0
+    }
+   ],
+   "start": {
+    "gold": 1419,
+    "gems": 69,
+    "level": 10,
+    "xp": 3470,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma",
+     "m_frost",
+     "pet_mimic",
+     "m_storm",
+     "art_plate",
+     "art_crystal",
+     "sh_riot",
+     "art_ammo_box",
+     "art_generator",
+     "art_gloves",
+     "m_scepter",
+     "art_stim",
+     "pet_rat",
+     "m_void",
+     "art_overdrive",
+     "w_nova",
+     "w_aa12",
+     "m_heaven",
+     "sh_titan",
+     "art_skull"
+    ],
+    "equip": {
+     "weapon": "m_void",
+     "shield": "sh_titan",
+     "pet": "pet_mimic",
+     "art1": "art_overdrive",
+     "art2": "art_skull",
+     "art3": "art_crystal"
+    },
+    "hero": "marcus",
+    "open": [
+     1,
+     2,
+     3
+    ],
+    "cleared": [
+     1,
+     2
+    ],
+    "stats": {
+     "hp": 14,
+     "dmg": 13,
+     "spd": 14,
+     "pick": 15,
+     "rate": 12
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 3
+     },
+     "pet_mimic": {
+      "dmg": 10,
+      "cool": 9
+     }
+    }
+   },
+   "end": {
+    "gold": 3331,
+    "gems": 122,
+    "level": 10,
+    "xp": 3969,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma",
+     "m_frost",
+     "pet_mimic",
+     "m_storm",
+     "art_plate",
+     "art_crystal",
+     "sh_riot",
+     "art_ammo_box",
+     "art_generator",
+     "art_gloves",
+     "m_scepter",
+     "art_stim",
+     "pet_rat",
+     "m_void",
+     "art_overdrive",
+     "w_nova",
+     "w_aa12",
+     "m_heaven",
+     "sh_titan",
+     "art_skull"
+    ],
+    "equip": {
+     "weapon": "m_void",
+     "shield": "sh_titan",
+     "pet": "pet_mimic",
+     "art1": "art_overdrive",
+     "art2": "art_skull",
+     "art3": "art_crystal"
+    },
+    "hero": "marcus",
+    "open": [
+     1,
+     2,
+     3
+    ],
+    "cleared": [
+     1,
+     2
+    ],
+    "stats": {
+     "hp": 14,
+     "dmg": 13,
+     "spd": 14,
+     "pick": 15,
+     "rate": 12
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 3
+     },
+     "pet_mimic": {
+      "dmg": 10,
+      "cool": 9
+     }
+    }
+   },
+   "wave": 10,
+   "seconds": 114.6,
+   "level": 14,
+   "kills": 227,
+   "won": false,
+   "boss": {
+    "id": "cyber_cerberus",
+    "hp": 70316.85478166289,
+    "maxHp": 191475
+   },
+   "got": {
+    "rejuvenation_aura": 2,
+    "arcane_power": 3,
+    "essence_regen": 3,
+    "wep_void_singularity": 2,
+    "soul_magnet": 2,
+    "fireball_burst": 1
+   }
+  },
+  {
+   "attempt": 16,
+   "chapter": 3,
+   "purchases": [
+    {
+     "type": "hero stat",
+     "id": "rate",
+     "gold": 2882,
+     "gems": 0
+    }
+   ],
+   "start": {
+    "gold": 449,
+    "gems": 122,
+    "level": 10,
+    "xp": 3969,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma",
+     "m_frost",
+     "pet_mimic",
+     "m_storm",
+     "art_plate",
+     "art_crystal",
+     "sh_riot",
+     "art_ammo_box",
+     "art_generator",
+     "art_gloves",
+     "m_scepter",
+     "art_stim",
+     "pet_rat",
+     "m_void",
+     "art_overdrive",
+     "w_nova",
+     "w_aa12",
+     "m_heaven",
+     "sh_titan",
+     "art_skull"
+    ],
+    "equip": {
+     "weapon": "m_void",
+     "shield": "sh_titan",
+     "pet": "pet_mimic",
+     "art1": "art_overdrive",
+     "art2": "art_skull",
+     "art3": "art_crystal"
+    },
+    "hero": "marcus",
+    "open": [
+     1,
+     2,
+     3
+    ],
+    "cleared": [
+     1,
+     2
+    ],
+    "stats": {
+     "hp": 14,
+     "dmg": 13,
+     "spd": 14,
+     "pick": 15,
+     "rate": 13
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 3
+     },
+     "pet_mimic": {
+      "dmg": 10,
+      "cool": 9
+     }
+    }
+   },
+   "end": {
+    "gold": 2342,
+    "gems": 170,
+    "level": 10,
+    "xp": 4468,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma",
+     "m_frost",
+     "pet_mimic",
+     "m_storm",
+     "art_plate",
+     "art_crystal",
+     "sh_riot",
+     "art_ammo_box",
+     "art_generator",
+     "art_gloves",
+     "m_scepter",
+     "art_stim",
+     "pet_rat",
+     "m_void",
+     "art_overdrive",
+     "w_nova",
+     "w_aa12",
+     "m_heaven",
+     "sh_titan",
+     "art_skull"
+    ],
+    "equip": {
+     "weapon": "m_void",
+     "shield": "sh_titan",
+     "pet": "pet_mimic",
+     "art1": "art_overdrive",
+     "art2": "art_skull",
+     "art3": "art_crystal"
+    },
+    "hero": "marcus",
+    "open": [
+     1,
+     2,
+     3
+    ],
+    "cleared": [
+     1,
+     2
+    ],
+    "stats": {
+     "hp": 14,
+     "dmg": 13,
+     "spd": 14,
+     "pick": 15,
+     "rate": 13
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 3
+     },
+     "pet_mimic": {
+      "dmg": 10,
+      "cool": 9
+     }
+    }
+   },
+   "wave": 10,
+   "seconds": 119.7,
+   "level": 14,
+   "kills": 227,
+   "won": false,
+   "boss": {
+    "id": "cyber_cerberus",
+    "hp": 81474.46483996841,
+    "maxHp": 191475
+   },
+   "got": {
+    "astral_haste": 1,
+    "arcane_multicast": 1,
+    "essence_regen": 1,
+    "quick_cast": 3,
+    "arcane_power": 3,
+    "soul_magnet": 3,
+    "wep_void_gravity": 1
+   }
+  },
+  {
+   "attempt": 17,
+   "chapter": 3,
+   "purchases": [],
+   "start": {
+    "gold": 2342,
+    "gems": 170,
+    "level": 10,
+    "xp": 4468,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma",
+     "m_frost",
+     "pet_mimic",
+     "m_storm",
+     "art_plate",
+     "art_crystal",
+     "sh_riot",
+     "art_ammo_box",
+     "art_generator",
+     "art_gloves",
+     "m_scepter",
+     "art_stim",
+     "pet_rat",
+     "m_void",
+     "art_overdrive",
+     "w_nova",
+     "w_aa12",
+     "m_heaven",
+     "sh_titan",
+     "art_skull"
+    ],
+    "equip": {
+     "weapon": "m_void",
+     "shield": "sh_titan",
+     "pet": "pet_mimic",
+     "art1": "art_overdrive",
+     "art2": "art_skull",
+     "art3": "art_crystal"
+    },
+    "hero": "marcus",
+    "open": [
+     1,
+     2,
+     3
+    ],
+    "cleared": [
+     1,
+     2
+    ],
+    "stats": {
+     "hp": 14,
+     "dmg": 13,
+     "spd": 14,
+     "pick": 15,
+     "rate": 13
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 3
+     },
+     "pet_mimic": {
+      "dmg": 10,
+      "cool": 9
+     }
+    }
+   },
+   "end": {
+    "gold": 3716,
+    "gems": 213,
+    "level": 10,
+    "xp": 4967,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma",
+     "m_frost",
+     "pet_mimic",
+     "m_storm",
+     "art_plate",
+     "art_crystal",
+     "sh_riot",
+     "art_ammo_box",
+     "art_generator",
+     "art_gloves",
+     "m_scepter",
+     "art_stim",
+     "pet_rat",
+     "m_void",
+     "art_overdrive",
+     "w_nova",
+     "w_aa12",
+     "m_heaven",
+     "sh_titan",
+     "art_skull"
+    ],
+    "equip": {
+     "weapon": "m_void",
+     "shield": "sh_titan",
+     "pet": "pet_mimic",
+     "art1": "art_overdrive",
+     "art2": "art_skull",
+     "art3": "art_crystal"
+    },
+    "hero": "marcus",
+    "open": [
+     1,
+     2,
+     3
+    ],
+    "cleared": [
+     1,
+     2
+    ],
+    "stats": {
+     "hp": 14,
+     "dmg": 13,
+     "spd": 14,
+     "pick": 15,
+     "rate": 13
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 3
+     },
+     "pet_mimic": {
+      "dmg": 10,
+      "cool": 9
+     }
+    }
+   },
+   "wave": 10,
+   "seconds": 102.8,
+   "level": 14,
+   "kills": 227,
+   "won": false,
+   "boss": {
+    "id": "cyber_cerberus",
+    "hp": 62945.03685131149,
+    "maxHp": 191475
+   },
+   "got": {
+    "soul_magnet": 1,
+    "essence_regen": 1,
+    "quick_cast": 2,
+    "barrier_reflection": 1,
+    "wep_void_gravity": 1,
+    "arcane_multicast": 5,
+    "spell_pierce": 1,
+    "arcane_multicast_evo": 1
+   }
+  },
+  {
+   "attempt": 18,
+   "chapter": 3,
+   "purchases": [
+    {
+     "type": "hero stat",
+     "id": "hp",
+     "gold": 3050,
+     "gems": 0
+    }
+   ],
+   "start": {
+    "gold": 666,
+    "gems": 213,
+    "level": 10,
+    "xp": 4967,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma",
+     "m_frost",
+     "pet_mimic",
+     "m_storm",
+     "art_plate",
+     "art_crystal",
+     "sh_riot",
+     "art_ammo_box",
+     "art_generator",
+     "art_gloves",
+     "m_scepter",
+     "art_stim",
+     "pet_rat",
+     "m_void",
+     "art_overdrive",
+     "w_nova",
+     "w_aa12",
+     "m_heaven",
+     "sh_titan",
+     "art_skull"
+    ],
+    "equip": {
+     "weapon": "m_void",
+     "shield": "sh_titan",
+     "pet": "pet_mimic",
+     "art1": "art_overdrive",
+     "art2": "art_skull",
+     "art3": "art_crystal"
+    },
+    "hero": "marcus",
+    "open": [
+     1,
+     2,
+     3
+    ],
+    "cleared": [
+     1,
+     2
+    ],
+    "stats": {
+     "hp": 15,
+     "dmg": 13,
+     "spd": 14,
+     "pick": 15,
+     "rate": 13
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 3
+     },
+     "pet_mimic": {
+      "dmg": 10,
+      "cool": 9
+     }
+    }
+   },
+   "end": {
+    "gold": 2577,
+    "gems": 256,
+    "level": 10,
+    "xp": 5466,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma",
+     "m_frost",
+     "pet_mimic",
+     "m_storm",
+     "art_plate",
+     "art_crystal",
+     "sh_riot",
+     "art_ammo_box",
+     "art_generator",
+     "art_gloves",
+     "m_scepter",
+     "art_stim",
+     "pet_rat",
+     "m_void",
+     "art_overdrive",
+     "w_nova",
+     "w_aa12",
+     "m_heaven",
+     "sh_titan",
+     "art_skull"
+    ],
+    "equip": {
+     "weapon": "m_void",
+     "shield": "sh_titan",
+     "pet": "pet_mimic",
+     "art1": "art_overdrive",
+     "art2": "art_skull",
+     "art3": "art_crystal"
+    },
+    "hero": "marcus",
+    "open": [
+     1,
+     2,
+     3
+    ],
+    "cleared": [
+     1,
+     2
+    ],
+    "stats": {
+     "hp": 15,
+     "dmg": 13,
+     "spd": 14,
+     "pick": 15,
+     "rate": 13
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 3
+     },
+     "pet_mimic": {
+      "dmg": 10,
+      "cool": 9
+     }
+    }
+   },
+   "wave": 10,
+   "seconds": 131.8,
+   "level": 14,
+   "kills": 227,
+   "won": false,
+   "boss": {
+    "id": "cyber_cerberus",
+    "hp": 79434.88926395842,
+    "maxHp": 191475
+   },
+   "got": {
+    "rejuvenation_aura": 1,
+    "arcane_multicast": 2,
+    "quick_cast": 4,
+    "magic_vitality": 3,
+    "mana_shield": 2,
+    "celestial_thunder": 1
+   }
+  },
+  {
+   "attempt": 19,
+   "chapter": 3,
+   "purchases": [],
+   "start": {
+    "gold": 2577,
+    "gems": 256,
+    "level": 10,
+    "xp": 5466,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma",
+     "m_frost",
+     "pet_mimic",
+     "m_storm",
+     "art_plate",
+     "art_crystal",
+     "sh_riot",
+     "art_ammo_box",
+     "art_generator",
+     "art_gloves",
+     "m_scepter",
+     "art_stim",
+     "pet_rat",
+     "m_void",
+     "art_overdrive",
+     "w_nova",
+     "w_aa12",
+     "m_heaven",
+     "sh_titan",
+     "art_skull"
+    ],
+    "equip": {
+     "weapon": "m_void",
+     "shield": "sh_titan",
+     "pet": "pet_mimic",
+     "art1": "art_overdrive",
+     "art2": "art_skull",
+     "art3": "art_crystal"
+    },
+    "hero": "marcus",
+    "open": [
+     1,
+     2,
+     3
+    ],
+    "cleared": [
+     1,
+     2
+    ],
+    "stats": {
+     "hp": 15,
+     "dmg": 13,
+     "spd": 14,
+     "pick": 15,
+     "rate": 13
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 3
+     },
+     "pet_mimic": {
+      "dmg": 10,
+      "cool": 9
+     }
+    }
+   },
+   "end": {
+    "gold": 4072,
+    "gems": 293,
+    "level": 11,
+    "xp": 125,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma",
+     "m_frost",
+     "pet_mimic",
+     "m_storm",
+     "art_plate",
+     "art_crystal",
+     "sh_riot",
+     "art_ammo_box",
+     "art_generator",
+     "art_gloves",
+     "m_scepter",
+     "art_stim",
+     "pet_rat",
+     "m_void",
+     "art_overdrive",
+     "w_nova",
+     "w_aa12",
+     "m_heaven",
+     "sh_titan",
+     "art_skull"
+    ],
+    "equip": {
+     "weapon": "m_void",
+     "shield": "sh_titan",
+     "pet": "pet_mimic",
+     "art1": "art_overdrive",
+     "art2": "art_skull",
+     "art3": "art_crystal"
+    },
+    "hero": "marcus",
+    "open": [
+     1,
+     2,
+     3
+    ],
+    "cleared": [
+     1,
+     2
+    ],
+    "stats": {
+     "hp": 15,
+     "dmg": 13,
+     "spd": 14,
+     "pick": 15,
+     "rate": 13
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 3
+     },
+     "pet_mimic": {
+      "dmg": 10,
+      "cool": 9
+     }
+    }
+   },
+   "wave": 10,
+   "seconds": 118.8,
+   "level": 14,
+   "kills": 227,
+   "won": false,
+   "boss": {
+    "id": "cyber_cerberus",
+    "hp": 71316.20641858205,
+    "maxHp": 191475
+   },
+   "got": {
+    "magic_vitality": 2,
+    "wep_void_gravity": 2,
+    "arcane_multicast": 3,
+    "arcane_power": 1,
+    "barrier_reflection": 1,
+    "quick_cast": 3,
+    "soul_magnet": 1
+   }
+  },
+  {
+   "attempt": 20,
+   "chapter": 3,
+   "purchases": [
+    {
+     "type": "hero stat",
+     "id": "pick",
+     "gold": 3203,
+     "gems": 0
+    },
+    {
+     "type": "pet",
+     "id": "pet_mimic/cool",
+     "gold": 0,
+     "gems": 270
+    }
+   ],
+   "start": {
+    "gold": 869,
+    "gems": 23,
+    "level": 11,
+    "xp": 125,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma",
+     "m_frost",
+     "pet_mimic",
+     "m_storm",
+     "art_plate",
+     "art_crystal",
+     "sh_riot",
+     "art_ammo_box",
+     "art_generator",
+     "art_gloves",
+     "m_scepter",
+     "art_stim",
+     "pet_rat",
+     "m_void",
+     "art_overdrive",
+     "w_nova",
+     "w_aa12",
+     "m_heaven",
+     "sh_titan",
+     "art_skull"
+    ],
+    "equip": {
+     "weapon": "m_void",
+     "shield": "sh_titan",
+     "pet": "pet_mimic",
+     "art1": "art_overdrive",
+     "art2": "art_skull",
+     "art3": "art_crystal"
+    },
+    "hero": "marcus",
+    "open": [
+     1,
+     2,
+     3
+    ],
+    "cleared": [
+     1,
+     2
+    ],
+    "stats": {
+     "hp": 15,
+     "dmg": 13,
+     "spd": 14,
+     "pick": 16,
+     "rate": 13
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 3
+     },
+     "pet_mimic": {
+      "dmg": 10,
+      "cool": 10
+     }
+    }
+   },
+   "end": {
+    "gold": 2583,
+    "gems": 81,
+    "level": 11,
+    "xp": 624,
+    "inv": [
+     "w_pistol",
+     "w_rebel",
+     "m_rune",
+     "m_bone",
+     "sh_buckler",
+     "pet_slime",
+     "art_battery",
+     "art_bandage",
+     "w_python",
+     "art_boots",
+     "pet_mushroom",
+     "art_compass",
+     "pet_spider",
+     "pet_bat",
+     "art_scope",
+     "art_magnet",
+     "w_vector",
+     "sh_plasma",
+     "m_frost",
+     "pet_mimic",
+     "m_storm",
+     "art_plate",
+     "art_crystal",
+     "sh_riot",
+     "art_ammo_box",
+     "art_generator",
+     "art_gloves",
+     "m_scepter",
+     "art_stim",
+     "pet_rat",
+     "m_void",
+     "art_overdrive",
+     "w_nova",
+     "w_aa12",
+     "m_heaven",
+     "sh_titan",
+     "art_skull"
+    ],
+    "equip": {
+     "weapon": "m_void",
+     "shield": "sh_titan",
+     "pet": "pet_mimic",
+     "art1": "art_overdrive",
+     "art2": "art_skull",
+     "art3": "art_crystal"
+    },
+    "hero": "marcus",
+    "open": [
+     1,
+     2,
+     3
+    ],
+    "cleared": [
+     1,
+     2
+    ],
+    "stats": {
+     "hp": 15,
+     "dmg": 13,
+     "spd": 14,
+     "pick": 16,
+     "rate": 13
+    },
+    "up": {
+     "pet_slime": {
+      "dmg": 2,
+      "cool": 1
+     },
+     "pet_spider": {
+      "dmg": 3,
+      "cool": 3
+     },
+     "pet_mimic": {
+      "dmg": 10,
+      "cool": 10
+     }
+    }
+   },
+   "wave": 10,
+   "seconds": 118.1,
+   "level": 14,
+   "kills": 227,
+   "won": false,
+   "boss": {
+    "id": "cyber_cerberus",
+    "hp": 77092.84059242245,
+    "maxHp": 191475
+   },
+   "got": {
+    "arcane_multicast": 5,
+    "magic_vitality": 2,
+    "rejuvenation_aura": 1,
+    "barrier_reflection": 1,
+    "astral_vortex": 1,
+    "quick_cast": 2,
+    "frost_nova": 1
+   }
+  }
+ ]
+}

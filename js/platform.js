@@ -21,7 +21,12 @@
     /**
      * Platform detection and SDK initialization
      */
-    async init() {
+    init() {
+      if (!this._initPromise) this._initPromise = this._initialize();
+      return this._initPromise;
+    },
+
+    async _initialize() {
       console.log('[Platform] Initializing Global SDK Bridge...');
 
       // 1. Poki SDK
@@ -335,6 +340,7 @@
      */
     async saveData(data) {
       if (!data) return;
+      await this.init();
       try {
         localStorage.setItem('surv_save', JSON.stringify(data));
       } catch (e) {
@@ -361,6 +367,7 @@
      * @returns {Promise<object|null>}
      */
     async loadData() {
+      await this.init();
       // Telegram CloudStorage
       if (this.type === 'telegram' && window.Telegram?.WebApp?.CloudStorage) {
         try {
@@ -449,16 +456,16 @@
      */
     _setupVisibilityLifecycle() {
       const onHide = () => {
-        // Tab hidden or app minimized: suspend audio
-        if (window.Sfx && window.Sfx.ctx && window.Sfx.ctx.state === 'running') {
-          window.Sfx.ctx.suspend().catch(() => {});
-        }
-        // If in active battle: trigger pause modal
-        if (typeof window.G !== 'undefined' && window.G && window.G.run && !window.G.pause) {
+        // Opening the pause modal can play a click and resume AudioContext.
+        // Pause first, then suspend audio so the hidden tab remains silent.
+        if (window.G && window.G.run && !window.G.pause) {
           window.G.pause = true;
           if (typeof window.openModal === 'function') {
             window.openModal('modal-pause');
           }
+        }
+        if (window.Sfx && window.Sfx.ctx && window.Sfx.ctx.state === 'running') {
+          window.Sfx.ctx.suspend().catch(() => {});
         }
       };
 

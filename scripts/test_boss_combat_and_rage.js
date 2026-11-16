@@ -92,6 +92,7 @@ console.log("=== VERIFYING FULL BOSS COMBAT & RAGE MODE FOR ALL 5 BOSSES ===");
 
 function testFullBossCombat(bossName, waveNum){
   console.log(`\nTesting Boss: ${bossName} (Wave ${waveNum})`);
+  env.save.unlockedLvls = [1, 2, 3];
   env.setSelectedLvlIdx(2);
   env.save.selectedLvl = 3;
   env.startGame();

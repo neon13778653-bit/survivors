@@ -67,7 +67,7 @@ const fn = new Function('window', 'document', 'Image', 'Audio', 'addEventListene
   window.SafeStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
   ${code}
   return {
-    startGame, update, drawGame,
+    save, startGame, update, drawGame,
     spawnCyberCerberusBoss, spawnBioButcherBoss, spawnChitinReaperBoss,
     spawnNeuroOvermindBoss, spawnPatientZeroBoss,
     setSelectedLvlIdx: (idx) => { selectedLvlIdx = idx; },
@@ -77,6 +77,7 @@ const fn = new Function('window', 'document', 'Image', 'Audio', 'addEventListene
 
 const env = fn(mockWindow, mockDoc, mockWindow.Image, mockWindow.Audio, mockWindow.addEventListener, CanvasRenderingContext2D, NodeFilter, MutationObserver, mockWindow.requestAnimationFrame);
 
+env.save.unlockedLvls = [1, 2, 3];
 env.setSelectedLvlIdx(2);
 env.startGame();
 const g = env.getG();

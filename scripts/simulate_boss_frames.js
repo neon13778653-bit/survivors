@@ -104,6 +104,7 @@ console.log("Testing full frame simulation for all 5 bosses...");
 function runBossSimulation(bossName, waveNum){
   console.log(`\n--- Simulating Boss ${bossName} (Wave ${waveNum}) ---`);
   // Start game using real startGame() logic
+  env.save.unlockedLvls = [1, 2, 3];
   env.setSelectedLvlIdx(2);
   env.save.selectedLvl = 3;
   env.startGame();
