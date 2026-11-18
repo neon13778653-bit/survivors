@@ -103,6 +103,8 @@ function testFullBossCombat(bossName, waveNum){
   const g = env.getG();
 
   env.warpToWave(waveNum);
+  g.p.maxHp = 1e6;
+  g.p.hp = 1e6;
   const boss = g.enemies.find(e => e.isBoss);
   console.log(`1. Spawned: ${boss.name} (HP: ${boss.hp})`);
 
@@ -121,22 +123,40 @@ function testFullBossCombat(bossName, waveNum){
   }
   console.log(`2. Emergence completed: state = ${boss.spawnState}`);
 
-  // Deal damage to trigger Enrage (< 50% HP)
-  boss.phaseGuardT = 0;
-  boss.immortal = false;
-  boss.hp = boss.maxHp * 0.45;
-  env.update(0.016);
-  
-    env.drawGame();
-    for(const en of g.enemies){
-      if(isNaN(en.x) || isNaN(en.y)) throw new Error('Enemy pos NaN: ' + en.bossId + ' at x=' + en.x + ', y=' + en.y);
+  if(bossName === 'ChitinReaper'){
+    boss.hp = 1;
+    env.hurt(boss, 10);
+    if(boss.spawnState !== 'egg_rebirth') throw new Error(`ChitinReaper failed to enter egg_rebirth state (got ${boss.spawnState})!`);
+    for(let i = 0; i < 190; i++){
+      env.update(0.016);
+      env.drawGame();
+      for(const en of g.enemies){
+        if(isNaN(en.x) || isNaN(en.y)) throw new Error('Enemy pos NaN: ' + en.bossId + ' at x=' + en.x + ', y=' + en.y);
+      }
+      for(const sw of (g.bossShockwaves || [])){
+        if(isNaN(sw.x) || isNaN(sw.y)) throw new Error('Shockwave pos NaN: ' + sw.type + ' at x=' + sw.x + ', y=' + sw.y);
+      }
     }
-    for(const sw of (g.bossShockwaves || [])){
-      if(isNaN(sw.x) || isNaN(sw.y)) throw new Error('Shockwave pos NaN: ' + sw.type + ' at x=' + sw.x + ', y=' + sw.y);
-    }
+    console.log(`3. Egg hatched into Phase 2: phase2Form=${boss.phase2Form}, enraged=${boss.enraged}`);
+    if(!boss.phase2Form || !boss.enraged) throw new Error(`${bossName} failed to hatch into armored enraged Phase 2!`);
+  } else {
+    // Deal damage to trigger Enrage (< 50% HP)
+    boss.phaseGuardT = 0;
+    boss.immortal = false;
+    boss.hp = boss.maxHp * 0.45;
+    env.update(0.016);
+    
+      env.drawGame();
+      for(const en of g.enemies){
+        if(isNaN(en.x) || isNaN(en.y)) throw new Error('Enemy pos NaN: ' + en.bossId + ' at x=' + en.x + ', y=' + en.y);
+      }
+      for(const sw of (g.bossShockwaves || [])){
+        if(isNaN(sw.x) || isNaN(sw.y)) throw new Error('Shockwave pos NaN: ' + sw.type + ' at x=' + sw.x + ', y=' + sw.y);
+      }
 
-  console.log(`3. Enrage triggered: enraged = ${boss.enraged}`);
-  if(!boss.enraged) throw new Error(`${bossName} failed to enter enraged mode!`);
+    console.log(`3. Enrage triggered: enraged = ${boss.enraged}`);
+    if(!boss.enraged) throw new Error(`${bossName} failed to enter enraged mode!`);
+  }
 
   // Run 150 frames in Rage Mode with active abilities and shockwaves
   for(let i = 0; i < 150; i++){

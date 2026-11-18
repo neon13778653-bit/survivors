@@ -33,8 +33,8 @@ async function testDamageAndStats(){
  e.run("FIREARM_ABILITIES.find(a=>a.id==='stopping_power').apply(G.p);");
  assert.ok(Math.abs(e.run('G.p.dmg')-119)<1e-9,'Damage card bonuses must add within their own budget');
  e.run('G.p.shield=0;G.p.armor=.5;G.p.hp=100;G.p.inv=0;damagePlayer(40);');assert.equal(e.run('G.p.hp'),80);
- e.run("G.p.armor=.8;FIREARM_ABILITIES.find(a=>a.id==='kevlar_vest').apply(G.p);G.p.critChance=.9;FIREARM_ABILITIES.find(a=>a.id==='laser_pointer').apply(G.p)");
- assert.equal(e.run('G.p.armor'),.8);assert.equal(e.run('G.p.critChance'),.9);
+ e.run("G.p.armor=.65;FIREARM_ABILITIES.find(a=>a.id==='kevlar_vest').apply(G.p);G.p.critChance=.9;FIREARM_ABILITIES.find(a=>a.id==='laser_pointer').apply(G.p)");
+ assert.equal(e.run('G.p.armor'),.65);assert.equal(e.run('G.p.critChance'),.9);
  e.run("save.inv.push('w_vector');save.equip.weapon='w_vector';startGame()");
  assert.equal(e.run('calcStats().dmg'),e.run('G.p.dmg'));assert.equal(e.run('calcStats().rate'),e.run('1/G.p.cool'));
 }
