@@ -284,7 +284,7 @@
   position: relative;
   width: 100%;
   max-width: none;
-  min-height: 0;
+  min-height: 112px;
   margin: 0;
   padding: 11px 13px 10px;
   border: 0;
@@ -295,6 +295,7 @@
   text-align: center;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   gap: 0;
 }
 
@@ -399,11 +400,16 @@
 
 #screen-menu .lvl-rec-tag {
   margin: 0;
+  min-height: 12px;
+  max-width: 100%;
   font-size: 9.5px;
   font-weight: 800;
   color: #fde68a;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95);
   line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 #screen-menu .lvl-footer-row {
@@ -1137,6 +1143,7 @@
 
 @media (max-height: 700px) {
   #screen-menu .lvl-info-card {
+    min-height: 98px;
     padding: 8px 10px 7px;
   }
   #screen-menu .lvl-footer-row {
@@ -1163,6 +1170,7 @@
 
 @media (max-height: 500px) {
   #screen-menu .lvl-info-card {
+    min-height: 82px;
     padding: 6px 10px;
   }
   #screen-menu .menu-stage-rail {
