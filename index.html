@@ -5450,6 +5450,218 @@ const Sfx = {
 };
 window.Sfx = Sfx;
 
+// ===== ДИНАМИЧЕСКАЯ ПРОЦЕДУРНАЯ МУЗЫКА (Zero-KB Web Audio Synthwave BGM) =====
+const Bgm = {
+  enabled: true,
+  unlocked: false,
+  mode: 'lobby', // 'lobby' | 'combat' | 'event' | 'boss' | 'boss_enraged'
+  _timer: null,
+  _step: 0,
+  _nextNoteT: 0,
+  _gain: null,
+  _gainCtx: null,
+  _noiseBuf: null,
+  _duck: 1.0,
+
+  _midiToHz(m) { return 440 * Math.pow(2, (m - 69) / 12); },
+
+  _ensureGraph() {
+    if (!Sfx || !Sfx.ctx || typeof Sfx.ctx.createGain !== 'function') return false;
+    const ctx = Sfx.ctx;
+    if (this._gainCtx !== ctx) {
+      this._gainCtx = ctx;
+      this._gain = ctx.createGain();
+      this._gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+      this._gain.connect(Sfx.masterGain || ctx.destination);
+      const len = Math.floor((ctx.sampleRate || 44100) * 0.14);
+      const buf = ctx.createBuffer(1, len, ctx.sampleRate || 44100);
+      const ch = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) ch[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 1.8);
+      this._noiseBuf = buf;
+    }
+    return true;
+  },
+
+  unlock() {
+    this.unlocked = true;
+    if (Sfx && typeof Sfx.init === 'function') Sfx.init();
+    this.sync();
+  },
+
+  setMode(newMode, ducked) {
+    const nextDuck = ducked ? 0.32 : 1.0;
+    if (newMode && newMode !== this.mode) this.mode = newMode;
+    this._duck = nextDuck;
+    this.sync();
+  },
+
+  _shouldPlay() {
+    if (!this.unlocked || !this.enabled) return false;
+    if (Sfx && Sfx.enabled === false) return false;
+    if (typeof document !== 'undefined' && document.hidden) return false;
+    return !!(Sfx && Sfx.ctx && Sfx.ctx.state === 'running');
+  },
+
+  sync() {
+    if (!this._ensureGraph()) return;
+    const ctx = Sfx.ctx;
+    const play = this._shouldPlay();
+    const baseVol = this.mode === 'lobby' ? 0.13 : (this.mode === 'boss_enraged' ? 0.21 : (this.mode === 'boss' ? 0.19 : 0.17));
+    const target = play ? (baseVol * this._duck) : 0.0001;
+    try {
+      this._gain.gain.setTargetAtTime(target, ctx.currentTime, 0.09);
+    } catch (e) {}
+    if (play && !this._timer) {
+      this._nextNoteT = ctx.currentTime + 0.06;
+      this._timer = setInterval(() => this._tick(), 45);
+    } else if (!play && this._timer) {
+      clearInterval(this._timer);
+      this._timer = null;
+    }
+  },
+
+  _playKick(t, punch) {
+    const ctx = Sfx.ctx;
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(punch ? 148 : 122, t);
+    osc.frequency.exponentialRampToValueAtTime(38, t + 0.11);
+    g.gain.setValueAtTime(punch ? 0.56 : 0.42, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+    osc.connect(g); g.connect(this._gain);
+    osc.start(t); osc.stop(t + 0.16);
+  },
+
+  _playNoise(t, vol, hpHz, dur) {
+    if (!this._noiseBuf) return;
+    const ctx = Sfx.ctx;
+    const src = ctx.createBufferSource();
+    src.buffer = this._noiseBuf;
+    const flt = ctx.createBiquadFilter();
+    flt.type = 'highpass';
+    flt.frequency.setValueAtTime(hpHz, t);
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(vol, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    src.connect(flt); flt.connect(g); g.connect(this._gain);
+    src.start(t); src.stop(t + dur + 0.02);
+  },
+
+  _playTone(t, midi, dur, type, vol, cutoffHz) {
+    const ctx = Sfx.ctx;
+    const osc = ctx.createOscillator();
+    const flt = ctx.createBiquadFilter();
+    const g = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(this._midiToHz(midi), t);
+    flt.type = 'lowpass';
+    flt.frequency.setValueAtTime(cutoffHz, t);
+    flt.frequency.exponentialRampToValueAtTime(Math.max(220, cutoffHz * 0.42), t + dur);
+    g.gain.setValueAtTime(0.001, t);
+    g.gain.linearRampToValueAtTime(vol, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    osc.connect(flt); flt.connect(g); g.connect(this._gain);
+    osc.start(t); osc.stop(t + dur + 0.02);
+  },
+
+  _scheduleStep(step, t, stepDur) {
+    const m = this.mode;
+    const bar = Math.floor(step / 16) % 4;
+    const beat = step % 16;
+
+    if (m === 'lobby') {
+      // Атмосферный тёмный синт в лобби (D-minor: Dm -> Bb -> C -> Am)
+      const roots = [38, 34, 36, 33];
+      const arps = [
+        [62, 65, 69, 72], [58, 62, 65, 70], [60, 64, 67, 72], [57, 60, 64, 69]
+      ];
+      if (beat === 0) this._playTone(t, roots[bar], stepDur * 14, 'triangle', 0.34, 420);
+      if (beat % 4 === 0) this._playTone(t, arps[bar][(beat / 4) % 4], stepDur * 3.2, 'sine', 0.14, 1500);
+      if (beat === 10) this._playTone(t, arps[bar][2] + 12, stepDur * 2.5, 'triangle', 0.08, 1900);
+      return;
+    }
+
+    if (m === 'boss' || m === 'boss_enraged') {
+      // Агрессивный босс-трек: фригийский Dm -> Eb -> Dm -> C#dim
+      const enraged = m === 'boss_enraged';
+      const roots = [38, 39, 38, 37];
+      const root = roots[bar];
+      // Ударная секция (double-kick в ярости)
+      if (beat === 0 || beat === 6 || beat === 8 || (enraged && (beat === 3 || beat === 11 || beat === 14))) {
+        this._playKick(t, true);
+      }
+      if (beat === 4 || beat === 12) this._playNoise(t, 0.25, 1600, 0.11);
+      if (beat % 2 === 1) this._playNoise(t, enraged ? 0.11 : 0.08, 6500, 0.04);
+      // Октавный бас-рифф
+      const bassNote = (beat % 2 === 0) ? root : (root + 12);
+      this._playTone(t, bassNote, stepDur * 0.9, 'sawtooth', 0.28, enraged ? 1350 : 980);
+      // Тревожный лид-арпеджио
+      const leadSeq = [62, 63, 69, 65, 62, 69, 70, 69];
+      if (enraged || beat % 2 === 0) {
+        const ln = leadSeq[(beat >> (enraged ? 0 : 1)) % leadSeq.length] + (bar === 1 ? 1 : (bar === 3 ? -1 : 0));
+        this._playTone(t, ln, stepDur * (enraged ? 0.85 : 1.5), 'square', enraged ? 0.13 : 0.10, enraged ? 2600 : 1900);
+      }
+      return;
+    }
+
+    // Бой ('combat') и Событие волны / Овердрайв ('event')
+    const isEvent = m === 'event';
+    const roots = [38, 34, 36, 33]; // D, Bb, C, A
+    const root = roots[bar];
+    if (beat === 0 || beat === 8 || (isEvent && (beat === 6 || beat === 14))) {
+      this._playKick(t, isEvent);
+    }
+    if (beat === 4 || beat === 12) this._playNoise(t, 0.20, 1800, 0.09);
+    if (beat % 2 === 1 || (isEvent && beat % 2 === 0)) {
+      this._playNoise(t, beat % 4 === 2 ? 0.10 : 0.06, 6800, 0.035);
+    }
+    // Пульсирующий 16-дольный synthwave-бас
+    if (isEvent || beat % 2 === 0) {
+      const oct = (beat === 6 || beat === 14) ? 12 : 0;
+      this._playTone(t, root + oct, stepDur * (isEvent ? 0.85 : 1.4), 'sawtooth', 0.24, isEvent ? 1150 : 820);
+    }
+    // Мелодический хук (каждый чётный такт или постоянно в ивенте)
+    const riff = [
+      [62, 0, 65, 0, 69, 0, 67, 65],
+      [62, 0, 65, 0, 70, 0, 69, 65],
+      [64, 0, 67, 0, 72, 0, 70, 67],
+      [69, 0, 67, 65, 64, 0, 61, 0]
+    ];
+    if (beat % 2 === 0) {
+      const n = riff[bar][(beat / 2) % 8];
+      if (n > 0 && (isEvent || (Math.floor(step / 64) % 2 === 0) || bar >= 2)) {
+        this._playTone(t, n + (isEvent ? 12 : 0), stepDur * 1.6, isEvent ? 'square' : 'triangle', isEvent ? 0.11 : 0.13, isEvent ? 2400 : 1750);
+      }
+    }
+  },
+
+  _tick() {
+    if (!this._shouldPlay()) { this.sync(); return; }
+    const ctx = Sfx.ctx;
+    const bpm = this.mode === 'lobby' ? 100
+      : (this.mode === 'boss_enraged' ? 148
+      : (this.mode === 'boss' ? 138
+      : (this.mode === 'event' ? 134 : 124)));
+    const stepDur = (60 / bpm) / 4; // 16th note
+    if (this._nextNoteT < ctx.currentTime - 0.2) this._nextNoteT = ctx.currentTime + 0.03;
+    while (this._nextNoteT < ctx.currentTime + 0.13) {
+      this._scheduleStep(this._step, this._nextNoteT, stepDur);
+      this._nextNoteT += stepDur;
+      this._step = (this._step + 1) % 256;
+    }
+  }
+};
+window.Bgm = Bgm;
+if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+  const _unlockBgm = () => Bgm.unlock();
+  window.addEventListener('pointerdown', _unlockBgm, { passive: true, once: true });
+  window.addEventListener('keydown', _unlockBgm, { passive: true, once: true });
+  if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
+    document.addEventListener('visibilitychange', () => Bgm.sync());
+  }
+}
+
 // ===== УРОВНИ И ГЕРОИ =====
 const LEVELS=[
   {
@@ -8080,15 +8292,24 @@ function resize(){
 }
 addEventListener('resize',resize);resize();
 
-// Спрайты персонажей
+// Спрайты персонажей (ленивая подгрузка — на старте грузится только активный герой)
+const ASSET_VER='v=22';
+function verUrl(u){return u+(u.includes('?')?'&':'?')+ASSET_VER;}
+function lazyImg(path,addVer){
+  const img=new Image();
+  img._lazySrc=addVer?verUrl(path):path;
+  return img;
+}
+function loadImg(img){
+  if(img&&img._lazySrc&&!img.src)img.src=img._lazySrc;
+  return img;
+}
 const heroImg=new Image();heroImg.src='img/heroes/hero_sheet.webp?v=2';
-const marcusImg=new Image();marcusImg.src='img/heroes/hero_marcus_sheet.webp?v=14';
-const marcusPortImg=new Image();marcusPortImg.src='img/heroes/hero_marcus_portrait.webp?v=15';
-const leonImg=new Image();leonImg.src='img/heroes/hero_leon_sheet.webp?v=12';
-const leonPortImg=new Image();leonPortImg.src='img/heroes/hero_leon_portrait.webp?v=13';
-const viktorImg=new Image();viktorImg.src='img/heroes/hero_viktor_sheet.webp?v=1';
-const rexImg=new Image();rexImg.src='img/heroes/hero_rex_sheet.webp?v=1';
-const kaelImg=new Image();kaelImg.src='img/heroes/hero_kael_sheet.webp?v=2';
+const marcusImg=lazyImg('img/heroes/hero_marcus_sheet.webp?v=14');
+const leonImg=lazyImg('img/heroes/hero_leon_sheet.webp?v=12');
+const viktorImg=lazyImg('img/heroes/hero_viktor_sheet.webp?v=1');
+const rexImg=lazyImg('img/heroes/hero_rex_sheet.webp?v=1');
+const kaelImg=lazyImg('img/heroes/hero_kael_sheet.webp?v=2');
 
 const HERO_SHEETS = {
   john: heroImg,
@@ -8101,86 +8322,29 @@ const HERO_SHEETS = {
 
 function getHeroImage(charId){
   const id = charId || (save && save.selectedChar) || 'john';
-  return HERO_SHEETS[id] || heroImg;
+  return loadImg(HERO_SHEETS[id] || heroImg);
 }
 
-// Динамические спрайты рук героя в зависимости от надетого оружия (Джон)
-const HERO_ARMS_IMGS = {
-  empty: new Image(),
-  w_pistol: new Image(),
-  w_smg: new Image(),
-  w_shotgun: new Image(),
-  w_plasma: new Image(),
-  w_laser: new Image()
-};
-HERO_ARMS_IMGS.empty.src = 'img/heroes/hero_arms_empty.webp';
-HERO_ARMS_IMGS.w_pistol.src = 'img/heroes/hero_arms_w_pistol.webp';
-HERO_ARMS_IMGS.w_smg.src = 'img/heroes/hero_arms_w_smg.webp';
-HERO_ARMS_IMGS.w_shotgun.src = 'img/heroes/hero_arms_w_shotgun.webp';
-HERO_ARMS_IMGS.w_plasma.src = 'img/heroes/hero_arms_w_plasma.webp';
-HERO_ARMS_IMGS.w_laser.src = 'img/heroes/hero_arms_w_laser.webp';
-HERO_ARMS_IMGS.w_minigun = HERO_ARMS_IMGS.w_laser;
+function makeLazyArms(prefix, ver){
+  const q = ver ? ('?'+ver) : '';
+  const t = {
+    empty: lazyImg(`img/heroes/${prefix}_arms_empty.webp${q}`),
+    w_pistol: lazyImg(`img/heroes/${prefix}_arms_w_pistol.webp${q}`),
+    w_smg: lazyImg(`img/heroes/${prefix}_arms_w_smg.webp${q}`),
+    w_shotgun: lazyImg(`img/heroes/${prefix}_arms_w_shotgun.webp${q}`),
+    w_plasma: lazyImg(`img/heroes/${prefix}_arms_w_plasma.webp${q}`),
+    w_laser: lazyImg(`img/heroes/${prefix}_arms_w_laser.webp${q}`)
+  };
+  t.w_minigun = t.w_laser;
+  return t;
+}
 
-// Динамические спрайты рук Маркуса с тактическими бинтами
-const HERO_MARCUS_ARMS_IMGS = {
-  empty: new Image(),
-  w_pistol: new Image(),
-  w_smg: new Image(),
-  w_shotgun: new Image(),
-  w_plasma: new Image(),
-  w_laser: new Image()
-};
-HERO_MARCUS_ARMS_IMGS.empty.src = 'img/heroes/hero_marcus_arms_empty.webp?v=13';
-HERO_MARCUS_ARMS_IMGS.w_pistol.src = 'img/heroes/hero_marcus_arms_w_pistol.webp?v=13';
-HERO_MARCUS_ARMS_IMGS.w_smg.src = 'img/heroes/hero_marcus_arms_w_smg.webp?v=13';
-HERO_MARCUS_ARMS_IMGS.w_shotgun.src = 'img/heroes/hero_marcus_arms_w_shotgun.webp?v=13';
-HERO_MARCUS_ARMS_IMGS.w_plasma.src = 'img/heroes/hero_marcus_arms_w_plasma.webp?v=13';
-HERO_MARCUS_ARMS_IMGS.w_laser.src = 'img/heroes/hero_marcus_arms_w_laser.webp?v=13';
-HERO_MARCUS_ARMS_IMGS.w_minigun = HERO_MARCUS_ARMS_IMGS.w_laser;
-
-// Динамические спрайты рук Леона с зелёным плащом и стрелковыми наручами
-const HERO_LEON_ARMS_IMGS = {
-  empty: new Image(),
-  w_pistol: new Image(),
-  w_smg: new Image(),
-  w_shotgun: new Image(),
-  w_plasma: new Image(),
-  w_laser: new Image()
-};
-HERO_LEON_ARMS_IMGS.empty.src = 'img/heroes/hero_leon_arms_empty.webp?v=9';
-HERO_LEON_ARMS_IMGS.w_pistol.src = 'img/heroes/hero_leon_arms_w_pistol.webp?v=9';
-HERO_LEON_ARMS_IMGS.w_smg.src = 'img/heroes/hero_leon_arms_w_smg.webp?v=9';
-HERO_LEON_ARMS_IMGS.w_shotgun.src = 'img/heroes/hero_leon_arms_w_shotgun.webp?v=9';
-HERO_LEON_ARMS_IMGS.w_plasma.src = 'img/heroes/hero_leon_arms_w_plasma.webp?v=9';
-HERO_LEON_ARMS_IMGS.w_laser.src = 'img/heroes/hero_leon_arms_w_laser.webp?v=9';
-HERO_LEON_ARMS_IMGS.w_minigun = HERO_LEON_ARMS_IMGS.w_laser;
-
-const HERO_VIKTOR_ARMS_IMGS = {empty:new Image(),w_pistol:new Image(),w_smg:new Image(),w_shotgun:new Image(),w_plasma:new Image(),w_laser:new Image()};
-HERO_VIKTOR_ARMS_IMGS.empty.src = 'img/heroes/hero_viktor_arms_empty.webp?v=1';
-HERO_VIKTOR_ARMS_IMGS.w_pistol.src = 'img/heroes/hero_viktor_arms_w_pistol.webp?v=1';
-HERO_VIKTOR_ARMS_IMGS.w_smg.src = 'img/heroes/hero_viktor_arms_w_smg.webp?v=1';
-HERO_VIKTOR_ARMS_IMGS.w_shotgun.src = 'img/heroes/hero_viktor_arms_w_shotgun.webp?v=1';
-HERO_VIKTOR_ARMS_IMGS.w_plasma.src = 'img/heroes/hero_viktor_arms_w_plasma.webp?v=1';
-HERO_VIKTOR_ARMS_IMGS.w_laser.src = 'img/heroes/hero_viktor_arms_w_laser.webp?v=1';
-HERO_VIKTOR_ARMS_IMGS.w_minigun = HERO_VIKTOR_ARMS_IMGS.w_laser;
-
-const HERO_REX_ARMS_IMGS = {empty:new Image(),w_pistol:new Image(),w_smg:new Image(),w_shotgun:new Image(),w_plasma:new Image(),w_laser:new Image()};
-HERO_REX_ARMS_IMGS.empty.src = 'img/heroes/hero_rex_arms_empty.webp?v=1';
-HERO_REX_ARMS_IMGS.w_pistol.src = 'img/heroes/hero_rex_arms_w_pistol.webp?v=1';
-HERO_REX_ARMS_IMGS.w_smg.src = 'img/heroes/hero_rex_arms_w_smg.webp?v=1';
-HERO_REX_ARMS_IMGS.w_shotgun.src = 'img/heroes/hero_rex_arms_w_shotgun.webp?v=1';
-HERO_REX_ARMS_IMGS.w_plasma.src = 'img/heroes/hero_rex_arms_w_plasma.webp?v=1';
-HERO_REX_ARMS_IMGS.w_laser.src = 'img/heroes/hero_rex_arms_w_laser.webp?v=1';
-HERO_REX_ARMS_IMGS.w_minigun = HERO_REX_ARMS_IMGS.w_laser;
-
-const HERO_KAEL_ARMS_IMGS = {empty:new Image(),w_pistol:new Image(),w_smg:new Image(),w_shotgun:new Image(),w_plasma:new Image(),w_laser:new Image()};
-HERO_KAEL_ARMS_IMGS.empty.src = 'img/heroes/hero_kael_arms_empty.webp?v=1';
-HERO_KAEL_ARMS_IMGS.w_pistol.src = 'img/heroes/hero_kael_arms_w_pistol.webp?v=1';
-HERO_KAEL_ARMS_IMGS.w_smg.src = 'img/heroes/hero_kael_arms_w_smg.webp?v=1';
-HERO_KAEL_ARMS_IMGS.w_shotgun.src = 'img/heroes/hero_kael_arms_w_shotgun.webp?v=1';
-HERO_KAEL_ARMS_IMGS.w_plasma.src = 'img/heroes/hero_kael_arms_w_plasma.webp?v=1';
-HERO_KAEL_ARMS_IMGS.w_laser.src = 'img/heroes/hero_kael_arms_w_laser.webp?v=1';
-HERO_KAEL_ARMS_IMGS.w_minigun = HERO_KAEL_ARMS_IMGS.w_laser;
+const HERO_ARMS_IMGS = makeLazyArms('hero', '');
+const HERO_MARCUS_ARMS_IMGS = makeLazyArms('hero_marcus', 'v=13');
+const HERO_LEON_ARMS_IMGS = makeLazyArms('hero_leon', 'v=9');
+const HERO_VIKTOR_ARMS_IMGS = makeLazyArms('hero_viktor', 'v=1');
+const HERO_REX_ARMS_IMGS = makeLazyArms('hero_rex', 'v=1');
+const HERO_KAEL_ARMS_IMGS = makeLazyArms('hero_kael', 'v=1');
 
 
 function getHeroArmsImage(wepId, charId){
@@ -8192,10 +8356,10 @@ function getHeroArmsImage(wepId, charId){
   else if(cid === 'rex') table = HERO_REX_ARMS_IMGS;
   else if(cid === 'kael') table = HERO_KAEL_ARMS_IMGS;
   if(!wepId || wepId === 'empty' || wepId === 'none') {
-    return table.empty;
+    return loadImg(table.empty);
   }
   const armAlias={w_rebel:'w_shotgun',w_python:'w_pistol',w_vector:'w_smg',w_jericho:'w_pistol',w_marauder:'w_smg',w_vepr_auto:'w_shotgun',w_nova:'w_plasma',w_aa12:'w_shotgun',w_phantom:'w_laser',m_rune:'empty',m_bone:'empty',m_frost:'empty',m_storm:'empty',m_hellfire:'empty',m_scepter:'empty',m_heaven:'empty',m_void:'empty',m_astral:'empty',m_grimoire:'empty'};
-  return table[wepId] || table[armAlias[wepId]] || table.w_pistol;
+  return loadImg(table[wepId] || table[armAlias[wepId]] || table.w_pistol);
 }
 
 const HERO_SHOULDER_OFFSETS = {
@@ -8227,172 +8391,106 @@ function getHeroAlign(charId){
 }
 
 const heroArmsImg = HERO_ARMS_IMGS.w_pistol;
-const zombieImg=new Image();zombieImg.src='img/monsters/zombie_sheet.webp';
-const zombieMutantImg=new Image();zombieMutantImg.src='img/monsters/zombie_mutant_sheet.webp';
-const skeletonImg=new Image();skeletonImg.src='img/monsters/monster_skeleton_sheet.webp';
-const houndImg=new Image();houndImg.src='img/monsters/hound_sheet.webp';
+const zombieImg=new Image();zombieImg.src='img/monsters/zombie_sheet.webp?'+ASSET_VER;
+const zombieMutantImg=lazyImg('img/monsters/zombie_mutant_sheet.webp',true);
+const skeletonImg=lazyImg('img/monsters/monster_skeleton_sheet.webp',true);
+const houndImg=lazyImg('img/monsters/hound_sheet.webp',true);
 const monsterSpriteImgs=Object.create(null);
 const monsterSheetImgs=Object.create(null);
-for(const enemyDef of Object.values(CONFIG.enemies)){
-  if(enemyDef.sprite&&!monsterSpriteImgs[enemyDef.sprite]){
-    const img=new Image();img.src=enemyDef.sprite;monsterSpriteImgs[enemyDef.sprite]=img;
-// ==============================================================================
-// СИСТЕМА ПРЕДВАРИТЕЛЬНОЙ ЗАГРУЗКИ И ДЕКОДИРОВАНИЯ РЕСУРСОВ (PRELOAD ENGINE)
-// ==============================================================================
-// Данный блок инициализирует предварительную фоновую загрузку всех ключевых
-// графических текстур, спрайтов боссов, миньонов и питомцев для предотвращения микрофризов.
-// Архитектура конвейера ресурсов:
-// 1. Анимированные спрайт-листы боссов (BOSS SPRITE SHEETS):
-//    - Зомби-могильщик (img/monsters/monster_ghoul_sheet.webp, 8 кадров ходьбы и атаки)
-//    - Король крыс (img/monsters/monster_rat_sheet.webp, 8 кадров скоростного рывка)
-//    - Мутант-аберрация (img/monsters/monster_abomination_sheet.webp, 8 кадров сокрушительного шага)
-// 2. Спрайт-листы компаньонов и питомцев (PET COMPANIONS):
-//    - Пещерный паучок (img/monsters/monster_spiderling_sheet.webp, 8 кадров)
-//    - Слизень-малыш (img/monsters/monster_slime_sheet.webp, 8 кадров)
-//    - Ручной нетопырь (img/monsters/monster_bat_sheet.webp, 8 кадров)
-//    - Сундучок-мимик (img/monsters/monster_mimic_sheet.webp, 8 кадров)
-//    - Страж-гаргулья (img/monsters/monster_gargoyle_sheet.webp, 8 кадров)
-//    - Древень-хранитель (img/monsters/monster_treant_sheet.webp, 8 кадров)
-// 3. Иконки и текстуры снаряжения (EQUIPMENT ICONS):
-//    - Тактические барьеры и щиты всех 5 тиров редкости (1★ - 5★)
-//    - Боевые артефакты: компас, неодимовое кольцо, кевлар, стимулятор, обойма и др.
-// 4. Кэш процедурных оверлеев рук выжившего (HERO HAND OVERLAY CACHE):
-//    - Синхронизация ведущей и поддерживающей руки под углы стрельбы огнестрельного оружия.
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// ==============================================================================
-  }
-  if(enemyDef.sheet&&!monsterSheetImgs[enemyDef.sheet]){
-    const img=new Image();img.src=enemyDef.sheet+(enemyDef.sheet.includes('?')?'':'?v=21');monsterSheetImgs[enemyDef.sheet]=img;
+function ensureMonsterSheet(key){
+  if(!key)return null;
+  if(!monsterSheetImgs[key]){const img=new Image();img.src=verUrl(key);monsterSheetImgs[key]=img;}
+  return monsterSheetImgs[key];
+}
+function ensureMonsterSprite(key){
+  if(!key)return null;
+  if(!monsterSpriteImgs[key]){const img=new Image();img.src=verUrl(key);monsterSpriteImgs[key]=img;}
+  return monsterSpriteImgs[key];
+}
+function lazyBossImg(path){return lazyImg(path,true);}
+function bindFallback(sheetImg,fallbackImg){
+  if(sheetImg&&fallbackImg)sheetImg.onerror=()=>loadImg(fallbackImg);
+}
+const crateImg=new Image();crateImg.src='img/ui/crate_wood.webp?'+ASSET_VER;
+const airdropFullImg=lazyImg('img/ui/airdrop_full.webp',true);
+const airdropBoxImg=new Image();airdropBoxImg.src='img/ui/airdrop_box.webp?'+ASSET_VER;
+
+// Лениво-подгружаемые боссы по главам (не грузят 3-ю главу при открытии меню)
+const bossGravediggerImg=lazyBossImg('img/monsters/boss_gravedigger.webp');
+const bossGravediggerWalkImg=lazyBossImg('img/monsters/boss_gravedigger_walk.webp');
+const bossGravediggerSlamImg=lazyBossImg('img/monsters/boss_gravedigger_slam.webp');
+const bossGravediggerDigImg=lazyBossImg('img/monsters/boss_gravedigger_dig.webp');
+const bossGravediggerRoarImg=lazyBossImg('img/monsters/boss_gravedigger_roar.webp');
+bindFallback(bossGravediggerWalkImg,bossGravediggerImg);
+
+const bossSlimeImg=lazyBossImg('img/monsters/monster_slime.webp');
+const bossSlimeSheetImg=lazyBossImg('img/monsters/monster_slime_sheet.webp');
+
+const bossCyberCerberusImg=lazyBossImg('img/monsters/boss_cyber_cerberus.webp');
+const bossCyberCerberusSheetImg=lazyBossImg('img/monsters/boss_cyber_cerberus_sheet.webp');
+const bossCyberCerberusWalkImg=bossCyberCerberusSheetImg;
+const bossCyberCerberusAttackImg=lazyBossImg('img/monsters/boss_cyber_cerberus_attack.webp');
+bindFallback(bossCyberCerberusSheetImg,bossCyberCerberusImg);
+
+const bossBioButcherImg=lazyBossImg('img/monsters/boss_bio_butcher.webp');
+const bossBioButcherSheetImg=lazyBossImg('img/monsters/boss_bio_butcher_sheet.webp');
+const bossBioButcherWalkImg=bossBioButcherSheetImg;
+const bossBioButcherAttackImg=lazyBossImg('img/monsters/boss_bio_butcher_attack.webp');
+bindFallback(bossBioButcherSheetImg,bossBioButcherImg);
+
+const bossChitinReaperImg=lazyBossImg('img/monsters/boss_chitin_reaper.webp');
+const bossChitinReaperSheetImg=lazyBossImg('img/monsters/boss_chitin_reaper_sheet.webp');
+const bossChitinReaperWalkImg=bossChitinReaperSheetImg;
+const bossChitinReaperAttackImg=lazyBossImg('img/monsters/boss_chitin_reaper_attack.webp');
+const bossChitinEggImg=lazyBossImg('img/monsters/boss_chitin_egg.webp');
+const bossChitinEggSheetImg=lazyBossImg('img/monsters/boss_chitin_egg_sheet.webp');
+const bossChitinReaperP2Img=lazyBossImg('img/monsters/boss_chitin_reaper_p2.webp');
+const bossChitinReaperP2SheetImg=lazyBossImg('img/monsters/boss_chitin_reaper_p2_sheet.webp');
+const bossChitinReaperP2AttackImg=lazyBossImg('img/monsters/boss_chitin_reaper_p2_attack.webp');
+bindFallback(bossChitinReaperSheetImg,bossChitinReaperImg);
+bindFallback(bossChitinReaperP2SheetImg,bossChitinReaperP2Img);
+
+const bossNeuroOvermindImg=lazyBossImg('img/monsters/boss_neuro_overmind.webp');
+const bossNeuroOvermindSheetImg=lazyBossImg('img/monsters/boss_neuro_overmind_sheet.webp');
+const bossNeuroOvermindFloatImg=bossNeuroOvermindSheetImg;
+const bossNeuroOvermindAttackImg=lazyBossImg('img/monsters/boss_neuro_overmind_attack.webp');
+bindFallback(bossNeuroOvermindSheetImg,bossNeuroOvermindImg);
+
+const bossPatientZeroImg=lazyBossImg('img/monsters/boss_patient_zero.webp');
+const bossPatientZeroSheetImg=lazyBossImg('img/monsters/boss_patient_zero_sheet.webp');
+const bossPatientZeroWalkImg=bossPatientZeroSheetImg;
+const bossPatientZeroAttackImg=lazyBossImg('img/monsters/boss_patient_zero_attack.webp');
+bindFallback(bossPatientZeroSheetImg,bossPatientZeroImg);
+
+const _preloadedChapters=Object.create(null);
+function preloadChapterAssets(lvlId){
+  const id=(lvlId===2||lvlId===3)?lvlId:1;
+  if(_preloadedChapters[id])return;
+  _preloadedChapters[id]=true;
+  loadImg(airdropFullImg);
+  if(id===1){
+    [zombieMutantImg,houndImg].forEach(loadImg);
+    ['img/monsters/monster_rat_sheet.webp','img/monsters/monster_mushroom_sheet.webp','img/monsters/monster_spider_sheet.webp',
+     'img/monsters/monster_abomination_sheet.webp','img/monsters/monster_slime_sheet.webp','img/monsters/monster_ghoul_sheet.webp',
+     'img/monsters/monster_bat_sheet.webp','img/monsters/monster_mimic_sheet.webp','img/monsters/monster_gargoyle_sheet.webp'].forEach(ensureMonsterSheet);
+    [bossGravediggerWalkImg,bossGravediggerSlamImg,bossGravediggerDigImg,bossGravediggerRoarImg].forEach(loadImg);
+  }else if(id===2){
+    [zombieMutantImg,skeletonImg,houndImg].forEach(loadImg);
+    ['img/monsters/monster_skeleton_sheet.webp','img/monsters/monster_spiderling_sheet.webp','img/monsters/monster_spider_sheet.webp',
+     'img/monsters/monster_spider_egg_sheet.webp','img/monsters/monster_broodmother_sheet.webp','img/monsters/monster_slime_sheet.webp',
+     'img/monsters/monster_treant_sheet.webp','img/monsters/monster_bat_sheet.webp','img/monsters/monster_ghoul_sheet.webp',
+     'img/monsters/monster_mimic_sheet.webp','img/monsters/monster_gargoyle_sheet.webp','img/monsters/boss_kraken_sheet.webp'].forEach(ensureMonsterSheet);
+    monsterSheetImgs['img/monsters/monster_slime_sheet.webp']&&(bossSlimeSheetImg.src=monsterSheetImgs['img/monsters/monster_slime_sheet.webp'].src);
+  }else if(id===3){
+    ['img/monsters/bunker_cyber_zombie_sheet.webp','img/monsters/bunker_spark_drone_sheet.webp','img/monsters/bunker_servo_hound_sheet.webp',
+     'img/monsters/bunker_acid_mite_sheet.webp','img/monsters/bunker_bio_spitter_sheet.webp','img/monsters/bunker_hazmat_brute_sheet.webp',
+     'img/monsters/bunker_brain_crawler_sheet.webp','img/monsters/bunker_saw_bot_sheet.webp','img/monsters/bunker_riot_enforcer_sheet.webp',
+     'img/monsters/bunker_bio_brute_sheet.webp','img/monsters/monster_spiderling_sheet.webp'].forEach(ensureMonsterSheet);
+    [bossCyberCerberusSheetImg,bossCyberCerberusAttackImg,bossBioButcherSheetImg,bossBioButcherAttackImg,
+     bossChitinReaperSheetImg,bossChitinReaperAttackImg,bossChitinEggSheetImg,bossChitinReaperP2SheetImg,bossChitinReaperP2AttackImg,
+     bossNeuroOvermindSheetImg,bossNeuroOvermindAttackImg,bossPatientZeroSheetImg,bossPatientZeroAttackImg].forEach(loadImg);
   }
 }
-['img/monsters/monster_slime.webp','img/monsters/monster_bat.webp','img/monsters/monster_mimic.webp','img/monsters/monster_gargoyle.webp','img/monsters/monster_treant.webp',
- 'img/monsters/monster_mushroom.webp','img/monsters/monster_spiderling.webp','img/monsters/monster_rat.webp','img/monsters/monster_ghoul.webp','img/monsters/monster_abomination.webp',
- 'img/monsters/boss_kraken.webp',
- 'img/monsters/bunker_cyber_zombie.webp','img/monsters/bunker_spark_drone.webp','img/monsters/bunker_servo_hound.webp','img/monsters/bunker_acid_mite.webp',
- 'img/monsters/bunker_bio_spitter.webp','img/monsters/bunker_hazmat_brute.webp','img/monsters/bunker_brain_crawler.webp','img/monsters/bunker_saw_bot.webp',
- 'img/monsters/bunker_riot_enforcer.webp','img/monsters/bunker_bio_brute.webp',
- 'img/pets/pet_slime_icon.webp?v=3','img/pets/pet_bat_icon.webp?v=3','img/pets/pet_mimic_icon.webp?v=3','img/pets/pet_gargoyle_icon.webp?v=3','img/pets/pet_treant_icon.webp?v=3',
- 'img/pets/pet_mushroom_icon.webp?v=3','img/pets/pet_spider_icon.webp?v=3','img/pets/pet_rat_icon.webp?v=3','img/pets/pet_ghoul_icon.webp?v=3'].forEach(s=>{
-  if(!monsterSpriteImgs[s]){const img=new Image();img.src=s;monsterSpriteImgs[s]=img;}
-});
-['img/monsters/monster_mushroom_sheet.webp','img/monsters/monster_spiderling_sheet.webp','img/monsters/monster_spider_sheet.webp',
- 'img/monsters/monster_broodmother_sheet.webp','img/monsters/monster_spider_egg_sheet.webp','img/monsters/monster_rat_sheet.webp',
- 'img/monsters/monster_ghoul_sheet.webp','img/monsters/monster_abomination_sheet.webp','img/monsters/monster_slime_sheet.webp',
- 'img/monsters/monster_bat_sheet.webp','img/monsters/monster_mimic_sheet.webp','img/monsters/monster_gargoyle_sheet.webp','img/monsters/monster_treant_sheet.webp',
- 'img/monsters/monster_skeleton_sheet.webp',
- 'img/monsters/bunker_cyber_zombie_sheet.webp','img/monsters/bunker_spark_drone_sheet.webp','img/monsters/bunker_servo_hound_sheet.webp','img/monsters/bunker_acid_mite_sheet.webp',
- 'img/monsters/bunker_bio_spitter_sheet.webp','img/monsters/bunker_hazmat_brute_sheet.webp','img/monsters/bunker_brain_crawler_sheet.webp','img/monsters/bunker_saw_bot_sheet.webp',
- 'img/monsters/bunker_riot_enforcer_sheet.webp','img/monsters/bunker_bio_brute_sheet.webp',
- 'img/pets/pet_slime_sheet.webp?v=3','img/pets/pet_bat_sheet.webp?v=3','img/pets/pet_mimic_sheet.webp?v=3','img/pets/pet_gargoyle_sheet.webp?v=3','img/pets/pet_treant_sheet.webp?v=3',
- 'img/pets/pet_mushroom_sheet.webp?v=3','img/pets/pet_spider_sheet.webp?v=3','img/pets/pet_rat_sheet.webp?v=3','img/pets/pet_ghoul_sheet.webp?v=3',
- 'img/monsters/boss_kraken_sheet.webp'].forEach(s=>{
-  if(!monsterSheetImgs[s]){const img=new Image();img.src=s+(s.includes('?')?'':'?v=21');monsterSheetImgs[s]=img;}
-});
-const crateImg=new Image();crateImg.src='img/ui/crate_wood.webp';
-const airdropFullImg=new Image();airdropFullImg.src='img/ui/airdrop_full.webp';
-const airdropBoxImg=new Image();airdropBoxImg.src='img/ui/airdrop_box.webp';
-const bossGravediggerImg=new Image();bossGravediggerImg.src='img/monsters/boss_gravedigger.webp?v=21';
-const bossGravediggerWalkImg=new Image();bossGravediggerWalkImg.src='img/monsters/boss_gravedigger_walk.webp?v=21';
-const bossGravediggerSlamImg=new Image();bossGravediggerSlamImg.src='img/monsters/boss_gravedigger_slam.webp?v=21';
-const bossGravediggerDigImg=new Image();bossGravediggerDigImg.src='img/monsters/boss_gravedigger_dig.webp?v=21';
-const bossGravediggerRoarImg=new Image();bossGravediggerRoarImg.src='img/monsters/boss_gravedigger_roar.webp?v=21';
-const bossSlimeImg=new Image();bossSlimeImg.src='img/monsters/monster_slime.webp';
-const bossSlimeSheetImg=new Image();bossSlimeSheetImg.src='img/monsters/monster_slime_sheet.webp';
-const bossCyberCerberusImg=new Image();bossCyberCerberusImg.src='img/monsters/boss_cyber_cerberus.webp?v=21';
-const bossCyberCerberusSheetImg=new Image();bossCyberCerberusSheetImg.src='img/monsters/boss_cyber_cerberus_sheet.webp?v=21';
-const bossCyberCerberusWalkImg=bossCyberCerberusSheetImg;
-const bossCyberCerberusAttackImg=new Image();bossCyberCerberusAttackImg.src='img/monsters/boss_cyber_cerberus_attack.webp?v=21';
-
-const bossBioButcherImg=new Image();bossBioButcherImg.src='img/monsters/boss_bio_butcher.webp?v=21';
-const bossBioButcherSheetImg=new Image();bossBioButcherSheetImg.src='img/monsters/boss_bio_butcher_sheet.webp?v=21';
-const bossBioButcherWalkImg=bossBioButcherSheetImg;
-const bossBioButcherAttackImg=new Image();bossBioButcherAttackImg.src='img/monsters/boss_bio_butcher_attack.webp?v=21';
-
-const bossChitinReaperImg=new Image();bossChitinReaperImg.src='img/monsters/boss_chitin_reaper.webp?v=21';
-const bossChitinReaperSheetImg=new Image();bossChitinReaperSheetImg.src='img/monsters/boss_chitin_reaper_sheet.webp?v=21';
-const bossChitinReaperWalkImg=bossChitinReaperSheetImg;
-const bossChitinReaperAttackImg=new Image();bossChitinReaperAttackImg.src='img/monsters/boss_chitin_reaper_attack.webp?v=21';
-const bossChitinEggImg=new Image();bossChitinEggImg.src='img/monsters/boss_chitin_egg.webp?v=19';
-const bossChitinEggSheetImg=new Image();bossChitinEggSheetImg.src='img/monsters/boss_chitin_egg_sheet.webp?v=19';
-const bossChitinReaperP2Img=new Image();bossChitinReaperP2Img.src='img/monsters/boss_chitin_reaper_p2.webp?v=21';
-const bossChitinReaperP2SheetImg=new Image();bossChitinReaperP2SheetImg.src='img/monsters/boss_chitin_reaper_p2_sheet.webp?v=21';
-const bossChitinReaperP2AttackImg=new Image();bossChitinReaperP2AttackImg.src='img/monsters/boss_chitin_reaper_p2_attack.webp?v=21';
-
-const bossNeuroOvermindImg=new Image();bossNeuroOvermindImg.src='img/monsters/boss_neuro_overmind.webp?v=21';
-const bossNeuroOvermindSheetImg=new Image();bossNeuroOvermindSheetImg.src='img/monsters/boss_neuro_overmind_sheet.webp?v=21';
-const bossNeuroOvermindFloatImg=bossNeuroOvermindSheetImg;
-const bossNeuroOvermindAttackImg=new Image();bossNeuroOvermindAttackImg.src='img/monsters/boss_neuro_overmind_attack.webp?v=21';
-
-const bossPatientZeroImg=new Image();bossPatientZeroImg.src='img/monsters/boss_patient_zero.webp?v=21';
-const bossPatientZeroSheetImg=new Image();bossPatientZeroSheetImg.src='img/monsters/boss_patient_zero_sheet.webp?v=21';
-const bossPatientZeroWalkImg=bossPatientZeroSheetImg;
-const bossPatientZeroAttackImg=new Image();bossPatientZeroAttackImg.src='img/monsters/boss_patient_zero_attack.webp?v=21';
 
 // Частицы
 const menuParticles=Array.from({length:10},()=>({
@@ -8936,12 +9034,14 @@ if(sndBtn)sndBtn.onclick=()=>{
   Sfx.enabled=!Sfx.enabled;
   ensureSet();save.settings.sfx=Sfx.enabled;persist();
   syncSoundBtnIcon();
+  if(window.Bgm) Bgm.sync();
   Sfx.play('click');
 };
 
 document.getElementById('btn-start-play').onclick=()=>{
   if(!gameDataReady)return;
   Sfx.init();
+  if(window.Bgm) Bgm.unlock();
   if(window.Platform&&Platform.haptic)Platform.haptic('light');
   Sfx.play('start');
   showScreen('menu');
@@ -9266,7 +9366,7 @@ function applyLang(){
   const hwLbl=document.getElementById('hud-wave-lbl');if(hwLbl)hwLbl.textContent=T('WAVE','ВОЛНА');
   document.documentElement.lang=LANG;
 }
-function ensureSet(){save.settings=Object.assign({lang:'en',sfx:true,volume:0.85,dmg:true,shake:true,hpBars:true,fps60:true,vfxHigh:true,joyMode:'dynamic',haptics:true},save.settings||{})}
+function ensureSet(){save.settings=Object.assign({lang:'en',sfx:true,bgm:true,volume:0.85,dmg:true,shake:true,hpBars:true,fps60:true,vfxHigh:true,joyMode:'dynamic',haptics:true},save.settings||{})}
 function opt(k){return !save.settings||save.settings[k]!==false}
 // ===== МУЛЬТИЯЗЫЧНЫЙ СЛОВАРЬ (8 ЯЗЫКОВ) =====
 const I18N = {
@@ -9755,7 +9855,7 @@ function setLang(l){
 const SUPPORTED_LANGS=['en','ru','de','es','fr','zh','ja','pt'];
 function initI18n(){
   ensureSet();LANG=SUPPORTED_LANGS.includes(save.settings.lang)?save.settings.lang:'en';
-  Sfx.enabled=save.settings.sfx!==false;syncSoundBtnIcon();if(typeof save.settings.volume==='number')Sfx.setVolume(save.settings.volume);
+  Sfx.enabled=save.settings.sfx!==false;if(window.Bgm)Bgm.enabled=save.settings.bgm!==false;syncSoundBtnIcon();if(typeof save.settings.volume==='number')Sfx.setVolume(save.settings.volume);
   applyLang();
   new MutationObserver(ms=>{if(LANG==='ru')return;for(const m of ms){if(m.type==='characterData')trNode(m.target);else m.addedNodes.forEach(walkTr)}}).observe(document.body,{childList:true,subtree:true,characterData:true});
   document.getElementById('btn-settings').onclick=()=>openModal('modal-settings');
@@ -9810,6 +9910,7 @@ function renderSettings(){
   // 2. Game (Simplified Audio & Combat)
   const gameHtml = secHdr('GAME','ИГРА') +
     cardSw('sfx', 'Sound effects', 'Звуковые эффекты', 'Shots, hits and menu clicks', 'Выстрелы, попадания и клики интерфейса') +
+    cardSw('bgm', 'Music', 'Музыка', 'Dynamic adaptive synth soundtrack', 'Динамическая музыка лобби, боя и боссов') +
     cardSw('dmg', 'Damage numbers', 'Цифры урона', 'Show floating damage in battle', 'Всплывающие цифры урона в бою') +
     cardSw('shake', 'Screen shake', 'Тряска экрана', 'Shake and red flash when hit', 'Тряска экрана и вспышка при ударе');
 
@@ -9865,6 +9966,10 @@ function renderSettings(){
       if(k==='sfx'){
         Sfx.enabled=S.sfx;
         syncSoundBtnIcon();
+        if(window.Bgm) Bgm.sync();
+      }
+      if(k==='bgm'){
+        if(window.Bgm){ Bgm.enabled=S.bgm; Bgm.sync(); }
       }
       persist();
       Sfx.play('click');
@@ -12186,11 +12291,26 @@ function tryClickInteractable(cxCoord, cyCoord, customRadius){
       }
     }
   }
+
+  // 3. Взрывные бочки (тап для моментального подрыва в пределах досягаемости)
+  if(G.barrels){
+    const rBar = (customRadius || 48) / cam.zoom;
+    const maxReach = (G.weaponRange || CONFIG.weapon.range) * 1.45;
+    for(let i = G.barrels.length - 1; i >= 0; i--){
+      const b = G.barrels[i];
+      if(b.dead) continue;
+      if(Math.hypot(wPt.x - b.x, wPt.y - b.y) <= rBar && Math.hypot(G.p.x - b.x, G.p.y - b.y) <= maxReach){
+        detonateBarrel(b);
+        return true;
+      }
+    }
+  }
   return false;
 }
 
 function openCrate(c, idx){
   Sfx.play('crate_open');
+  G.cratesOpened = (G.cratesOpened || 0) + 1;
   for(let k=0; k<18; k++){
     G.fx.push({
       x: c.x, y: c.y,
@@ -12219,6 +12339,11 @@ function openCrate(c, idx){
     y: c.y + (Math.random() - 0.5) * 10,
     t: 0
   });
+  // 2b. Шанс (55%, или гарантированно каждый 2-й ящик) выбить один из 4 тактических пикапов
+  if((G.cratesOpened % 2 === 0) || Math.random() < 0.55){
+    const angP = Math.random() * 6.283;
+    spawnTacticalPickup(c.x + Math.cos(angP) * 34, c.y + Math.sin(angP) * 26);
+  }
   // 3. Фиолетовые кристаллы (авто-подбор)
   dropPurpleCrystals(c.x, c.y, 4, 1, true);
 
@@ -12238,6 +12363,497 @@ function openCrate(c, idx){
   } else {
     const i = G.crates.indexOf(c);
     if(i !== -1) G.crates.splice(i, 1);
+  }
+}
+
+// ===== 4 ДОФАМИНОВЫХ ПИКАПА (MAGNET / NUKE / FREEZE / OVERDRIVE) =====
+const TACTICAL_PICKUP_TYPES = ['magnet', 'nuke', 'freeze', 'overdrive'];
+
+function spawnTacticalPickup(x, y, forcedType){
+  if(!G) return null;
+  if(!G.pickups) G.pickups = [];
+  let type = forcedType;
+  if(!type || !TACTICAL_PICKUP_TYPES.includes(type)){
+    const looseGems = G.gems ? G.gems.filter(gm => !gm.mag).length : 0;
+    const pool = looseGems >= 14
+      ? ['magnet', 'magnet', 'nuke', 'freeze', 'overdrive']
+      : TACTICAL_PICKUP_TYPES;
+    type = pool[Math.floor(Math.random() * pool.length)];
+  }
+  const pk = { type, x, y, t: 0, tactical: true };
+  G.pickups.push(pk);
+  return pk;
+}
+
+function applyTacticalPickup(pk){
+  if(!G || !G.p || !pk) return;
+  const g = G, p = g.p;
+  if(pk.type === 'magnet'){
+    Sfx.play('levelup');
+    if(g.gems){
+      for(const gm of g.gems){
+        if(gm.type === 'xp' || gm.type === 'coin' || gm.type === 'purple'){
+          gm.mag = true;
+          gm.magFast = true;
+        }
+      }
+    }
+    g.fx.push({ type: 'frostRing', x: p.x, y: p.y, r: 16, maxR: 220, l: 0.55, maxL: 0.55, col: '#38bdf8' });
+    g.fx.push({ type: 'frostRing', x: p.x, y: p.y, r: 8, maxR: 130, l: 0.38, maxL: 0.38, col: '#e0f2fe' });
+    g.fx.push({
+      type: 'popup_text',
+      txt: '🧲 ' + T('VACUUM MAGNET!', 'МАГНИТ ЛУТА!'),
+      x: p.x, y: p.y - 46, vx: 0, vy: -28,
+      col: '#38bdf8', font: '900 15.5px Russo One, sans-serif', l: 1.8, maxL: 1.8, fadeTime: 0.5
+    });
+  } else if(pk.type === 'nuke'){
+    Sfx.play('anvil');
+    Sfx.play('boss_roar');
+    g.nukeFlash = 0.45;
+    g.shake = Math.max(g.shake || 0, 0.9);
+    g.fx.push({ type: 'frostRing', x: p.x, y: p.y, r: 24, maxR: 420, l: 0.65, maxL: 0.65, col: '#f97316' });
+    g.fx.push({ type: 'frostRing', x: p.x, y: p.y, r: 12, maxR: 280, l: 0.45, maxL: 0.45, col: '#fde047' });
+    for(let k = 0; k < 32; k++){
+      const ang = (k / 32) * 6.283;
+      const spd = 120 + Math.random() * 210;
+      g.fx.push({ x: p.x, y: p.y, vx: Math.cos(ang)*spd, vy: Math.sin(ang)*spd, col: k%2 ? '#f97316' : '#fef08a', r: 3.4, l: 0.55 });
+    }
+    let cleared = 0;
+    for(const e of g.enemies){
+      if(e.dead || isEnemyUntargetable(e)) continue;
+      const dist = Math.hypot(e.x - p.x, e.y - p.y);
+      if(dist > 480) continue;
+      if(e.isBoss){
+        const bossNuke = Math.min(Math.round((e.maxHp || e.hp) * 0.10), Math.max(180, p.dmg * 18));
+        hurt(e, bossNuke, { isCrit: true });
+      } else if(e.isMiniBoss){
+        const eliteNuke = Math.round((e.maxHp || e.hp) * 0.45);
+        hurt(e, Math.max(eliteNuke, p.dmg * 10), { isCrit: true });
+      } else {
+        hurt(e, Math.max(e.hp + 999, 9999), { isCrit: true });
+        cleared++;
+      }
+    }
+    g.fx.push({
+      type: 'popup_text',
+      txt: '💥 ' + T('EMP NUKE!', 'ЭМИ-ВЗРЫВ!') + (cleared > 0 ? ` (${cleared})` : ''),
+      x: p.x, y: p.y - 46, vx: 0, vy: -28,
+      col: '#fb923c', font: '900 16px Russo One, sans-serif', l: 1.9, maxL: 1.9, fadeTime: 0.5
+    });
+  } else if(pk.type === 'freeze'){
+    Sfx.play('magic_frost');
+    g.freezeT = Math.max(g.freezeT || 0, 6.0);
+    g.fx.push({ type: 'frostRing', x: p.x, y: p.y, r: 18, maxR: 360, l: 0.6, maxL: 0.6, col: '#22d3ee' });
+    for(let k = 0; k < 22; k++){
+      const ang = (k / 22) * 6.283;
+      const spd = 80 + Math.random() * 140;
+      g.fx.push({ x: p.x, y: p.y, vx: Math.cos(ang)*spd, vy: Math.sin(ang)*spd, col: k%2 ? '#67e8f9' : '#e0f2fe', r: 2.8, l: 0.55 });
+    }
+    g.fx.push({
+      type: 'popup_text',
+      txt: '❄️ ' + T('TIME FREEZE (6s)!', 'ЗАМОРОЗКА (6с)!'),
+      x: p.x, y: p.y - 46, vx: 0, vy: -28,
+      col: '#67e8f9', font: '900 15.5px Russo One, sans-serif', l: 1.8, maxL: 1.8, fadeTime: 0.5
+    });
+  } else if(pk.type === 'overdrive'){
+    Sfx.play('dash');
+    Sfx.play('levelup');
+    g.overdriveT = Math.max(g.overdriveT || 0, 8.0);
+    g.fx.push({ type: 'frostRing', x: p.x, y: p.y, r: 14, maxR: 170, l: 0.45, maxL: 0.45, col: '#facc15' });
+    g.fx.push({
+      type: 'popup_text',
+      txt: '⚡ ' + T('OVERDRIVE ×1.85 (8s)!', 'БЕРСЕРК ×1.85 (8с)!'),
+      x: p.x, y: p.y - 46, vx: 0, vy: -28,
+      col: '#fde047', font: '900 15.5px Russo One, sans-serif', l: 1.8, maxL: 1.8, fadeTime: 0.5
+    });
+  }
+}
+
+// ===== ИНТЕРАКТИВ НА АРЕНЕ: ВЗРЫВНЫЕ БОЧКИ И МАЯКИ РИСКА =====
+function getBarrelTheme(lvlId){
+  if(lvlId === 2) return { kind: 'spore', col: '#84cc16', core: '#bef264', ring: '#22c55e', r: 140, labelEn: 'TOXIC BLAST!', labelRu: 'ТОКСИЧНЫЙ ВЗРЫВ!' };
+  if(lvlId === 3) return { kind: 'plasma', col: '#22d3ee', core: '#e0f2fe', ring: '#38bdf8', r: 145, labelEn: 'EMP SHOCK!', labelRu: 'ЭМИ-РАЗРЯД!' };
+  return { kind: 'fuel', col: '#ef4444', core: '#fde047', ring: '#f97316', r: 135, labelEn: 'BOOM!', labelRu: 'ВЗРЫВ!' };
+}
+
+function spawnBarrel(customX, customY){
+  if(!G || !G.p) return null;
+  if(!G.barrels) G.barrels = [];
+  const aliveBarrels = G.barrels.filter(b => !b.dead);
+  if(aliveBarrels.length >= 3) return null;
+  const p = G.p;
+  let bx = customX, by = customY;
+  if(bx === undefined || by === undefined){
+    for(let tries = 0; tries < 8; tries++){
+      const ang = Math.random() * 6.283;
+      const dist = 155 + Math.random() * 140;
+      let tx = p.x + Math.cos(ang) * dist;
+      let ty = p.y + Math.sin(ang) * dist;
+      if(G.bossArena){
+        const pad = 55;
+        tx = Math.max(G.bossArena.x + pad, Math.min(G.bossArena.x + G.bossArena.size - pad, tx));
+        ty = Math.max(G.bossArena.y + pad, Math.min(G.bossArena.y + G.bossArena.size - pad, ty));
+      }
+      if(Math.hypot(tx - p.x, ty - p.y) < 110) continue;
+      if(aliveBarrels.some(ob => Math.hypot(ob.x - tx, ob.y - ty) < 105)) continue;
+      bx = tx; by = ty; break;
+    }
+    if(bx === undefined) return null;
+  }
+  const theme = getBarrelTheme(G.lvlConfig?.id || 1);
+  const b = {
+    x: bx, y: by, r: 16, blastR: theme.r,
+    kind: theme.kind, col: theme.col, core: theme.core, ring: theme.ring,
+    hp: 2, maxHp: 2, hitFlash: 0, chainT: 0, dead: false, t: 0
+  };
+  G.barrels.push(b);
+  return b;
+}
+
+function hitBarrel(b, dmg){
+  if(!b || b.dead) return;
+  b.hp -= Math.max(1, dmg >= 25 ? 2 : 1);
+  b.hitFlash = 0.14;
+  Sfx.play('hit');
+  if(b.hp <= 0) detonateBarrel(b);
+}
+
+function detonateBarrel(b){
+  if(!G || !b || b.dead) return;
+  b.dead = true;
+  const g = G, p = g.p;
+  const lvlId = g.lvlConfig?.id || 1;
+  const theme = getBarrelTheme(lvlId);
+  const curW = g.wave || 1;
+  const waveScale = curW <= 10 ? (1 + (curW - 1) * 0.04) : (1.36 + (curW - 10) * 0.11);
+  const multHp = (g.lvlConfig && g.lvlConfig.multHp) || 1;
+  const blastR = b.blastR || theme.r;
+  const blastDmg = Math.round(62 * multHp * waveScale + (p ? p.dmg * 2.6 : 30));
+
+  Sfx.play('anvil');
+  g.shake = Math.max(g.shake || 0, 0.55);
+  g.fx.push({ type: 'blast', x: b.x, y: b.y, r: blastR, l: 0.34, col: theme.col });
+  g.fx.push({ type: 'frostRing', x: b.x, y: b.y, r: 16, maxR: blastR, l: 0.42, maxL: 0.42, col: theme.core });
+  for(let k = 0; k < 22; k++){
+    const ang = (k / 22) * 6.283 + (Math.random() - 0.5) * 0.25;
+    const spd = 75 + Math.random() * 145;
+    g.fx.push({ x: b.x, y: b.y, vx: Math.cos(ang)*spd, vy: Math.sin(ang)*spd, col: k%2 ? theme.col : theme.core, r: 3.0, l: 0.48 });
+  }
+
+  let hits = 0;
+  for(const e of g.enemies){
+    if(e.dead || isEnemyUntargetable(e)) continue;
+    const dist = Math.hypot(e.x - b.x, e.y - b.y);
+    if(dist > blastR + (e.c?.r || 12)) continue;
+    hits++;
+    const dmgToE = e.isBoss ? Math.min(blastDmg, Math.round((e.maxHp || e.hp) * 0.06)) : blastDmg;
+    hurt(e, dmgToE, { isCrit: true });
+    if(!e.dead){
+      if(!e.isBoss && !e.isMiniBoss){
+        const ka = Math.atan2(e.y - b.y, e.x - b.x);
+        e.x += Math.cos(ka) * 42;
+        e.y += Math.sin(ka) * 42;
+      }
+      if(theme.kind === 'spore'){
+        applyEnemySlowOrCC(e, 0.55, 3.8);
+        e.poisonDmg = Math.max(e.poisonDmg || 0, Math.round(blastDmg * 0.14));
+        e.poisonT = Math.max(e.poisonT || 0, 4.2);
+      } else if(theme.kind === 'plasma'){
+        if(!e.isBoss) e.rootT = Math.max(e.rootT || 0, 1.6);
+        else applyEnemySlowOrCC(e, 0.45, 2.0);
+        g.fx.push({ type: 'chain', x1: b.x, y1: b.y, x2: e.x, y2: e.y, col: '#38bdf8', l: 0.22 });
+      }
+    }
+  }
+
+  // Глава 1: горящая лужа на земле после взрыва топливной бочки
+  if(theme.kind === 'fuel' && g.firePatches){
+    g.firePatches.push({ x: b.x, y: b.y, rad: blastR * 0.65, l: 3.5, tick: 0, dmg: Math.max(8, Math.round(blastDmg * 0.14)) });
+  }
+
+  // Цепная реакция соседних бочек
+  if(g.barrels){
+    for(const ob of g.barrels){
+      if(ob !== b && !ob.dead && ob.chainT <= 0 && Math.hypot(ob.x - b.x, ob.y - b.y) <= blastR + 25){
+        ob.chainT = 0.13;
+      }
+    }
+  }
+
+  g.fx.push({
+    type: 'popup_text',
+    txt: (theme.kind === 'plasma' ? '⚡ ' : (theme.kind === 'spore' ? '☣️ ' : '💥 ')) + T(theme.labelEn, theme.labelRu) + (hits > 1 ? ` ×${hits}` : ''),
+    x: b.x, y: b.y - 24, vx: 0, vy: -26,
+    col: theme.core, font: '900 14px Russo One, sans-serif', l: 1.45, maxL: 1.45, fadeTime: 0.4
+  });
+}
+
+function updateBarrels(g, dt){
+  if(!g || !g.p) return;
+  if(!g.barrels) g.barrels = [];
+  const p = g.p;
+  if(g.t >= (g.nextBarrelT || 0)){
+    g.nextBarrelT = g.t + 14 + Math.random() * 5;
+    spawnBarrel();
+  }
+  for(let i = g.barrels.length - 1; i >= 0; i--){
+    const b = g.barrels[i];
+    if(b.dead){ g.barrels.splice(i, 1); continue; }
+    b.t += dt;
+    if(b.hitFlash > 0) b.hitFlash = Math.max(0, b.hitFlash - dt);
+    if(b.chainT > 0){
+      b.chainT -= dt;
+      if(b.chainT <= 0){ detonateBarrel(b); g.barrels.splice(i, 1); continue; }
+    }
+    if(Math.hypot(b.x - p.x, b.y - p.y) > 640){
+      g.barrels.splice(i, 1);
+    }
+  }
+}
+
+function spawnSupplyBeacon(customX, customY){
+  if(!G || !G.p) return null;
+  if(!G.beacons) G.beacons = [];
+  if(G.beacons.length >= 1) return G.beacons[0];
+  const p = G.p;
+  const ang = Math.random() * 6.283;
+  const dist = 175 + Math.random() * 65;
+  const bx = customX !== undefined ? customX : (p.x + Math.cos(ang) * dist);
+  const by = customY !== undefined ? customY : (p.y + Math.sin(ang) * dist);
+  const bc = {
+    x: bx, y: by, r: 66, charge: 0, chargeNeed: 4.0,
+    ttl: 34.0, maxTtl: 34.0, tickStep: 0, done: false, t: 0
+  };
+  G.beacons.push(bc);
+  Sfx.play('dash');
+  if(!G.activeBoss){
+    showEnrageBanner(
+      T('RISK BEACON DETECTED!', 'ОБНАРУЖЕН МАЯК РИСКА!'),
+      T('HOLD THE ZONE 4s FOR TACTICAL DROP + LOOT', 'УДЕРЖИ ЗОНУ 4с — ТАКТИЧЕСКИЙ ДРОП + ЛУТ'),
+      '#38bdf8', '📡'
+    );
+  }
+  return bc;
+}
+
+function updateBeacons(g, dt){
+  if(!g || !g.p || !g.beacons || !g.beacons.length) return;
+  const p = g.p;
+  for(let i = g.beacons.length - 1; i >= 0; i--){
+    const bc = g.beacons[i];
+    bc.t += dt;
+    bc.ttl -= dt;
+    const dist = Math.hypot(p.x - bc.x, p.y - bc.y);
+    const inside = dist <= bc.r;
+    bc.inside = inside;
+    if(inside){
+      bc.charge = Math.min(bc.chargeNeed, bc.charge + dt);
+      const qStep = Math.floor((bc.charge / bc.chargeNeed) * 4);
+      if(qStep > bc.tickStep && qStep < 4){
+        bc.tickStep = qStep;
+        Sfx.play('click');
+      }
+      // Напряжение риска: ближайшие мобы чуть активнее стягиваются к маяку
+      for(const e of g.enemies){
+        if(e.dead || e.isBoss) continue;
+        const ed = Math.hypot(bc.x - e.x, bc.y - e.y);
+        if(ed > 28 && ed < 260){
+          e.x += ((bc.x - e.x) / ed) * 16 * dt;
+          e.y += ((bc.y - e.y) / ed) * 16 * dt;
+        }
+      }
+    } else if(bc.charge > 0){
+      bc.charge = Math.max(0, bc.charge - dt * 0.55);
+      bc.tickStep = Math.floor((bc.charge / bc.chargeNeed) * 4);
+    }
+
+    if(bc.charge >= bc.chargeNeed){
+      bc.done = true;
+      Sfx.play('levelup');
+      g.shake = Math.max(g.shake || 0, 0.45);
+      g.fx.push({ type: 'frostRing', x: bc.x, y: bc.y, r: 16, maxR: 175, l: 0.55, maxL: 0.55, col: '#facc15' });
+      g.fx.push({ type: 'frostRing', x: bc.x, y: bc.y, r: 12, maxR: 120, l: 0.4, maxL: 0.4, col: '#38bdf8' });
+      // Защитный импульс отбрасывает ближайших обычных врагов
+      for(const e of g.enemies){
+        if(e.dead || e.isBoss || e.isMiniBoss) continue;
+        const ed = Math.hypot(e.x - bc.x, e.y - bc.y);
+        if(ed < 150 && ed > 1){
+          e.x += ((e.x - bc.x) / ed) * 65;
+          e.y += ((e.y - bc.y) / ed) * 65;
+        }
+      }
+      // Щедрая награда за риск: тактический пикап + кристаллы + золото + щит/ХП
+      spawnTacticalPickup(bc.x, bc.y);
+      dropPurpleCrystals(bc.x, bc.y, 6, 1, true);
+      const goldGain = collectCoinValue(45 + (g.wave || 1) * 2);
+      g.coinsCollected = (g.coinsCollected || 0) + goldGain;
+      if(p.maxShield > 0 && p.shield < p.maxShield){
+        p.shield = Math.min(p.maxShield, p.shield + Math.round(p.maxShield * 0.25));
+      } else if(p.hp < p.maxHp){
+        p.hp = Math.min(p.maxHp, p.hp + Math.round(p.maxHp * 0.20));
+      }
+      g.fx.push({
+        type: 'popup_text',
+        txt: `📡 ${T('BEACON CAPTURED!', 'МАЯК ЗАХВАЧЕН!')} +${goldGain}🪙 +6💎`,
+        x: bc.x, y: bc.y - 34, vx: 0, vy: -26,
+        col: '#fde047', font: '900 14.5px Russo One, sans-serif', l: 2.0, maxL: 2.0, fadeTime: 0.5
+      });
+      g.beacons.splice(i, 1);
+      continue;
+    }
+
+    if(bc.ttl <= 0 || g.activeBoss){
+      g.beacons.splice(i, 1);
+    }
+  }
+}
+
+// ===== СОБЫТИЯ ВОЛН (WAVE DIRECTOR: RING / ELITE / STAMPEDE) =====
+function pickWaveEventMob(lvlId, wave, role){
+  if(lvlId === 2){
+    if(role === 'fast') return wave < 14 ? CONFIG.enemies.bat : CONFIG.enemies.spiderling;
+    if(role === 'elite') return wave < 18 ? CONFIG.enemies.spider : (wave < 28 ? CONFIG.enemies.slime : CONFIG.enemies.ghoul);
+    return wave < 12 ? CONFIG.enemies.skeleton : (wave < 22 ? CONFIG.enemies.spider : CONFIG.enemies.ghoul);
+  }
+  if(lvlId === 3){
+    if(role === 'fast') return wave < 20 ? CONFIG.enemies.bunker_spark_drone : CONFIG.enemies.bunker_servo_hound;
+    if(role === 'elite') return wave < 20 ? CONFIG.enemies.bunker_hazmat_brute : CONFIG.enemies.bunker_riot_enforcer;
+    return wave < 16 ? CONFIG.enemies.bunker_cyber_zombie : CONFIG.enemies.bunker_acid_mite;
+  }
+  if(role === 'fast') return wave < 12 ? CONFIG.enemies.hound : CONFIG.enemies.rat;
+  if(role === 'elite') return wave < 12 ? CONFIG.enemies.zombie_mutant : CONFIG.enemies.hound;
+  return wave < 12 ? CONFIG.enemies.zombie : CONFIG.enemies.rat;
+}
+
+function spawnEliteEnemy(c, x, y, affix){
+  if(!G || !G.p) return null;
+  const curW = G.wave || 1;
+  const waveScale = curW <= 10 ? (1 + (curW - 1) * 0.035) : (curW <= 20 ? (1.315 + (curW - 10) * 0.075) : (2.065 + (curW - 20) * 0.14));
+  const multHp = (G.lvlConfig && G.lvlConfig.multHp) || 1;
+  const aff = affix || ['shielded', 'berserk', 'swift'][Math.floor(Math.random() * 3)];
+  const hpMult = aff === 'shielded' ? 8.0 : 6.2;
+  const baseDef = c || CONFIG.enemies.zombie;
+  const eliteHp = Math.round(baseDef.hp * multHp * waveScale * hpMult);
+  const eliteObj = {
+    x, y,
+    hp: eliteHp, maxHp: eliteHp,
+    c: Object.assign({}, baseDef, {
+      r: Math.round((baseDef.r || 14) * 1.32),
+      spriteW: Math.round((baseDef.spriteW || 50) * 1.32),
+      spriteH: Math.round((baseDef.spriteH || 50) * 1.32),
+      speed: Math.round((baseDef.speed || 50) * (aff === 'swift' ? 1.24 : 1.08)),
+      damage: Math.round((baseDef.damage || 8) * (aff === 'berserk' ? 1.35 : 1.15))
+    }),
+    isMiniBoss: true,
+    isElite: true,
+    eliteAffix: aff,
+    oh: 0, fl: 0, dead: false, frame: 0, animT: 0, facing: 1
+  };
+  G.enemies.push(eliteObj);
+  return eliteObj;
+}
+
+function triggerWaveEvent(g, forcedType){
+  if(!g || !g.p || g.activeBoss || g.bossArena) return null;
+  const w = g.wave || 1;
+  const lvlId = g.lvlConfig?.id || 1;
+  const mod = w % 10;
+  let type = forcedType;
+  if(!type){
+    if(mod === 3) type = 'ring';
+    else if(mod === 5) type = 'elite';
+    else if(mod === 8) type = 'stampede';
+    else return null;
+  }
+  if(!g.eventTelegraphs) g.eventTelegraphs = [];
+  const p = g.p;
+  Sfx.play('wave_horde');
+
+  if(type === 'ring'){
+    const count = Math.min(18, 12 + Math.floor(w / 6));
+    const rad = 245;
+    g.waveEvent = { type: 'ring', t: 10.0, maxT: 10.0 };
+    g.eventTelegraphs.push({ type: 'ring', x: p.x, y: p.y, rad, count, t: 0.80, maxT: 0.80, lvlId, wave: w });
+    showEnrageBanner(
+      T('EVENT: ENCIRCLEMENT RING!', 'СОБЫТИЕ: КОЛЬЦО ОКРУЖЕНИЯ!'),
+      T('BREAK THROUGH THE SWARM RING!', 'ПРОРВИ СЖИМАЮЩЕЕСЯ КОЛЬЦО ВРАГОВ!'),
+      '#ef4444', '⭕'
+    );
+  } else if(type === 'elite'){
+    const eliteCount = w >= 25 ? 2 : 1;
+    g.waveEvent = { type: 'elite', t: 13.0, maxT: 13.0 };
+    const mobDef = pickWaveEventMob(lvlId, w, 'elite');
+    for(let ei = 0; ei < eliteCount; ei++){
+      const ang = Math.random() * 6.283;
+      const dist = Math.min(280, getEnemySpawnDistance(ang));
+      spawnEliteEnemy(mobDef, p.x + Math.cos(ang)*dist, p.y + Math.sin(ang)*dist);
+    }
+    showEnrageBanner(
+      T('EVENT: ELITE HUNTER!', 'СОБЫТИЕ: ЭЛИТНЫЙ ОХОТНИК!'),
+      T('DEFEAT ELITE FOR GUARANTEED TACTICAL DROP!', 'УБЕЙ ЭЛИТКУ — ГАРАНТИРОВАННЫЙ ТАКТИЧЕСКИЙ ДРОП!'),
+      '#facc15', '👑'
+    );
+  } else if(type === 'stampede'){
+    const ang = Math.random() * 6.283;
+    g.waveEvent = { type: 'stampede', t: 10.0, maxT: 10.0 };
+    g.eventTelegraphs.push({ type: 'stampede', x: p.x, y: p.y, ang, count: Math.min(12, 8 + Math.floor(w / 8)), t: 0.85, maxT: 0.85, lvlId, wave: w });
+    showEnrageBanner(
+      T('EVENT: SWARM STAMPEDE!', 'СОБЫТИЕ: НАЛЁТ РОЯ!'),
+      T('DODGE THE FAST PREDATOR WAVE!', 'УКЛОНЯЙСЯ ОТ СТРЕМИТЕЛЬНОГО КЛИНА ВРАГОВ!'),
+      '#fb923c', '⚡'
+    );
+  }
+  return g.waveEvent;
+}
+
+function updateWaveEvents(g, dt){
+  if(!g || !g.p) return;
+  if(g.waveEvent){
+    g.waveEvent.t -= dt;
+    if(g.waveEvent.t <= 0) g.waveEvent = null;
+  }
+  if(!g.eventTelegraphs || !g.eventTelegraphs.length) return;
+  for(let i = g.eventTelegraphs.length - 1; i >= 0; i--){
+    const tg = g.eventTelegraphs[i];
+    tg.t -= dt;
+    if(tg.t <= 0){
+      if(tg.type === 'ring'){
+        const mobDef = pickWaveEventMob(tg.lvlId, tg.wave, 'melee');
+        const waveScale = tg.wave <= 10 ? (1 + (tg.wave - 1) * 0.035) : (1.315 + (tg.wave - 10) * 0.08);
+        const multHp = (g.lvlConfig && g.lvlConfig.multHp) || 1;
+        for(let k = 0; k < tg.count; k++){
+          if(g.enemies.length >= (CONFIG.waves.maxEnemies || 150)) break;
+          const a = (k / tg.count) * 6.283;
+          const ex = tg.x + Math.cos(a) * tg.rad;
+          const ey = tg.y + Math.sin(a) * tg.rad;
+          g.enemies.push({
+            x: ex, y: ey, hp: Math.round(mobDef.hp * multHp * waveScale * 0.82), c: mobDef,
+            oh: 0, fl: 0, dead: false, frame: 0, animT: Math.random()*6, facing: 1
+          });
+          g.fx.push({ x: ex, y: ey, vx: 0, vy: -20, col: '#ef4444', l: 0.3 });
+        }
+        g.shake = Math.max(g.shake || 0, 0.35);
+      } else if(tg.type === 'stampede'){
+        const mobDef = pickWaveEventMob(tg.lvlId, tg.wave, 'fast');
+        const waveScale = tg.wave <= 10 ? (1 + (tg.wave - 1) * 0.035) : (1.315 + (tg.wave - 10) * 0.08);
+        const multHp = (g.lvlConfig && g.lvlConfig.multHp) || 1;
+        const dirX = Math.cos(tg.ang), dirY = Math.sin(tg.ang);
+        const perpX = -dirY, perpY = dirX;
+        for(let k = 0; k < tg.count; k++){
+          if(g.enemies.length >= (CONFIG.waves.maxEnemies || 150)) break;
+          const row = Math.floor(k / 2);
+          const side = (k % 2 === 0 ? -1 : 1) * (16 + row * 12);
+          const ex = tg.x - dirX * (270 + row * 28) + perpX * side;
+          const ey = tg.y - dirY * (270 + row * 28) + perpY * side;
+          g.enemies.push({
+            x: ex, y: ey, hp: Math.round(mobDef.hp * multHp * waveScale * 0.78), c: mobDef,
+            oh: 0, fl: 0, dead: false, frame: 0, animT: Math.random()*6, facing: dirX >= 0 ? 1 : -1
+          });
+        }
+        Sfx.play('dash');
+      }
+      g.eventTelegraphs.splice(i, 1);
+    }
   }
 }
 
@@ -13011,6 +13627,8 @@ function startGame(){
       attackAnim:null,attackAnimT:0,attackAnimDur:0,jumpMaxH:0,
       jumpY:0,squashX:1,squashY:1,rot:0,eyeGlow:0,targetFacing:0
     };
+    if(petObj.sheet)ensureMonsterSheet(petObj.sheet);
+    if(petObj.sprite)ensureMonsterSprite(petObj.sprite);
   }
 
   let abObj=null;
@@ -13032,6 +13650,7 @@ function startGame(){
     spawnFxSpawned:false,
     waveCoinFarm:0,
     airdrops:[],lootDrops:[],crates:[],lastCrateWave:1,lastSurgeWave:0,waveSpawnedCount:0,pickups:[],toasts:[],sessionLoot:[],
+    barrels:[],beacons:[],waveEvent:null,eventTelegraphs:[],freezeT:0,overdriveT:0,nukeFlash:0,cratesOpened:0,nextBarrelT:2.5,lastEventWave:0,lastBeaconWave:0,
     nextAirdropT:30+Math.random()*15,nextBossT:60,bossWave:1,activeBoss:null,
     bossArena:null,bossWarning:null,bossShockwaves:[],bossCraters:[],bossFlash:0,
     camZoom:CAM_BASE_ZOOM,camOffX:0,camOffY:0,
@@ -13066,6 +13685,7 @@ function startGame(){
     G.pet.facing = G.p.facing;
   }
   if(curLvl){
+    if(typeof preloadChapterAssets==='function')preloadChapterAssets(curLvl.id);
     // Стартовый десант: 5 врагов равномерно по периметру экрана (вход в поле зрения через ~1 сек)
     const initCount = 5;
     for(let i = 0; i < initCount; i++){
@@ -13983,6 +14603,8 @@ function hurt(e,d,opts){
       }
       dropPurpleCrystals(e.x, e.y, 4, 1);
       dropMonsterRewards(e);
+      // Гарантированный тактический пикап с элитного мини-босса (Магнит / Бомба / Заморозка / Берсерк)
+      spawnTacticalPickup(e.x, e.y);
       // Кристалл опыта мини-босса (Tier 4/5)
       G.gems.push({ x: e.x, y: e.y, v: Math.round(40 * (G.lvlConfig?.multXp || 1)), type: 'xp', isBoss: false, mag: false });
       const mbRoll = Math.random();
@@ -15782,6 +16404,7 @@ function syncBossHUD(b){
 
 function spawnGravediggerBoss(isPlague = false){
   if(!G || !G.run) return;
+  preloadChapterAssets(1);
   const g = G, p = g.p;
   if(g.enemies.some(e => e.isBoss && e.bossId === 'gravedigger' && !e.dead)) return;
 
@@ -15870,6 +16493,7 @@ window.spawnZombieBoss = spawnGravediggerBoss;
 
 function spawnRatKingBoss(){
   if(!G || !G.run) return;
+  preloadChapterAssets(1);
   const g = G, p = g.p;
   if(g.enemies.some(e => e.isBoss && e.bossId === 'rat_king' && !e.dead)) return;
 
@@ -15949,6 +16573,7 @@ window.spawnRatKingBoss = spawnRatKingBoss;
 
 function spawnKrakenBoss(){
   if(!G || !G.run) return;
+  preloadChapterAssets(2);
   const g = G, p = g.p;
   if(g.enemies.some(e => e.isBoss && e.bossId === 'kraken' && !e.dead)) return;
 
@@ -16024,6 +16649,7 @@ function spawnKrakenBoss(){
 window.spawnKrakenBoss = spawnKrakenBoss;
 function spawnAbominationBoss(){
   if(!G || !G.run) return;
+  preloadChapterAssets(1);
   const g = G, p = g.p;
   if(g.enemies.some(e => e.isBoss && e.bossId === 'abomination' && !e.dead)) return;
 
@@ -16101,6 +16727,7 @@ window.spawnAbominationBoss = spawnAbominationBoss;
 
 function spawnBroodmotherBoss(){
   if(!G || !G.run) return;
+  preloadChapterAssets(2);
   const g = G, p = g.p;
   if(g.enemies.some(e => e.isBoss && e.bossId === 'broodmother' && !e.dead)) return;
 
@@ -16178,6 +16805,7 @@ window.spawnBroodmotherBoss = spawnBroodmotherBoss;
 
 function spawnTreantBoss(){
   if(!G || !G.run) return;
+  preloadChapterAssets(2);
   const g = G, p = g.p;
   if(g.enemies.some(e => e.isBoss && e.bossId === 'treant' && !e.dead)) return;
 
@@ -16249,6 +16877,7 @@ window.spawnTreantBoss = spawnTreantBoss;
 
 function spawnSlimeBoss(){
   if(!G || !G.run) return;
+  preloadChapterAssets(2);
   const g = G, p = g.p;
   if(g.enemies.some(e => e.isBoss && e.bossId === 'toxic_slime' && !e.dead)) return;
 
@@ -16362,6 +16991,7 @@ function computeBossSpawnCoords(p, g, bossRadius = 78){
 // ===== БОСС 1 (ВОЛНА 10, ЛОК. 3): КИБЕР-ЦЕРБЕР =====
 function spawnCyberCerberusBoss(){
   if(!G || !G.run) return;
+  preloadChapterAssets(3);
   const g = G, p = g.p;
   if(g.enemies.some(e => e.isBoss && e.bossId === 'cyber_cerberus' && !e.dead)) return;
 
@@ -16433,6 +17063,7 @@ window.spawnCyberCerberusBoss = spawnCyberCerberusBoss;
 // ===== БОСС 2 (ВОЛНА 20, ЛОК. 3): ХИРУРГ-МЯСНИК =====
 function spawnBioButcherBoss(){
   if(!G || !G.run) return;
+  preloadChapterAssets(3);
   const g = G, p = g.p;
   if(g.enemies.some(e => e.isBoss && e.bossId === 'bio_butcher' && !e.dead)) return;
 
@@ -16503,6 +17134,7 @@ window.spawnBioButcherBoss = spawnBioButcherBoss;
 // ===== БОСС 3 (ВОЛНА 30, ЛОК. 3): ХИТИНОВЫЙ ЖНЕЦ =====
 function spawnChitinReaperBoss(){
   if(!G || !G.run) return;
+  preloadChapterAssets(3);
   const g = G, p = g.p;
   if(g.enemies.some(e => e.isBoss && e.bossId === 'chitin_reaper' && !e.dead)) return;
 
@@ -16578,6 +17210,7 @@ window.spawnChitinReaperBoss = spawnChitinReaperBoss;
 // ===== БОСС 4 (ВОЛНА 40, ЛОК. 3): НЕЙРО-СВЕРХРАЗУМ =====
 function spawnNeuroOvermindBoss(){
   if(!G || !G.run) return;
+  preloadChapterAssets(3);
   const g = G, p = g.p;
   if(g.enemies.some(e => e.isBoss && e.bossId === 'neuro_overmind' && !e.dead)) return;
 
@@ -16650,6 +17283,7 @@ window.spawnNeuroOvermindBoss = spawnNeuroOvermindBoss;
 // ===== БОСС 5 (ВОЛНА 50, ЛОК. 3): НУЛЕВОЙ ПАЦИЕНТ (ФИНАЛЬНЫЙ СУПЕРБОСС) =====
 function spawnPatientZeroBoss(){
   if(!G || !G.run) return;
+  preloadChapterAssets(3);
   const g = G, p = g.p;
   if(g.enemies.some(e => e.isBoss && e.bossId === 'patient_zero' && !e.dead)) return;
 
@@ -17519,6 +18153,24 @@ function drawEnemyPetStatusMarks(cx, e, ox, oy){
 
 function selectWeaponTarget(p, g, maxRange){
   const nearEnemy = nearest(p.x, p.y - 12, maxRange);
+  // Умный авто-таргет на взрывную бочку, если в её радиусе взрыва >=2 врага или босс/элитка
+  if(g && g.barrels && g.barrels.length){
+    let bestBarrel = null, bestScore = 0;
+    for(const b of g.barrels){
+      if(b.dead) continue;
+      const dB = Math.hypot(b.x - p.x, b.y - (p.y - 12));
+      if(dB > maxRange) continue;
+      let score = 0;
+      for(const e of g.enemies){
+        if(e.dead || isEnemyUntargetable(e)) continue;
+        if(Math.hypot(e.x - b.x, e.y - b.y) <= (b.blastR || 135) * 0.92){
+          score += (e.isBoss || e.isMiniBoss) ? 3 : 1;
+        }
+      }
+      if(score >= 2 && score > bestScore){ bestScore = score; bestBarrel = b; }
+    }
+    if(bestBarrel) return bestBarrel;
+  }
   const boss = g && g.activeBoss;
   if(boss && !isEnemyUntargetable(boss) && isEnemyOnScreen(boss)){
     const dBoss = Math.hypot(boss.x - p.x, boss.y - (p.y - 12));
@@ -17596,7 +18248,15 @@ function update(dt){
   const isAirborne = g.spawnT>0 && (1 - g.spawnT/0.9) < 0.52;
   const isImmobilized = isAirborne || ((p.webStunT || 0) > 0);
   const [mx,my]=isImmobilized ? [0,0] : moveVec();
-  const moveSpeed = p.speed * (p.poisonSlow || 1) * ((p.slowT||0)>0?0.65:1);
+  if(g.freezeT>0) g.freezeT=Math.max(0, g.freezeT-dt);
+  if(g.overdriveT>0){
+    g.overdriveT=Math.max(0, g.overdriveT-dt);
+    if(g.fx.length<160 && Math.random()<0.45){
+      g.fx.push({ x:p.x+(Math.random()-0.5)*18, y:p.y+(Math.random()-0.5)*16, vx:(Math.random()-0.5)*30, vy:-25-Math.random()*35, col:Math.random()<0.5?'#facc15':'#fb923c', l:0.28 });
+    }
+  }
+  if(g.nukeFlash>0) g.nukeFlash=Math.max(0, g.nukeFlash-dt);
+  const moveSpeed = p.speed * (p.poisonSlow || 1) * ((p.slowT||0)>0?0.65:1) * ((g.overdriveT||0)>0?1.22:1);
   if(p.slowT>0)p.slowT=Math.max(0,p.slowT-dt);
   const moving=(mx!==0||my!==0) && !isImmobilized;
   p.x+=mx*moveSpeed*dt;
@@ -17772,6 +18432,19 @@ function update(dt){
         x: p.x + Math.cos(ang) * dist,
         y: p.y + Math.sin(ang) * dist
       });
+    }
+
+    // События волн (Кольцо окружения / Элитный охотник / Налёт роя) и Маяки риска
+    if(!isBossNext){
+      const evMod = g.wave % 10;
+      if((evMod === 3 || evMod === 5 || evMod === 8) && g.lastEventWave !== g.wave){
+        g.lastEventWave = g.wave;
+        triggerWaveEvent(g);
+      }
+      if((g.wave === 4 || (g.wave >= 11 && (g.wave - 5) % 6 === 0)) && g.lastBeaconWave !== g.wave){
+        g.lastBeaconWave = g.wave;
+        spawnSupplyBeacon();
+      }
     }
 
     const roundXpBonus=curLvlId===3?30:(curLvlId===2?20:10);
@@ -17963,11 +18636,18 @@ function update(dt){
             });
           }
           showGameToast('💚 '+T('FULL HP RESTORED!','ПОЛНОЕ ХП ВОССТАНОВЛЕНО!'),'#4ade80',2.4);
+        } else if(TACTICAL_PICKUP_TYPES.includes(pk.type)){
+          applyTacticalPickup(pk);
         }
         g.pickups.splice(i, 1);
       }
     }
   }
+
+  // Обновление событий волн, взрывных бочек и маяков риска
+  updateWaveEvents(g, dt);
+  updateBarrels(g, dt);
+  updateBeacons(g, dt);
 
   // 1. Движение врагов к игроку и способности босса
   for(const e of g.enemies){
@@ -22426,6 +23106,14 @@ function update(dt){
     }
 
     const dx=p.x-e.x,dy=p.y-e.y,d=Math.hypot(dx,dy)||1;
+    // Полная заморозка всех обычных врагов и стрелков во время Cryo Freeze
+    if((g.freezeT || 0) > 0 && !e.isBoss){
+      if(e.rootT > 0) e.rootT -= dt;
+      if(e.slashAnimT > 0) e.slashAnimT -= dt;
+      if(e.fl > 0) e.fl -= dt;
+      if(e.oh > 0) e.oh -= dt;
+      continue;
+    }
     // Автоматическое вылупление кокона паука по таймеру
     if(e.c === CONFIG.enemies.spider_egg && !e.dead){
       e.hatchT = (e.hatchT !== undefined ? e.hatchT : 6.5) - dt;
@@ -22577,8 +23265,8 @@ function update(dt){
       if(e.oh > 0) e.oh -= dt;
       continue;
     }
-    if(e.rootT > 0){
-      e.rootT -= dt;
+    if(e.rootT > 0 || ((g.freezeT || 0) > 0 && !e.isBoss)){
+      if(e.rootT > 0) e.rootT -= dt;
       e.facing = dx >= 0 ? 1 : -1;
       if(e.slashAnimT > 0) e.slashAnimT -= dt;
       if(e.fl > 0) e.fl -= dt;
@@ -22719,7 +23407,7 @@ function update(dt){
     }
     for(let i=0;i<g.enemies.length;i++){
       const e1=g.enemies[i];if(isEnemyUntargetable(e1))continue;
-      if(e1.rootT > 0) continue;
+      if(e1.rootT > 0 || ((g.freezeT || 0) > 0 && !e1.isBoss)) continue;
       const gx=Math.floor(e1.x/cellSize),gy=Math.floor(e1.y/cellSize);
       for(let cx=gx-1;cx<=gx+1;cx++){
         for(let cy=gy-1;cy<=gy+1;cy++){
@@ -23490,7 +24178,7 @@ function update(dt){
   }
   if(p.leadstormActive > 0) p.leadstormActive -= dt;
 
-  p.cd-=dt;
+  p.cd-=dt * ((g.overdriveT || 0) > 0 ? 1.85 : 1);
   const weaponDef=g.weaponDef||ITEMS[g.weaponId]||ITEMS.w_pistol;
   if(weaponDef.special==='void_pulse'&&p.cd<=0){
     const radius=(weaponDef.radius||205)*(p.voidRadMult||1)*(p.aoeMult||1)*(1+(p.laser_sight||0)*0.08);
@@ -23535,6 +24223,11 @@ function update(dt){
         }
       }
     }
+    if(g.barrels){
+      for(const b of g.barrels){
+        if(!b.dead && Math.hypot(b.x-p.x,b.y-p.y)<=radius+(b.r||16)) hitBarrel(b, voidDmg);
+      }
+    }
     const curWep = g.weaponId || (save && save.equip && save.equip.weapon) || 'm_void';
     const muzzle = getWeaponMuzzleOrigin(p, curWep);
     g.fx.push({type:'magicCast',x:muzzle.x,y:muzzle.y,angle:p.aimA,l:0.32,maxL:0.32,col:'#c084fc'});
@@ -23573,6 +24266,11 @@ function update(dt){
         if(e.dead||Math.hypot(e.x-ct.x,e.y-ct.y)>radius+(e.c?.r||10))continue;
         hurt(e,hDmg);
         applyEnemySlowOrCC(e, 0.88, stunDur, 0.35);
+      }
+      if(g.barrels){
+        for(const b of g.barrels){
+          if(!b.dead && Math.hypot(b.x-ct.x,b.y-ct.y)<=radius+(b.r||16)) hitBarrel(b, hDmg);
+        }
       }
       if(p.heavenSmite>0){
         const smiteChains=1+Math.floor(p.heavenSmite/2);
@@ -23848,6 +24546,17 @@ function update(dt){
     const shotBoundX = (W / 2) / (g.camZoom || CAM_BASE_ZOOM) + 120;
     const shotBoundY = (H / 2) / (g.camZoom || CAM_BASE_ZOOM) + 120;
     let rm=s.l<=0 || (Math.abs(s.x-p.x) > shotBoundX || Math.abs(s.y-p.y) > shotBoundY);
+    if(!rm && g.barrels && g.barrels.length){
+      for(const b of g.barrels){
+        if(b.dead || s.hit.includes(b)) continue;
+        const br = (b.r || 16) + 8;
+        if(distSqToSegment(b.x, b.y, prevX, prevY, s.x, s.y) < br * br){
+          s.hit.push(b);
+          hitBarrel(b, s.dmg);
+          if(s.pr > 0) s.pr--; else { rm = true; break; }
+        }
+      }
+    }
     if(!rm)for(const e of g.enemies){
       if(isEnemyUntargetable(e)||s.hit.includes(e))continue;
       const r=e.c.r+6;
@@ -24882,7 +25591,7 @@ function update(dt){
 
     if(m.mag){
       m.magT=(m.magT||0)+dt;
-      const pullSpd=Math.max(440,p.speed*1.7)+m.magT*320;
+      const pullSpd=(m.magFast ? 720 : Math.max(440,p.speed*1.7))+m.magT*(m.magFast ? 480 : 320);
       const step=Math.min(d,pullSpd*dt);
       m.x+=(dx/d)*step;m.y+=(dy/d)*step;
     }
@@ -26054,8 +26763,8 @@ function drawPickups(g, ox, oy){
   if(!g.pickups) return;
   const t = performance.now() / 250;
   for(const pk of g.pickups){
-    const px = pk.x + ox, py = pk.y + oy + Math.sin(t + pk.x * 0.05) * 2;
-    if(px < -20 || px > W + 20 || py < -20 || py > H + 20) continue;
+    const px = pk.x + ox, py = pk.y + oy + Math.sin(t + pk.x * 0.05) * 2.5;
+    if(px < -140 || px > W + 140 || py < -140 || py > H + 140) continue;
     if(pk.type === 'heal_full'){
       // Тень
       cx.fillStyle = 'rgba(0,0,0,0.35)';
@@ -26080,8 +26789,280 @@ function drawPickups(g, ox, oy){
       cx.fillStyle = '#bbf7d0';
       cx.fillRect(px - 1.5, py - 5.5, 3, 11);
       cx.fillRect(px - 5.5, py - 1.5, 11, 3);
+    } else if(TACTICAL_PICKUP_TYPES.includes(pk.type)){
+      const cfg = pk.type === 'magnet'
+        ? { bg: '#0c2a4a', col: '#38bdf8', glow: '56,189,248', lbl: T('MAGNET','МАГНИТ') }
+        : (pk.type === 'nuke'
+          ? { bg: '#451208', col: '#f97316', glow: '249,115,22', lbl: T('NUKE','БОМБА') }
+          : (pk.type === 'freeze'
+            ? { bg: '#083344', col: '#22d3ee', glow: '34,211,238', lbl: T('FREEZE','ЛЁД') }
+            : { bg: '#422006', col: '#facc15', glow: '250,204,21', lbl: T('FURY','ЯРОСТЬ') }));
+      const pulse = 0.78 + 0.22 * Math.sin(t * 3.2);
+      cx.save();
+      // Тень + пульсирующий световой столб
+      cx.fillStyle = 'rgba(0,0,0,0.42)';
+      cx.beginPath(); cx.ellipse(px, py + 14, 14, 5.5, 0, 0, 6.283); cx.fill();
+      const radG = cx.createRadialGradient(px, py, 2, px, py, 24);
+      radG.addColorStop(0, `rgba(${cfg.glow},${0.78 * pulse})`);
+      radG.addColorStop(0.55, `rgba(${cfg.glow},${0.26 * pulse})`);
+      radG.addColorStop(1, `rgba(${cfg.glow},0)`);
+      cx.fillStyle = radG;
+      cx.beginPath(); cx.arc(px, py, 24, 0, 6.283); cx.fill();
+      // Внешнее кольцо
+      cx.strokeStyle = `rgba(${cfg.glow},${0.65 * pulse})`;
+      cx.lineWidth = 1.6;
+      cx.beginPath(); cx.arc(px, py, 14 + Math.sin(t * 3) * 1.5, 0, 6.283); cx.stroke();
+      // Медальон
+      cx.fillStyle = cfg.bg;
+      cx.strokeStyle = cfg.col;
+      cx.lineWidth = 2;
+      cx.beginPath(); cx.arc(px, py, 11.5, 0, 6.283); cx.fill(); cx.stroke();
+      // Чёткая векторная иконка
+      if(pk.type === 'magnet'){
+        cx.strokeStyle = '#ef4444'; cx.lineWidth = 3.2; cx.lineCap = 'butt';
+        cx.beginPath(); cx.arc(px, py - 1, 5.5, 0, Math.PI, false); cx.stroke();
+        cx.beginPath(); cx.moveTo(px - 5.5, py - 1); cx.lineTo(px - 5.5, py - 6.2); cx.moveTo(px + 5.5, py - 1); cx.lineTo(px + 5.5, py - 6.2); cx.stroke();
+        cx.fillStyle = '#e2e8f0';
+        cx.fillRect(px - 7.1, py - 7, 3.2, 3); cx.fillRect(px + 3.9, py - 7, 3.2, 3);
+      } else if(pk.type === 'nuke'){
+        cx.fillStyle = '#1e293b'; cx.strokeStyle = '#fb923c'; cx.lineWidth = 1.3;
+        cx.beginPath(); cx.arc(px, py + 1.5, 6.2, 0, 6.283); cx.fill(); cx.stroke();
+        cx.strokeStyle = '#fde047'; cx.lineWidth = 1.6;
+        cx.beginPath(); cx.moveTo(px + 1, py - 4.5); cx.quadraticCurveTo(px + 5, py - 8, px + 7.5, py - 6.5); cx.stroke();
+        cx.fillStyle = '#fef08a'; cx.beginPath(); cx.arc(px + 7.5, py - 6.5, 2.2, 0, 6.283); cx.fill();
+      } else if(pk.type === 'freeze'){
+        cx.strokeStyle = '#cffafe'; cx.lineWidth = 1.8; cx.lineCap = 'round';
+        for(let a = 0; a < 3; a++){
+          const ang = a * (Math.PI / 3);
+          cx.beginPath();
+          cx.moveTo(px - Math.cos(ang)*6.5, py - Math.sin(ang)*6.5);
+          cx.lineTo(px + Math.cos(ang)*6.5, py + Math.sin(ang)*6.5);
+          cx.stroke();
+        }
+        cx.fillStyle = '#ffffff'; cx.beginPath(); cx.arc(px, py, 2.2, 0, 6.283); cx.fill();
+      } else {
+        // Lightning bolt (Overdrive / Fury)
+        cx.fillStyle = '#fef08a'; cx.strokeStyle = '#ef4444'; cx.lineWidth = 1;
+        cx.beginPath();
+        cx.moveTo(px + 1.5, py - 7.5); cx.lineTo(px - 4.5, py + 0.5); cx.lineTo(px - 0.5, py + 0.5);
+        cx.lineTo(px - 2.5, py + 7.5); cx.lineTo(px + 5, py - 1); cx.lineTo(px + 0.8, py - 1);
+        cx.closePath(); cx.fill(); cx.stroke();
+      }
+      // Компактная подпись
+      drawPromptBadge(px, py - 4, cfg.lbl, cfg.col);
+      cx.restore();
     }
   }
+}
+
+function drawBarrels(g, ox, oy, cam){
+  if(!g.barrels || !g.barrels.length) return;
+  const vMinX = cam.viewMinX - 80, vMaxX = cam.viewMaxX + 80;
+  const vMinY = cam.viewMinY - 80, vMaxY = cam.viewMaxY + 80;
+  const now = performance.now();
+  for(const b of g.barrels){
+    if(b.dead) continue;
+    const bx = b.x + ox, by = b.y + oy;
+    if(bx < vMinX || bx > vMaxX || by < vMinY || by > vMaxY) continue;
+    // Проверка: есть ли враги в зоне поражения (подсвечиваем радиус взрыва!)
+    let enemyNear = false;
+    for(const e of g.enemies){
+      if(!e.dead && !isEnemyUntargetable(e) && Math.hypot(e.x - b.x, e.y - b.y) <= (b.blastR || 135)){
+        enemyNear = true; break;
+      }
+    }
+    const pulse = 0.72 + 0.28 * Math.sin(now / (enemyNear ? 110 : 240));
+    cx.save();
+    if(enemyNear || b.chainT > 0){
+      cx.strokeStyle = b.col;
+      cx.globalAlpha = b.chainT > 0 ? 0.75 : (0.34 * pulse);
+      cx.lineWidth = b.chainT > 0 ? 2.4 : 1.5;
+      cx.setLineDash([8, 6]);
+      cx.beginPath(); cx.arc(bx, by, b.blastR || 135, 0, 6.283); cx.stroke();
+      cx.setLineDash([]);
+      cx.globalAlpha = 1;
+    }
+    // Тень
+    cx.fillStyle = 'rgba(0,0,0,0.45)';
+    cx.beginPath(); cx.ellipse(bx, by + 13, 15, 6, 0, 0, 6.283); cx.fill();
+    // Подсветка
+    const gg = cx.createRadialGradient(bx, by, 2, bx, by, 22);
+    gg.addColorStop(0, b.hitFlash > 0 ? 'rgba(255,255,255,0.85)' : colorMixAlpha(b.col, 0.36 * pulse));
+    gg.addColorStop(1, 'rgba(0,0,0,0)');
+    cx.fillStyle = gg;
+    cx.beginPath(); cx.arc(bx, by, 22, 0, 6.283); cx.fill();
+
+    if(b.kind === 'spore'){
+      // Глава 2: Токсичный споровый кокон
+      cx.fillStyle = b.hitFlash > 0 ? '#ffffff' : '#365314';
+      cx.strokeStyle = '#bef264'; cx.lineWidth = 1.8;
+      cx.beginPath(); cx.ellipse(bx, by, 13, 14.5, 0, 0, 6.283); cx.fill(); cx.stroke();
+      cx.fillStyle = '#84cc16';
+      cx.beginPath(); cx.arc(bx - 3, by - 2, 4.5, 0, 6.283); cx.arc(bx + 4, by + 3, 3.2, 0, 6.283); cx.fill();
+      cx.fillStyle = '#ecfccb';
+      cx.beginPath(); cx.arc(bx - 4, by - 3.5, 1.8, 0, 6.283); cx.fill();
+    } else if(b.kind === 'plasma'){
+      // Глава 3: Плазменная энергоячейка
+      cx.fillStyle = b.hitFlash > 0 ? '#ffffff' : '#0f172a';
+      cx.strokeStyle = '#38bdf8'; cx.lineWidth = 1.8;
+      cx.beginPath(); cx.roundRect(bx - 11, by - 14, 22, 28, 5); cx.fill(); cx.stroke();
+      cx.fillStyle = '#22d3ee';
+      cx.fillRect(bx - 6, by - 8, 12, 16);
+      cx.fillStyle = '#e0f2fe';
+      cx.fillRect(bx - 2.5, by - 6, 5, 12);
+      cx.fillStyle = '#334155';
+      cx.fillRect(bx - 11, by - 14, 22, 4.5); cx.fillRect(bx - 11, by + 9.5, 22, 4.5);
+    } else {
+      // Глава 1: Красная топливная бочка
+      cx.fillStyle = b.hitFlash > 0 ? '#ffffff' : '#b91c1c';
+      cx.strokeStyle = '#0f172a'; cx.lineWidth = 1.8;
+      cx.beginPath(); cx.roundRect(bx - 11, by - 14, 22, 28, 4); cx.fill(); cx.stroke();
+      // Светлый блик + металлические обода
+      cx.fillStyle = '#ef4444'; cx.fillRect(bx - 8, by - 11, 6, 22);
+      cx.fillStyle = '#cbd5e1';
+      cx.fillRect(bx - 11.5, by - 7.5, 23, 2.5);
+      cx.fillRect(bx - 11.5, by + 5, 23, 2.5);
+      // Жёлтый ромб опасности
+      cx.fillStyle = '#facc15';
+      cx.beginPath(); cx.moveTo(bx, by - 4.5); cx.lineTo(bx + 4.5, by); cx.lineTo(bx, by + 4.5); cx.lineTo(bx - 4.5, by); cx.closePath(); cx.fill();
+    }
+    if(enemyNear){
+      drawPromptBadge(bx, by - 8, '💥', b.core);
+    }
+    cx.restore();
+  }
+}
+
+function drawBeacons(g, ox, oy, cam){
+  if(!g.beacons || !g.beacons.length) return;
+  const now = performance.now();
+  for(const bc of g.beacons){
+    const bx = bc.x + ox, by = bc.y + oy;
+    const prog = Math.min(1, Math.max(0, bc.charge / bc.chargeNeed));
+    const pulse = 0.72 + 0.28 * Math.sin(now / 150);
+    const col = bc.inside ? '#facc15' : '#38bdf8';
+    cx.save();
+    // Заливка зоны захвата
+    const rg = cx.createRadialGradient(bx, by, 6, bx, by, bc.r);
+    rg.addColorStop(0, colorMixAlpha(col, bc.inside ? 0.30 : 0.16));
+    rg.addColorStop(0.75, colorMixAlpha(col, bc.inside ? 0.14 : 0.06));
+    rg.addColorStop(1, 'rgba(0,0,0,0)');
+    cx.fillStyle = rg;
+    cx.beginPath(); cx.arc(bx, by, bc.r, 0, 6.283); cx.fill();
+    // Вращающееся внешнее пунктирное кольцо
+    cx.strokeStyle = colorMixAlpha(col, 0.78 * pulse);
+    cx.lineWidth = 2.2;
+    cx.setLineDash([12, 7]);
+    cx.beginPath();
+    cx.arc(bx, by, bc.r, now * 0.0008, now * 0.0008 + 6.283);
+    cx.stroke();
+    cx.setLineDash([]);
+    // Дуга прогресса захвата (0% -> 100%)
+    if(prog > 0){
+      cx.strokeStyle = '#fde047';
+      cx.lineWidth = 4.2;
+      cx.lineCap = 'round';
+      cx.beginPath();
+      cx.arc(bx, by, bc.r - 4, -Math.PI / 2, -Math.PI / 2 + prog * 6.283);
+      cx.stroke();
+    }
+    // Центральный голографический пилон маяка
+    cx.fillStyle = 'rgba(0,0,0,0.45)';
+    cx.beginPath(); cx.ellipse(bx, by + 9, 13, 5, 0, 0, 6.283); cx.fill();
+    cx.fillStyle = '#0f172a'; cx.strokeStyle = col; cx.lineWidth = 2;
+    cx.beginPath(); cx.moveTo(bx, by - 14); cx.lineTo(bx + 8, by + 6); cx.lineTo(bx - 8, by + 6); cx.closePath(); cx.fill(); cx.stroke();
+    cx.fillStyle = col;
+    cx.beginPath(); cx.arc(bx, by - 14, 4 + Math.sin(now / 120), 0, 6.283); cx.fill();
+    // Текст прогресса или таймера
+    const lbl = prog > 0 ? `${Math.round(prog * 100)}%` : `📡 ${Math.ceil(bc.ttl)}s`;
+    drawPromptBadge(bx, by - 12, lbl, col);
+    cx.restore();
+  }
+}
+
+function drawWaveEventTelegraphs(g, ox, oy){
+  if(!g.eventTelegraphs || !g.eventTelegraphs.length) return;
+  const now = performance.now();
+  for(const tg of g.eventTelegraphs){
+    const alpha = 0.45 + 0.45 * Math.sin(now / 60);
+    cx.save();
+    if(tg.type === 'ring'){
+      cx.strokeStyle = `rgba(239,68,68,${alpha})`;
+      cx.lineWidth = 3.2;
+      cx.setLineDash([14, 8]);
+      cx.beginPath(); cx.arc(tg.x + ox, tg.y + oy, tg.rad, 0, 6.283); cx.stroke();
+      cx.setLineDash([]);
+    } else if(tg.type === 'stampede'){
+      cx.translate(tg.x + ox, tg.y + oy);
+      cx.rotate(tg.ang);
+      cx.fillStyle = `rgba(251,146,60,${0.18 * alpha})`;
+      cx.fillRect(-320, -48, 640, 96);
+      cx.strokeStyle = `rgba(251,146,60,${0.85 * alpha})`;
+      cx.lineWidth = 2.2;
+      cx.setLineDash([12, 8]);
+      cx.strokeRect(-320, -48, 640, 96);
+      cx.setLineDash([]);
+    }
+    cx.restore();
+  }
+}
+
+function drawOffscreenMarker(wx, wy, g, col, label){
+  const s = worldToScreen(wx, wy, g);
+  if(s.x >= 16 && s.x <= W - 16 && s.y >= 54 && s.y <= H - 54) return;
+  const cx0 = W / 2, cy0 = H / 2;
+  const ang = Math.atan2(s.y - cy0, s.x - cx0);
+  const padX = 24, padTop = 94, padBot = 82;
+  const sxL = (W / 2 - padX) / Math.max(1e-4, Math.abs(Math.cos(ang)));
+  const syL = (H / 2 - padTop) / Math.max(1e-4, Math.abs(Math.sin(ang)));
+  const dEdge = Math.min(sxL, syL);
+  const ix = cx0 + Math.cos(ang) * dEdge;
+  const iy = Math.max(padTop, Math.min(H - padBot, cy0 + Math.sin(ang) * dEdge));
+  cx.save();
+  cx.translate(ix, iy);
+  cx.rotate(ang);
+  cx.fillStyle = col;
+  cx.strokeStyle = '#ffffff';
+  cx.lineWidth = 1.6;
+  cx.beginPath();
+  cx.moveTo(10, 0); cx.lineTo(-7, -6); cx.lineTo(-4, 0); cx.lineTo(-7, 6);
+  cx.closePath(); cx.fill(); cx.stroke();
+  cx.restore();
+  if(label){
+    cx.save();
+    cx.font = '800 10px "Russo One", sans-serif';
+    cx.textAlign = 'center'; cx.textBaseline = 'middle';
+    cx.fillStyle = col;
+    cx.fillText(label, ix, iy - 13);
+    cx.restore();
+  }
+}
+
+function drawTacticalBuffHUD(g){
+  const buffs = [];
+  if((g.freezeT || 0) > 0) buffs.push({ ico: '❄️', name: T('FREEZE','ЛЁД'), t: g.freezeT, max: 6.0, col: '#22d3ee' });
+  if((g.overdriveT || 0) > 0) buffs.push({ ico: '⚡', name: T('FURY','ЯРОСТЬ'), t: g.overdriveT, max: 8.0, col: '#facc15' });
+  if(!buffs.length) return;
+  const pillW = 92, pillH = 22, gap = 8;
+  const totalW = buffs.length * pillW + (buffs.length - 1) * gap;
+  let sx = (W - totalW) / 2;
+  const sy = H - 38;
+  cx.save();
+  for(const bf of buffs){
+    const pct = Math.max(0, Math.min(1, bf.t / bf.max));
+    cx.fillStyle = 'rgba(7,12,24,0.82)';
+    cx.strokeStyle = bf.col;
+    cx.lineWidth = 1.4;
+    cx.beginPath(); cx.roundRect(sx, sy, pillW, pillH, 11); cx.fill(); cx.stroke();
+    cx.fillStyle = colorMixAlpha(bf.col, 0.28);
+    cx.beginPath(); cx.roundRect(sx + 1.5, sy + 1.5, Math.max(4, (pillW - 3) * pct), pillH - 3, 9.5); cx.fill();
+    cx.font = '800 10.5px "Russo One", sans-serif';
+    cx.textAlign = 'center'; cx.textBaseline = 'middle';
+    cx.fillStyle = '#ffffff';
+    cx.fillText(`${bf.ico} ${bf.name} ${bf.t.toFixed(1)}s`, sx + pillW / 2, sy + pillH / 2 + 0.5);
+    sx += pillW + gap;
+  }
+  cx.restore();
 }
 
 function drawHazardStripe(x, y, w, h, offset){
@@ -32029,8 +33010,11 @@ function drawGame(){
   drawGround(ox,oy,g.lvlConfig,cam);
   drawBossCraters(g,ox,oy);
   drawBossArena(g,ox,oy,cam);
+  drawBeacons(g,ox,oy,cam);
+  drawWaveEventTelegraphs(g,ox,oy);
   drawPetGroundDecals(g,ox,oy,cam);
   drawGems(g,ox,oy,cam);
+  drawBarrels(g,ox,oy,cam);
 
   // Отрисовка Аирдропов (Airdrops)
   for(const a of g.airdrops){
@@ -32353,7 +33337,7 @@ function drawGame(){
         }
         cx.restore();
       }
-    }else if(e.c===CONFIG.enemies.zombie_mutant&&zombieMutantImg.complete&&zombieMutantImg.naturalWidth>0){
+    }else if(e.c===CONFIG.enemies.zombie_mutant&&loadImg(zombieMutantImg).complete&&zombieMutantImg.naturalWidth>0){
       cx.fillStyle='rgba(0,0,0,.35)';
       cx.beginPath();cx.ellipse(e.x+ox,e.y+oy+28,17,6,0,0,6.283);cx.fill();
       cx.save();
@@ -32373,7 +33357,7 @@ function drawGame(){
       const src = e.fl>0 ? getFilteredSheet(zombieImg, 'brightness(3)') : zombieImg;
       cx.drawImage(src,e.frame*280,0,280,380,-28,-42,56,76);
       cx.restore();
-    }else if(e.c===CONFIG.enemies.skeleton&&skeletonImg.complete&&skeletonImg.naturalWidth>0){
+    }else if(e.c===CONFIG.enemies.skeleton&&loadImg(skeletonImg).complete&&skeletonImg.naturalWidth>0){
       cx.fillStyle='rgba(0,0,0,.35)';
       cx.beginPath();cx.ellipse(e.x+ox,e.y+oy+26,18,6.5,0,0,6.283);cx.fill();
       cx.save();
@@ -32387,7 +33371,7 @@ function drawGame(){
       const src = e.fl>0 ? getFilteredSheet(skeletonImg, 'brightness(3)') : skeletonImg;
       cx.drawImage(src,e.frame*280,0,280,380,-25,-36,50,68);
       cx.restore();
-    }else if(e.c===CONFIG.enemies.hound&&houndImg.complete&&houndImg.naturalWidth>0){
+    }else if(e.c===CONFIG.enemies.hound&&loadImg(houndImg).complete&&houndImg.naturalWidth>0){
       cx.fillStyle='rgba(0,0,0,.38)';
       cx.beginPath();cx.ellipse(e.x+ox,e.y+oy+16,22,7,0,0,6.283);cx.fill();
       cx.save();
@@ -32398,7 +33382,7 @@ function drawGame(){
       const src = e.fl>0 ? getFilteredSheet(houndImg, 'brightness(3)') : houndImg;
       cx.drawImage(src,e.frame*420,0,420,300,-hw/2,-hh/2-2,hw,hh);
       cx.restore();
-    }else if(e.c&&e.c.sheet&&monsterSheetImgs[e.c.sheet]?.complete&&monsterSheetImgs[e.c.sheet].naturalWidth>0){
+    }else if(e.c&&e.c.sheet&&ensureMonsterSheet(e.c.sheet)?.complete&&monsterSheetImgs[e.c.sheet].naturalWidth>0){
       const img = monsterSheetImgs[e.c.sheet];
       const fw = e.c.frameW, fh = e.c.frameH;
       const dw = e.c.spriteW || 50, dh = e.c.spriteH || 50;
@@ -32432,12 +33416,44 @@ function drawGame(){
       const src = e.fl > 0 ? getFilteredSheet(img, 'brightness(3)') : img;
       cx.drawImage(src, f * fw, 0, fw, fh, -dw / 2, drawOffsetY, dw, dh);
       cx.restore();
-    }else if(e.c.sprite&&monsterSpriteImgs[e.c.sprite]?.complete&&monsterSpriteImgs[e.c.sprite].naturalWidth>0){
+    }else if(e.c&&e.c.sprite&&ensureMonsterSprite(e.c.sprite)?.complete&&monsterSpriteImgs[e.c.sprite].naturalWidth>0){
       drawAnimatedMonster(cx, e, monsterSpriteImgs[e.c.sprite], e.c.spriteW || 48, e.c.spriteH || 48, ox, oy);
     }else{
       circle(e.x+ox,e.y+oy,e.c.r,e.fl>0?'#fff':e.c.color);
     }
     drawEnemyPetStatusMarks(cx, e, ox, oy);
+    // Визуал заморозки (Cryo Freeze Clock) на обычных врагах
+    if((g.freezeT || 0) > 0 && !e.isBoss && !e.dead){
+      const fr = (e.c?.r || 14) + 5;
+      cx.save();
+      cx.fillStyle = 'rgba(34,211,238,0.26)';
+      cx.strokeStyle = 'rgba(165,243,252,0.85)';
+      cx.lineWidth = 1.5;
+      cx.beginPath();
+      cx.moveTo(e.x + ox, e.y + oy - fr);
+      cx.lineTo(e.x + ox + fr * 0.85, e.y + oy);
+      cx.lineTo(e.x + ox, e.y + oy + fr);
+      cx.lineTo(e.x + ox - fr * 0.85, e.y + oy);
+      cx.closePath(); cx.fill(); cx.stroke();
+      cx.restore();
+    }
+    // Золотая аура, корона и полоска ХП для Элитных мини-боссов событий волн
+    if(e.isElite && !e.dead){
+      const er = (e.c?.r || 18) + 8;
+      const ep = 0.72 + 0.28 * Math.sin(performance.now() / 140);
+      cx.save();
+      cx.strokeStyle = `rgba(250,204,21,${0.85 * ep})`;
+      cx.lineWidth = 2.2;
+      cx.beginPath(); cx.ellipse(e.x + ox, e.y + oy + 8, er, er * 0.52, 0, 0, 6.283); cx.stroke();
+      // Полоска HP и корона
+      const bw = 42, bh = 5, bx0 = e.x + ox - bw / 2, by0 = e.y + oy - er - 16;
+      const pct = Math.max(0, Math.min(1, e.hp / (e.maxHp || 1)));
+      cx.fillStyle = 'rgba(0,0,0,0.75)'; cx.fillRect(bx0 - 1, by0 - 1, bw + 2, bh + 2);
+      cx.fillStyle = '#facc15'; cx.fillRect(bx0, by0, bw * pct, bh);
+      cx.font = '800 11px sans-serif'; cx.textAlign = 'center'; cx.textBaseline = 'bottom';
+      cx.fillText('👑', e.x + ox, by0 - 2);
+      cx.restore();
+    }
     if(e.isBoss && !e.dead && e.phaseGuardT > 0){
       const pulse = .75 + .25 * Math.sin(performance.now() / 70);
       const alpha = Math.min(1, e.phaseGuardT / 0.35) * pulse;
@@ -33275,8 +34291,8 @@ function drawGame(){
     const lx=g.pet.lungeX||0, ly=g.pet.lungeY||0;
     const jumpY=g.pet.jumpY||0;
     const px=g.pet.x+lx+ox,py=g.pet.y+ly+oy,rc=RAR[g.pet.rar]||RAR[1];
-    const spr=g.pet.sprite&&monsterSpriteImgs[g.pet.sprite];
-    const sheet=g.pet.sheet&&monsterSheetImgs[g.pet.sheet];
+    const spr=g.pet.sprite&&ensureMonsterSprite(g.pet.sprite);
+    const sheet=g.pet.sheet&&ensureMonsterSheet(g.pet.sheet);
     const pw=g.pet.spriteW||38,ph=g.pet.spriteH||34;
     const isFlying=!!g.pet.flying;
 
@@ -34990,6 +36006,22 @@ function drawGame(){
   if(opt('shake')&&p.inv>0&&g.t>1.3){cx.globalAlpha=Math.min(1,p.inv*2.2);cx.drawImage(vig('red','rgba(220,38,38,.75)',.3),0,0,W,H);cx.globalAlpha=1}
   if(p.hp<p.maxHp*.3){cx.globalAlpha=.35+.25*Math.sin(performance.now()/180);cx.drawImage(vig('red','rgba(220,38,38,.75)',.3),0,0,W,H);cx.globalAlpha=1}
   if(g.bossFlash>0){cx.globalAlpha=Math.min(.5,g.bossFlash*2.6);cx.fillStyle='#fff7ed';cx.fillRect(0,0,W,H);cx.globalAlpha=1}
+  if((g.nukeFlash||0)>0){cx.globalAlpha=Math.min(.62,g.nukeFlash*1.5);cx.fillStyle='#fed7aa';cx.fillRect(0,0,W,H);cx.globalAlpha=1}
+  if((g.freezeT||0)>0){cx.globalAlpha=0.28+0.10*Math.sin(performance.now()/220);cx.drawImage(vig('ice','rgba(34,211,238,.78)',.32),0,0,W,H);cx.globalAlpha=1}
+  if((g.overdriveT||0)>0){cx.globalAlpha=0.22+0.12*Math.sin(performance.now()/140);cx.drawImage(vig('fury','rgba(250,204,21,.68)',.28),0,0,W,H);cx.globalAlpha=1}
+
+  // Индикаторы за краем экрана для Маяков риска и тактических пикапов
+  if(g.beacons && g.beacons.length){
+    for(const bc of g.beacons) drawOffscreenMarker(bc.x, bc.y, g, '#38bdf8', '📡');
+  }
+  if(g.pickups && g.pickups.length){
+    for(const pk of g.pickups){
+      if(!pk.tactical) continue;
+      const pCol = pk.type==='magnet'?'#38bdf8':(pk.type==='nuke'?'#f97316':(pk.type==='freeze'?'#22d3ee':'#facc15'));
+      drawOffscreenMarker(pk.x, pk.y, g, pCol, '');
+    }
+  }
+  drawTacticalBuffHUD(g);
 
   // Индикатор босса за краем экрана (с учётом адаптивного зума камеры)
   if(g.activeBoss && !g.activeBoss.dead){
@@ -35060,7 +36092,15 @@ function loop(now){
 
     if(G&&G.run){
       drawGame();
+      if(window.Bgm){
+        const ab = G.activeBoss && !G.activeBoss.dead ? G.activeBoss : null;
+        const bMode = ab
+          ? ((ab.enraged || ab.phase3) ? 'boss_enraged' : 'boss')
+          : ((G.waveEvent || (G.overdriveT || 0) > 0) ? 'event' : 'combat');
+        Bgm.setMode(bMode, !!G.pause);
+      }
     }else{
+      if(window.Bgm) Bgm.setMode('lobby', false);
       const hasOpenModal = !!(typeof document !== 'undefined' && document.querySelector && document.querySelector('.modal-overlay.open'));
       if(!hasOpenModal) drawLobby(now);
       const invEl=document.getElementById('modal-inventory');
@@ -35076,69 +36116,21 @@ function loop(now){
 
 // ===== МОБИЛЬНЫЙ ПРЕЛОАДЕР И ЖЕСТЫ (PRELOADER & GESTURE LOCK) =====
 function preloadGameAssets() {
+  // Только критически важные ассеты старта и лобби (без дубликатов и боссов 2-3 глав — они грузятся лениво)
   const criticalAssets = [
-    'img/heroes/hero_sheet.webp',
-    'img/heroes/hero_portrait.webp',
-    'img/heroes/hero_marcus_sheet.webp',
-    'img/heroes/hero_marcus_portrait.webp',
-    'img/heroes/hero_leon_sheet.webp',
-    'img/heroes/hero_leon_portrait.webp',
-    'img/heroes/hero_viktor_sheet.webp',
-    'img/heroes/hero_rex_sheet.webp',
-    'img/heroes/hero_kael_sheet.webp',
+    'img/heroes/hero_sheet.webp?v=2',
+    'img/heroes/hero_portrait.webp?v=2',
     'img/backgrounds/bg_lvl1.webp?v=19',
-    'img/backgrounds/bg_lvl2.webp?v=19',
-    'img/backgrounds/bg_lvl3.webp?v=19',
-    'img/monsters/zombie_sheet.webp',
-    'img/monsters/monster_skeleton_sheet.webp',
-    'img/monsters/monster_slime_sheet.webp',
-    'img/monsters/boss_gravedigger.webp?v=18',
-  'img/monsters/boss_gravedigger_walk.webp?v=18',
-  'img/monsters/boss_gravedigger_slam.webp?v=18',
-  'img/monsters/boss_gravedigger_dig.webp?v=18',
-  'img/monsters/boss_gravedigger_roar.webp?v=18',
-  'img/monsters/boss_cyber_cerberus.webp?v=19',
-  'img/monsters/boss_cyber_cerberus_attack.webp?v=19',
-  'img/monsters/boss_cyber_cerberus_sheet.webp?v=19',
-  'img/monsters/boss_bio_butcher.webp?v=20',
-  'img/monsters/boss_bio_butcher_attack.webp?v=20',
-  'img/monsters/boss_bio_butcher_sheet.webp?v=20',
-  'img/monsters/boss_chitin_reaper.webp?v=19',
-  'img/monsters/boss_chitin_reaper_attack.webp?v=19',
-  'img/monsters/boss_chitin_reaper_sheet.webp?v=19',
-  'img/monsters/boss_chitin_egg.webp?v=19',
-  'img/monsters/boss_chitin_egg_sheet.webp?v=19',
-  'img/monsters/boss_chitin_reaper_p2.webp?v=20',
-  'img/monsters/boss_chitin_reaper_p2_sheet.webp?v=20',
-  'img/monsters/boss_chitin_reaper_p2_attack.webp?v=20',
-  'img/monsters/boss_neuro_overmind.webp?v=18',
-  'img/monsters/boss_neuro_overmind_attack.webp?v=18',
-  'img/monsters/boss_neuro_overmind_sheet.webp?v=18',
-  'img/monsters/boss_patient_zero.webp?v=18',
-  'img/monsters/boss_patient_zero_attack.webp?v=18',
-  'img/monsters/boss_patient_zero_sheet.webp?v=18',
+    'img/monsters/zombie_sheet.webp?v=22',
     'img/ui/dock_heroes.webp',
     'img/ui/dock_storage.webp',
     'img/ui/dock_stats.webp',
     'img/ui/dock_craft.webp',
     'img/ui/dock_rewards.webp',
-    'img/ui/crate_wood.webp',
-    'img/ui/airdrop_box.webp',
+    'img/ui/crate_wood.webp?v=22',
+    'img/ui/airdrop_box.webp?v=22',
     'img/weapons/item_m1911_icon.webp',
-    'img/weapons/weapon_rebel_sawedoff_icon.webp',
-    'img/weapons/weapon_python_revolver_icon.webp',
-    'img/weapons/weapon_vector_smg_icon.webp',
-    'img/shields/shield_buckler_icon.webp',
-    'img/artifacts/art_compass_icon.webp',
-    'img/pets/pet_slime_sheet.webp?v=3',
-    'img/pets/pet_bat_sheet.webp?v=3',
-    'img/pets/pet_mimic_sheet.webp?v=3',
-    'img/pets/pet_gargoyle_sheet.webp?v=3',
-    'img/pets/pet_treant_sheet.webp?v=3',
-    'img/pets/pet_mushroom_sheet.webp?v=3',
-    'img/pets/pet_spider_sheet.webp?v=3',
-    'img/pets/pet_rat_sheet.webp?v=3',
-    'img/pets/pet_ghoul_sheet.webp?v=3'
+    'img/shields/shield_buckler_icon.webp'
   ];
 
   return new Promise(resolve=>{
@@ -35201,6 +36193,7 @@ async function initializeGameData(){
         SafeStorage.setItem('surv_save',JSON.stringify(save));
         LANG=save.settings.lang==='ru'?'ru':'en';
         Sfx.enabled=save.settings.sfx!==false;
+        if(window.Bgm){Bgm.enabled=save.settings.bgm!==false;Bgm.sync();}
         Sfx.setVolume(save.settings.volume);
         syncSoundBtnIcon();
         applyLang();
@@ -35266,895 +36259,6 @@ Promise.all([preloadGameAssets(),initializeGameData()]).then(()=>{
 //    - Кнопка "СКИП +5 ВОЛН" в правом нижнем углу боевого экрана (test-skip-wave-btn).
 //    - Мгновенный пропуск 5 волн с начислением опыта за каждую волну и вызовом босса при переходе через 10/20/30/40/50.
 //    - Автоматическая блокировка кнопки во время активного боя с боссом для честного прохождения.
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
-// * --------------------------------------------------------------------------
 // ==============================================================================
 requestAnimationFrame(loop);
 </script>
