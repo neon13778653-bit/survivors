@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="arc" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7dd3fc"/>
+      <stop offset="55%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+    <linearGradient id="bolt" x1="15%" y1="0%" x2="85%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="45%" stop-color="#bae6fd"/>
+      <stop offset="100%" stop-color="#38bdf8"/>
+    </linearGradient>
+  </defs>
+  <!-- Clean recharge circular sweep arc -->
+  <path d="M51.5 26 A21 21 0 1 1 38.5 12" fill="none" stroke="url(#arc)" stroke-width="4.4" stroke-linecap="round"/>
+  <!-- Crisp directional recharge arrowhead -->
+  <path d="M35.5 6.5 L47.5 11.5 L38 19.5 Z" fill="#bae6fd"/>
+  <!-- Secondary calibration arc accent -->
+  <path d="M51 37 A20.5 20.5 0 0 1 40 50.5" fill="none" stroke="#e0f2fe" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+  <!-- Sharp geometric energy bolt -->
+  <path d="M35.5 17.5 L22.5 34.5 H31.2 L28.2 47.5 L41.8 30 H32.8 Z" fill="url(#bolt)"/>
+</svg>

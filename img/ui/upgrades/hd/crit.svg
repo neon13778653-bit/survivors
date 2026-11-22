@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="star" x1="15%" y1="10%" x2="85%" y2="90%">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="48%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </linearGradient>
+    <linearGradient id="br" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d8b4fe"/>
+      <stop offset="100%" stop-color="#9333ea"/>
+    </linearGradient>
+  </defs>
+  <!-- Tactical precision corner lock brackets -->
+  <path d="M10 20 V10 H20" fill="none" stroke="url(#br)" stroke-width="3.2" stroke-linecap="square"/>
+  <path d="M44 10 H54 V20" fill="none" stroke="url(#br)" stroke-width="3.2" stroke-linecap="square"/>
+  <path d="M54 44 V54 H44" fill="none" stroke="url(#br)" stroke-width="3.2" stroke-linecap="square"/>
+  <path d="M20 54 H10 V44" fill="none" stroke="url(#br)" stroke-width="3.2" stroke-linecap="square"/>
+  <!-- Razor-sharp 4-point critical burst -->
+  <path d="M32 9 L38.2 25.8 L55 32 L38.2 38.2 L32 55 L25.8 38.2 L9 32 L25.8 25.8 Z" fill="url(#star)"/>
+  <!-- White-hot inner diamond core -->
+  <path d="M32 22.5 L35.5 28.5 L41.5 32 L35.5 35.5 L32 41.5 L28.5 35.5 L22.5 32 L28.5 28.5 Z" fill="#fffbeb"/>
+</svg>

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="52%" stop-color="#facc15"/>
+      <stop offset="100%" stop-color="#ca8a04"/>
+    </linearGradient>
+    <linearGradient id="trail" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#facc15" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#fde047" stop-opacity="0.85"/>
+    </linearGradient>
+  </defs>
+  <g transform="rotate(45 32 32)">
+    <!-- Left round -->
+    <path d="M16 14 C18.5 18 19.5 21 19.5 24 V38 H12.5 V24 C12.5 21 13.5 18 16 14 Z" fill="url(#gold)" opacity="0.88"/>
+    <rect x="14.7" y="41" width="2.6" height="12" rx="1.3" fill="url(#trail)"/>
+    <!-- Center lead round -->
+    <path d="M32 6 C35 11 36.2 14.5 36.2 18.5 V35 H27.8 V18.5 C27.8 14.5 29 11 32 6 Z" fill="url(#gold)"/>
+    <rect x="30.4" y="17" width="1.8" height="16" rx="0.9" fill="#ffffff" opacity="0.35"/>
+    <rect x="30.5" y="38.5" width="3" height="17" rx="1.5" fill="url(#trail)"/>
+    <!-- Right round -->
+    <path d="M48 16 C50.5 20 51.5 23 51.5 26 V40 H44.5 V26 C44.5 23 45.5 20 48 16 Z" fill="url(#gold)" opacity="0.88"/>
+    <rect x="46.7" y="43" width="2.6" height="12" rx="1.3" fill="url(#trail)"/>
+  </g>
+</svg>

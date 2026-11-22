@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="gBack" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#92400e"/>
+    </linearGradient>
+    <linearGradient id="gFront" x1="12%" y1="8%" x2="88%" y2="92%">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="50%" stop-color="#facc15"/>
+      <stop offset="100%" stop-color="#ca8a04"/>
+    </linearGradient>
+    <linearGradient id="gInner" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#fef08a"/>
+    </linearGradient>
+  </defs>
+  <!-- Back offset credit disc -->
+  <circle cx="38.5" cy="26" r="18" fill="url(#gBack)"/>
+  <circle cx="38.5" cy="26" r="14" fill="none" stroke="#fde68a" stroke-width="1.6" opacity="0.35"/>
+  <!-- Front primary gold coin -->
+  <circle cx="27" cy="36" r="20.5" fill="url(#gFront)"/>
+  <!-- Recessed tactical inner bezel -->
+  <circle cx="27" cy="36" r="15.2" fill="none" stroke="url(#gInner)" stroke-width="2.2" opacity="0.8"/>
+  <!-- Geometric diamond credit emblem -->
+  <path d="M27 25.5 L34.5 36 L27 46.5 L19.5 36 Z" fill="#92400e" opacity="0.45"/>
+  <path d="M27 27.5 L32.5 36 L27 44.5 L21.5 36 Z" fill="#fef9c3"/>
+  <!-- Subtle diagonal metallic sheen -->
+  <path d="M14.5 23.5 C19.5 18.2 27.5 16.5 34.2 18.8 L16.2 36.8 C13.5 32.5 12.8 27.5 14.5 23.5 Z" fill="#ffffff" opacity="0.22"/>
+</svg>

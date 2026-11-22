@@ -1,131 +1,446 @@
-/* Two focused upgrade views; the tabs remain outside the scroll container. */
-#modal-stats .modal-window{background:#111925!important;}
-#modal-stats .modal-window::before,#modal-stats .modal-window::after{display:none!important;}
-#modal-stats .modal-header{background:linear-gradient(180deg,#253246,#182334)!important;border-bottom:1px solid #ffffff14!important;padding:10px 12px!important;}
-#modal-stats .modal-title{font-size:14px!important;letter-spacing:.6px;}
-#modal-stats .modal-body{padding:12px 14px 18px!important;background:#101824;scrollbar-gutter:auto!important;overscroll-behavior:contain;touch-action:pan-y;}
-#modal-stats .stats-tabs{display:flex;gap:6px;flex:none;padding:8px 14px;background:#182232;border-bottom:1px solid #ffffff0c;}
-#modal-stats .stats-tabs button{flex:1;min-width:0;height:40px;border-radius:9px;gap:8px;background:#101925;border:1px solid #ffffff10;color:#a2adbd;font:700 14px 'Rajdhani',system-ui,sans-serif;box-shadow:none;}
-#modal-stats .stats-tabs img{width:24px;height:24px;object-fit:contain;image-rendering:auto;}
-#modal-stats .stats-tabs button.selected{color:#f5d5a1;background:linear-gradient(180deg,#3b342a,#292924);border-color:#d3a15d9c;box-shadow:inset 0 -2px 0 #d3a15d;}
-#modal-stats .stats-tabs button:focus-visible{outline:2px solid #edc789!important;outline-offset:1px!important;}
-#modal-stats [hidden]{display:none!important;}
-#modal-stats .stats-account{display:flex;gap:12px;align-items:center;min-height:66px;padding:10px 12px;background:linear-gradient(120deg,#2d2d2b,#1c2737 70%);border:1px solid #d1a66b40;border-radius:12px;margin-bottom:14px;}
-#modal-stats .stats-account-level{flex:none;width:42px;text-align:center;}
-#modal-stats .stats-account-level b{font:24px/1 'Russo One',sans-serif;color:#f0c38b;display:block;}
-#modal-stats .stats-account-level>span{font:600 8px 'Rajdhani',system-ui,sans-serif;letter-spacing:.8px;color:#a7b1bf;}
-#modal-stats .stats-account-copy{flex:1;min-width:0;}
-#modal-stats .stats-account-copy>div:first-child{display:flex;justify-content:space-between;gap:8px;font:600 13px 'Rajdhani',system-ui,sans-serif;}
-#modal-stats .stats-account-copy>div:first-child span{color:#b8a17d;}
-#modal-stats .stats-account-copy p{font:600 11px 'Rajdhani',system-ui,sans-serif;color:#a6b2c2;margin:3px 0 0;font-variant-numeric:tabular-nums;}
-#modal-stats .stats-account-bar{height:4px;border-radius:2px;background:#080e18;margin-top:6px;overflow:hidden;}
-#modal-stats .stats-account-bar i{height:100%;display:block;background:linear-gradient(90deg,#b78244,#edc48a);}
-#modal-stats .stats-section-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:14px 0 8px;font:700 13px 'Rajdhani',system-ui,sans-serif;color:#d4dce6;}
-#modal-stats .stats-section-heading small{font-size:11px;color:#9c89b6;font-weight:600;}
-#modal-stats .stats-overview{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;padding-bottom:4px;}
-#modal-stats .stats-overview>div{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0;background:#1a2535;border:1px solid #ffffff0c;border-radius:9px;padding:7px 2px;}
-#modal-stats .stats-overview img{width:22px;height:22px;object-fit:contain;image-rendering:auto;}
-#modal-stats .stats-overview b{font:700 13px 'Rajdhani',system-ui,sans-serif;color:#eaf0f5;font-variant-numeric:tabular-nums;white-space:nowrap;}
-#modal-stats .stats-overview span{font:600 10px 'Rajdhani',system-ui,sans-serif;color:#a2afc1;}
-#modal-stats .stats-view-hint{font:500 11px 'Rajdhani',system-ui,sans-serif;color:#9eaabd;margin:-4px 0 10px;}
-#modal-stats .stats-upgrade{display:grid;grid-template-columns:40px minmax(0,1fr) 78px;align-items:center;gap:8px;padding:10px;margin-bottom:8px;min-height:72px;border-radius:11px;border:1px solid #ffffff12;background:linear-gradient(135deg,#243145,#1a2535);box-shadow:inset 0 1px 0 #ffffff06;}
-#modal-stats .stats-upgrade-icon{width:40px;height:40px;object-fit:contain;border-radius:0;image-rendering:auto;}
-#modal-stats .stats-upgrade-copy{min-width:0;}
-#modal-stats .stats-upgrade-heading{display:flex;align-items:center;justify-content:space-between;gap:6px;}
-#modal-stats .stats-upgrade-heading h3{font:700 14px/1.15 'Rajdhani',system-ui,sans-serif;color:#e8edf4;margin:0;}
-#modal-stats .stats-level-chip{display:flex;align-items:baseline;gap:3px;flex:none;white-space:nowrap;padding:2px 5px;border:1px solid color-mix(in srgb,var(--upgrade-accent,#d0a66b) 30%,transparent);border-radius:5px;background:color-mix(in srgb,var(--upgrade-accent,#d0a66b) 7%,#152030);font-family:'Rajdhani',system-ui,sans-serif;line-height:1;}
-#modal-stats .stats-level-chip>span{font-size:8px;font-weight:600;letter-spacing:.3px;color:#9daec4;}
-#modal-stats .stats-level-chip b{font-size:13px;font-weight:700;color:#f0d1a5;}
-#modal-stats .stats-level-chip small{font-size:10px;font-weight:500;color:#899aaf;}
-#modal-stats .pet-upgrade .stats-level-chip b{color:#dfc4f5;}
-#modal-stats .stats-level-track{height:3px;margin-top:7px;border-radius:2px;overflow:hidden;background:#0d1522;box-shadow:0 1px 0 #ffffff09;}
-#modal-stats .stats-level-track i{display:block;height:100%;border-radius:2px;background:linear-gradient(90deg,color-mix(in srgb,var(--upgrade-accent,#d0a66b) 55%,#263041),var(--upgrade-accent,#d0a66b));box-shadow:inset 0 1px 0 #ffffff2b;}
-#modal-stats .stats-upgrade.is-maxed{--upgrade-accent:#93c6a2;}
-#modal-stats .stats-upgrade-values{display:flex;align-items:center;gap:7px;margin-top:5px;font:600 14px/1.1 'Rajdhani',system-ui,sans-serif;font-variant-numeric:tabular-nums;color:#bac6d6;}
-#modal-stats .stats-upgrade-values strong{color:#9bd6ae;font-weight:700;}
-#modal-stats .stats-value-arrow{color:#70849d;}
-#modal-stats .stats-upgrade-reason{margin:4px 0 0;font:500 11px/1.25 'Rajdhani',system-ui,sans-serif;color:#c9ac84;}
-#modal-stats .stats-buy{height:44px;min-width:0;width:78px;padding:0 5px;border-radius:9px;border:1px solid #edc6869c;background:linear-gradient(180deg,#e6b774,#c98b46);color:#342411;font:700 14px 'Rajdhani',system-ui,sans-serif;box-shadow:0 2px 0 #74502d,inset 0 1px 0 #fff4;gap:5px;font-variant-numeric:tabular-nums;}
-#modal-stats .stats-buy:disabled{opacity:1;filter:none;color:#9daabd;border-color:#56667e4d;background:#202c3e;box-shadow:inset 0 1px 0 #ffffff05;cursor:default;}
-#modal-stats .stats-buy.gems{background:linear-gradient(180deg,#b69cdb,#8763b6);color:#fff;border-color:#d3bdf8a1;box-shadow:0 2px 0 #4b3665,inset 0 1px 0 #fff3;}
-#modal-stats .stats-buy.gems:disabled{background:#292840;color:#a69cbd;border-color:#82749a4d;box-shadow:none;}
-#modal-stats .stats-buy:focus-visible{outline:2px solid #edc789!important;outline-offset:2px!important;}
-#modal-stats .stats-pet-picker-heading{display:flex;justify-content:space-between;font:600 13px 'Rajdhani',system-ui,sans-serif;color:#b9c4d3;margin:0 0 8px;}
-#modal-stats .stats-pet-picker-heading>span{color:#9a89b2;}
-#modal-stats .pet-carousel-wrap{margin:0 0 12px;}
-#modal-stats .pet-carousel{display:flex;gap:8px;overflow-x:auto;padding:3px 2px 7px;scrollbar-width:thin;scrollbar-color:#6d5b85 transparent;mask-image:none;-webkit-mask-image:none;}
-#modal-stats .pc-chip{position:relative;width:55px;height:65px;flex:0 0 55px;border-radius:10px;border:1px solid #ffffff17;background:#1a2535;box-shadow:none;padding:5px;display:flex;flex-direction:column;gap:3px;justify-content:center;}
-#modal-stats .pc-chip.on{border-color:var(--rc);box-shadow:0 0 0 1px var(--rc);background:#2b2c41;transform:none;}
-#modal-stats .pc-chip img{width:36px;height:36px;object-fit:contain;}
-#modal-stats .pc-stars{font:10px/1 system-ui,sans-serif;letter-spacing:0;color:var(--rc,#be9de4);}
-#modal-stats .pc-eq{position:absolute;top:2px;right:3px;font-size:10px;color:#9ee0af;background:#182b22;border-radius:3px;padding:0 2px;}
-#modal-stats .stats-pet-selected{display:flex;align-items:center;gap:10px;padding:12px;border-radius:12px;border:1px solid color-mix(in srgb,var(--pet-color) 45%,#354354);background:linear-gradient(135deg,#2b3042,#1a2535);}
-#modal-stats .stats-pet-selected>img{width:48px;height:48px;object-fit:contain;flex:none;}
-#modal-stats .stats-pet-selected>div{flex:1;min-width:0;}
-#modal-stats .stats-pet-selected h3{font:700 16px/1.2 'Rajdhani',system-ui,sans-serif;margin:0 0 4px;color:#e9eef5;}
-#modal-stats .stats-pet-selected>div>span{color:var(--pet-color);font:12px system-ui,sans-serif;}
-#modal-stats .stats-pet-equipped{font:700 10px 'Rajdhani',system-ui,sans-serif;color:#9ad1a6;flex:none;}
-#modal-stats .ph-equip-btn{font:700 12px 'Rajdhani',system-ui,sans-serif;height:38px;padding:0 10px;background:#365e4c;border:1px solid #90b09b99;box-shadow:none;border-radius:8px;}
-#modal-stats .stats-pet-details{padding:0 10px;margin:8px 0 14px;background:#192332;border:1px solid #ffffff0c;border-radius:9px;}
-#modal-stats .stats-pet-details summary{padding:11px 0;font:600 12px 'Rajdhani',system-ui,sans-serif;color:#b6c3d6;cursor:pointer;touch-action:manipulation;}
-#modal-stats .stats-pet-details p{font:500 13px/1.45 'Rajdhani',system-ui,sans-serif;color:#bec8d7;margin:0 0 10px;}
-#modal-stats .stats-pet-bonuses{display:flex;flex-wrap:wrap;gap:5px;padding-bottom:10px;}
-#modal-stats .stats-pet-bonuses span{font:500 11px 'Rajdhani',system-ui,sans-serif;color:#9eacc0;background:#233044;border-radius:5px;padding:4px 6px;}
-#modal-stats .stats-pet-bonuses b{color:#ddc6f0;}
-#modal-stats .pet-upgrade .stats-upgrade-values strong{color:#d6b8f3;}
-@media(max-width:370px){#modal-stats .modal-body{padding-left:10px!important;padding-right:10px!important;}#modal-stats .stats-tabs{padding-left:10px;padding-right:10px;}#modal-stats .stats-upgrade{gap:8px;padding:9px;grid-template-columns:36px minmax(0,1fr) 72px;}#modal-stats .stats-upgrade-icon{width:36px;height:36px;}#modal-stats .stats-buy{width:72px;}#modal-stats .stats-upgrade-heading h3{font-size:13px;}#modal-stats .stats-overview b{font-size:12px;}}
-
-#modal-stats .stats-account{margin-bottom:10px;}
-#modal-stats .stats-loadout-details{border:1px solid #ffffff0c;background:#172231;border-radius:9px;margin-bottom:12px;}
-#modal-stats .stats-loadout-details summary{padding:10px;font:600 12px 'Rajdhani',system-ui,sans-serif;color:#b5c2d4;cursor:pointer;touch-action:manipulation;}
-#modal-stats .stats-loadout-details .stats-overview{padding:0 8px 8px;}
-#modal-stats .stats-section-heading{margin-top:10px;}
-
-/* Light surface detailing; dimensions and interaction stay unchanged. */
-#modal-stats{--stats-grain:url('../img/ui/materials/panel-grain.svg');}
+/* ===== STATS / UPGRADES SCREEN (TACTICAL OVERHAUL v3) ===== */
+#modal-stats .modal-window{background:#0c111c!important;}
+#modal-stats .modal-window::before{display:none!important;}
+#modal-stats .modal-window::after{
+  display:block!important;
+  background:var(--b) 0 0/16px 2px,var(--b) 0 0/2px 16px,var(--b) 100% 0/16px 2px,var(--b) 100% 0/2px 16px!important;
+  background-repeat:no-repeat!important;
+  opacity:.75!important;
+}
 #modal-stats .modal-header{
- background-image:var(--stats-grain),linear-gradient(180deg,#2b394d,#182334)!important;
- box-shadow:inset 0 1px 0 #dce8ff18,0 2px 8px #0003;
+  background:repeating-linear-gradient(-45deg,#191d2b,#191d2b 8px,#151925 8px,#151925 16px)!important;
+  border-bottom:2px solid #252b3d!important;
+  padding:10px 12px!important;
+  box-shadow:0 4px 14px rgba(0,0,0,.35);
 }
-#modal-stats .stats-tabs{box-shadow:inset 0 -1px 0 #0004;}
-#modal-stats .stats-tabs button{background-image:var(--stats-grain);box-shadow:inset 0 1px 0 #ffffff08;}
+#modal-stats .modal-title{
+  font-family:'Chakra Petch','Rajdhani',sans-serif!important;
+  font-size:clamp(12px,3.6vw,16px)!important;
+  font-weight:800!important;
+  letter-spacing:.06em!important;
+}
+#modal-stats .modal-body{
+  padding:10px 12px 28px!important;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,.012) 0 1px,transparent 1px 3px),linear-gradient(180deg,#121723,#0b0f19)!important;
+  scrollbar-gutter:auto!important;
+  overscroll-behavior:contain;
+  touch-action:pan-y;
+}
+#modal-stats [hidden]{display:none!important;}
+
+/* Sub-tabs: Survivor (Orange) & Pets (Crystal Violet) */
+#modal-stats .stats-tabs{
+  display:grid;grid-template-columns:1fr 1fr;gap:7px;flex:none;
+  padding:8px 12px;background:#0e1320;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  box-shadow:inset 0 -1px 0 rgba(0,0,0,.45);
+}
+#modal-stats .stats-tabs button{
+  position:relative;overflow:visible;
+  flex:1;min-width:0;height:40px;border-radius:10px;gap:7px;
+  background:linear-gradient(180deg,#1b2234,#111726);
+  border:1px solid rgba(148,163,184,.2);
+  color:#94a3b8;
+  font:800 13px/1 'Chakra Petch','Rajdhani',sans-serif;
+  letter-spacing:.5px;text-transform:uppercase;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+  transition:all .14s;
+}
+#modal-stats .stats-tabs img{
+  width:24px;height:24px;object-fit:contain;image-rendering:auto;
+  filter:drop-shadow(0 2px 3px rgba(0,0,0,.7));
+}
 #modal-stats .stats-tabs button.selected{
- background-image:var(--stats-grain),linear-gradient(155deg,#494033,#292924);
- box-shadow:inset 0 1px 0 #efd1a329,inset 0 -2px 0 #d3a15d;
+  color:#fff;border-color:#fb923c;
+  background:linear-gradient(180deg,rgba(124,45,18,.58),rgba(30,20,24,.96));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16),inset 0 -2px 0 #f97316,0 0 14px rgba(249,115,22,.24);
 }
+#modal-stats .stats-tabs #stats-tab-pets.selected{
+  border-color:#c084fc;
+  background:linear-gradient(180deg,rgba(88,28,135,.6),rgba(23,18,38,.96));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16),inset 0 -2px 0 #a855f7,0 0 14px rgba(168,85,247,.26);
+}
+#modal-stats .stats-tabs button:focus-visible{outline:2px solid #fb923c!important;outline-offset:1px!important;}
+#modal-stats .stats-tab-dot{
+  position:absolute;top:-3px;right:-2px;width:9px;height:9px;border-radius:50%;
+  background:#4ade80;border:1.5px solid #0e1320;
+  box-shadow:0 0 8px rgba(74,222,128,.9);pointer-events:none;
+  animation:invDotPulse 1.6s ease-in-out infinite;
+}
+#modal-stats #stats-tab-pets .stats-tab-dot{background:#c084fc;box-shadow:0 0 8px rgba(192,132,252,.9);}
+
+/* Survivor Level Card */
 #modal-stats .stats-account{
- background-image:var(--stats-grain),radial-gradient(ellipse at 0% 30%,#c38a3e1a,transparent 65%),linear-gradient(120deg,#2d2d2b,#1c2737 70%);
- box-shadow:inset 0 1px 0 #ffe0ac17,inset 0 -1px 0 #0004;
+  display:flex;gap:11px;align-items:center;min-height:70px;padding:10px 12px;margin-bottom:9px;
+  border-radius:13px;
+  background:
+    radial-gradient(ellipse at 10% 35%,rgba(249,115,22,.2),transparent 60%),
+    linear-gradient(180deg,#1d263b,#121828);
+  border:1px solid rgba(251,146,60,.36);
+  border-left:3px solid #f97316;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 5px 14px rgba(0,0,0,.35);
 }
-#modal-stats .stats-account-level b{text-shadow:0 1px 0 #ffe8c044,0 3px 6px #0005;}
-#modal-stats .stats-account-bar{box-shadow:0 1px 0 #ffffff0d,inset 0 1px 2px #0008;}
-#modal-stats .stats-account-bar i{box-shadow:inset 0 1px 0 #fff4;}
-#modal-stats .stats-section-heading{gap:10px;}
-#modal-stats .stats-section-heading::after{content:'';height:1px;flex:1;background:linear-gradient(90deg,#bba07a44,#60718c0d);}
-#modal-stats .stats-section-heading small{order:3;}
+#modal-stats .stats-account-level{
+  flex:none;width:48px;height:48px;border-radius:11px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+  background:radial-gradient(circle at 50% 25%,rgba(249,115,22,.34),rgba(11,16,28,.94) 84%);
+  border:1.5px solid rgba(251,146,60,.65);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 0 12px rgba(249,115,22,.24);
+}
+#modal-stats .stats-account-level b{
+  font:22px/1 'Russo One',sans-serif;color:#fde68a;display:block;
+  text-shadow:0 2px 6px rgba(0,0,0,.75);
+}
+#modal-stats .stats-account-level>span{
+  font:800 7.5px/1 'Chakra Petch','Rajdhani',sans-serif;letter-spacing:.7px;color:#fdba74;text-transform:uppercase;
+}
+#modal-stats .stats-account-copy{flex:1;min-width:0;}
+#modal-stats .stats-account-top{
+  display:flex;align-items:center;justify-content:space-between;gap:6px;
+}
+#modal-stats .stats-account-top strong{
+  font:800 13px/1.1 'Chakra Petch','Rajdhani',sans-serif;color:#f8fafc;letter-spacing:.3px;
+}
+#modal-stats .stats-account-meta{
+  display:inline-flex;align-items:center;gap:6px;flex:none;
+}
+#modal-stats .stats-cap-chip{
+  font:800 9px/1 'Chakra Petch','Rajdhani',sans-serif;letter-spacing:.4px;text-transform:uppercase;
+  padding:2.5px 6px;border-radius:5px;
+  color:#fdba74;background:rgba(249,115,22,.16);border:1px solid rgba(251,146,60,.36);
+}
+#modal-stats .stats-account-pct{
+  font:800 12px/1 'Rajdhani',sans-serif;color:#fb923c;font-variant-numeric:tabular-nums;
+}
+#modal-stats .stats-account-bar{
+  height:6px;border-radius:3px;background:#080d18;margin-top:6px;overflow:hidden;
+  border:1px solid rgba(255,255,255,.08);position:relative;
+}
+#modal-stats .stats-account-bar::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(90deg,transparent 0 18%,rgba(6,10,18,.45) 18% 20%);
+}
+#modal-stats .stats-account-bar i{
+  height:100%;display:block;border-radius:3px;
+  background:linear-gradient(90deg,#ea580c,#fb923c,#fde047);
+  box-shadow:0 0 10px rgba(249,115,22,.55);
+}
+#modal-stats .stats-account-copy p{
+  font:700 11px/1 'Rajdhani',sans-serif;color:#94a3b8;margin:5px 0 0;font-variant-numeric:tabular-nums;
+}
+
+/* Collapsible Loadout Summary Accordion */
+#modal-stats .stats-loadout-details{
+  border:1px solid rgba(148,163,184,.18);
+  background:linear-gradient(180deg,#182032,#111726);
+  border-radius:11px;margin-bottom:10px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 3px 10px rgba(0,0,0,.25);
+  overflow:hidden;
+}
+#modal-stats .stats-loadout-details summary{
+  list-style:none;display:flex;align-items:center;justify-content:space-between;gap:6px;
+  padding:8px 10px;cursor:pointer;touch-action:manipulation;
+  font:800 10.5px/1 'Chakra Petch','Rajdhani',sans-serif;letter-spacing:.35px;text-transform:uppercase;color:#cbd5e1;
+}
+#modal-stats .stats-loadout-details summary::-webkit-details-marker{display:none;}
+#modal-stats .stats-loadout-left{display:inline-flex;align-items:center;gap:6px;min-width:0}
+#modal-stats .stats-loadout-chev{
+  width:16px;height:16px;border-radius:5px;flex:none;display:inline-flex;align-items:center;justify-content:center;
+  background:rgba(249,115,22,.16);border:1px solid rgba(251,146,60,.35);color:#fb923c;
+  transition:transform .16s ease;
+}
+#modal-stats .stats-loadout-details[open] .stats-loadout-chev{transform:rotate(90deg);}
+#modal-stats .stats-loadout-preview{
+  display:inline-flex;align-items:center;gap:4px;flex:none;
+  font:800 10px/1 'Rajdhani',sans-serif;color:#94a3b8;font-variant-numeric:tabular-nums;
+}
+#modal-stats .stats-loadout-preview b{color:#f8fafc;font-weight:800;}
+#modal-stats .stats-loadout-preview .dot{color:#475569;}
+#modal-stats .stats-loadout-details .stats-overview{padding:2px 8px 9px;}
+#modal-stats .stats-overview{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;}
+#modal-stats .stats-overview>div{
+  display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0;
+  background:linear-gradient(180deg,#1f2940,#121827);
+  border:1px solid rgba(255,255,255,.08);border-top:2px solid var(--oc,#fb923c);
+  border-radius:9px;padding:7px 2px 6px;
+}
+#modal-stats .stats-overview img{width:22px;height:22px;object-fit:contain;image-rendering:auto;filter:drop-shadow(0 2px 3px rgba(0,0,0,.65));}
+#modal-stats .stats-overview b{font:800 12px/1.1 'Rajdhani',sans-serif;color:#f8fafc;font-variant-numeric:tabular-nums;white-space:nowrap;}
+#modal-stats .stats-overview span{font:700 9px/1 'Chakra Petch','Rajdhani',sans-serif;color:#8fa0b9;text-transform:uppercase;}
+
+/* Section Headings */
+#modal-stats .stats-section-heading{
+  display:flex;align-items:center;gap:8px;margin:10px 2px 8px;
+  font:800 11.5px/1 'Chakra Petch','Rajdhani',sans-serif;letter-spacing:1.1px;text-transform:uppercase;color:#fb923c;
+}
+#modal-stats .stats-section-heading::before{
+  content:'';width:6px;height:6px;background:#f97316;transform:rotate(45deg);flex:none;
+}
+#modal-stats .stats-section-heading::after{
+  content:'';height:1px;flex:1;background:linear-gradient(90deg,rgba(249,115,22,.5),transparent);
+}
+#modal-stats .stats-section-heading small{
+  order:3;flex:none;font:800 9.5px/1 'Chakra Petch','Rajdhani',sans-serif;letter-spacing:.4px;
+  padding:2.5px 7px;border-radius:6px;
+  color:#fde68a;background:rgba(245,158,11,.14);border:1px solid rgba(250,204,21,.34);
+}
+#modal-stats #stats-pets-panel .stats-section-heading{color:#c084fc;}
+#modal-stats #stats-pets-panel .stats-section-heading::before{background:#a855f7;}
+#modal-stats #stats-pets-panel .stats-section-heading::after{background:linear-gradient(90deg,rgba(168,85,247,.5),transparent);}
+#modal-stats #stats-pets-panel .stats-section-heading small{color:#e9d5ff;background:rgba(168,85,247,.16);border-color:rgba(192,132,252,.38);}
+#modal-stats .stats-view-hint{
+  font:600 10.5px/1.2 'Rajdhani',sans-serif;color:#7e90a8;margin:-4px 2px 9px;
+}
+
+/* Upgrade Cards (Gold Survivor & Crystal Pets) */
 #modal-stats .stats-upgrade{
- position:relative;--upgrade-accent:#d0a66b;
- background-image:var(--stats-grain),linear-gradient(135deg,#29374b,#1a2535);
- box-shadow:inset 0 1px 0 #cbdcff13,inset 0 -1px 0 #080e183d,0 2px 4px #0002;
+  position:relative;--upgrade-accent:#fb923c;
+  display:grid;grid-template-columns:46px minmax(0,1fr) 84px;align-items:center;gap:9px;
+  padding:9px 10px;margin-bottom:8px;min-height:74px;border-radius:12px;
+  border:1px solid color-mix(in srgb,var(--upgrade-accent) 26%,rgba(255,255,255,.1));
+  border-left:3px solid var(--upgrade-accent);
+  background:
+    radial-gradient(ellipse at 8% 50%,color-mix(in srgb,var(--upgrade-accent) 13%,transparent),transparent 52%),
+    linear-gradient(180deg,#1c2539,#111726);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 4px 12px rgba(0,0,0,.32);
+  transition:border-color .14s,transform .12s;
 }
-#modal-stats .stats-upgrade.pet-upgrade{--upgrade-accent:#b99edb;}
-#modal-stats .stats-upgrade::before{content:'';position:absolute;left:0;top:16px;bottom:16px;width:2px;border-radius:2px;background:var(--upgrade-accent);opacity:.55;pointer-events:none;}
-#modal-stats .stats-upgrade::after{content:'';position:absolute;inset:3px;border:1px solid #ffffff04;border-radius:8px;pointer-events:none;}
-#modal-stats .stats-upgrade-icon{filter:drop-shadow(0 2px 2px #0004);}
-#modal-stats .stats-buy:not(:disabled){
- background-image:var(--stats-grain),linear-gradient(170deg,#edc184,#c98b46);
- box-shadow:inset 0 1px 0 #ffebc973,inset 0 -1px 0 #7c4b2744,0 2px 0 #74502d;
+#modal-stats .stats-upgrade.is-affordable{
+  border-color:color-mix(in srgb,var(--upgrade-accent) 52%,rgba(255,255,255,.16));
 }
-#modal-stats .stats-buy.gems:not(:disabled){
- background-image:var(--stats-grain),linear-gradient(170deg,#c5ade7,#8763b6);
- box-shadow:inset 0 1px 0 #f2e6ff66,inset 0 -1px 0 #4b366544,0 2px 0 #4b3665;
+#modal-stats .stats-upgrade.pet-upgrade{--upgrade-accent:#c084fc;}
+#modal-stats .stats-upgrade.is-maxed{--upgrade-accent:#4ade80;}
+#modal-stats .stats-upgrade-ico-box{
+  width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--upgrade-accent) 30%,transparent),#0c1220 84%);
+  border:1px solid color-mix(in srgb,var(--upgrade-accent) 48%,rgba(255,255,255,.12));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 3px 8px rgba(0,0,0,.45);
 }
-#modal-stats .stats-buy:disabled{background-image:var(--stats-grain);}
+#modal-stats .stats-upgrade-icon{
+  width:30px;height:30px;object-fit:contain;image-rendering:auto;
+  filter:drop-shadow(0 2px 4px rgba(0,0,0,.65));
+}
+#modal-stats .stats-upgrade-copy{min-width:0;}
+#modal-stats .stats-upgrade-heading{display:flex;align-items:center;justify-content:space-between;gap:5px;}
+#modal-stats .stats-upgrade-heading h3{
+  font:800 clamp(11.5px,3.1vw,13px)/1.12 'Chakra Petch','Rajdhani',sans-serif;color:#f8fafc;margin:0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+#modal-stats .stats-level-chip{
+  display:flex;align-items:baseline;gap:2px;flex:none;white-space:nowrap;
+  padding:2px 5px;border-radius:6px;line-height:1;
+  border:1px solid color-mix(in srgb,var(--upgrade-accent) 42%,transparent);
+  background:color-mix(in srgb,var(--upgrade-accent) 12%,#0d1322);
+  font-family:'Rajdhani',sans-serif;
+}
+#modal-stats .stats-level-chip>span{font-size:8px;font-weight:800;letter-spacing:.4px;color:#94a3b8;}
+#modal-stats .stats-level-chip b{font-size:12.5px;font-weight:800;color:color-mix(in srgb,var(--upgrade-accent) 70%,#fff);}
+#modal-stats .stats-level-chip small{font-size:10px;font-weight:700;color:#64748b;}
+#modal-stats .stats-upgrade-values{
+  display:flex;align-items:center;gap:6px;margin-top:4px;
+  font:700 13px/1.1 'Rajdhani',sans-serif;font-variant-numeric:tabular-nums;color:#94a3b8;
+}
+#modal-stats .stats-upgrade-values strong{color:#4ade80;font-weight:800;}
+#modal-stats .pet-upgrade .stats-upgrade-values strong{color:#d8b4fe;}
+#modal-stats .stats-value-arrow{color:#64748b;font-weight:800;}
+#modal-stats .stats-level-track{
+  height:5px;margin-top:6px;border-radius:3px;overflow:hidden;
+  background:#090e1a;border:1px solid rgba(255,255,255,.07);position:relative;
+}
+#modal-stats .stats-level-track::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(90deg,transparent 0 18%,rgba(8,12,22,.5) 18% 20%);
+}
+#modal-stats .stats-level-track i{
+  display:block;height:100%;border-radius:2px;
+  background:linear-gradient(90deg,color-mix(in srgb,var(--upgrade-accent) 68%,#1e293b),var(--upgrade-accent));
+  box-shadow:0 0 8px color-mix(in srgb,var(--upgrade-accent) 55%,transparent);
+}
+#modal-stats .stats-upgrade-reason{
+  margin:4px 0 0;font:700 10px/1.2 'Rajdhani',sans-serif;color:#fbbf24;
+}
+#modal-stats .stats-upgrade.is-maxed .stats-upgrade-reason{color:#4ade80;}
+
+/* Buy / Cap / Max CTA Buttons */
+#modal-stats .stats-buy{
+  height:44px;min-width:0;width:84px;padding:0 6px;border-radius:10px;
+  border:1px solid rgba(255,255,255,.55);
+  background:linear-gradient(180deg,#fde047,#f59e0b 58%,#c2410c);
+  color:#2d1400;
+  font:800 13.5px/1 'Russo One','Rajdhani',sans-serif;
+  box-shadow:0 3px 0 #78350f,0 0 12px rgba(245,158,11,.28),inset 0 1px 0 rgba(255,255,255,.72);
+  gap:4px;font-variant-numeric:tabular-nums;
+  transition:transform .1s,filter .12s;
+}
+#modal-stats .stats-buy:hover:not(:disabled){filter:brightness(1.07);}
+#modal-stats .stats-buy:active:not(:disabled){transform:translateY(1.5px);box-shadow:0 1px 0 #78350f;}
+#modal-stats .stats-buy:disabled{
+  opacity:1;filter:none;color:#8b9bb4;
+  border-color:rgba(148,163,184,.2);
+  background:linear-gradient(180deg,#1a2234,#121826);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+  cursor:default;
+}
+#modal-stats .stats-upgrade.is-maxed .stats-buy:disabled{
+  color:#4ade80;border-color:rgba(74,222,128,.38);
+  background:linear-gradient(180deg,rgba(20,83,45,.45),rgba(12,30,24,.88));
+}
+#modal-stats .stats-buy.is-cap:disabled{
+  color:#fbbf24;border-color:rgba(250,204,21,.36);
+  background:linear-gradient(180deg,rgba(120,53,15,.4),rgba(24,18,16,.88));
+}
+#modal-stats .stats-buy.gems{
+  background:linear-gradient(180deg,#d8b4fe,#9333ea 58%,#6b21a8);
+  color:#fff;border-color:rgba(233,213,255,.6);
+  box-shadow:0 3px 0 #3b0764,0 0 14px rgba(168,85,247,.32),inset 0 1px 0 rgba(255,255,255,.45);
+  text-shadow:0 1px 2px rgba(0,0,0,.45);
+}
+#modal-stats .stats-buy.gems:active:not(:disabled){transform:translateY(1.5px);box-shadow:0 1px 0 #3b0764;}
+#modal-stats .stats-buy.gems:disabled{
+  background:linear-gradient(180deg,#1f1c34,#141324);color:#8e82ab;
+  border-color:rgba(168,85,247,.22);box-shadow:none;text-shadow:none;
+}
+#modal-stats .stats-buy:focus-visible{outline:2px solid #fb923c!important;outline-offset:2px!important;}
+
+/* ===== PETS TAB ===== */
+#modal-stats .stats-pet-picker-heading{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;margin:2px 2px 8px;
+  font:800 11.5px/1 'Chakra Petch','Rajdhani',sans-serif;letter-spacing:1.1px;text-transform:uppercase;color:#c084fc;
+}
+#modal-stats .stats-pet-picker-heading strong{display:inline-flex;align-items:center;gap:7px;}
+#modal-stats .stats-pet-picker-heading strong::before{
+  content:'';width:6px;height:6px;background:#a855f7;transform:rotate(45deg);flex:none;
+}
+#modal-stats .stats-pet-picker-heading>span{
+  font:800 10px/1 'Chakra Petch','Rajdhani',sans-serif;
+  padding:2.5px 7px;border-radius:6px;color:#e9d5ff;
+  background:rgba(168,85,247,.16);border:1px solid rgba(192,132,252,.35);
+}
+#modal-stats .pet-carousel-wrap{margin:0 0 10px;}
+#modal-stats .pet-carousel{
+  display:flex;gap:7px;overflow-x:auto;padding:4px 2px 7px;
+  scrollbar-width:thin;scrollbar-color:#7e22ce transparent;mask-image:none;-webkit-mask-image:none;
+}
+#modal-stats .pc-chip{
+  position:relative;width:60px;height:70px;flex:0 0 60px;border-radius:11px;
+  border:1.5px solid color-mix(in srgb,var(--rc,#64748b) 55%,rgba(255,255,255,.12));
+  background:radial-gradient(circle at 50% 42%,color-mix(in srgb,var(--rc,#64748b) 26%,transparent),#121828 80%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 3px 8px rgba(0,0,0,.35);
+  padding:5px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;justify-content:center;
+  transition:transform .12s,box-shadow .12s,border-color .12s;
+}
+#modal-stats .pc-chip.on{
+  border-color:#c084fc;
+  box-shadow:0 0 0 2px rgba(192,132,252,.85),0 0 14px rgba(168,85,247,.38);
+  background:radial-gradient(circle at 50% 42%,color-mix(in srgb,var(--rc,#c084fc) 38%,transparent),#1c1a34 84%);
+  transform:translateY(-2px);
+}
+#modal-stats .pc-chip img{width:38px;height:38px;object-fit:contain;image-rendering:pixelated;image-rendering:crisp-edges;filter:drop-shadow(0 2px 4px rgba(0,0,0,.85));}
+#modal-stats .pc-stars{font:900 10px/1 'Rajdhani',sans-serif;letter-spacing:-.5px;color:#facc15;text-shadow:0 1px 2px rgba(0,0,0,.9);}
+#modal-stats .pc-eq{
+  position:absolute;top:-3px;left:-3px;width:15px;height:15px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font:900 9px/1 sans-serif;color:#fff;
+  background:linear-gradient(180deg,#22c55e,#15803d);border:1.5px solid #0e1320;
+  box-shadow:0 0 6px rgba(34,197,94,.75);
+}
+#modal-stats .pc-up{
+  position:absolute;top:3px;right:3px;font:900 8px/1 'Rajdhani',sans-serif;
+  padding:1.5px 3.5px;border-radius:4px;
+  background:linear-gradient(180deg,#a855f7,#6b21a8);color:#faf5ff;
+  border:1px solid rgba(233,213,255,.48);box-shadow:0 1px 4px rgba(0,0,0,.8);
+}
+
+/* Selected Pet Hero Card */
 #modal-stats .stats-pet-selected{
- background-image:var(--stats-grain),radial-gradient(ellipse 90px 65px at 40px 50%,color-mix(in srgb,var(--pet-color) 14%,transparent),transparent),linear-gradient(135deg,#2b3042,#1a2535);
- box-shadow:inset 0 1px 0 #e2d4fa1a,inset 0 -1px 0 #0004;
+  display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:13px;
+  border:1.5px solid color-mix(in srgb,var(--pet-color,#c084fc) 58%,rgba(255,255,255,.15));
+  border-left:3.5px solid var(--pet-color,#c084fc);
+  background:
+    radial-gradient(ellipse at 12% 50%,color-mix(in srgb,var(--pet-color,#c084fc) 26%,transparent),transparent 58%),
+    linear-gradient(180deg,#1d243b,#111726);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 5px 14px rgba(0,0,0,.35);
 }
-#modal-stats .stats-pet-selected>img{filter:drop-shadow(0 3px 4px #0006);}
-#modal-stats .pc-chip{box-shadow:inset 0 1px 0 #ffffff0b;}
-#modal-stats .ph-equip-btn{background-image:var(--stats-grain),linear-gradient(170deg,#486f5d,#2c4c3c);box-shadow:inset 0 1px 0 #d0ebd626;}
-#modal-stats .stats-loadout-details,#modal-stats .stats-pet-details{box-shadow:inset 0 1px 0 #ffffff09,inset 0 -1px 0 #0003;}
+#modal-stats .stats-pet-ico-wrap{
+  position:relative;width:54px;height:54px;border-radius:11px;flex:none;
+  display:flex;align-items:center;justify-content:center;
+  border:1.5px solid color-mix(in srgb,var(--pet-color,#c084fc) 75%,#fff);
+  background:radial-gradient(circle at 50% 40%,color-mix(in srgb,var(--pet-color,#c084fc) 44%,transparent),#0c1220 84%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 3px 10px rgba(0,0,0,.55);
+}
+#modal-stats .stats-pet-ico-wrap img{width:44px;height:44px;object-fit:contain;image-rendering:pixelated;image-rendering:crisp-edges;filter:drop-shadow(0 3px 4px rgba(0,0,0,.9));}
+#modal-stats .stats-pet-selected>div:not(.stats-pet-ico-wrap){flex:1;min-width:0;}
+#modal-stats .stats-pet-selected h3{
+  font:800 15px/1.15 'Russo One','Rajdhani',sans-serif;margin:0 0 4px;color:#fff;
+  display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+}
+#modal-stats .pet-role-pill{
+  font:800 8.5px/1 'Chakra Petch','Rajdhani',sans-serif;letter-spacing:.45px;text-transform:uppercase;
+  padding:2.5px 6px;border-radius:5px;
+  color:color-mix(in srgb,var(--pet-color,#c084fc) 72%,#fff);
+  background:color-mix(in srgb,var(--pet-color,#c084fc) 18%,rgba(8,12,22,.85));
+  border:1px solid color-mix(in srgb,var(--pet-color,#c084fc) 45%,transparent);
+}
+#modal-stats .stats-pet-stars{color:#facc15;font:800 12px/1 'Rajdhani',sans-serif;letter-spacing:-.3px;text-shadow:0 1px 3px rgba(0,0,0,.85);}
+#modal-stats .stats-pet-equipped{
+  display:inline-flex;align-items:center;gap:4px;flex:none;
+  font:800 10px/1 'Chakra Petch','Rajdhani',sans-serif;letter-spacing:.5px;text-transform:uppercase;
+  color:#4ade80;padding:6px 9px;border-radius:8px;
+  background:rgba(20,83,45,.55);border:1px solid rgba(74,222,128,.45);
+}
+#modal-stats .ph-equip-btn{
+  flex:none;font:800 11px/1 'Russo One','Rajdhani',sans-serif;letter-spacing:.5px;text-transform:uppercase;
+  height:36px;padding:0 12px;border-radius:9px;color:#fff;
+  background:linear-gradient(180deg,#fb923c,#ea580c 60%,#c2410c);
+  border:1px solid rgba(255,255,255,.3);box-shadow:0 3px 0 #7c2d12,inset 0 1px 0 rgba(255,255,255,.38);
+}
+#modal-stats .ph-equip-btn:active{transform:translateY(1.5px);box-shadow:0 1px 0 #7c2d12;}
+
+/* Pet Details Collapsible */
+#modal-stats .stats-pet-details{
+  padding:0;margin:8px 0 12px;
+  background:linear-gradient(180deg,#182032,#111726);
+  border:1px solid rgba(192,132,252,.2);border-radius:11px;overflow:hidden;
+}
+#modal-stats .stats-pet-details summary{
+  list-style:none;display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:9px 11px;font:800 11px/1 'Chakra Petch','Rajdhani',sans-serif;letter-spacing:.45px;text-transform:uppercase;
+  color:#d8b4fe;cursor:pointer;touch-action:manipulation;
+}
+#modal-stats .stats-pet-details summary::-webkit-details-marker{display:none;}
+#modal-stats .stats-pet-details[open] .stats-loadout-chev{transform:rotate(90deg);}
+#modal-stats .stats-pet-details p{font:600 12px/1.4 'Rajdhani',sans-serif;color:#cbd5e1;margin:0;padding:0 11px 9px;}
+#modal-stats .stats-pet-bonuses{display:flex;flex-wrap:wrap;gap:5px;padding:0 11px 10px;}
+#modal-stats .stats-pet-bonuses span{
+  font:700 10.5px/1 'Rajdhani',sans-serif;color:#cbd5e1;
+  background:rgba(168,85,247,.14);border:1px solid rgba(192,132,252,.26);
+  border-radius:6px;padding:4px 7px;
+}
+#modal-stats .stats-pet-bonuses b{color:#e9d5ff;font-weight:800;}
+
+/* Pet Reset Upgrades Button */
+#modal-stats .stats-reset-btn{
+  width:100%;height:38px;margin-top:4px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  background:linear-gradient(180deg,rgba(127,29,29,.42),rgba(30,16,24,.9));
+  border:1px solid rgba(248,113,113,.38);color:#fecaca;
+  font:800 11.5px/1 'Chakra Petch','Rajdhani',sans-serif;letter-spacing:.4px;
+  cursor:pointer;transition:filter .12s;
+}
+#modal-stats .stats-reset-btn:hover{filter:brightness(1.12);}
+#modal-stats .stat-empty{
+  text-align:center;padding:34px 16px;color:#94a3b8;font:600 13px/1.4 'Rajdhani',sans-serif;
+  background:rgba(15,23,42,.6);border:1px dashed rgba(148,163,184,.25);border-radius:12px;
+}
+
+@media(max-width:370px){
+  #modal-stats .modal-body{padding-left:9px!important;padding-right:9px!important;}
+  #modal-stats .stats-tabs{padding-left:9px;padding-right:9px;}
+  #modal-stats .stats-upgrade{gap:7px;padding:8px;grid-template-columns:40px minmax(0,1fr) 76px;}
+  #modal-stats .stats-upgrade-ico-box{width:40px;height:40px;}
+  #modal-stats .stats-upgrade-icon{width:30px;height:30px;}
+  #modal-stats .stats-buy{width:76px;font-size:12.5px;}
+  #modal-stats .stats-upgrade-heading h3{font-size:12.5px;}
+  #modal-stats .stats-overview b{font-size:11px;}
+  #modal-stats .stats-loadout-preview{display:none;}
+}
