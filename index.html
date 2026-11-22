@@ -8876,6 +8876,7 @@ function resetAllGameProgress(){
   if(selectedLvlIdx < 0) selectedLvlIdx = 0;
   if(typeof showcaseCharIdx !== 'undefined') showcaseCharIdx = 0;
   updateMenuUI();
+  if(typeof updateDockNotifs === 'function') updateDockNotifs();
   if(typeof renderEquip === 'function') renderEquip();
   if(typeof renderStats === 'function') renderStats();
   if(typeof renderCharacters === 'function') renderCharacters();
@@ -10593,16 +10594,17 @@ function renderSettings(){
     cardSw('dmg', 'Damage numbers', 'Цифры урона', 'Show floating damage in battle', 'Всплывающие цифры урона в бою') +
     cardSw('shake', 'Screen shake', 'Тряска экрана', 'Shake and red flash when hit', 'Тряска экрана и вспышка при ударе');
 
-  // 3. Test Tools (+999 Gold, +999 Gems, Survivor Level, Give/Remove Gear, Full Reset)
-  const testHtml = DEV_TOOLS ? (secHdr('TEST TOOLS','ТЕСТОВЫЕ ЧИТЫ') +
-    `<div class="set-test-grid">
+  // 3. Testing & Gear Controls (always available for testing from scratch; currency cheats gated by DEV_TOOLS)
+  const devCheatBtns = DEV_TOOLS ? `
       <button class="set-tool-btn" id="btn-dev-gold">+999 🪙</button>
       <button class="set-tool-btn" id="btn-dev-gems">+999 💎</button>
-      <button class="set-tool-btn" id="btn-dev-acclv" style="background:linear-gradient(180deg,#3b82f6 0%,#1d4ed8 100%);box-shadow:0 3px 0 #1e40af;font-size:11px;grid-column:1/-1">⭐ ${T('+5 SURVIVOR LVL','+5 УР. ВЫЖИВШЕГО')}</button>
+      <button class="set-tool-btn" id="btn-dev-acclv" style="background:linear-gradient(180deg,#3b82f6 0%,#1d4ed8 100%);box-shadow:0 3px 0 #1e40af;font-size:11px;grid-column:1/-1">⭐ ${T('+5 SURVIVOR LVL','+5 УР. ВЫЖИВШЕГО')}</button>` : '';
+  const testHtml = secHdr('TESTING','ТЕСТИРОВАНИЕ') +
+    `<div class="set-test-grid">${devCheatBtns}
       <button class="set-tool-btn" id="btn-dev-give-all" style="background:linear-gradient(180deg,#10b981 0%,#059669 100%);box-shadow:0 3px 0 #047857;font-size:11px">🎁 ${T('GIVE ALL GEAR','ВЫДАТЬ ВСЁ')}</button>
-      <button class="set-tool-btn" id="btn-dev-clear-all" style="background:linear-gradient(180deg,#64748b 0%,#475569 100%);box-shadow:0 3px 0 #334155;font-size:11px">🗑️ ${T('REMOVE GEAR','СНЯТЬ ВЕЩИ')}</button>
-      <button class="set-tool-btn" id="btn-dev-reset-all" style="background:linear-gradient(180deg,#ef4444 0%,#991b1b 100%);box-shadow:0 3px 0 #7f1d1d;font-size:11.5px;grid-column:1/-1;border-color:rgba(254,202,202,0.4)">⚠️ ${T('RESET ALL & STATS','СБРОС ВСЕГО И СТАТИСТИКИ')}</button>
-    </div>`) : '';
+      <button class="set-tool-btn" id="btn-dev-clear-all" style="background:linear-gradient(180deg,#64748b 0%,#475569 100%);box-shadow:0 3px 0 #334155;font-size:11px">🗑️ ${T('REMOVE ALL','УБРАТЬ ВСЁ')}</button>
+      <button class="set-tool-btn" id="btn-dev-reset-all" style="background:linear-gradient(180deg,#ef4444 0%,#991b1b 100%);box-shadow:0 3px 0 #7f1d1d;font-size:11.5px;grid-column:1/-1;border-color:rgba(254,202,202,0.4)">⚠️ ${T('RESET ALL TO ZERO','СБРОСИТЬ ВСЁ В НОЛЬ')}</button>
+    </div>`;
 
   // 4. Footer
   const footerHtml = `<div class="set-footer">Survivors • beta 1.0</div>`;
@@ -10681,62 +10683,73 @@ function renderSettings(){
       bLv.innerHTML = '✓ LV. ' + save.accLv;
       setTimeout(() => { bLv.innerHTML = '⭐ ' + T('+5 SURVIVOR LVL','+5 УР. ВЫЖИВШЕГО'); }, 1000);
     };
+  }
 
-    const bGive = document.getElementById('btn-dev-give-all');
-    if(bGive) bGive.onclick = () => {
-      save.inv = Object.keys(ITEMS);
-      save.accLv = Math.max(save.accLv || 1, 10);
-      persist();
-      Sfx.play('levelup');
-      updateMenuUI();
-      if(document.getElementById('modal-inventory')?.classList.contains('open')) renderEquip();
-      bGive.innerHTML = '✓ ' + T('ALL GIVEN!','ВЫДАНО!');
-      setTimeout(() => { bGive.innerHTML = '🎁 ' + T('GIVE ALL GEAR','ВЫДАТЬ ВСЁ'); }, 1200);
-    };
+  // Event Listeners: Testing & Gear Controls (Give All Gear, Remove All, Full Reset)
+  const bGive = document.getElementById('btn-dev-give-all');
+  if(bGive) bGive.onclick = () => {
+    save.inv = Object.keys(ITEMS);
+    save.accLv = Math.max(save.accLv || 1, 10);
+    persist();
+    Sfx.play('levelup');
+    updateMenuUI();
+    if(typeof updateDockNotifs === 'function') updateDockNotifs();
+    if(document.getElementById('modal-inventory')?.classList.contains('open')) renderEquip();
+    if(document.getElementById('modal-craft')?.classList.contains('open')) renderCraft();
+    if(document.getElementById('modal-stats')?.classList.contains('open')) renderStats();
+    bGive.innerHTML = '✓ ' + T('ALL GIVEN!','ВЫДАНО!');
+    setTimeout(() => { bGive.innerHTML = '🎁 ' + T('GIVE ALL GEAR','ВЫДАТЬ ВСЁ'); }, 1200);
+  };
 
-    const bClear = document.getElementById('btn-dev-clear-all');
-    if(bClear) bClear.onclick = () => {
-      save.inv = ['w_pistol'];
-      save.equip = { weapon: 'w_pistol', shield: null, pet: null, art1: null, art2: null, art3: null };
-      persist();
-      Sfx.play('click');
-      updateMenuUI();
-      if(document.getElementById('modal-inventory')?.classList.contains('open')) renderEquip();
-      bClear.innerHTML = '✓ ' + T('CLEARED!','СНЯТО!');
-      setTimeout(() => { bClear.innerHTML = '🗑️ ' + T('REMOVE GEAR','СНЯТЬ ВЕЩИ'); }, 1200);
-    };
+  const bClear = document.getElementById('btn-dev-clear-all');
+  if(bClear) bClear.onclick = () => {
+    save.inv = ['w_pistol'];
+    save.equip = { weapon: 'w_pistol', shield: null, pet: null, art1: null, art2: null, art3: null };
+    save.itemUpgrades = {};
+    persist();
+    Sfx.play('click');
+    updateMenuUI();
+    if(typeof updateDockNotifs === 'function') updateDockNotifs();
+    if(document.getElementById('modal-inventory')?.classList.contains('open')) renderEquip();
+    if(document.getElementById('modal-craft')?.classList.contains('open')) renderCraft();
+    if(document.getElementById('modal-stats')?.classList.contains('open')) renderStats();
+    bClear.innerHTML = '✓ ' + T('REMOVED!','УБРАНО!');
+    setTimeout(() => { bClear.innerHTML = '🗑️ ' + T('REMOVE ALL','УБРАТЬ ВСЁ'); }, 1200);
+  };
 
-    const bReset = document.getElementById('btn-dev-reset-all');
-    let resetConfirmState = false;
-    let resetTimer = null;
-    if(bReset) bReset.onclick = (e) => {
-      e.stopPropagation();
-      if(!resetConfirmState){
-        resetConfirmState = true;
-        bReset.style.background = 'linear-gradient(180deg,#dc2626 0%,#7f1d1d 100%)';
-        bReset.style.borderColor = '#fca5a5';
-        bReset.innerHTML = '❓ ' + T('CONFIRM FULL RESET?','ТОЧНО СБРОСИТЬ ВСЁ?');
-        if(typeof Sfx !== 'undefined' && Sfx.play) Sfx.play('click');
-        clearTimeout(resetTimer);
-        resetTimer = setTimeout(() => {
-          resetConfirmState = false;
-          bReset.style.background = 'linear-gradient(180deg,#ef4444 0%,#991b1b 100%)';
-          bReset.style.borderColor = 'rgba(254,202,202,0.4)';
-          bReset.innerHTML = '⚠️ ' + T('RESET ALL & STATS','СБРОС ВСЕГО И СТАТИСТИКИ');
-        }, 3500);
-      } else {
-        clearTimeout(resetTimer);
+  const bReset = document.getElementById('btn-dev-reset-all');
+  let resetConfirmState = false;
+  let resetTimer = null;
+  if(bReset) bReset.onclick = (e) => {
+    e.stopPropagation();
+    if(!resetConfirmState){
+      resetConfirmState = true;
+      bReset.style.background = 'linear-gradient(180deg,#dc2626 0%,#7f1d1d 100%)';
+      bReset.style.borderColor = '#fca5a5';
+      bReset.innerHTML = '❓ ' + T('CONFIRM FULL RESET?','ТОЧНО СБРОСИТЬ ВСЁ?');
+      if(typeof Sfx !== 'undefined' && Sfx.play) Sfx.play('click');
+      clearTimeout(resetTimer);
+      resetTimer = setTimeout(() => {
         resetConfirmState = false;
-        resetAllGameProgress();
-        bReset.innerHTML = '💥 ' + T('RESET COMPLETE!','СБРОШЕНО В НОЛЬ!');
+        bReset.style.background = 'linear-gradient(180deg,#ef4444 0%,#991b1b 100%)';
+        bReset.style.borderColor = 'rgba(254,202,202,0.4)';
+        bReset.innerHTML = '⚠️ ' + T('RESET ALL TO ZERO','СБРОСИТЬ ВСЁ В НОЛЬ');
+      }, 3500);
+    } else {
+      clearTimeout(resetTimer);
+      resetConfirmState = false;
+      resetAllGameProgress();
+      const bResetFresh = document.getElementById('btn-dev-reset-all');
+      if(bResetFresh){
+        bResetFresh.innerHTML = '💥 ' + T('RESET COMPLETE!','СБРОШЕНО В НОЛЬ!');
         setTimeout(() => {
-          bReset.style.background = 'linear-gradient(180deg,#ef4444 0%,#991b1b 100%)';
-          bReset.style.borderColor = 'rgba(254,202,202,0.4)';
-          bReset.innerHTML = '⚠️ ' + T('RESET ALL & STATS','СБРОС ВСЕГО И СТАТИСТИКИ');
+          bResetFresh.style.background = 'linear-gradient(180deg,#ef4444 0%,#991b1b 100%)';
+          bResetFresh.style.borderColor = 'rgba(254,202,202,0.4)';
+          bResetFresh.innerHTML = '⚠️ ' + T('RESET ALL TO ZERO','СБРОСИТЬ ВСЁ В НОЛЬ');
         }, 1500);
       }
-    };
-  }
+    }
+  };
 
 
 }
