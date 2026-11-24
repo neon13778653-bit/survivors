@@ -428,7 +428,7 @@
 
 #screen-menu .lvl-name {
   font-family: 'Russo One', sans-serif;
-  font-size: clamp(15px, 4.3vw, 19px);
+  font-size: clamp(14px, 4.1vw, 16.5px);
   line-height: 1.15;
   letter-spacing: 0.5px;
   color: #ffffff;
