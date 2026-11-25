@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Survivors MVP</title>
+<title>Survivors</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b1120'/%3E%3Cpath d='M16 4l9 4v7c0 6.2-3.8 11.4-9 13-5.2-1.6-9-6.8-9-13V8l9-4z' fill='%23f97316' stroke='%23fed7aa' stroke-width='1.5'/%3E%3Cpath d='M16 9l2 4.5 4.8.6-3.5 3.3.9 4.7-4.2-2.3-4.2 2.3.9-4.7-3.5-3.3 4.8-.6z' fill='%23fff7ed'/%3E%3C/svg%3E">
 <!-- Профессиональные игровые шрифты (локально — работает офлайн) -->
 <link href="css/game_fonts.css?v=2" rel="stylesheet">
@@ -2277,7 +2277,7 @@ button:disabled{opacity:.35;cursor:default;transform:none}
 /* ===== UI v4: полноэкранные меню и склад ===== */
 .dock-icon-box::before{display:none}
 #modal-profile,#modal-inventory,#modal-stats,#modal-rewards,#modal-characters,#modal-craft{padding:0;background:#070a11}
-#modal-profile .modal-window,#modal-inventory .modal-window,#modal-stats .modal-window,#modal-rewards .modal-window,#modal-characters .modal-window,#modal-craft .modal-window{max-width:none;width:100%;height:100%;max-height:none;border-radius:0;border:0;border-top:2px solid var(--primary)}
+#modal-profile .modal-window,#modal-inventory .modal-window,#modal-stats .modal-window,#modal-rewards .modal-window,#modal-characters .modal-window,#modal-craft .modal-window{max-width:none;width:100%;height:100%;max-height:100%;border-radius:0;border:0;border-top:2px solid var(--primary)}
 #modal-profile .modal-body,#modal-inventory .modal-body,#modal-stats .modal-body,#modal-rewards .modal-body,#modal-craft .modal-body{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-gutter:stable;padding-bottom:24px}
 #modal-characters .modal-body{flex:1;overflow-y:auto;scrollbar-gutter:stable;padding-bottom:14px}
 #inv-tabs{display:flex;gap:6px;padding:4px;background:rgba(0,0,0,.45);border-radius:14px;margin-bottom:12px}
@@ -4182,13 +4182,13 @@ button:disabled{opacity:.35;cursor:default;transform:none}
         </div>
       </div>
 
-      <!-- Кнопка пропуска 5 волн -->
-      <button id="btn-test-skip-wave" class="test-skip-wave-btn" type="button">
+      <!-- Кнопка пропуска 5 волн (только ?dev=1) -->
+      <button id="btn-test-skip-wave" class="test-skip-wave-btn" type="button" style="display:none">
         <svg viewBox="0 0 20 20" width="12" height="12" aria-hidden="true"><path d="M3 4.5v11l6.5-5.5L3 4.5zm7.5 0v11L17 10l-6.5-5.5z" fill="#fb923c"/></svg>
         <span>СКИП +5 ВОЛН</span>
       </button>
-      <!-- Кнопка пропуска босса -->
-      <button id="btn-test-skip-boss" class="test-skip-boss-btn" type="button">
+      <!-- Кнопка пропуска босса (только ?dev=1) -->
+      <button id="btn-test-skip-boss" class="test-skip-boss-btn" type="button" style="display:none">
         <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M12 2C7.58 2 4 5.58 4 10c0 2.5 1.15 4.73 2.95 6.22V19a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-2.78C18.85 14.73 20 12.5 20 10c0-4.42-3.58-8-8-8zm-3 10a1.6 1.6 0 1 1 0-3.2 1.6 1.6 0 0 1 0 3.2zm6 0a1.6 1.6 0 1 1 0-3.2 1.6 1.6 0 0 1 0 3.2z" fill="#f87171"/></svg>
         <span>СКИП БОССА</span>
       </button>
@@ -6464,10 +6464,10 @@ const CHARACTERS=[
   {
     id:'leon',name:'ЛЕОН',title:'Призрак Разведчик',cost:9500,
     desc:'Сверхбыстрый боец с ураганным темпом стрельбы.',
-    bonus:'95 HP (-5%), 183 Скорость (+22%), 11.5 Урон (+15%), +32% скорострельность',
-    trait:'Ураганная скорострельность (+32%) и манёвренность (+22%)',
-    traitEn:'Hurricane fire rate (+32%) and high mobility (+22%)',
-    hpMod:0.95,spdMod:1.22,dmgMod:1.15,projMod:1,coolMod:0.76,
+    bonus:'95 HP (-5%), 183 Скорость (+22%), 12.4 Урон (+24%), +28% скорострельность',
+    trait:'Ураганная скорострельность (+28%) и манёвренность (+22%)',
+    traitEn:'Hurricane fire rate (+28%) and high mobility (+22%)',
+    hpMod:0.95,spdMod:1.22,dmgMod:1.24,projMod:1,coolMod:0.78,
     portrait:'img/heroes/hero_leon_portrait.webp?v=13',sheet:'img/heroes/hero_leon_sheet.webp?v=12'
   },
   {
@@ -6536,7 +6536,7 @@ const CONFIG={
   level:{base:10,growth:1.18},
   meta:{
     hpStep:0.05,pickStep:0.035,dmgStep:0.04,spdStep:0.015,rateStep:0.015,
-    hpCost:120,pickCost:100,dmgCost:160,spdCost:140,rateCost:180,costGrowth:1.26
+    hpCost:120,pickCost:100,dmgCost:160,spdCost:140,rateCost:180,costGrowth:1.22
   }
 };
 
@@ -10092,8 +10092,8 @@ Object.entries({
   'ЗДЕСЬ ПОКА ПУСТО':'No gear here yet','СКЛАД':'Storage','КАТАЛОГ':'Catalog','РЮКЗАК':'Bag',
   // Updated weapon, shield, pet (descriptions + active skills) & artifact EN translations
   'Выпускает исполинское гравитационное кольцо Бездны, притягивающее и сокрушающее врагов в большом радиусе.':'Unleashes a massive Abyssal gravity ring that pulls and crushes enemies in a wide radius.',
-  'Тактический барьерный щит. Проецирует силовое поле на +35 к прочности щита (зарядка 1.8/сек вне боя). Без доп. бонусов.':'Tactical barrier shield projecting a protective force field that absorbs incoming hits.',
-  'Усиленный баллистический щит. Добавляет +60 к прочности щита (зарядка 3.0/сек) и +4% к поглощению урона.':'Reinforced ballistic shield with faster shield regeneration and kinetic armor plating.',
+  'Тактический барьерный щит. Проецирует силовое поле на +35 к прочности щита (зарядка 2.3/сек вне боя). Без доп. бонусов.':'Tactical barrier shield projecting a protective force field that absorbs incoming hits.',
+  'Усиленный баллистический щит. Добавляет +60 к прочности щита (зарядка 3.5/сек) и +4% к поглощению урона.':'Reinforced ballistic shield with faster shield regeneration and kinetic armor plating.',
   'Генератор силового кинетического поля. Добавляет +90 к прочности щита (зарядка 4.2/сек), +7% к поглощению урона и +6% скорости бега.':'Kinetic force field generator combining high barrier capacity with agile plating.',
   'Тяжёлый генератор купола. Добавляет +125 к прочности щита (зарядка 6.0/сек), +10% к поглощению урона, +10% к здоровью и +8% скорости бега.':'Heavy dome generator delivering formidable barrier strength, health, and damage mitigation.',
   'Реликтовый гипер-щит. Добавляет +170 к прочности щита (зарядка 8.0/сек), +13% к поглощению урона, +16% к здоровью, +10% скорости бега и +12% к радиусу сбора.':'Relic hyper-shield with rapid barrier recovery and elite all-around defensive bonuses.',
@@ -10101,7 +10101,7 @@ Object.entries({
   'Пустошная летучая мышь [2★]. Цепь до 4–5 врагов с эхо-меткой (+12% входящего урона); каждый 3-й каст — широкий конус мега-крика. Бонусы: +12% скорость, +10% сбор, +6% урон.':'Wasteland bat companion. Chains echo-marks (+12% damage taken) across 4–5 foes; every 3rd cast unleashes a wide sonic cone.',
   'Одомашненный зубастый сундучок [3★]. Яростный кусь с золотом; каждый 3-й удар — Джекпот-хлопок по площади, россыпь монет и притягивание лута. Бонусы: +18% сбор, +10% скорость, +12% урон.':'Tamed toothy mimic chest. Bites for bonus gold; every 3rd strike triggers an AoE Jackpot slam that rains coins and pulls loot.',
   'Каменный крылатый защитник [4★]. Пикирующий таран с окаменением и веерным залпом 6–8 обсидиановых осколков. Бонусы: +18% HP, +10% броня, +10% темп, +14% урон.':'Stone winged defender. Dives to petrify enemies and fires a fan volley of 6–8 obsidian shards.',
-  'Древний лесной гигант [5★ Реликвия]. Опутывает до 5 врагов (или вбивает доп. удары по боссу), исцеляет до +3.5% HP (кап 18 ед.) / +4% щит и снимает яд/замедление. Бонусы: +28% HP, +14% броня, +18% сбор, +12% скорость, +20% урон.':'Ancient forest guardian. Roots up to 5 enemies (or deals bonus boss strikes), restores HP & shield, and cleanses poison/slow.',
+  'Древний лесной гигант [5★ Реликвия]. Опутывает до 5 врагов (или вбивает доп. удары по боссу), исцеляет до +5% HP (кап 28 ед.) / +6% щит и снимает яд/замедление. Бонусы: +28% HP, +14% броня, +18% сбор, +12% скорость, +20% урон.':'Ancient forest guardian. Roots up to 5 enemies (or deals bonus boss strikes), restores HP & shield, and cleanses poison/slow.',
   'Одомашненный грибной мутант [1★]. Залп 3–4 споровых бомб с токсичными зонами и заражением: убитые враги взрываются облаком спор. Бонусы: +8% урон, +6% HP.':'Tamed mushroom mutant. Launches 3–4 toxic spore bombs; infected foes detonate in a spore cloud on death.',
   'Проворный паучок-мутант [2★]. Затягивает цель в ядовитый кокон (взрывается при гибели жертвы) и выпускает веер из 2–3 паутинных кунаев. Бонусы: +10% скорость бега, +8% темп, +8% урон.':'Agile mutant spiderling. Wraps targets in venomous cocoons that burst on death and hurls fans of 2–3 web kunai.',
   'Чумная пустошная крыса [3★]. Молниеносный рывок по 3 ближайшим врагам с чумным ядом и добычей монет. Бонусы: +8% броня, +12% сбор, +12% урон.':'Plague wasteland rat. Dashes rapidly across 3 nearby foes, inflicting plague venom and pilfering extra coins.',
@@ -10115,7 +10115,8 @@ Object.entries({
   'Паутина, Кунаи и Взрыв кокона':'Venom Cocoon, Web Kunai & Burst',
   '3-целевой чумной блиц и Монеты 🪙':'3-Target Plague Blitz & Bonus Coins',
   'X-разрыв, Казнь (+30%) и Отхил':'Crimson X-Rend, +30% Execute & Lifesteal',
-  'Облегчает навигацию: увеличивает скорость бега на +10% и радиус сбора на +8%.':'Tactical field compass enhancing sprint agility and loot pickup range.',
+  'Облегчает навигацию: увеличивает скорость бега, радиус сбора и добычу золота.':'Tactical field compass enhancing sprint agility, pickup range, and gold yield.',
+  'Мощный магнит притягивает лут издалека, ускоряет бег и повышает добычу золота.':'Powerful magnet pulling loot from afar while boosting move speed and gold bonus.',
   'Искажает время: даёт ускорение темпа огня, бега, зарядки щита и шанса крита.':'Warps combat tempo, accelerating fire rate, movement, shield charge, and critical chance.',
   'Реликтовое ядро усиливает здоровье, регенерацию и силу.':'Relic titan core empowering vitality, passive health regeneration, and weapon damage.',
   'Микрореактор обеспечивает подпитку щита и дополнительную стойкость.':'Compact plasma micro-reactor sustaining shield capacity, recharge, and armor.',
@@ -10125,8 +10126,14 @@ Object.entries({
   'Гравитационный микро-разлом стягивает материю и пронзает полчища.':'Gravity micro-rift bending loot trajectories and driving piercing shots through hordes.',
   'Огненная реликвия наделяет владельца высокой живучестью и регенерацией.':'Blazing phoenix relic granting immense resilience, armor, and continuous recovery.',
   'Древняя регалия власти, поднимающая ключевые боевые параметры.':'Ancient sovereign crown elevating every key offensive and defensive combat stat.',
-  // Legacy aliases
+  // Legacy aliases & hidden/aria UI labels
   'Споровик-светляк':'Mushroom Sporeling','Изумрудный арахнид':'Cave Spiderling','Хромо-крыс':'Wasteland Rat','Теневой фантом':'Wasteland Ghoul','Магма-колосс':'Mutant Abomination',
+  'Настройки':'Settings','Баланс':'Balance','Золото':'Gold','Кристаллы':'Crystals','Профиль':'Profile',
+  'Открыт новый сектор!':'New Sector Unlocked!','Следующий сектор':'Next Sector',
+  'Здоровье (+5% / ур., макс. 20)':'Health (+5% / lv., max 20)',
+  'Радиус сбора (+3.5% / ур., макс. 20)':'Pickup radius (+3.5% / lv., max 20)',
+  'Урон оружия (+4% / ур., макс. 20)':'Weapon damage (+4% / lv., max 20)',
+  'Скорость бега (+1.5% / ур., макс. 20)':'Move speed (+1.5% / lv., max 20)',
 }).forEach(([k,v])=>{ EN[k]=v; _EN[k.toLowerCase()]=v; });
 if(typeof ABILITY_TR !== 'undefined'){
   for(const id in ABILITY_TR){
@@ -10144,9 +10151,15 @@ const _cv=new Map();
   CanvasRenderingContext2D.prototype[f]=function(t,...a){
     if(typeof t==='string'&&LANG!=='ru'&&CYR.test(t)){let r=_cv.get(t);if(r===undefined){r=trText(t);_cv.set(t,r)}t=r}
     return o.call(this,t,...a)}});
+function _isNonUiTextNode(n){
+  const p = n && n.parentElement;
+  if(!p) return false;
+  const tag = p.tagName;
+  return tag === 'SCRIPT' || tag === 'STYLE' || tag === 'NOSCRIPT';
+}
 // --- отладка: в консоли браузера выполните i18nAudit(), чтобы увидеть непереведённые тексты на экране ---
-window.i18nAudit=()=>{const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT),o=new Set();let n;
-  while(n=w.nextNode()){const t=n.nodeValue.trim();if(CYR.test(t))o.add(t)}return[...o]};
+window.i18nAudit=()=>{const root=document.getElementById('ui-root')||document.body,w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),o=new Set();let n;
+  while(n=w.nextNode()){if(_isNonUiTextNode(n))continue;const t=n.nodeValue.trim();if(CYR.test(t))o.add(t)}return[...o]};
 function trText(s){
   if(LANG==='ru'||!CYR.test(s))return s;
   const m=/^(\s*)([\s\S]*?)(\s*)$/.exec(s),core=m[2];
@@ -10181,19 +10194,23 @@ function trText(s){
   return m[1]+(core===core.toUpperCase()&&core!==core.toLowerCase()?v.toUpperCase():v)+m[3];
 }
 function trNode(n){
-  if(LANG==='ru'||(n._t!==undefined&&n.nodeValue===n._t))return;
+  if(LANG==='ru'||!n||_isNonUiTextNode(n)||(n._t!==undefined&&n.nodeValue===n._t))return;
   const o=n.nodeValue,out=trText(o);n._o=o;
   if(out!==o){n._t=out;n.nodeValue=out}else n._t=undefined;
 }
 function walkTr(root){
+  if(!root)return;
   if(root.nodeType===3){trNode(root);return}
+  if(root.tagName==='SCRIPT'||root.tagName==='STYLE'||root.tagName==='NOSCRIPT')return;
   const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;while(n=w.nextNode())trNode(n);
 }
 function applyLang(){
   _cv.clear();
-  const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let n;
-  while(n=w.nextNode()){if(n._o!==undefined&&n._t!==undefined&&n.nodeValue===n._t)n.nodeValue=n._o;n._t=undefined;trNode(n)}
+  const root=document.getElementById('ui-root')||document.body;
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;
+  while(n=w.nextNode()){if(_isNonUiTextNode(n))continue;if(n._o!==undefined&&n._t!==undefined&&n.nodeValue===n._t)n.nodeValue=n._o;n._t=undefined;trNode(n)}
   document.querySelectorAll('[title]').forEach(el=>{if(el._ot===undefined)el._ot=el.title;el.title=LANG==='ru'?el._ot:trText(el._ot)});
+  document.querySelectorAll('[aria-label]').forEach(el=>{if(el._oa===undefined)el._oa=el.getAttribute('aria-label')||'';el.setAttribute('aria-label',LANG==='ru'?el._oa:trText(el._oa))});
   const hwLbl=document.getElementById('hud-wave-lbl');if(hwLbl)hwLbl.textContent=T('WAVE','ВОЛНА');
   const swLbl=document.querySelector('#btn-test-skip-wave span');if(swLbl)swLbl.textContent=T('SKIP +5 WAVES','СКИП +5 ВОЛН');
   const sbLbl=document.querySelector('#btn-test-skip-boss span');if(sbLbl)sbLbl.textContent=T('SKIP BOSS','СКИП БОССА');
@@ -10206,6 +10223,8 @@ const I18N = {
   de: {
     'SETTINGS': 'EINSTELLUNGEN', 'Settings': 'Einstellungen', 'LANGUAGE': 'SPRACHE', 'Language': 'Sprache',
     'GAME': 'SPIEL', 'Game': 'Spiel', 'Sound effects': 'Toneffekte', 'Shots, hits and menu clicks': 'Schüsse, Treffer und Menüklicks',
+    'Music': 'Musik', 'Dynamic adaptive synth soundtrack': 'Dynamischer adaptiver Synth-Soundtrack',
+    'DATA': 'DATEN', 'Data': 'Daten', 'RESET ALL TO ZERO': 'FORTSCHRITT ZURÜCKSETZEN', 'CONFIRM FULL RESET?': 'WIRKLICH ZURÜCKSETZEN?', 'RESET COMPLETE!': 'ZURÜCKGESETZT!',
     'Damage numbers': 'Schadenszahlen', 'Show floating damage in battle': 'Schwebende Schadenszahlen im Kampf',
     'Screen shake': 'Bildschirmwackeln', 'Shake and red flash when hit': 'Kamera-Wackeln und roter Blitz bei Treffern',
     'TEST TOOLS': 'TESTWERKZEUGE', 'Test Tools': 'Testwerkzeuge', 'WAVE': 'WELLE', 'Wave': 'Welle',
@@ -10237,6 +10256,8 @@ const I18N = {
   es: {
     'SETTINGS': 'AJUSTES', 'Settings': 'Ajustes', 'LANGUAGE': 'IDIOMA', 'Language': 'Idioma',
     'GAME': 'JUEGO', 'Game': 'Juego', 'Sound effects': 'Efectos de sonido', 'Shots, hits and menu clicks': 'Disparos, golpes y clics de menú',
+    'Music': 'Música', 'Dynamic adaptive synth soundtrack': 'Banda sonora synth adaptativa',
+    'DATA': 'DATOS', 'Data': 'Datos', 'RESET ALL TO ZERO': 'REINICIAR PROGRESO', 'CONFIRM FULL RESET?': '¿CONFIRMAR REINICIO?', 'RESET COMPLETE!': '¡REINICIADO!',
     'Damage numbers': 'Números de daño', 'Show floating damage in battle': 'Mostrar daño flotante en combate',
     'Screen shake': 'Sacudida de pantalla', 'Shake and red flash when hit': 'Vibración y destello rojo al recibir daño',
     'TEST TOOLS': 'HERRAMIENTAS DE PRUEBA', 'Test Tools': 'Herramientas de prueba', 'WAVE': 'OLEADA', 'Wave': 'Oleada',
@@ -10268,6 +10289,8 @@ const I18N = {
   fr: {
     'SETTINGS': 'PARAMÈTRES', 'Settings': 'Paramètres', 'LANGUAGE': 'LANGUE', 'Language': 'Langue',
     'GAME': 'JEU', 'Game': 'Jeu', 'Sound effects': 'Effets sonores', 'Shots, hits and menu clicks': 'Tirs, impacts et clics de menu',
+    'Music': 'Musique', 'Dynamic adaptive synth soundtrack': 'Bande-son synthé adaptative dynamique',
+    'DATA': 'DONNÉES', 'Data': 'Données', 'RESET ALL TO ZERO': 'RÉINITIALISER LA PROGRESSION', 'CONFIRM FULL RESET?': 'CONFIRMER LA RÉINITIALISATION ?', 'RESET COMPLETE!': 'RÉINITIALISÉ !',
     'Damage numbers': 'Chiffres de dégâts', 'Show floating damage in battle': 'Afficher les dégâts flottants en combat',
     'Screen shake': "Secousse d'écran", 'Shake and red flash when hit': 'Secousse et flash rouge lors des coups',
     'TEST TOOLS': 'OUTILS DE TEST', 'Test Tools': 'Outils de test', 'WAVE': 'VAGUE', 'Wave': 'Vague',
@@ -10299,6 +10322,8 @@ const I18N = {
   zh: {
     'SETTINGS': '设置', 'Settings': '设置', 'LANGUAGE': '语言', 'Language': '语言',
     'GAME': '游戏', 'Game': '游戏', 'Sound effects': '声音特效', 'Shots, hits and menu clicks': '射击、命中与菜单点击音效',
+    'Music': '音乐', 'Dynamic adaptive synth soundtrack': '动态自适应合成器配乐',
+    'DATA': '数据', 'Data': '数据', 'RESET ALL TO ZERO': '重置全部进度', 'CONFIRM FULL RESET?': '确认完全重置？', 'RESET COMPLETE!': '已重置！',
     'Damage numbers': '伤害数字', 'Show floating damage in battle': '战斗中显示浮动伤害数字',
     'Screen shake': '屏幕震动', 'Shake and red flash when hit': '受击时屏幕震动与红色闪烁',
     'TEST TOOLS': '测试工具', 'Test Tools': '测试工具', 'WAVE': '波次', 'Wave': '波次',
@@ -10330,6 +10355,8 @@ const I18N = {
   ja: {
     'SETTINGS': '設定', 'Settings': '設定', 'LANGUAGE': '言語', 'Language': '言語',
     'GAME': 'ゲーム', 'Game': 'ゲーム', 'Sound effects': '効果音', 'Shots, hits and menu clicks': '射撃、被弾、メニュー操作音',
+    'Music': '音楽', 'Dynamic adaptive synth soundtrack': 'ダイナミック・シンセBGM',
+    'DATA': 'データ', 'Data': 'データ', 'RESET ALL TO ZERO': '進行データをリセット', 'CONFIRM FULL RESET?': '本当にリセットしますか？', 'RESET COMPLETE!': 'リセット完了！',
     'Damage numbers': 'ダメージ表記', 'Show floating damage in battle': '戦闘中にダメージ数値をポップアップ表示',
     'Screen shake': '画面の揺れ', 'Shake and red flash when hit': '被弾時の画面振動とレッドフラッシュ',
     'TEST TOOLS': 'テストツール', 'Test Tools': 'テストツール', 'WAVE': 'ウェーブ', 'Wave': 'ウェーブ',
@@ -10361,6 +10388,8 @@ const I18N = {
   pt: {
     'SETTINGS': 'CONFIGURAÇÕES', 'Settings': 'Configurações', 'LANGUAGE': 'IDIOMA', 'Language': 'Idioma',
     'GAME': 'JOGO', 'Game': 'Jogo', 'Sound effects': 'Efeitos sonoros', 'Shots, hits and menu clicks': 'Disparos, acertos e cliques no menu',
+    'Music': 'Música', 'Dynamic adaptive synth soundtrack': 'Trilha sonora synth adaptativa',
+    'DATA': 'DADOS', 'Data': 'Dados', 'RESET ALL TO ZERO': 'REINICIAR PROGRESSO', 'CONFIRM FULL RESET?': 'CONFIRMAR REINÍCIO?', 'RESET COMPLETE!': 'REINICIADO!',
     'Damage numbers': 'Números de dano', 'Show floating damage in battle': 'Mostrar dano flutuante em combate',
     'Screen shake': 'Tremor de tela', 'Shake and red flash when hit': 'Vibração e flash vermelho ao sofrer dano',
     'TEST TOOLS': 'FERRAMENTAS DE TESTE', 'Test Tools': 'Ferramentas de teste', 'WAVE': 'ONDA', 'Wave': 'Onda',
@@ -10690,7 +10719,7 @@ function initI18n(){
   ensureSet();LANG=SUPPORTED_LANGS.includes(save.settings.lang)?save.settings.lang:'en';
   Sfx.enabled=save.settings.sfx!==false;if(window.Bgm)Bgm.enabled=save.settings.bgm!==false;syncSoundBtnIcon();if(typeof save.settings.volume==='number')Sfx.setVolume(save.settings.volume);
   applyLang();
-  new MutationObserver(ms=>{if(LANG==='ru')return;for(const m of ms){if(m.type==='characterData')trNode(m.target);else m.addedNodes.forEach(walkTr)}}).observe(document.body,{childList:true,subtree:true,characterData:true});
+  new MutationObserver(ms=>{if(LANG==='ru')return;for(const m of ms){if(m.type==='characterData')trNode(m.target);else m.addedNodes.forEach(walkTr)}}).observe(document.getElementById('ui-root')||document.body,{childList:true,subtree:true,characterData:true});
   document.getElementById('btn-settings').onclick=()=>openModal('modal-settings');
 }
 const DEV_TOOLS=window.SURVIVORS_DEV===true || new URLSearchParams(window.location?.search||'').get('dev')==='1';
@@ -10747,22 +10776,24 @@ function renderSettings(){
     cardSw('dmg', 'Damage numbers', 'Цифры урона', 'Show floating damage in battle', 'Всплывающие цифры урона в бою') +
     cardSw('shake', 'Screen shake', 'Тряска экрана', 'Shake and red flash when hit', 'Тряска экрана и вспышка при ударе');
 
-  // 3. Testing & Gear Controls (always available for testing from scratch; currency cheats gated by DEV_TOOLS)
-  const devCheatBtns = DEV_TOOLS ? `
+  // 3. Dev / Testing tools (strictly gated by DEV_TOOLS / ?dev=1) & Player Save Reset
+  const devHtml = DEV_TOOLS ? (secHdr('TESTING','ТЕСТИРОВАНИЕ') +
+    `<div class="set-test-grid">
       <button class="set-tool-btn" id="btn-dev-gold">+999 🪙</button>
       <button class="set-tool-btn" id="btn-dev-gems">+999 💎</button>
-      <button class="set-tool-btn" id="btn-dev-acclv" style="background:linear-gradient(180deg,#3b82f6 0%,#1d4ed8 100%);box-shadow:0 3px 0 #1e40af;font-size:11px;grid-column:1/-1">⭐ ${T('+5 SURVIVOR LVL','+5 УР. ВЫЖИВШЕГО')}</button>` : '';
-  const testHtml = secHdr('TESTING','ТЕСТИРОВАНИЕ') +
-    `<div class="set-test-grid">${devCheatBtns}
+      <button class="set-tool-btn" id="btn-dev-acclv" style="background:linear-gradient(180deg,#3b82f6 0%,#1d4ed8 100%);box-shadow:0 3px 0 #1e40af;font-size:11px;grid-column:1/-1">⭐ ${T('+5 SURVIVOR LVL','+5 УР. ВЫЖИВШЕГО')}</button>
       <button class="set-tool-btn" id="btn-dev-give-all" style="background:linear-gradient(180deg,#10b981 0%,#059669 100%);box-shadow:0 3px 0 #047857;font-size:11px">🎁 ${T('GIVE ALL GEAR','ВЫДАТЬ ВСЁ')}</button>
       <button class="set-tool-btn" id="btn-dev-clear-all" style="background:linear-gradient(180deg,#64748b 0%,#475569 100%);box-shadow:0 3px 0 #334155;font-size:11px">🗑️ ${T('REMOVE ALL','УБРАТЬ ВСЁ')}</button>
+    </div>`) : '';
+  const dataHtml = secHdr('DATA','ДАННЫЕ') +
+    `<div class="set-test-grid">
       <button class="set-tool-btn" id="btn-dev-reset-all" style="background:linear-gradient(180deg,#ef4444 0%,#991b1b 100%);box-shadow:0 3px 0 #7f1d1d;font-size:11.5px;grid-column:1/-1;border-color:rgba(254,202,202,0.4)">⚠️ ${T('RESET ALL TO ZERO','СБРОСИТЬ ВСЁ В НОЛЬ')}</button>
     </div>`;
 
   // 4. Footer
-  const footerHtml = `<div class="set-footer">Survivors • beta 1.0</div>`;
+  const footerHtml = `<div class="set-footer">Survivors • v1.0</div>`;
 
-  b.innerHTML = langHtml + gameHtml + testHtml + footerHtml;
+  b.innerHTML = langHtml + gameHtml + devHtml + dataHtml + footerHtml;
 
   // Event Listeners: Language Dropdown
   const langDd = b.querySelector('#set-lang-dropdown');
@@ -10962,8 +10993,8 @@ const ITEMS={
   m_astral:{s:'weapon',r:5,n:'Астральный посох «Сверхновая»',img:'img/weapons/weapon_astral_staff_icon.webp',ic:'🌌',d:'Запускает сингулярности, детонирующие ослепительной сверхновой.',dmg:70,fireRate:'1.05 /сек',range:'335 м',speed:520,aoe:130,special:'supernova',combatStats:true,color:'#c084fc',kind:'magic',m:{dmg:.26,cool:.90,critChance:.12,pierce:1}},
 
   // === ЩИТЫ (1★ - 5★) — ДОБАВЛЯЮТ ПОЛОСКУ ПРОЧНОСТИ ПОВЕРХ ЗДОРОВЬЯ ===
-  sh_buckler: {s:'shield',r:1,n:'Барьерный щит',img:'img/shields/shield_buckler_icon.webp',ic:'🛡️',d:'Тактический барьерный щит. Проецирует силовое поле на +35 к прочности щита (зарядка 1.8/сек вне боя). Без доп. бонусов.',shield:35,shieldRegen:1.8,m:{shield:35,shieldRegen:1.8}},
-  sh_riot:    {s:'shield',r:2,n:'Штурмовой щит',img:'img/shields/shield_riot_icon.webp',ic:'🛡️',d:'Усиленный баллистический щит. Добавляет +60 к прочности щита (зарядка 3.0/сек) и +4% к поглощению урона.',shield:60,shieldRegen:3.0,m:{shield:60,shieldRegen:3.0,armor:.04}},
+  sh_buckler: {s:'shield',r:1,n:'Барьерный щит',img:'img/shields/shield_buckler_icon.webp',ic:'🛡️',d:'Тактический барьерный щит. Проецирует силовое поле на +35 к прочности щита (зарядка 2.3/сек вне боя). Без доп. бонусов.',shield:35,shieldRegen:2.3,m:{shield:35,shieldRegen:2.3}},
+  sh_riot:    {s:'shield',r:2,n:'Штурмовой щит',img:'img/shields/shield_riot_icon.webp',ic:'🛡️',d:'Усиленный баллистический щит. Добавляет +60 к прочности щита (зарядка 3.5/сек) и +4% к поглощению урона.',shield:60,shieldRegen:3.5,m:{shield:60,shieldRegen:3.5,armor:.04}},
   sh_plasma:  {s:'shield',r:3,n:'Плазменный экран',img:'img/shields/shield_plasma_icon.webp',ic:'🛡️',d:'Генератор силового кинетического поля. Добавляет +90 к прочности щита (зарядка 4.2/сек), +7% к поглощению урона и +6% скорости бега.',shield:90,shieldRegen:4.2,m:{shield:90,shieldRegen:4.2,armor:.07,spd:.06}},
   sh_titan:   {s:'shield',r:4,n:'Титановый бастион',img:'img/shields/shield_titan_icon.webp',ic:'🛡️',d:'Тяжёлый генератор купола. Добавляет +125 к прочности щита (зарядка 6.0/сек), +10% к поглощению урона, +10% к здоровью и +8% скорости бега.',shield:125,shieldRegen:6.0,m:{shield:125,shieldRegen:6.0,armor:.10,hp:.10,spd:.08}},
   sh_aegis:   {s:'shield',r:5,n:'Эгида Предтеч',img:'img/shields/shield_aegis_icon.webp',ic:'🛡️',d:'Реликтовый гипер-щит. Добавляет +170 к прочности щита (зарядка 8.0/сек), +13% к поглощению урона, +16% к здоровью, +10% скорости бега и +12% к радиусу сбора.',shield:170,shieldRegen:8.0,m:{shield:170,shieldRegen:8.0,armor:.13,hp:.16,spd:.10,pick:.12}},
@@ -10974,7 +11005,7 @@ const ITEMS={
   pet_bat:     {s:'pet',r:2,n:'Ручной нетопырь',img:'img/pets/pet_bat_icon.webp?v=3',sprite:'img/pets/pet_bat_icon.webp?v=3',sheet:'img/pets/pet_bat_sheet.webp?v=3',frameW:260,frameH:220,frames:8,animRate:10,flying:true,spriteW:56,spriteH:48,ic:'🦇',active:'Эхо-метка (+12% урон) + Мега-крик',d:'Пустошная летучая мышь [2★]. Цепь до 4–5 врагов с эхо-меткой (+12% входящего урона); каждый 3-й каст — широкий конус мега-крика. Бонусы: +12% скорость, +10% сбор, +6% урон.',petType:'bat',m:{spd:.12,pick:.10,dmg:.06}},
   pet_mimic:   {s:'pet',r:3,n:'Карманный мимик',img:'img/pets/pet_mimic_icon.webp?v=3',sprite:'img/pets/pet_mimic_icon.webp?v=3',sheet:'img/pets/pet_mimic_sheet.webp?v=3',frameW:220,frameH:220,frames:8,animRate:9,spriteW:48,spriteH:48,ic:'📦',active:'Золотой Джекпот-удар и Магнит 🪙',d:'Одомашненный зубастый сундучок [3★]. Яростный кусь с золотом; каждый 3-й удар — Джекпот-хлопок по площади, россыпь монет и притягивание лута. Бонусы: +18% сбор, +10% скорость, +12% урон.',petType:'mimic',m:{pick:.18,spd:.10,dmg:.12}},
   pet_gargoyle:{s:'pet',r:4,n:'Страж-гаргулья',img:'img/pets/pet_gargoyle_icon.webp?v=3',sprite:'img/pets/pet_gargoyle_icon.webp?v=3',sheet:'img/pets/pet_gargoyle_sheet.webp?v=3',frameW:240,frameH:240,frames:8,animRate:9,flying:true,spriteW:52,spriteH:52,ic:'🗿',active:'Таран, Окаменение и Залп осколков',d:'Каменный крылатый защитник [4★]. Пикирующий таран с окаменением и веерным залпом 6–8 обсидиановых осколков. Бонусы: +18% HP, +10% броня, +10% темп, +14% урон.',petType:'gargoyle',m:{hp:.18,armor:.10,cool:.90,dmg:.14}},
-  pet_treant:  {s:'pet',r:5,n:'Древень-хранитель',img:'img/pets/pet_treant_icon.webp?v=3',sprite:'img/pets/pet_treant_icon.webp?v=3',sheet:'img/pets/pet_treant_sheet.webp?v=3',frameW:260,frameH:260,frames:8,animRate:8,spriteW:56,spriteH:56,ic:'🌲',active:'Корни, Соло-сокрушение и Очищение',d:'Древний лесной гигант [5★ Реликвия]. Опутывает до 5 врагов (или вбивает доп. удары по боссу), исцеляет до +3.5% HP (кап 18 ед.) / +4% щит и снимает яд/замедление. Бонусы: +28% HP, +14% броня, +18% сбор, +12% скорость, +20% урон.',petType:'treant',m:{hp:.28,armor:.14,pick:.18,spd:.12,dmg:.20}},
+  pet_treant:  {s:'pet',r:5,n:'Древень-хранитель',img:'img/pets/pet_treant_icon.webp?v=3',sprite:'img/pets/pet_treant_icon.webp?v=3',sheet:'img/pets/pet_treant_sheet.webp?v=3',frameW:260,frameH:260,frames:8,animRate:8,spriteW:56,spriteH:56,ic:'🌲',active:'Корни, Соло-сокрушение и Очищение',d:'Древний лесной гигант [5★ Реликвия]. Опутывает до 5 врагов (или вбивает доп. удары по боссу), исцеляет до +5% HP (кап 28 ед.) / +6% щит и снимает яд/замедление. Бонусы: +28% HP, +14% броня, +18% сбор, +12% скорость, +20% урон.',petType:'treant',m:{hp:.28,armor:.14,pick:.18,spd:.12,dmg:.20}},
   // Монстры-компаньоны (1★ - 5★):
   pet_mushroom: {s:'pet',r:1,n:'Грибной споровик',img:'img/pets/pet_mushroom_icon.webp?v=3',sprite:'img/pets/pet_mushroom_icon.webp?v=3',sheet:'img/pets/pet_mushroom_sheet.webp?v=3',frameW:220,frameH:220,frames:8,animRate:9,spriteW:46,spriteH:46,ic:'🍄',active:'Залп спор + Детонация при смерти',d:'Одомашненный грибной мутант [1★]. Залп 3–4 споровых бомб с токсичными зонами и заражением: убитые враги взрываются облаком спор. Бонусы: +8% урон, +6% HP.',petType:'mushroom',m:{dmg:.08,hp:.06}},
   pet_spider:   {s:'pet',r:2,n:'Пещерный паучок',img:'img/pets/pet_spider_icon.webp?v=3',sprite:'img/pets/pet_spider_icon.webp?v=3',sheet:'img/pets/pet_spider_sheet.webp?v=3',frameW:220,frameH:220,frames:8,animRate:12,spriteW:50,spriteH:50,ic:'🕷️',active:'Паутина, Кунаи и Взрыв кокона',d:'Проворный паучок-мутант [2★]. Затягивает цель в ядовитый кокон (взрывается при гибели жертвы) и выпускает веер из 2–3 паутинных кунаев. Бонусы: +10% скорость бега, +8% темп, +8% урон.',petType:'spider',m:{spd:.10,cool:.92,dmg:.08}},
@@ -10982,11 +11013,11 @@ const ITEMS={
   pet_ghoul:    {s:'pet',r:4,n:'Пустошный гуль',img:'img/pets/pet_ghoul_icon.webp?v=3',sprite:'img/pets/pet_ghoul_icon.webp?v=3',sheet:'img/pets/pet_ghoul_sheet.webp?v=3',frameW:240,frameH:220,frames:8,animRate:9,spriteW:54,spriteH:50,ic:'🧟',active:'X-разрыв, Казнь (+30%) и Отхил',d:'Свирепый мертвяк-гуль [4★]. Кровавый X-разрыв с бонусом +30% казни по раненым и отравленным, откатом КД за убийства и вампиризмом. Бонусы: +10% броня, +18% HP, +16% урон, +10% темп.',petType:'ghoul',m:{armor:.10,hp:.18,dmg:.16,cool:.90}},
 
   // === АРТЕФАКТЫ (1★ - 5★) ===
-  art_compass:    {s:'artifact',r:1,n:'Компас выжившего',img:'img/artifacts/art_compass_icon.webp',ic:'🧭',d:'Облегчает навигацию: увеличивает скорость бега на +10% и радиус сбора на +8%.',m:{spd:.10,pick:.08}},
-  art_magnet:     {s:'artifact',r:2,n:'Неодимовое кольцо',img:'img/artifacts/art_magnet_icon.webp',ic:'🧲',d:'Мощный магнит притягивает кристаллы и опыт издалека.',m:{pick:.20}},
-  art_crystal:    {s:'artifact',r:3,n:'Кристалл ярости',img:'img/artifacts/art_crystal_icon.webp',ic:'💎',d:'Концентрирует боевую энергию, усиливая урон оружия.',m:{dmg:.22}},
+  art_compass:    {s:'artifact',r:1,n:'Компас выжившего',img:'img/artifacts/art_compass_icon.webp',ic:'🧭',d:'Облегчает навигацию: увеличивает скорость бега, радиус сбора и добычу золота.',m:{spd:.10,pick:.10,goldBonus:.05}},
+  art_magnet:     {s:'artifact',r:2,n:'Неодимовое кольцо',img:'img/artifacts/art_magnet_icon.webp',ic:'🧲',d:'Мощный магнит притягивает лут издалека, ускоряет бег и повышает добычу золота.',m:{pick:.24,spd:.08,goldBonus:.10}},
+  art_crystal:    {s:'artifact',r:3,n:'Кристалл ярости',img:'img/artifacts/art_crystal_icon.webp',ic:'💎',d:'Концентрирует боевую энергию, усиливая урон оружия.',m:{dmg:.24,critChance:.06}},
   art_chronos:    {s:'artifact',r:4,n:'Хроно-песочные часы',img:'img/artifacts/art_chronos_icon.webp',ic:'⌛',d:'Искажает время: даёт ускорение темпа огня, бега, зарядки щита и шанса крита.',m:{cool:.78,spd:.14,shieldRegen:3.0,critChance:.12}},
-  art_heart:      {s:'artifact',r:5,n:'Сердце Титана',img:'img/artifacts/art_heart_icon.webp',ic:'❤️‍🔥',d:'Реликтовое ядро усиливает здоровье, регенерацию и силу.',m:{hp:.45,dmg:.24,regen:1.5}},
+  art_heart:      {s:'artifact',r:5,n:'Сердце Титана',img:'img/artifacts/art_heart_icon.webp',ic:'❤️‍🔥',d:'Реликтовое ядро усиливает здоровье, регенерацию и силу.',m:{hp:.48,dmg:.26,regen:1.8,armor:.06}},
 
   // 1★ (Обычные)
   art_boots:      {s:'artifact',r:1,n:'Армейские берцы',img:'img/artifacts/art_boots_icon.webp',ic:'🥾',d:'Облегченная тактическая обувь повышает маневренность и живучесть.',m:{spd:.08,hp:.08}},
@@ -11001,16 +11032,16 @@ const ITEMS={
 
   // 3★ (Редкие)
   art_stim:       {s:'artifact',r:3,n:'Боевой стимулятор',img:'img/artifacts/art_stim_icon.webp',ic:'💉',d:'Инъекция адреналина кратно ускоряет реакцию и силу бойца.',m:{spd:.14,dmg:.14,cool:.90}},
-  art_ammo_box:   {s:'artifact',r:3,n:'Бронебойная обойма',img:'img/artifacts/art_ammo_box_icon.webp',ic:'📦',d:'Патроны с сердечником из вольфрама прошивают тела врагов насквозь.',m:{dmg:.16,pierce:1}},
+  art_ammo_box:   {s:'artifact',r:3,n:'Бронебойная обойма',img:'img/artifacts/art_ammo_box_icon.webp',ic:'📦',d:'Патроны с сердечником из вольфрама прошивают тела врагов насквозь.',m:{dmg:.18,pierce:1,critChance:.04}},
   art_generator:  {s:'artifact',r:3,n:'Плазменный стабилизатор',img:'img/artifacts/art_generator_icon.webp',ic:'⚛️',d:'Микрореактор обеспечивает подпитку щита и дополнительную стойкость.',m:{shield:55,shieldRegen:2.2,armor:.06}},
   // 4★ (Эпические)
-  art_skull:      {s:'artifact',r:4,n:'Амулет Жнеца',img:'img/artifacts/art_skull_icon.webp',ic:'💀',d:'Зловещий костяной талисман дарует ярость и восстановление сил.',m:{dmg:.24,regen:1.4,critChance:.10}},
+  art_skull:      {s:'artifact',r:4,n:'Амулет Жнеца',img:'img/artifacts/art_skull_icon.webp',ic:'💀',d:'Зловещий костяной талисман дарует ярость и восстановление сил.',m:{dmg:.28,regen:1.6,critChance:.12}},
   art_overdrive:  {s:'artifact',r:4,n:'Модуль «Овердрайв»',img:'img/artifacts/art_overdrive_icon.webp',ic:'⚡',d:'Сверхпроводящий чип разгоняет автоматику оружия.',m:{cool:.82,spd:.15,dmg:.16}},
-  art_nanites:    {s:'artifact',r:4,n:'Наноматрица плоти',img:'img/artifacts/art_nanites_icon.webp',ic:'🧬',d:'Микроскопические боты латают ткани и укрепляют щит носителя.',m:{hp:.22,regen:1.2,shield:65,armor:.07}},
+  art_nanites:    {s:'artifact',r:4,n:'Наноматрица плоти',img:'img/artifacts/art_nanites_icon.webp',ic:'🧬',d:'Микроскопические боты латают ткани и укрепляют щит носителя.',m:{hp:.18,regen:1.1,shield:50,armor:.06}},
   // 5★ (Легендарные)
-  art_singularity:{s:'artifact',r:5,n:'Ядро Сингулярности',img:'img/artifacts/art_singularity_icon.webp',ic:'🌌',d:'Гравитационный микро-разлом стягивает материю и пронзает полчища.',m:{dmg:.28,pick:.22,pierce:1}},
-  art_phoenix:    {s:'artifact',r:5,n:'Перо Феникса',img:'img/artifacts/art_phoenix_icon.webp',ic:'🪶',d:'Огненная реликвия наделяет владельца высокой живучестью и регенерацией.',m:{hp:.38,regen:1.8,armor:.12}},
-  art_crown:      {s:'artifact',r:5,n:'Корона Повелителя',img:'img/artifacts/art_crown_icon.webp',ic:'👑',d:'Древняя регалия власти, поднимающая ключевые боевые параметры.',m:{dmg:.25,cool:.82,spd:.18,shield:85,critChance:.12}},
+  art_singularity:{s:'artifact',r:5,n:'Ядро Сингулярности',img:'img/artifacts/art_singularity_icon.webp',ic:'🌌',d:'Гравитационный микро-разлом стягивает материю и пронзает полчища.',m:{dmg:.32,cool:.88,critChance:.08,pick:.24,pierce:1}},
+  art_phoenix:    {s:'artifact',r:5,n:'Перо Феникса',img:'img/artifacts/art_phoenix_icon.webp',ic:'🪶',d:'Огненная реликвия наделяет владельца высокой живучестью и регенерацией.',m:{hp:.42,regen:2.2,armor:.14,shield:45}},
+  art_crown:      {s:'artifact',r:5,n:'Корона Повелителя',img:'img/artifacts/art_crown_icon.webp',ic:'👑',d:'Древняя регалия власти, поднимающая ключевые боевые параметры.',m:{dmg:.20,cool:.88,spd:.14,shield:60,critChance:.08}},
 };
 // Миграции старых и дублирующих ID предметов в актуальные канонические ключи
 const LEGACY_ITEM_MIGRATIONS = {
@@ -11402,11 +11433,15 @@ function ensureInv(){
   if(!save.equip.weapon||!ITEMS[save.equip.weapon]||ITEMS[save.equip.weapon].s!=='weapon'||!save.inv.includes(save.equip.weapon)){
     save.equip.weapon='w_pistol';
   }
+  const seenArts = new Set();
   for(const k of ['shield','pet','art1','art2','art3']){
     if(save.equip[k]){
       const expectedSlot = k.startsWith('art') ? 'artifact' : k;
       if(!ITEMS[save.equip[k]]||ITEMS[save.equip[k]].s!==expectedSlot||!save.inv.includes(save.equip[k])){
         save.equip[k]=null;
+      } else if(k.startsWith('art')){
+        if(seenArts.has(save.equip[k])) save.equip[k]=null;
+        else seenArts.add(save.equip[k]);
       }
     }
   }
@@ -12768,13 +12803,21 @@ function checkForgeRateCap(itemId, curLv){
     const rIdx = Math.max(0, Math.min(4, (it.r || 1) - 1));
     stepForItem = ARTIFACT_STAT_TABLE.rate.steps[rIdx] || 0.02;
   }
+  if(targetWep && targetWep.m && targetWep.m.cool) passiveCool *= targetWep.m.cool;
   const effPassiveCool = Math.max(0.42, passiveCool);
   const wepBaseCool = 1 / (parseFloat(targetWep.fireRate) || 1.5);
   const curRaw = (wepBaseCool * (hero.coolMod || 1) * effPassiveCool) / (otherUpgDiv * (1 + stepForItem * curLv) * rateBonus);
   const nextRaw = (wepBaseCool * (hero.coolMod || 1) * effPassiveCool) / (otherUpgDiv * (1 + stepForItem * (curLv + 1)) * rateBonus);
-  const curRate = 1 / clampPlayerCooldown(curRaw, targetWep, null);
-  const nextRate = 1 / clampPlayerCooldown(nextRaw, targetWep, null);
-  return { capped: (nextRate - curRate) < 0.005, curRate };
+  const curClamped = clampPlayerCooldown(curRaw, targetWep, null);
+  const nextClamped = clampPlayerCooldown(nextRaw, targetWep, null);
+  const curRate = 1 / curClamped;
+  const nextRate = 1 / nextClamped;
+  const calcOv = (raw, clamped) => (raw > 0 && clamped > 0 && raw < clamped) ? Math.min(0.60, ((clamped / raw) - 1) * 0.50) : 0;
+  const curOv = calcOv(curRaw, curClamped);
+  const nextOv = calcOv(nextRaw, nextClamped);
+  const rateHitCap = (nextRate - curRate) < 0.005;
+  const convertsToDmg = rateHitCap && (nextOv - curOv) > 0.0005;
+  return { capped: rateHitCap && !convertsToDmg, convertsToDmg, curRate };
 }
 function getItemUpgradeDefs(id){
   const it=ITEMS[id];
@@ -12795,14 +12838,14 @@ function getItemUpgradeDefs(id){
     const curRateVal = '+' + (curRateLv * rateStep).toFixed(1) + '%';
     const nextRateVal = rateCapInfo.capped
       ? `${T('CAP','ЛИМИТ')} (${rateCapInfo.curRate.toFixed(1)}/с)`
-      : '+' + ((curRateLv + 1) * rateStep).toFixed(1) + '%';
+      : '+' + ((curRateLv + 1) * rateStep).toFixed(1) + '%' + (rateCapInfo.convertsToDmg ? ' 💥' : '');
     const baseRange=parseInt(it.range)||CONFIG.weapon.range;
     const curRange=baseRange+curRangeLv*rangeStep;
     const nextRange=baseRange+(curRangeLv+1)*rangeStep;
     const rangeIco=forgeStatIcon('img/ui/upgrades/hd/range.svg');
     return [
       {key:'dmg',name:'Урон',nameEn:'Damage',ico:forgeStatIcon(STAT_ICONS.dmg),curLv:curDmgLv,maxLv:10,curVal:curDmgVal,nextVal:nextDmgVal,cost:getUpgradeCrystalCost(curDmgLv, id)},
-      {key:'rate',name:'Скорострельность',nameEn:'Fire rate',ico:forgeStatIcon(STAT_ICONS.rate),curLv:curRateLv,maxLv:10,curVal:curRateVal,nextVal:nextRateVal,isCapped:rateCapInfo.capped,capRate:rateCapInfo.curRate,cost:getUpgradeCrystalCost(curRateLv, id)},
+      {key:'rate',name:'Скорострельность',nameEn:'Fire rate',ico:forgeStatIcon(STAT_ICONS.rate),curLv:curRateLv,maxLv:10,curVal:curRateVal,nextVal:nextRateVal,isCapped:rateCapInfo.capped,convertsToDmg:!!rateCapInfo.convertsToDmg,capRate:rateCapInfo.curRate,cost:getUpgradeCrystalCost(curRateLv, id)},
       {key:'range',name:'Дальность',nameEn:'Range',ico:rangeIco,curLv:curRangeLv,maxLv:10,curVal:curRange+T(' m',' м'),nextVal:nextRange+T(' m',' м'),cost:getUpgradeCrystalCost(curRangeLv, id)}
     ];
   }else if(it.s==='shield'){
@@ -12843,8 +12886,9 @@ function getItemUpgradeDefs(id){
         curLv,
         maxLv: 10,
         curVal: spec.fmt(curLv * step),
-        nextVal: rateCapInfo.capped ? `${T('CAP','ЛИМИТ')} (${rateCapInfo.curRate.toFixed(1)}/с)` : spec.fmt((curLv + 1) * step),
+        nextVal: rateCapInfo.capped ? `${T('CAP','ЛИМИТ')} (${rateCapInfo.curRate.toFixed(1)}/с)` : (spec.fmt((curLv + 1) * step) + (rateCapInfo.convertsToDmg ? ' 💥' : '')),
         isCapped: rateCapInfo.capped,
+        convertsToDmg: !!rateCapInfo.convertsToDmg,
         capRate: rateCapInfo.curRate,
         cost: getUpgradeCrystalCost(curLv, id)
       };
@@ -13071,7 +13115,8 @@ function renderCraft(){
                 ${isMax?`<span class="max-tag">${T('MAX','МАКС.')}</span>`:`<span class="c-arr">→</span><span class="n-val">${def.nextVal}</span>`}
               </div>
             </div>
-            ${isCapped ? `<div class="craft-stat-note cap">${T('Fire-rate cap reached for current build','Достигнут лимит скорости текущей сборки')}</div>` : ''}
+            ${isCapped ? `<div class="craft-stat-note cap">${T('Fire-rate & overflow damage cap reached','Достигнут лимит скорости и перелива в урон')}</div>` : ''}
+            ${(!isMax && !isCapped && def.convertsToDmg) ? `<div class="craft-stat-note">${T('Rate capped: excess converts into damage (+50%)','Потолок темпа: избыток идёт в урон (+50%)')}</div>` : ''}
             ${(!isMax && !isCapped && !canPay) ? `<div class="craft-stat-note need">${T('Need','Нужно ещё')} ${need} ${T('more crystals','кристаллов')}</div>` : ''}
           </div>
           <div class="craft-stat-action">
@@ -14270,9 +14315,9 @@ function rollAirdropTier(wave){
     else if(r < 0.92) tier = 4;
     else tier = 5;
   }
-  if(lvlId === 1) return Math.min(3, tier);
-  if(lvlId === 2) return Math.min(4, tier);
-  return tier;
+  if(lvlId === 1) return Math.min(3, Math.max(1, tier));
+  if(lvlId === 2) return Math.min(4, Math.max(2, tier));
+  return Math.min(5, Math.max(3, tier));
 }
 
 let _dropBannerQueue = [], _dropBannerTimer = null;
@@ -14714,8 +14759,8 @@ function damagePlayer(dmgVal,bypassInvulnerability=false,bypassShield=false){
   if(window.Platform&&Platform.haptic)Platform.haptic(dmgVal > 18 ? "heavy" : "medium");
   const p = G.p;
 
-  // 5★ Протокол «Эгида»: полностью блокирует 1 входящее попадание (0 урона)
-  if(!bypassShield && (p.aegisLevel || 0) > 0 && p.aegisReady){
+  // 5★ Протокол «Эгида»: полностью блокирует 1 входящее прямое попадание (тики яда не сжигают Эгиду)
+  if(!bypassShield && !bypassInvulnerability && (p.aegisLevel || 0) > 0 && p.aegisReady){
     p.aegisReady = false;
     p.aegisCd = Math.max(4.5, 11.5 - p.aegisLevel * 1.3);
     p.inv = Math.max(p.inv || 0, 0.48);
@@ -14729,7 +14774,7 @@ function damagePlayer(dmgVal,bypassInvulnerability=false,bypassShield=false){
   }
 
   const chDmgMult = (G.lvlConfig && G.lvlConfig.multDmg) || 1;
-  const waveDmgScale = 1 + Math.max(0, (G.wave || 1) - 10) * 0.012;
+  const waveDmgScale = 1 + Math.max(0, (G.wave || 1) - 10) * 0.016;
   dmgVal=Math.max(0,Number(dmgVal)||0)*chDmgMult*waveDmgScale*Math.max(1-ARMOR_CAP,1-Math.min(ARMOR_CAP,p.armor||0));
   let remainingDmg = dmgVal;
   let shieldBroke = false;
@@ -15258,13 +15303,13 @@ if(typeof hideEnrageBanner === 'function') hideEnrageBanner();
 }
 const skipWaveBtnEl = document.getElementById('btn-test-skip-wave');
 if(skipWaveBtnEl){
-  skipWaveBtnEl.style.display='';
-  skipWaveBtnEl.onclick = () => testSkipWaves(5);
+  skipWaveBtnEl.style.display = DEV_TOOLS ? '' : 'none';
+  skipWaveBtnEl.onclick = DEV_TOOLS ? (() => testSkipWaves(5)) : null;
 }
 const skipBossBtnEl = document.getElementById('btn-test-skip-boss');
 if(skipBossBtnEl){
-  skipBossBtnEl.style.display='';
-  skipBossBtnEl.onclick = () => testSkipBoss();
+  skipBossBtnEl.style.display = DEV_TOOLS ? '' : 'none';
+  skipBossBtnEl.onclick = DEV_TOOLS ? (() => testSkipBoss()) : null;
 }
 
 function quitToMenu(){
@@ -15305,6 +15350,10 @@ function quitToMenu(){
     G.bossShockwaves = [];
     G.bossCraters = [];
   }
+  if(typeof hideEnrageBanner === 'function') hideEnrageBanner();
+  if(typeof hideDropBanner === 'function') hideDropBanner();
+  const gameHudEl = document.getElementById('screen-game');
+  if(gameHudEl) gameHudEl.classList.remove('boss-hud-active', 'boss-warning-active');
   document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.remove('open'));
   G=null;
   showScreen('menu');
@@ -15350,7 +15399,7 @@ function getWaveSpawnBudget(wave){
   if(wave <= 15) return 48;
   if(wave <= 20) return 60;
   if(wave <= 30) return 75;
-  return 95;
+  return 85;
 }
 
 function getEnemySpawnDistance(angle, extraMargin = 0){
@@ -15510,79 +15559,90 @@ function spawn(overrideConfig, customAngle, customDist, customPoint){
         ];
       }
     } else if(lvlId === 3){
-      // Третья локация (Секретный бункер, 50 волн) — 10 новых кибер- и био-мутантов
-      const activeSpitters = G.enemies.filter(e => !e.dead && e.c === CONFIG.enemies.bunker_bio_spitter).length;
-      const activeHazmats = G.enemies.filter(e => !e.dead && e.c === CONFIG.enemies.bunker_hazmat_brute).length;
+      // Третья локация (Секретный бункер, 50 волн) — 10 новых кибер- и био-мутантов с лимитами стрелков
+      let activeSpitters = 0, activeHazmats = 0, activeDrones = 0, activeCrawlers = 0, activeSawBots = 0;
+      for(const en of G.enemies){
+        if(en.dead) continue;
+        if(en.c === CONFIG.enemies.bunker_bio_spitter) activeSpitters++;
+        else if(en.c === CONFIG.enemies.bunker_hazmat_brute) activeHazmats++;
+        else if(en.c === CONFIG.enemies.bunker_spark_drone) activeDrones++;
+        else if(en.c === CONFIG.enemies.bunker_brain_crawler) activeCrawlers++;
+        else if(en.c === CONFIG.enemies.bunker_saw_bot) activeSawBots++;
+      }
       if(curWave < 4){
         list = [
           { c: CONFIG.enemies.bunker_cyber_zombie, weight: 9 },
-          { c: CONFIG.enemies.bunker_spark_drone, weight: 6 },
-          { c: CONFIG.enemies.bunker_servo_hound, weight: 5 }
+          { c: CONFIG.enemies.bunker_servo_hound, weight: 6 }
         ];
+        if(activeDrones < 4) list.push({ c: CONFIG.enemies.bunker_spark_drone, weight: 5 });
       } else if(curWave < 8){
         list = [
           { c: CONFIG.enemies.bunker_cyber_zombie, weight: 8 },
-          { c: CONFIG.enemies.bunker_spark_drone, weight: 6 },
           { c: CONFIG.enemies.bunker_servo_hound, weight: 6 },
           { c: CONFIG.enemies.bunker_acid_mite, weight: 7 }
         ];
+        if(activeDrones < 4) list.push({ c: CONFIG.enemies.bunker_spark_drone, weight: 5 });
       } else if(curWave < 12){
         list = [
-          { c: CONFIG.enemies.bunker_cyber_zombie, weight: 7 },
+          { c: CONFIG.enemies.bunker_cyber_zombie, weight: 8 },
           { c: CONFIG.enemies.bunker_servo_hound, weight: 6 },
-          { c: CONFIG.enemies.bunker_acid_mite, weight: 7 },
-          { c: CONFIG.enemies.bunker_spark_drone, weight: 5 }
+          { c: CONFIG.enemies.bunker_acid_mite, weight: 7 }
         ];
+        if(activeDrones < 4) list.push({ c: CONFIG.enemies.bunker_spark_drone, weight: 4 });
         if(activeSpitters < 3) list.push({ c: CONFIG.enemies.bunker_bio_spitter, weight: 4 });
       } else if(curWave < 16){
         list = [
-          { c: CONFIG.enemies.bunker_cyber_zombie, weight: 6 },
+          { c: CONFIG.enemies.bunker_cyber_zombie, weight: 7 },
           { c: CONFIG.enemies.bunker_servo_hound, weight: 6 },
-          { c: CONFIG.enemies.bunker_acid_mite, weight: 7 },
-          { c: CONFIG.enemies.bunker_brain_crawler, weight: 4 }
+          { c: CONFIG.enemies.bunker_acid_mite, weight: 7 }
         ];
-        if(activeSpitters < 3) list.push({ c: CONFIG.enemies.bunker_bio_spitter, weight: 4 });
+        if(activeCrawlers < 5) list.push({ c: CONFIG.enemies.bunker_brain_crawler, weight: 4 });
+        if(activeSpitters < 3) list.push({ c: CONFIG.enemies.bunker_bio_spitter, weight: 3 });
         if(activeHazmats < 2) list.push({ c: CONFIG.enemies.bunker_hazmat_brute, weight: 3 });
       } else if(curWave < 22){
         list = [
-          { c: CONFIG.enemies.bunker_cyber_zombie, weight: 5 },
-          { c: CONFIG.enemies.bunker_acid_mite, weight: 6 },
-          { c: CONFIG.enemies.bunker_servo_hound, weight: 5 },
-          { c: CONFIG.enemies.bunker_brain_crawler, weight: 6 },
-          { c: CONFIG.enemies.bunker_saw_bot, weight: 4 }
+          { c: CONFIG.enemies.bunker_cyber_zombie, weight: 7 },
+          { c: CONFIG.enemies.bunker_acid_mite, weight: 7 },
+          { c: CONFIG.enemies.bunker_servo_hound, weight: 6 }
         ];
+        if(activeCrawlers < 5) list.push({ c: CONFIG.enemies.bunker_brain_crawler, weight: 4 });
+        if(activeSawBots < 5) list.push({ c: CONFIG.enemies.bunker_saw_bot, weight: 4 });
         if(activeSpitters < 3) list.push({ c: CONFIG.enemies.bunker_bio_spitter, weight: 3 });
-        if(activeHazmats < 3) list.push({ c: CONFIG.enemies.bunker_hazmat_brute, weight: 4 });
+        if(activeHazmats < 3) list.push({ c: CONFIG.enemies.bunker_hazmat_brute, weight: 3 });
       } else if(curWave < 30){
         list = [
-          { c: CONFIG.enemies.bunker_acid_mite, weight: 5 },
-          { c: CONFIG.enemies.bunker_brain_crawler, weight: 7 },
-          { c: CONFIG.enemies.bunker_saw_bot, weight: 6 },
-          { c: CONFIG.enemies.bunker_riot_enforcer, weight: 5 },
-          { c: CONFIG.enemies.bunker_spark_drone, weight: 4 }
+          { c: CONFIG.enemies.bunker_acid_mite, weight: 7 },
+          { c: CONFIG.enemies.bunker_servo_hound, weight: 6 },
+          { c: CONFIG.enemies.bunker_riot_enforcer, weight: 6 },
+          { c: CONFIG.enemies.bunker_cyber_zombie, weight: 4 }
         ];
-        if(activeSpitters < 3) list.push({ c: CONFIG.enemies.bunker_bio_spitter, weight: 3 });
-        if(activeHazmats < 3) list.push({ c: CONFIG.enemies.bunker_hazmat_brute, weight: 4 });
+        if(activeCrawlers < 5) list.push({ c: CONFIG.enemies.bunker_brain_crawler, weight: 4 });
+        if(activeSawBots < 5) list.push({ c: CONFIG.enemies.bunker_saw_bot, weight: 4 });
+        if(activeDrones < 4) list.push({ c: CONFIG.enemies.bunker_spark_drone, weight: 3 });
+        if(activeSpitters < 3) list.push({ c: CONFIG.enemies.bunker_bio_spitter, weight: 2 });
+        if(activeHazmats < 3) list.push({ c: CONFIG.enemies.bunker_hazmat_brute, weight: 3 });
       } else if(curWave < 40){
         list = [
-          { c: CONFIG.enemies.bunker_brain_crawler, weight: 7 },
-          { c: CONFIG.enemies.bunker_saw_bot, weight: 7 },
-          { c: CONFIG.enemies.bunker_riot_enforcer, weight: 6 },
-          { c: CONFIG.enemies.bunker_bio_brute, weight: 4 },
-          { c: CONFIG.enemies.bunker_servo_hound, weight: 4 }
+          { c: CONFIG.enemies.bunker_riot_enforcer, weight: 7 },
+          { c: CONFIG.enemies.bunker_bio_brute, weight: 5 },
+          { c: CONFIG.enemies.bunker_servo_hound, weight: 6 },
+          { c: CONFIG.enemies.bunker_acid_mite, weight: 6 }
         ];
-        if(activeSpitters < 3) list.push({ c: CONFIG.enemies.bunker_bio_spitter, weight: 3 });
-        if(activeHazmats < 3) list.push({ c: CONFIG.enemies.bunker_hazmat_brute, weight: 4 });
+        if(activeCrawlers < 5) list.push({ c: CONFIG.enemies.bunker_brain_crawler, weight: 4 });
+        if(activeSawBots < 5) list.push({ c: CONFIG.enemies.bunker_saw_bot, weight: 4 });
+        if(activeSpitters < 3) list.push({ c: CONFIG.enemies.bunker_bio_spitter, weight: 2 });
+        if(activeHazmats < 3) list.push({ c: CONFIG.enemies.bunker_hazmat_brute, weight: 3 });
       } else {
         list = [
-          { c: CONFIG.enemies.bunker_brain_crawler, weight: 6 },
-          { c: CONFIG.enemies.bunker_saw_bot, weight: 7 },
-          { c: CONFIG.enemies.bunker_riot_enforcer, weight: 6 },
-          { c: CONFIG.enemies.bunker_bio_brute, weight: 5 },
-          { c: CONFIG.enemies.bunker_acid_mite, weight: 4 }
+          { c: CONFIG.enemies.bunker_riot_enforcer, weight: 7 },
+          { c: CONFIG.enemies.bunker_bio_brute, weight: 6 },
+          { c: CONFIG.enemies.bunker_acid_mite, weight: 6 },
+          { c: CONFIG.enemies.bunker_servo_hound, weight: 5 }
         ];
-        if(activeSpitters < 3) list.push({ c: CONFIG.enemies.bunker_bio_spitter, weight: 3 });
-        if(activeHazmats < 3) list.push({ c: CONFIG.enemies.bunker_hazmat_brute, weight: 4 });
+        if(activeCrawlers < 5) list.push({ c: CONFIG.enemies.bunker_brain_crawler, weight: 4 });
+        if(activeSawBots < 5) list.push({ c: CONFIG.enemies.bunker_saw_bot, weight: 4 });
+        if(activeSpitters < 3) list.push({ c: CONFIG.enemies.bunker_bio_spitter, weight: 2 });
+        if(activeHazmats < 3) list.push({ c: CONFIG.enemies.bunker_hazmat_brute, weight: 3 });
       }
     } else {
       for(const k in CONFIG.enemies){
@@ -15619,8 +15679,8 @@ function spawn(overrideConfig, customAngle, customDist, customPoint){
     : (curW <= 20
       ? (1.315 + (curW - 10) * 0.075)
       : (curW <= 30
-        ? (2.065 + (curW - 20) * 0.14)
-        : (3.465 + (curW - 30) * 0.22)));
+        ? (2.065 + (curW - 20) * 0.115)
+        : (3.215 + (curW - 30) * 0.135)));
   const multHp = (G.lvlConfig && G.lvlConfig.multHp) || 1;
   const m = multHp * waveScale;
   const enObj = {
@@ -16057,7 +16117,11 @@ function hurt(e,d,opts){
         spawnLootDrop(rollWeaponId(1, true, { pool: mbRule.pool, preferNewChance: 0.40 }), e.x, e.y);
         showGameToast('⚡ '+T('MINI-BOSS DEFEATED! Weapon Dropped! +40 XP','МИНИ-БОСС ПОВЕРЖЕН! Выпало оружие! +40 XP'),'#fb923c',3.0);
       } else if(mbRoll < mbWepChance + 0.22){
-        const mbTier = curWave <= 12 ? 1 : (curWave <= 22 ? 2 : 3);
+        const mbTier = locId === 3
+          ? (curWave <= 18 ? 3 : (curWave <= 36 ? 4 : 5))
+          : (locId === 2
+            ? (curWave <= 14 ? 2 : (curWave <= 28 ? 3 : 4))
+            : (curWave <= 14 ? 1 : (curWave <= 24 ? 2 : 3)));
         spawnLootDrop(rollGearId(mbTier, true, { preferNewChance: 0.45 }), e.x, e.y);
         showGameToast('⚡ '+T('MINI-BOSS DEFEATED! Gear Dropped! +40 XP','МИНИ-БОСС ПОВЕРЖЕН! Выпало снаряжение! +40 XP'),'#fb923c',3.0);
       } else {
@@ -16067,7 +16131,7 @@ function hurt(e,d,opts){
       if(e.c && e.c.xp) kXp = e.c.xp;
       dropMonsterRewards(e);
       if(e.c === CONFIG.enemies.bunker_acid_mite && !e.isMinion){
-        spawnBunkerAcidPuddle(G, e.x, e.y, 'puddle', 3, 1.65);
+        spawnBunkerAcidPuddle(G, e.x, e.y, 'bunker_puddle', 3, 1.65, '#84cc16');
         for(let ak = 0; ak < 6; ak++){
           const aa = (ak / 6) * 6.283 + Math.random() * 0.4;
           const as = 45 + Math.random() * 55;
@@ -16079,12 +16143,15 @@ function hurt(e,d,opts){
         const spawnCount = Math.min(2, Math.max(0, 10 - curSpiders));
         if(spawnCount > 0){
           Sfx.play('dash');
+          const eggW = G.wave || 1;
+          const eggWaveScale = eggW <= 10 ? (1 + (eggW - 1) * 0.035) : (eggW <= 20 ? (1.315 + (eggW - 10) * 0.075) : (2.065 + (eggW - 20) * 0.115));
+          const eggSpiderHp = Math.round(CONFIG.enemies.spiderling.hp * ((G.lvlConfig && G.lvlConfig.multHp) || 1) * eggWaveScale * 0.75);
           for(let si=0; si<spawnCount; si++){
             const ang = Math.random() * 6.283, dst = 12 + Math.random() * 16;
             G.enemies.push({
               x: e.x + Math.cos(ang) * dst,
               y: e.y + Math.sin(ang) * dst,
-              hp: CONFIG.enemies.spiderling.hp * (1 + ((G.wave||1)-1)*0.025),
+              hp: eggSpiderHp,
               c: CONFIG.enemies.spiderling,
               isMinion: true,
               oh: 0, fl: 0, dead: false, frame: 0, animT: Math.random() * 8, facing: Math.random() > 0.5 ? 1 : -1
@@ -16093,7 +16160,12 @@ function hurt(e,d,opts){
         }
       }
     }
-    const accKillXp = e.isBoss ? ((e.bossId === 'kraken' || e.bossId === 'abomination') ? 80 : 45) : (e.isMiniBoss ? 15 : (e.isMinion ? 0 : ((e.c?.xp || 1) >= 8 ? 2 : 1)));
+    const BOSS_ACC_XP = {
+      gravedigger: 45, abomination: 65, rat_king: 90,
+      broodmother: 65, toxic_slime: 80, treant: 100, kraken: 130,
+      cyber_cerberus: 90, bio_butcher: 115, chitin_reaper: 140, neuro_overmind: 170, patient_zero: 240
+    };
+    const accKillXp = e.isBoss ? (BOSS_ACC_XP[e.bossId] || 65) : (e.isMiniBoss ? 15 : (e.isMinion ? 0 : ((e.c?.xp || 1) >= 8 ? 2 : 1)));
     G.accXpKills = (G.accXpKills || 0) + accKillXp;
     if(!e.isBoss && !e.isMiniBoss){
       // Призванные миньоны (паучата босса, споры, вылупившиеся из коконов) не спамят кристаллами опыта
@@ -17391,7 +17463,7 @@ function die(isVictory){
         if(!save.inv.includes(d.itemId)){
           save.inv.push(d.itemId);
         } else {
-          const dGold = 60 * (it.r || 1);
+          const dGold = 100 * (it.r || 1);
           endDupeLootGold += dGold;
           if(d.lootRef) d.lootRef.dupeGold = (d.lootRef.dupeGold || 0) + dGold;
         }
@@ -17621,58 +17693,84 @@ function die(isVictory){
 
   const settledRun=G;
   if(rv){
-    rv.onclick = () => Platform.rewarded(ok => {
-      if(!ok || G!==settledRun || G.run || G.revived) return;
-      save.totalGoldEarned=Math.max(0,(save.totalGoldEarned||0)-G.banked);
-      save.gold -= G.banked; G.banked = 0; G.doubled = false; persist();
-      G.revived = true;
-      G.p.hp = G.p.maxHp * 0.5;
-      G.p.inv = 2.5;
-      G.p.hurtFlash = 0;
-      if(G.p.maxShield > 0){
-        G.p.shield = G.p.maxShield * 0.5;
-        G.p.shieldCooldown = 0;
-      }
+    rv.disabled = false;
+    rv.onclick = () => {
+      if(rv.disabled || G!==settledRun || G.run || G.revived) return;
+      rv.disabled = true;
+      Platform.rewarded(ok => {
+        if(!ok || G!==settledRun || G.run || G.revived){
+          rv.disabled = false;
+          return;
+        }
+        save.totalGoldEarned=Math.max(0,(save.totalGoldEarned||0)-G.banked);
+        save.gold -= G.banked; G.banked = 0; G.doubled = false; persist();
+        G.revived = true;
+        G.p.hp = G.p.maxHp * 0.5;
+        G.p.inv = 2.5;
+        G.p.hurtFlash = 0;
+        G.p.slowT = 0;
+        G.p.poisonT = 0;
+        if(G.p.maxShield > 0){
+          G.p.shield = G.p.maxShield * 0.5;
+          G.p.shieldCooldown = 0;
+        }
 
-      // Очищаем только обычных мобов вокруг, сохраняя БОССОВ
-      G.enemies = G.enemies.filter(e => e.isBoss || (e.x - G.p.x)**2 + (e.y - G.p.y)**2 > 250*250);
+        // Очищаем только обычных мобов вокруг, сохраняя БОССОВ; сбрасываем вражеские снаряды и активные шоквейвы (кроме луж)
+        G.enemies = G.enemies.filter(e => e.isBoss || (e.x - G.p.x)**2 + (e.y - G.p.y)**2 > 250*250);
+        if(Array.isArray(G.enemyBullets)) G.enemyBullets = [];
+        if(Array.isArray(G.bossShockwaves)){
+          G.bossShockwaves = G.bossShockwaves.filter(s => s && (s.type === 'puddle' || s.type === 'abom_puddle' || s.type === 'bunker_puddle'));
+        }
 
-      // Если босс был рядом — отодвигаем его на безопасное расстояние 200px и сбрасываем атаку в idle
-      if(G.activeBoss && !G.activeBoss.dead && !G.enemies.includes(G.activeBoss)){
-        G.enemies.push(G.activeBoss);
-      }
-      for(const e of G.enemies){
-        if(e.isBoss && !e.dead){
-          const bDist = Math.hypot(e.x - G.p.x, e.y - G.p.y) || 1;
-          if(bDist < 190){
-            const bAng = Math.atan2(e.y - G.p.y, e.x - G.p.x);
-            e.x = G.p.x + Math.cos(bAng) * 200;
-            e.y = G.p.y + Math.sin(bAng) * 200;
-          }
-          e.action = 'idle';
-          e.actionT = 0;
-          if(G.bossArena){
-            keepInsideBossArena(e, G.bossArena, (e.c?.r || 36) + 10);
+        // Если босс был рядом — отодвигаем его на безопасное расстояние 200px и безопасно сбрасываем атаку
+        if(G.activeBoss && !G.activeBoss.dead && !G.enemies.includes(G.activeBoss)){
+          G.enemies.push(G.activeBoss);
+        }
+        for(const e of G.enemies){
+          if(e.isBoss && !e.dead){
+            const bDist = Math.hypot(e.x - G.p.x, e.y - G.p.y) || 1;
+            if(bDist < 190){
+              const bAng = Math.atan2(e.y - G.p.y, e.x - G.p.x);
+              e.x = G.p.x + Math.cos(bAng) * 200;
+              e.y = G.p.y + Math.sin(bAng) * 200;
+            }
+            if(e.spawnState !== 'egg_rebirth' && e.spawnState !== 'emerging'){
+              e.action = 'idle';
+              e.actionT = 0;
+              e.invulnerable = false;
+              e.burrowed = false;
+            }
+            if(G.bossArena){
+              keepInsideBossArena(e, G.bossArena, (e.c?.r || 36) + 10);
+            }
           }
         }
-      }
-      if(G.bossArena){
-        keepInsideBossArena(G.p, G.bossArena, G.p.r + 6);
-      }
+        if(G.bossArena){
+          keepInsideBossArena(G.p, G.bossArena, G.p.r + 6);
+        }
 
-      if(typeof clearAllInputs==='function')clearAllInputs();
-      G.pause = false;
-      G.run = true; closeModal('modal-gameover');
-      if(window.Platform&&Platform.gameplayStart)Platform.gameplayStart();
-    });
+        if(typeof clearAllInputs==='function')clearAllInputs();
+        G.pause = false;
+        G.run = true; closeModal('modal-gameover');
+        if(window.Platform&&Platform.gameplayStart)Platform.gameplayStart();
+      });
+    };
   }
   if(x2){
-    x2.onclick = () => Platform.rewarded(ok => {
-      if(!ok || G!==settledRun || G.run || G.doubled) return;
-      save.gold += G.banked; save.totalGoldEarned += G.banked; G.banked *= 2; G.doubled = true; persist();
-      document.getElementById('go-gold').textContent = G.banked + (G.endDupeLootGold || 0);
-      x2.style.display = 'none';
-    });
+    x2.disabled = false;
+    x2.onclick = () => {
+      if(x2.disabled || G!==settledRun || G.run || G.doubled) return;
+      x2.disabled = true;
+      Platform.rewarded(ok => {
+        if(!ok || G!==settledRun || G.run || G.doubled){
+          x2.disabled = false;
+          return;
+        }
+        save.gold += G.banked; save.totalGoldEarned += G.banked; G.banked *= 2; G.doubled = true; persist();
+        document.getElementById('go-gold').textContent = G.banked + (G.endDupeLootGold || 0);
+        x2.style.display = 'none';
+      });
+    };
   }
   if(nextBtn){
     nextBtn.onclick = () => {
@@ -17693,6 +17791,10 @@ function scaledBossHp(g,baseHp){
 }
 function prepareBossArena(g){
   if(!g||!g.p)return;
+  g.eventTelegraphs=[];
+  g.waveEvent=null;
+  g.beacons=[];
+  if(Array.isArray(g.enemyBullets))g.enemyBullets=[];
   const survivors=[];
   let killedMobs=0;
   for(const e of g.enemies){
@@ -17975,7 +18077,7 @@ function spawnRatKingBoss(){
     c: {
       r: 34,
       speed: isFinalBoss ? 72 : 64,
-      damage: isFinalBoss ? 44 : 34,
+      damage: isFinalBoss ? 34 : 28,
       color: '#84cc16',
       xp: isFinalBoss ? 350 : 220
     },
@@ -18035,7 +18137,7 @@ function spawnKrakenBoss(){
   prepareBossArena(g);
   const { bx, by } = computeBossSpawnCoords(p, g, 78);
 
-  const krakenBaseHp = (g.wave >= 50) ? 72000 : ((g.wave >= 40) ? 54000 : 38000);
+  const krakenBaseHp = (g.wave >= 50) ? 58000 : ((g.wave >= 40) ? 44000 : 31000);
   const maxHp = scaledBossHp(g, krakenBaseHp);
   const boss = {
     isBoss: true,
@@ -18053,7 +18155,7 @@ function spawnKrakenBoss(){
     c: {
       r: 48,
       speed: 86,
-      damage: 58,
+      damage: 34,
       color: '#3b0764',
       xp: 650
     },
@@ -18189,7 +18291,7 @@ function spawnBroodmotherBoss(){
   prepareBossArena(g);
   const { bx, by } = computeBossSpawnCoords(p, g, 96);
 
-  const maxHp = scaledBossHp(g, 13500);
+  const maxHp = scaledBossHp(g, 10500);
   const boss = {
     isBoss: true,
     bossId: 'broodmother',
@@ -18267,7 +18369,7 @@ function spawnTreantBoss(){
   prepareBossArena(g);
   const { bx, by } = computeBossSpawnCoords(p, g, 86);
 
-  const maxHp = scaledBossHp(g, 39000);
+  const maxHp = scaledBossHp(g, 30000);
   const boss = {
     isBoss: true,
     bossId: 'treant',
@@ -18284,7 +18386,7 @@ function spawnTreantBoss(){
     c: {
       r: 48,
       speed: 76,
-      damage: 44,
+      damage: 32,
       color: '#854d0e',
       xp: 340
     },
@@ -18346,7 +18448,7 @@ function spawnSlimeBoss(){
   const bx = p.x + dx;
   const by = p.y + dy;
 
-  const maxHp = scaledBossHp(g, 24000);
+  const maxHp = scaledBossHp(g, 19000);
   const boss = {
     isBoss: true,
     bossId: 'toxic_slime',
@@ -18363,7 +18465,7 @@ function spawnSlimeBoss(){
     c: {
       r: 46,
       speed: 78,
-      damage: 38,
+      damage: 30,
       color: '#22c55e',
       xp: 300
     },
@@ -18453,7 +18555,7 @@ function spawnCyberCerberusBoss(){
   prepareBossArena(g);
   const { bx, by } = computeBossSpawnCoords(p, g, 78);
 
-  const maxHp = scaledBossHp(g, 48000);
+  const maxHp = scaledBossHp(g, 29000);
   const boss = {
     isBoss: true,
     bossId: 'cyber_cerberus',
@@ -18469,8 +18571,8 @@ function spawnCyberCerberusBoss(){
     maxHp: maxHp,
     c: {
       r: 44,
-      speed: 105,
-      damage: 48,
+      speed: 96,
+      damage: 34,
       color: '#ef4444',
       xp: 450
     },
@@ -18525,7 +18627,7 @@ function spawnBioButcherBoss(){
   prepareBossArena(g);
   const { bx, by } = computeBossSpawnCoords(p, g, 84);
 
-  const maxHp = scaledBossHp(g, 102000);
+  const maxHp = scaledBossHp(g, 60000);
   const boss = {
     isBoss: true,
     bossId: 'bio_butcher',
@@ -18541,8 +18643,8 @@ function spawnBioButcherBoss(){
     maxHp: maxHp,
     c: {
       r: 48,
-      speed: 90,
-      damage: 75,
+      speed: 86,
+      damage: 36,
       color: '#dc2626',
       xp: 550
     },
@@ -18596,7 +18698,7 @@ function spawnChitinReaperBoss(){
   prepareBossArena(g);
   const { bx, by } = computeBossSpawnCoords(p, g, 86);
 
-  const maxHp = scaledBossHp(g, 54000);
+  const maxHp = scaledBossHp(g, 42000);
   const boss = {
     isBoss: true,
     bossId: 'chitin_reaper',
@@ -18610,13 +18712,13 @@ function spawnChitinReaperBoss(){
     spawnY: by,
     hp: maxHp,
     maxHp: maxHp,
-    p2MaxHp: scaledBossHp(g, 185000),
+    p2MaxHp: scaledBossHp(g, 62000),
     phase2Done: false,
     phase2Form: false,
     c: {
       r: 52,
-      speed: 92,
-      damage: 85,
+      speed: 88,
+      damage: 34,
       color: '#22c55e',
       xp: 650
     },
@@ -18672,7 +18774,7 @@ function spawnNeuroOvermindBoss(){
   prepareBossArena(g);
   const { bx, by } = computeBossSpawnCoords(p, g, 92);
 
-  const maxHp = scaledBossHp(g, 225000);
+  const maxHp = scaledBossHp(g, 175000);
   const boss = {
     isBoss: true,
     bossId: 'neuro_overmind',
@@ -18689,7 +18791,7 @@ function spawnNeuroOvermindBoss(){
     c: {
       r: 50,
       speed: 66,
-      damage: 80,
+      damage: 32,
       color: '#a855f7',
       xp: 800
     },
@@ -18745,7 +18847,7 @@ function spawnPatientZeroBoss(){
   prepareBossArena(g);
   const { bx, by } = computeBossSpawnCoords(p, g, 90);
 
-  const maxHp = scaledBossHp(g, 320000);
+  const maxHp = scaledBossHp(g, 245000);
   const boss = {
     isBoss: true,
     bossId: 'patient_zero',
@@ -18762,7 +18864,7 @@ function spawnPatientZeroBoss(){
     c: {
       r: 58,
       speed: 78,
-      damage: 95,
+      damage: 32,
       color: '#ef4444',
       xp: 1500
     },
@@ -18807,22 +18909,22 @@ function spawnPatientZeroBoss(){
 }
 window.spawnPatientZeroBoss = spawnPatientZeroBoss;
 
-function spawnBunkerAcidPuddle(g, x, y, type, dmg, life = 1.8){
+function spawnBunkerAcidPuddle(g, x, y, type, dmg, life = 1.8, colOverride){
   if(!g || !g.bossShockwaves) return;
   let mobPuddles = 0;
   for(let i = 0; i < g.bossShockwaves.length; i++){
     if(g.bossShockwaves[i].isMobPuddle) mobPuddles++;
   }
   if(mobPuddles >= 10) return;
-  const isAbom = (type === 'abom_puddle');
+  const isPurple = colOverride ? (colOverride === '#a855f7') : (type === 'abom_puddle' || type === 'bunker_puddle');
   g.bossShockwaves.push({
     x, y, vx: 0, vy: 0,
     l: life, maxL: life,
     dmg: dmg || 3,
-    type: isAbom ? 'abom_puddle' : 'puddle',
-    col: isAbom ? '#a855f7' : '#84cc16',
-    scale: isAbom ? 0.76 : 0.72,
-    hitR: isAbom ? 15 : 13,
+    type: 'bunker_puddle',
+    col: colOverride || (isPurple ? '#a855f7' : '#84cc16'),
+    scale: isPurple ? 0.76 : 0.72,
+    hitR: isPurple ? 15 : 13,
     isMobPuddle: true
   });
 }
@@ -18881,7 +18983,7 @@ function triggerBunkerBioSlam(g, e, p, waveDmgMult){
   }
   const pd = Math.hypot(p.x - e.x, p.y - e.y);
   if(pd <= slamR + (p.r || 12) * 0.35 && p.inv <= 0){
-    damagePlayer(Math.max(1, Math.round(e.c.damage * 1.15 * waveDmgMult)));
+    damagePlayer(Math.max(1, Math.round(e.c.damage * 1.15)));
     const pushA = Math.atan2(p.y - e.y, p.x - e.x);
     p.x += Math.cos(pushA) * 24;
     p.y += Math.sin(pushA) * 24;
@@ -18945,6 +19047,7 @@ function updateBunkerSpecialBehavior(g, e, p, dx, dy, d, dt, waveDmgMult){
   const en = CONFIG.enemies;
   let spd = e.c.speed;
   let mvx = dx / d, mvy = dy / d;
+  const onScreen = isEnemyOnScreen(e, -6);
 
   if(e.c === en.bunker_cyber_zombie){
     e.atkCd = (e.atkCd !== undefined ? e.atkCd : (1.2 + Math.random() * 1.4)) - dt;
@@ -18958,12 +19061,12 @@ function updateBunkerSpecialBehavior(g, e, p, dx, dy, d, dt, waveDmgMult){
       e.atkPrep -= dt;
       spd = e.c.speed * 0.35;
       if(e.atkPrep <= 0){ e.atkRushT = 0.24; Sfx.play('dash'); }
-    } else if(d >= 45 && d <= 105 && e.atkCd <= 0){
-      e.atkPrep = 0.18; e.atkPrepMax = 0.18;
+    } else if(onScreen && d >= 45 && d <= 105 && e.atkCd <= 0){
+      e.atkPrep = 0.22; e.atkPrepMax = 0.22;
       e.atkCd = 3.0 + Math.random() * 1.3;
     }
   } else if(e.c === en.bunker_spark_drone){
-    e.atkCd = (e.atkCd !== undefined ? e.atkCd : (1.1 + Math.random() * 1.6)) - dt;
+    e.atkCd = (e.atkCd !== undefined ? e.atkCd : (1.4 + Math.random() * 1.6)) - dt;
     if(e.atkPrep > 0){
       e.atkPrep -= dt;
       spd = e.c.speed * 0.28;
@@ -18971,17 +19074,17 @@ function updateBunkerSpecialBehavior(g, e, p, dx, dy, d, dt, waveDmgMult){
         g.fx.push({ x: e.x + (Math.random() - 0.5) * 18, y: e.y + (Math.random() - 0.5) * 18, vx: (Math.random() - 0.5) * 30, vy: -18, col: '#38bdf8', r: 1.9, l: 0.18 });
       }
       if(e.atkPrep <= 0){
-        pushBunkerProjectile(g, e, Math.atan2(dy, dx), 'drone_bolt', { speed: 260, life: 1.0, dmg: e.c.damage, col: '#38bdf8', sparkCol: '#e0f2fe', hitR: 13 });
+        pushBunkerProjectile(g, e, Math.atan2(dy, dx), 'drone_bolt', { speed: 245, life: 1.0, dmg: e.c.damage, col: '#38bdf8', sparkCol: '#e0f2fe', hitR: 13 });
       }
-    } else if(d <= 210 && e.atkCd <= 0){
-      e.atkPrep = 0.28; e.atkPrepMax = 0.28;
-      e.atkCd = 3.1 + Math.random() * 1.2;
+    } else if(onScreen && d <= 205 && e.atkCd <= 0){
+      e.atkPrep = 0.30; e.atkPrepMax = 0.30;
+      e.atkCd = 3.8 + Math.random() * 1.4;
     }
   } else if(e.c === en.bunker_servo_hound){
     e.lungeCd = (e.lungeCd !== undefined ? e.lungeCd : (1.2 + Math.random() * 1.5)) - dt;
     if(e.lungeT > 0){
       e.lungeT -= dt;
-      spd = e.c.speed * 2.35;
+      spd = e.c.speed * 1.90;
       mvx = e.rushVx ?? mvx; mvy = e.rushVy ?? mvy;
       if(Math.random() < 0.65){
         g.fx.push({ x: e.x + (Math.random() - 0.5) * 12, y: e.y + (Math.random() - 0.5) * 10, vx: -mvx * 45, vy: -15, col: Math.random() > 0.4 ? '#f97316' : '#fde047', r: 2.2, l: 0.20 });
@@ -18990,29 +19093,29 @@ function updateBunkerSpecialBehavior(g, e, p, dx, dy, d, dt, waveDmgMult){
       e.lungePrep -= dt;
       spd = 0;
       if(e.lungePrep <= 0){ e.lungeT = 0.36; Sfx.play('dash'); }
-    } else if(d >= 65 && d <= 185 && e.lungeCd <= 0){
+    } else if(onScreen && d >= 65 && d <= 180 && e.lungeCd <= 0){
       e.rushVx = dx / d; e.rushVy = dy / d;
-      e.lungePrep = 0.22; e.lungePrepMax = 0.22;
-      e.lungeCd = 2.9 + Math.random() * 1.3;
+      e.lungePrep = 0.32; e.lungePrepMax = 0.32;
+      e.lungeCd = 3.2 + Math.random() * 1.4;
     }
   } else if(e.c === en.bunker_acid_mite){
     if(d <= 120 && Math.random() < 0.14){
       g.fx.push({ x: e.x + (Math.random() - 0.5) * 12, y: e.y + 6, vx: (Math.random() - 0.5) * 16, vy: -12, col: '#84cc16', r: 1.8, l: 0.25 });
     }
   } else if(e.c === en.bunker_brain_crawler){
-    e.atkCd = (e.atkCd !== undefined ? e.atkCd : (1.4 + Math.random() * 1.6)) - dt;
+    e.atkCd = (e.atkCd !== undefined ? e.atkCd : (1.6 + Math.random() * 1.6)) - dt;
     if(e.atkPrep > 0){
       e.atkPrep -= dt;
       spd = 0;
       if(e.atkPrep <= 0){
-        pushBunkerProjectile(g, e, Math.atan2(dy, dx), 'brain_psi', { speed: 205, life: 1.05, dmg: Math.round(e.c.damage * 0.9), col: '#ec4899', sparkCol: '#fbcfe8', hitR: 18 });
+        pushBunkerProjectile(g, e, Math.atan2(dy, dx), 'brain_psi', { speed: 195, life: 1.05, dmg: Math.round(e.c.damage * 0.9), col: '#ec4899', sparkCol: '#fbcfe8', hitR: 16 });
       }
-    } else if(d >= 50 && d <= 195 && e.atkCd <= 0){
-      e.atkPrep = 0.32; e.atkPrepMax = 0.32;
-      e.atkCd = 3.6 + Math.random() * 1.3;
+    } else if(onScreen && d >= 50 && d <= 190 && e.atkCd <= 0){
+      e.atkPrep = 0.34; e.atkPrepMax = 0.34;
+      e.atkCd = 4.2 + Math.random() * 1.4;
     }
   } else if(e.c === en.bunker_saw_bot){
-    e.atkCd = (e.atkCd !== undefined ? e.atkCd : (1.4 + Math.random() * 1.6)) - dt;
+    e.atkCd = (e.atkCd !== undefined ? e.atkCd : (1.6 + Math.random() * 1.6)) - dt;
     if(e.atkPrep > 0){
       e.atkPrep -= dt;
       spd = e.c.speed * 0.25;
@@ -19020,11 +19123,11 @@ function updateBunkerSpecialBehavior(g, e, p, dx, dy, d, dt, waveDmgMult){
         g.fx.push({ x: e.x + (Math.random() - 0.5) * 20, y: e.y + (Math.random() - 0.5) * 16, vx: (Math.random() - 0.5) * 70, vy: -20 - Math.random() * 30, col: Math.random() > 0.5 ? '#f97316' : '#fde047', r: 2.0, l: 0.20 });
       }
       if(e.atkPrep <= 0){
-        pushBunkerProjectile(g, e, Math.atan2(dy, dx), 'saw_disc', { speed: 245, life: 1.15, dmg: Math.round(e.c.damage * 0.95), col: '#ef4444', sparkCol: '#e2e8f0', hitR: 15, sfx: 'hit' });
+        pushBunkerProjectile(g, e, Math.atan2(dy, dx), 'saw_disc', { speed: 235, life: 1.15, dmg: Math.round(e.c.damage * 0.95), col: '#ef4444', sparkCol: '#e2e8f0', hitR: 14, sfx: 'hit' });
       }
-    } else if(d >= 75 && d <= 215 && e.atkCd <= 0){
-      e.atkPrep = 0.28; e.atkPrepMax = 0.28;
-      e.atkCd = 3.5 + Math.random() * 1.2;
+    } else if(onScreen && d >= 75 && d <= 205 && e.atkCd <= 0){
+      e.atkPrep = 0.32; e.atkPrepMax = 0.32;
+      e.atkCd = 4.2 + Math.random() * 1.4;
     }
   } else if(e.c === en.bunker_riot_enforcer){
     e.atkCd = (e.atkCd !== undefined ? e.atkCd : (1.6 + Math.random() * 1.6)) - dt;
@@ -19039,9 +19142,9 @@ function updateBunkerSpecialBehavior(g, e, p, dx, dy, d, dt, waveDmgMult){
       e.chargePrep -= dt;
       spd = 0;
       if(e.chargePrep <= 0){ e.chargeT = 0.42; Sfx.play('anvil'); }
-    } else if(d >= 55 && d <= 165 && e.atkCd <= 0){
+    } else if(onScreen && d >= 55 && d <= 165 && e.atkCd <= 0){
       e.rushVx = dx / d; e.rushVy = dy / d;
-      e.chargePrep = 0.32; e.chargePrepMax = 0.32;
+      e.chargePrep = 0.34; e.chargePrepMax = 0.34;
       e.atkCd = 3.9 + Math.random() * 1.4;
     }
   } else if(e.c === en.bunker_bio_brute){
@@ -19053,8 +19156,8 @@ function updateBunkerSpecialBehavior(g, e, p, dx, dy, d, dt, waveDmgMult){
         e.slashAnimT = 0.32;
         triggerBunkerBioSlam(g, e, p, waveDmgMult);
       }
-    } else if(d <= 92 && e.atkCd <= 0){
-      e.slamPrep = 0.46; e.slamPrepMax = 0.46;
+    } else if(onScreen && d <= 92 && e.atkCd <= 0){
+      e.slamPrep = 0.48; e.slamPrepMax = 0.48;
       e.atkCd = 4.2 + Math.random() * 1.3;
     }
   }
@@ -19080,13 +19183,14 @@ function drawBunkerTelegraphs(cx, e, ox, oy){
     cx.setLineDash([]);
     cx.restore();
   }
-  if((e.chargePrep > 0 || e.lungePrep > 0) && (e.rushVx !== undefined)){
+  if((e.chargePrep > 0 || e.lungePrep > 0 || e.bitePrep > 0) && (e.rushVx !== undefined)){
     const isShield = e.chargePrep > 0;
-    const maxP = isShield ? (e.chargePrepMax || 0.32) : (e.lungePrepMax || 0.22);
-    const curP = isShield ? e.chargePrep : e.lungePrep;
+    const isBite = e.bitePrep > 0;
+    const maxP = isShield ? (e.chargePrepMax || 0.34) : (isBite ? (e.bitePrepMax || 0.32) : (e.lungePrepMax || 0.32));
+    const curP = isShield ? e.chargePrep : (isBite ? e.bitePrep : e.lungePrep);
     const prog = Math.max(0, Math.min(1, 1 - curP / maxP));
-    const col = isShield ? '#38bdf8' : '#f97316';
-    const laneLen = isShield ? 96 : 72;
+    const col = isShield ? '#38bdf8' : (isBite ? '#fbbf24' : (e.c === en.ghoul ? '#ef4444' : '#f97316'));
+    const laneLen = isShield ? 96 : 74;
     const ang = Math.atan2(e.rushVy || 0, e.rushVx || 1);
     cx.save();
     cx.translate(ex, ey + 6);
@@ -19112,8 +19216,10 @@ function drawBunkerTelegraphs(cx, e, ox, oy){
     const col = e.c === en.bunker_spark_drone ? '#38bdf8' :
                 (e.c === en.bunker_brain_crawler ? '#ec4899' :
                 (e.c === en.bunker_saw_bot ? '#f97316' :
-                (e.c === en.bunker_bio_spitter ? '#c084fc' :
-                (e.c === en.bunker_hazmat_brute ? '#eab308' : '#ef4444'))));
+                (e.c === en.bunker_bio_spitter || e.c === en.bat ? '#c084fc' :
+                (e.c === en.bunker_hazmat_brute ? '#eab308' :
+                (e.c === en.mushroom ? '#84cc16' :
+                (e.c === en.gargoyle ? '#94a3b8' : '#ef4444'))))));
     const ringR = (e.c?.r || 16) + 8 + prog * 8;
     cx.save();
     cx.globalAlpha = 0.55 + 0.4 * prog;
@@ -19253,7 +19359,7 @@ function executePetAttack(g, pet, p, petAtkDmg, petCoolMult, petUp){
       type: 'petLob', sub: 'slimeGlob',
       x: pet.x, y: pet.y, sx: pet.x, sy: pet.y, tx: t.x, ty: t.y, target: t,
       l: 0.32, maxL: 0.32, arcH: 46,
-      dmg: petAtkDmg * 1.25, r: 70, poison: petAtkDmg * 0.40,
+      dmg: petAtkDmg * 1.05, r: 70, poison: petAtkDmg * 0.35,
       splitCount: dmgLv >= 5 ? 3 : 2
     });
     for(let k = 0; k < 6; k++){
@@ -19284,8 +19390,8 @@ function executePetAttack(g, pet, p, petAtkDmg, petCoolMult, petUp){
         tx: tgtObj.x + Math.cos(spreadA) * spreadR, ty: tgtObj.y + Math.sin(spreadA) * spreadR,
         target: candidates[pod] ? tgtObj : null,
         l: 0.34 + pod * 0.05, maxL: 0.34 + pod * 0.05, arcH: 54 + pod * 7,
-        dmg: petAtkDmg * 0.72, r: 64, poison: petAtkDmg * 0.28,
-        sporeBurstDmg: petAtkDmg * 0.48
+        dmg: petAtkDmg * 0.64, r: 64, poison: petAtkDmg * 0.24,
+        sporeBurstDmg: petAtkDmg * 0.45
       });
     }
     for(let k = 0; k < 8; k++){
@@ -19318,7 +19424,7 @@ function executePetAttack(g, pet, p, petAtkDmg, petCoolMult, petUp){
     let prevX = pet.x, prevY = pet.y;
     for(let idx = 0; idx < chainHits.length; idx++){
       const ch = chainHits[idx];
-      const dmgScale = idx === 0 ? 1.45 : Math.max(0.85, 1.30 - idx * 0.14);
+      const dmgScale = idx === 0 ? 2.15 : Math.max(1.00, 1.55 - idx * 0.14);
       applyPetDebuffAndDamage(ch, petAtkDmg * dmgScale, {
         kx: prevX, ky: prevY, pushDist: 36,
         slow: 0.50, slowT: 1.8, sonarMarkT: 2.8
@@ -19336,12 +19442,12 @@ function executePetAttack(g, pet, p, petAtkDmg, petCoolMult, petUp){
           let diff = Math.abs(Math.atan2(e.y - pet.y, e.x - pet.x) - sAng);
           if(diff > Math.PI) diff = 6.283185 - diff;
           if(diff <= 0.68){
-            applyPetDebuffAndDamage(e, petAtkDmg * 1.15, { slow: 0.45, slowT: 1.5, sonarMarkT: 2.6 });
+            applyPetDebuffAndDamage(e, petAtkDmg * 1.40, { slow: 0.45, slowT: 1.5, sonarMarkT: 2.6 });
           }
         }
       }
     }
-    pet.cd = 1.12 * petCoolMult;
+    pet.cd = 1.10 * petCoolMult;
   } else if(pet.type === 'spider' || pet.type === 'scout'){
     const t = nearest(pet.x, pet.y, 275);
     if(!t) return;
@@ -19354,7 +19460,7 @@ function executePetAttack(g, pet, p, petAtkDmg, petCoolMult, petUp){
     g.fx.push({ type: 'webCocoon', x: t.x, y: t.y, target: t, l: 1.45, maxL: 1.45 });
     g.fx.push({ type: 'webNet', x: t.x, y: t.y, r: 58, l: 3.0, maxL: 3.0 });
 
-    applyPetDebuffAndDamage(t, petAtkDmg * 1.45, {
+    applyPetDebuffAndDamage(t, petAtkDmg * 1.55, {
       rootT: 1.2, slow: 0.85, slowT: 2.2,
       poison: petAtkDmg * 0.42, poisonT: 3.0,
       cocoonDetonateT: 1.65, cocoonBurstDmg: petAtkDmg * 1.10
@@ -19372,7 +19478,7 @@ function executePetAttack(g, pet, p, petAtkDmg, petCoolMult, petUp){
     for(const s of kunaiSpread){
       g.shots.push({
         x: pet.x, y: pet.y, vx: Math.cos(ang + s) * 540, vy: Math.sin(ang + s) * 540,
-        l: 0.72, dmg: petAtkDmg * 0.58, pr: 0, hit: [t],
+        l: 0.72, dmg: petAtkDmg * 0.62, pr: 0, hit: [t],
         kind: 'spiderWeb', slow: 0.60, slowDuration: 2.2,
         poison: petAtkDmg * 0.32, poisonDuration: 2.5, color: '#f8fafc'
       });
@@ -19386,7 +19492,7 @@ function executePetAttack(g, pet, p, petAtkDmg, petCoolMult, petUp){
     const isJackpot = (pet.castCount % 3 === 0);
     const mimicAng = setPetAttackMotion(pet, isJackpot ? 'jumpSlam' : 'pounceBite', 0.38, t.x, t.y, 0.72, 62);
     if(isJackpot) pet.jumpMaxH = 30;
-    hurt(t, petAtkDmg * (isJackpot ? 2.15 : 1.80));
+    hurt(t, petAtkDmg * (isJackpot ? 2.55 : 2.10));
     Sfx.play('pet_bite');
     Sfx.play('click');
     g.fx.push({ type: 'petAbilityCast', x: pet.x, y: pet.y, ang: mimicAng, tx: t.x, ty: t.y, theme: 'gold', l: 0.36, maxL: 0.36 });
@@ -19398,7 +19504,7 @@ function executePetAttack(g, pet, p, petAtkDmg, petCoolMult, petUp){
       for(const e of g.enemies){
         if(e === t || isEnemyUntargetable(e)) continue;
         if(Math.hypot(e.x - t.x, e.y - t.y) <= 88){
-          hurt(e, petAtkDmg * 1.45);
+          hurt(e, petAtkDmg * 1.65);
         }
       }
       if(g.gems){
@@ -19442,7 +19548,7 @@ function executePetAttack(g, pet, p, petAtkDmg, petCoolMult, petUp){
     for(let idx = 0; idx < rushTargets.length; idx++){
       const rt = rushTargets[idx];
       const ang = Math.atan2(rt.y - prevY, rt.x - prevX);
-      applyPetDebuffAndDamage(rt, petAtkDmg * (idx === 0 ? 1.25 : 1.05), { poison: petAtkDmg * 0.45, poisonT: 3.2, slow: 0.30, slowT: 1.4 });
+      applyPetDebuffAndDamage(rt, petAtkDmg * (idx === 0 ? 1.20 : 1.00), { poison: petAtkDmg * 0.40, poisonT: 3.2, slow: 0.30, slowT: 1.4 });
       g.fx.push({ type: 'echoLink', x1: prevX, y1: prevY, x2: rt.x, y2: rt.y, l: 0.22, maxL: 0.22, col: '#fb7185' });
       g.fx.push({ type: 'clawSlash', x: rt.x, y: rt.y, ang, col: idx % 2 ? '#84cc16' : '#ef4444', thick: 3.4, r: 42, l: 0.28, maxL: 0.28 });
       g.fx.push({ type: 'petAbilityImpact', x: rt.x, y: rt.y, ang, theme: 'frenzy', l: 0.36, maxL: 0.36 });
@@ -19455,7 +19561,7 @@ function executePetAttack(g, pet, p, petAtkDmg, petCoolMult, petUp){
       g.fx.push({ type: 'bouncingCoin', x: lastT.x, y: lastT.y, z: 10, vx: (Math.random() - .5) * 80, vy: (Math.random() - .5) * 80, vz: 145 + Math.random() * 65, l: 0.8, r: 7 });
       if(opt('dmg')) g.fx.push({ type: 'dmg', x: lastT.x, y: lastT.y - 26, vx: 0, vy: -38, l: .6, txt: '+1 🪙' });
     }
-    pet.cd = 0.96 * petCoolMult;
+    pet.cd = 0.98 * petCoolMult;
   } else if(pet.type === 'gargoyle' || pet.type === 'medbot'){
     const t = nearest(pet.x, pet.y, 255);
     if(!t) return;
@@ -19479,7 +19585,7 @@ function executePetAttack(g, pet, p, petAtkDmg, petCoolMult, petUp){
       if(isEnemyUntargetable(e)) continue;
       if(Math.hypot(e.x - impX, e.y - impY) <= 138){
         impacted.push(e);
-        applyPetDebuffAndDamage(e, petAtkDmg * 2.35, {
+        applyPetDebuffAndDamage(e, petAtkDmg * 2.90, {
           kx: impX, ky: impY, pushDist: 44,
           rootT: 0.85, petrifiedT: 0.85, slow: 0.85, slowT: 1.8
         });
@@ -19492,11 +19598,11 @@ function executePetAttack(g, pet, p, petAtkDmg, petCoolMult, petUp){
       g.shots.push({
         x: impX + Math.cos(sa) * 14, y: impY + Math.sin(sa) * 14,
         vx: Math.cos(sa) * 510, vy: Math.sin(sa) * 510,
-        l: 0.48, dmg: petAtkDmg * 0.72, pr: 1, hit: impacted.slice(),
+        l: 0.48, dmg: petAtkDmg * 0.85, pr: 1, hit: impacted.slice(),
         kind: 'stoneShard', slow: 0.50, slowDuration: 1.4, color: '#94a3b8'
       });
     }
-    pet.cd = 1.62 * petCoolMult;
+    pet.cd = 1.50 * petCoolMult;
   } else if(pet.type === 'ghoul' || pet.type === 'voidray'){
     const t = nearest(pet.x, pet.y, 245);
     if(!t) return;
@@ -19513,9 +19619,9 @@ function executePetAttack(g, pet, p, petAtkDmg, petCoolMult, petUp){
       if(isEnemyUntargetable(e)) continue;
       if(Math.hypot(e.x - t.x, e.y - t.y) <= 122){
         const isExec = (e.maxHp && e.hp / e.maxHp <= 0.45) || (e.poisonT > 0);
-        const mult = (e === t ? 2.45 : 1.85) * (isExec ? 1.30 : 1.0);
+        const mult = (e === t ? 1.90 : 1.45) * (isExec ? 1.30 : 1.0);
         const wasAlive = !e.dead;
-        applyPetDebuffAndDamage(e, petAtkDmg * mult, { poison: petAtkDmg * 0.48, poisonT: 2.8, slow: 0.40, slowT: 1.4 });
+        applyPetDebuffAndDamage(e, petAtkDmg * mult, { poison: petAtkDmg * 0.36, poisonT: 2.8, slow: 0.40, slowT: 1.4 });
         if(wasAlive && e.dead) killCount++;
         for(let k = 0; k < 5; k++) g.fx.push({ x: e.x, y: e.y, vx: (Math.random() - .5) * 105, vy: (Math.random() - .5) * 105, col: isExec ? '#f87171' : '#dc2626', l: .30 });
         hitCount++;
@@ -19529,7 +19635,7 @@ function executePetAttack(g, pet, p, petAtkDmg, petCoolMult, petUp){
       for(let k = 0; k < 6; k++) g.fx.push({ x: p.x + (Math.random() - .5) * 18, y: p.y + (Math.random() - .5) * 18, vx: (Math.random() - .5) * 40, vy: -28 - Math.random() * 22, col: '#ef4444', l: .38 });
     }
     const cdRefund = Math.min(0.45, killCount * 0.18);
-    pet.cd = Math.max(0.75 * petCoolMult, 1.48 * petCoolMult - cdRefund);
+    pet.cd = Math.max(0.80 * petCoolMult, 1.55 * petCoolMult - cdRefund);
   } else if(pet.type === 'treant' || pet.type === 'dragon'){
     const targets = [];
     for(const e of g.enemies){
@@ -19544,11 +19650,11 @@ function executePetAttack(g, pet, p, petAtkDmg, petCoolMult, petUp){
     const rootAng = setPetAttackMotion(pet, 'rootStomp', 0.45, hitTargets[0].e.x, hitTargets[0].e.y, 0, 0);
     Sfx.play('pet_root');
     g.fx.push({ type: 'petAbilityCast', x: pet.x, y: pet.y, ang: rootAng, tx: hitTargets[0].e.x, ty: hitTargets[0].e.y, theme: 'roots', seed: Math.random() * 1000, l: 0.45, maxL: 0.45 });
-    const dps = Math.max(16, Math.round(petAtkDmg * 1.85));
-    const dmgPerTick = Math.max(12, Math.round(dps * 0.25));
+    const dps = Math.max(12, Math.round(petAtkDmg * 1.25));
+    const dmgPerTick = Math.max(8, Math.round(dps * 0.22));
     for(let idx = 0; idx < hitTargets.length; idx++){
       const te = hitTargets[idx].e;
-      applyPetDebuffAndDamage(te, petAtkDmg * 1.85, { rootT: 1.10 });
+      applyPetDebuffAndDamage(te, petAtkDmg * 1.35, { rootT: 1.10 });
       g.fx.push({ type: 'entanglingRoots', target: te, x: te.x, y: te.y, l: 1.10, maxL: 1.10, tick: 0.22, dmgPerTick, dps, isPrimary: idx === 0 });
       g.fx.push({ type: 'rootThorns', x: te.x, y: te.y, l: 1.10, maxL: 1.10, target: te, seed: Math.random() * 1000 });
       if(idx === 0) g.fx.push({ type: 'lifeStream', x: te.x, y: te.y, l: 0.48, maxL: 0.48, col: '#4ade80' });
@@ -19557,7 +19663,7 @@ function executePetAttack(g, pet, p, petAtkDmg, petCoolMult, petUp){
     const focusSlams = Math.min(2, maxTargets - hitTargets.length);
     if(focusSlams > 0 && !hitTargets[0].e.dead){
       const pri = hitTargets[0].e;
-      hurt(pri, petAtkDmg * 0.90 * focusSlams);
+      hurt(pri, petAtkDmg * 0.70 * focusSlams);
       g.fx.push({ type: 'groundQuake', x: pri.x, y: pri.y, r: 85, col: '#22c55e', l: 0.42, maxL: 0.42 });
     }
     const healVal = Math.max(4, Math.min(28, p.maxHp * 0.05));
@@ -19693,7 +19799,8 @@ function update(dt){
       g.fx.push({ x:p.x+(Math.random()-0.5)*18, y:p.y+(Math.random()-0.5)*16, vx:(Math.random()-0.5)*30, vy:-25-Math.random()*35, col:Math.random()<0.5?'#facc15':'#fb923c', l:0.28 });
     }
   }
-  const moveSpeed = p.speed * (p.poisonSlow || 1) * ((p.slowT||0)>0?0.65:1) * ((g.overdriveT||0)>0?1.22:1);
+  const rawSlowMult = (p.poisonSlow || 1) * ((p.slowT||0)>0 ? 0.74 : 1);
+  const moveSpeed = p.speed * Math.max(0.72, rawSlowMult) * ((g.overdriveT||0)>0?1.22:1);
   if(p.slowT>0)p.slowT=Math.max(0,p.slowT-dt);
   const moving=(mx!==0||my!==0) && !isImmobilized;
   p.x+=mx*moveSpeed*dt;
@@ -19871,8 +19978,8 @@ function update(dt){
       }
     }
 
-    // Спавн 1 ящика каждые 5 волн строго за границами видимого экрана (подсвечивается маркером 📦)
-    if(Math.floor(g.wave / 5) > Math.floor((g.lastCrateWave || 1) / 5)){
+    // Спавн 1 ящика каждые 5 волн строго за границами видимого экрана (подсвечивается маркером 📦; на волне босса не спавним за закрытой ареной)
+    if(!isBossNext && Math.floor(g.wave / 5) > Math.floor((g.lastCrateWave || 1) / 5)){
       g.lastCrateWave = g.wave;
       if(!g.crates) g.crates = [];
       const ang = Math.random() * 6.283;
@@ -20861,7 +20968,7 @@ function update(dt){
           g.shake = Math.max(g.shake || 0, 0.72);
           const impactR = 112;
           if(Math.hypot(p.x - e.x, p.y - e.y) <= impactR && p.inv <= 0){
-            damagePlayer(e.enraged ? 54 : 44);
+            damagePlayer(e.enraged ? 44 : 38);
             p.slowT = Math.max(p.slowT || 0, 1.0);
           }
           g.fx.push({ type: 'blast', x: e.x, y: e.y, r: impactR, l: 0.36, maxL: 0.36, col: '#84cc16' });
@@ -20924,14 +21031,14 @@ function update(dt){
           g.bossShockwaves.push({ x: e.x, y: e.y, vx: 0, vy: 0, l: 3.6, maxL: 3.6, dmg: 8, type: 'puddle', col: '#84cc16' });
         }
         if(Math.hypot(p.x - e.x, p.y - e.y) < e.c.r + p.r + 12 && p.inv <= 0){
-          damagePlayer(48);
+          damagePlayer(40);
         }
         if(e.actionT <= 0){
           e.action = 'idle';
           e.rampageCd = 5.4;
           Sfx.play('explosion');
           g.shake = Math.max(g.shake || 0, 0.65);
-          if(Math.hypot(p.x - e.x, p.y - e.y) < 120 && p.inv <= 0) damagePlayer(42);
+          if(Math.hypot(p.x - e.x, p.y - e.y) < 120 && p.inv <= 0) damagePlayer(36);
           g.fx.push({ type: 'frostRing', x: e.x, y: e.y, r: 22, maxR: 120, l: 0.36, maxL: 0.36, col: '#84cc16' });
         }
         continue;
@@ -21146,19 +21253,21 @@ function update(dt){
               });
             }
             if(Math.hypot(p.x - rf.x, p.y - rf.y) < rf.r + p.r && p.inv <= 0){
-              const dmg = Math.max(1, Math.round(52 ));
+              const dmg = Math.max(1, Math.round(34));
               damagePlayer(dmg);
               showGameToast('⚡ ' + T('VOID GEYSER ERUPTION!', 'РАЗЛОМ БЕЗДНЫ!'), '#a855f7', 1.5);
             }
-            g.bossShockwaves.push({
-              x: rf.x, y: rf.y,
-              vx: 0, vy: 0,
-              angle: 0,
-              l: 3.5, maxL: 3.5,
-              dmg: 9,
-              col: '#a855f7',
-              type: 'abom_puddle'
-            });
+            if(g.bossShockwaves.filter(s => s.type === 'abom_puddle').length < 10){
+              g.bossShockwaves.push({
+                x: rf.x, y: rf.y,
+                vx: 0, vy: 0,
+                angle: 0,
+                l: 3.5, maxL: 3.5,
+                dmg: 8,
+                col: '#a855f7',
+                type: 'abom_puddle'
+              });
+            }
             e.rifts.splice(ri, 1);
           }
         }
@@ -21168,7 +21277,7 @@ function update(dt){
       if(e.enraged){
         e.novaCd = (e.novaCd || 2.6) - dt;
         if(e.novaCd <= 0){
-          e.novaCd = 2.6;
+          e.novaCd = 2.8;
           Sfx.play('dash');
           const startAng = performance.now() * 0.002;
           const novaCount = 12;
@@ -21182,7 +21291,7 @@ function update(dt){
               angle: na,
               l: 1.5,
               maxL: 1.5,
-              dmg: 26,
+              dmg: 18,
               col: '#c084fc',
               type: 'abom_nova'
             });
@@ -21297,7 +21406,7 @@ function update(dt){
               angle: sa,
               l: 1.15,
               maxL: 1.15,
-              dmg: 38,
+              dmg: 24,
               col: '#a855f7',
               type: 'abomination'
             });
@@ -21307,7 +21416,7 @@ function update(dt){
           while(dAng > Math.PI) dAng -= 2 * Math.PI;
           while(dAng < -Math.PI) dAng += 2 * Math.PI;
           if(d < 105 && Math.abs(dAng) < 1.05 && p.inv <= 0){
-            damagePlayer(Math.max(1, Math.round(62 )));
+            damagePlayer(38);
             showGameToast('💥 ' + T('LASHED BY ABYSSAL TENTACLES!', 'СОКРУШИТЕЛЬНЫЙ УДАР ЩУПАЛЕЦ!'), '#ef4444', 1.8);
           }
           for(let k = 0; k < 32; k++){
@@ -21383,7 +21492,7 @@ function update(dt){
         }
 
         if(Math.hypot(p.x - e.x, p.y - e.y) < e.c.r + p.r + 14 && p.inv <= 0){
-          damagePlayer(Math.max(1, Math.round(62 )));
+          damagePlayer(38);
           showGameToast('💥 ' + T('TRAMPLED BY KRAKEN RUSH!', 'РАЗДАВЛЕН БРОСКОМ КРАКЕНА!'), '#ef4444', 1.8);
           Sfx.play('hit');
         }
@@ -21405,7 +21514,7 @@ function update(dt){
               angle: ca,
               l: 0.95,
               maxL: 0.95,
-              dmg: 24,
+              dmg: 18,
               col: '#a855f7',
               type: 'abomination'
             });
@@ -21559,11 +21668,11 @@ function update(dt){
             for(let k = 0; k < 4; k++){
               const ang = (k / 4) * 6.283 + 0.35;
               const eggDist = 45 + Math.random() * 20;
-              const eggX = e.x + Math.cos(ang) * eggDist;
-              const eggY = e.y + 12 + Math.sin(ang) * eggDist;
+              const ep = { x: e.x + Math.cos(ang) * eggDist, y: e.y + 12 + Math.sin(ang) * eggDist };
+              keepInsideBossArena(ep, g.bossArena, 30);
               g.enemies.push({
-                x: eggX,
-                y: eggY,
+                x: ep.x,
+                y: ep.y,
                 hp: CONFIG.enemies.spider_egg.hp * 1.5,
                 maxHp: CONFIG.enemies.spider_egg.hp * 1.5,
                 c: CONFIG.enemies.spider_egg,
@@ -21593,11 +21702,11 @@ function update(dt){
         for(let k = 0; k < eggCount; k++){
           const ang = (k / Math.max(1, eggCount)) * 6.283 + Math.random() * 0.3;
           const eggDist = 50 + Math.random() * 32;
-          const eggX = e.x + Math.cos(ang) * eggDist;
-          const eggY = e.y + Math.sin(ang) * eggDist;
+          const ep = { x: e.x + Math.cos(ang) * eggDist, y: e.y + Math.sin(ang) * eggDist };
+          keepInsideBossArena(ep, g.bossArena, 30);
           g.enemies.push({
-            x: eggX,
-            y: eggY,
+            x: ep.x,
+            y: ep.y,
             hp: CONFIG.enemies.spider_egg.hp * 1.6,
             maxHp: CONFIG.enemies.spider_egg.hp * 1.6,
             c: CONFIG.enemies.spider_egg,
@@ -21734,8 +21843,9 @@ function update(dt){
         const pullAng = Math.atan2(e.y - p.y, e.x - p.x);
         const pullDist = Math.hypot(e.x - p.x, e.y - p.y);
         if(pullDist > 55){
-          p.x += Math.cos(pullAng) * 250 * dt;
-          p.y += Math.sin(pullAng) * 250 * dt;
+          p.x += Math.cos(pullAng) * 185 * dt;
+          p.y += Math.sin(pullAng) * 185 * dt;
+          keepInsideBossArena(p, g.bossArena, (p.r || 16) + 6);
           if(Math.random() < 0.65){
             g.fx.push({
               x: p.x + (Math.random() - 0.5) * 16,
@@ -21753,7 +21863,7 @@ function update(dt){
           p.poisonDps = Math.max(p.poisonDps || 0, 3.5);
           Sfx.play('dash');
           g.shake = Math.max(g.shake || 0, 0.45);
-          showGameToast('🕷️ ' + T('TOXIC MANDIBLE BITE! -20 HP', 'ЯДОВИТЫЙ УКУС ЖВАЛАМИ! -20 HP'), '#ef4444', 2.0);
+          showGameToast('🕷️ ' + T('TOXIC MANDIBLE BITE!', 'ЯДОВИТЫЙ УКУС ЖВАЛАМИ!'), '#ef4444', 2.0);
           for(let k = 0; k < 18; k++){
             const biteA = Math.random() * 6.283, bSpd = 50 + Math.random() * 110;
             g.fx.push({ x: p.x, y: p.y, vx: Math.cos(biteA) * bSpd, vy: Math.sin(biteA) * bSpd, col: Math.random() > 0.4 ? '#84cc16' : '#ef4444', l: 0.4 });
@@ -21785,9 +21895,11 @@ function update(dt){
           for(let k = 0; k < eggCount; k++){
             const eggAng = ((k - (eggCount - 1) / 2) * 0.55) + Math.atan2(p.y - e.y, p.x - e.x) + 3.14;
             const eggDist = 36 + Math.random() * 28;
+            const ep = { x: e.x + Math.cos(eggAng) * eggDist, y: e.y + Math.sin(eggAng) * eggDist };
+            keepInsideBossArena(ep, g.bossArena, 30);
             g.enemies.push({
-              x: e.x + Math.cos(eggAng) * eggDist,
-              y: e.y + Math.sin(eggAng) * eggDist,
+              x: ep.x,
+              y: ep.y,
               hp: CONFIG.enemies.spider_egg.hp * (e.enraged ? 1.6 : 1.3),
               maxHp: CONFIG.enemies.spider_egg.hp * (e.enraged ? 1.6 : 1.3),
               c: CONFIG.enemies.spider_egg,
@@ -21934,7 +22046,7 @@ function update(dt){
           if(distP < impactR && p.inv <= 0){
             const dmg = Math.max(1, Math.round(e.c.damage * 1.35 ));
             damagePlayer(dmg);
-            showGameToast('💥 ' + T('CRUSHED BY BROODMOTHER! -' + dmg + ' HP', 'РАЗДАВЛЕН ПАУЧИХОЙ! -' + dmg + ' HP'), '#ef4444', 2.0);
+            showGameToast('💥 ' + T('CRUSHED BY BROODMOTHER!', 'РАЗДАВЛЕН ПАУЧИХОЙ!'), '#ef4444', 2.0);
           }
 
           // Диагональный 4-сторонний залп ядовитой паутины при ударе
@@ -22197,7 +22309,7 @@ function update(dt){
           p.poisonT = Math.max(p.poisonT || 0, 2.5);
           p.poisonDps = Math.max(p.poisonDps || 0, 3.5);
           p.poisonSlow = Math.min(p.poisonSlow || 1, 0.80);
-          showGameToast('💥 ' + T('SMASHED BY TREANT! -' + dmg + ' HP', 'СОКРУШЕН ДРЕВНЕМ! -' + dmg + ' HP'), '#22c55e', 2.0);
+          showGameToast('💥 ' + T('SMASHED BY TREANT!', 'СОКРУШЕН ДРЕВНЕМ!'), '#22c55e', 2.0);
         }
       }
 
@@ -22249,12 +22361,12 @@ function update(dt){
         // Столкновение с героем во время тарана
         const distHero = Math.hypot(p.x - e.x, p.y - e.y);
         if(distHero < (e.c.r || 48) + p.r && p.inv <= 0){
-          const dmg = Math.max(1, Math.round(e.c.damage * 1.35 ));
+          const dmg = Math.max(1, Math.round(e.c.damage * 1.25 ));
           damagePlayer(dmg);
           p.poisonT = Math.max(p.poisonT || 0, 3.0);
           p.poisonDps = Math.max(p.poisonDps || 0, 3.5);
           p.poisonSlow = Math.min(p.poisonSlow || 1, 0.78);
-          showGameToast('💥 ' + T('TRAMPLED BY TREANT! -' + dmg + ' HP', 'РАСТОПТАН ДРЕВНЕМ! -' + dmg + ' HP'), '#22c55e', 2.0);
+          showGameToast('💥 ' + T('TRAMPLED BY TREANT!', 'РАСТОПТАН ДРЕВНЕМ!'), '#22c55e', 2.0);
         }
 
         if(e.chargeDur <= 0){
@@ -22316,14 +22428,16 @@ function update(dt){
                   l: 0.45
                 });
               }
-              // Оставляет ядовитую лужу
-              g.bossShockwaves.push({
-                x: tgt.x, y: tgt.y,
-                vx: 0, vy: 0,
-                l: 4.5, maxL: 4.5,
-                dmg: 6,
-                type: 'puddle'
-              });
+              // Оставляет ядовитую лужу (с общим лимитом)
+              if(g.bossShockwaves.filter(s => s.type === 'puddle').length < 14){
+                g.bossShockwaves.push({
+                  x: tgt.x, y: tgt.y,
+                  vx: 0, vy: 0,
+                  l: 4.5, maxL: 4.5,
+                  dmg: 6,
+                  type: 'puddle'
+                });
+              }
               const distP = Math.hypot(p.x - tgt.x, p.y - tgt.y);
               if(distP < (e.rootRadius || 60) + (p.r || 16) && p.inv <= 0){
                 const dmg = Math.max(1, Math.round(e.c.damage * 0.95 ));
@@ -22376,9 +22490,9 @@ function update(dt){
           });
           const distEpicenter = Math.hypot(p.x - e.x, p.y - slamY);
           if(distEpicenter < 105 && p.inv <= 0){
-            const dmg = Math.max(1, Math.round(e.c.damage * 1.40 ));
+            const dmg = Math.max(1, Math.round(e.c.damage * 1.30 ));
             damagePlayer(dmg);
-            showGameToast('💥 ' + T('SEISMIC SLAM IMPACT! -' + dmg + ' HP', 'СЕЙСМИЧЕСКИЙ УДАР ДРЕВНЯ! -' + dmg + ' HP'), '#22c55e', 2.0);
+            showGameToast('💥 ' + T('SEISMIC SLAM IMPACT!', 'СЕЙСМИЧЕСКИЙ УДАР ДРЕВНЯ!'), '#22c55e', 2.0);
           }
           // 10 (12 в ярости) радиальных сейсмических волн
           const numWaves = e.enraged ? 12 : 10;
@@ -22407,7 +22521,7 @@ function update(dt){
                 sx = Math.max(g.bossArena.x + 56, Math.min(g.bossArena.x + g.bossArena.size - 56, sx));
                 sy = Math.max(g.bossArena.y + 56, Math.min(g.bossArena.y + g.bossArena.size - 56, sy));
               }
-              g.bossShockwaves.push({ x: sx, y: sy, vx: 0, vy: 0, l: 1.05, maxL: 1.05, rad: 56, hitR: 56, dmg: 34, type: 'mutagen_bomb', col: '#22c55e' });
+              g.bossShockwaves.push({ x: sx, y: sy, vx: 0, vy: 0, l: 1.05, maxL: 1.05, rad: 56, hitR: 56, dmg: 26, type: 'mutagen_bomb', col: '#22c55e' });
             }
           }
         }
@@ -22613,7 +22727,7 @@ function update(dt){
             vy: Math.sin(ba) * bSpd,
             angle: ba,
             l: 0.95, maxL: 0.95,
-            dmg: 14,
+            dmg: 12,
             type: 'slime_glob',
             col: '#22c55e'
           });
@@ -22633,8 +22747,10 @@ function update(dt){
         e.slamCd = e.enraged ? 3.5 : 4.8;
         e.jumpStartX = e.x;
         e.jumpStartY = e.y;
-        e.jumpTargetX = p.x + (p.vx || 0) * 0.25;
-        e.jumpTargetY = p.y + (p.vy || 0) * 0.25;
+        const jt = { x: p.x + (p.vx || 0) * 0.25, y: p.y + (p.vy || 0) * 0.25 };
+        keepInsideBossArena(jt, g.bossArena, 50);
+        e.jumpTargetX = jt.x;
+        e.jumpTargetY = jt.y;
         continue;
       }
       if(e.action === 'slam_prep'){
@@ -22667,7 +22783,7 @@ function update(dt){
           Sfx.play('hit');
           // Удар по площади в радиусе 108px
           if(Math.hypot(p.x - e.x, p.y - e.y) <= 108 && p.inv <= 0){
-            damagePlayer(38);
+            damagePlayer(34);
             p.poisonT = Math.max(p.poisonT || 0, 2.8);
             p.poisonDps = Math.max(p.poisonDps || 0, 3.8);
             p.poisonSlow = 0.76;
@@ -22694,7 +22810,7 @@ function update(dt){
               vy: Math.sin(ga) * gSpd,
               angle: ga,
               l: 1.0, maxL: 1.0,
-              dmg: 16,
+              dmg: 13,
               type: 'slime_glob',
               col: '#22c55e'
             });
@@ -22708,7 +22824,7 @@ function update(dt){
                 gx = Math.max(g.bossArena.x + 64, Math.min(g.bossArena.x + g.bossArena.size - 64, gx));
                 gy = Math.max(g.bossArena.y + 64, Math.min(g.bossArena.y + g.bossArena.size - 64, gy));
               }
-              g.bossShockwaves.push({ x: gx, y: gy, vx: 0, vy: 0, l: 1.05, maxL: 1.05, rad: 64, hitR: 64, dmg: 32, type: 'acid_geyser', col: '#22c55e' });
+              g.bossShockwaves.push({ x: gx, y: gy, vx: 0, vy: 0, l: 1.05, maxL: 1.05, rad: 64, hitR: 64, dmg: 26, type: 'acid_geyser', col: '#22c55e' });
             }
           }
           for(let k = 0; k < 24; k++){
@@ -22752,7 +22868,7 @@ function update(dt){
               vy: Math.sin(angK) * gSpd,
               angle: angK,
               l: 1.4, maxL: 1.4,
-              dmg: 18,
+              dmg: 14,
               type: 'slime_glob',
               col: '#22c55e'
             });
@@ -22765,7 +22881,7 @@ function update(dt){
                 vy: Math.sin(flankA) * 230,
                 angle: flankA,
                 l: 1.2, maxL: 1.2,
-                dmg: 16,
+                dmg: 12,
                 type: 'slime_glob',
                 col: '#22c55e'
               });
@@ -22848,7 +22964,7 @@ function update(dt){
       if(e.action !== 'dash_run' && e.action !== 'dash_rebound') e.facing = dx >= 0 ? 1 : -1;
 
       if(!e.enraged && e.hp <= e.maxHp * 0.5){
-        e.c.speed = 140;
+        e.c.speed = 112;
         e.overdriveCd = 1.2;
         triggerBossEnrage(e, '+DOUBLE REBOUND / EMP MINES / JUDGEMENT', '+ДВОЙНОЙ РЫВОК / ЭМИ-МИНЫ / СУДНЫЙ ШКВАЛ', '#ef4444', { ico: '🐺' });
         for(let k = 0; k < 3; k++){
@@ -22859,7 +22975,7 @@ function update(dt){
             y: e.y + Math.sin(ma) * md,
             vx: 0, vy: 0,
             l: 7.0, maxL: 7.0,
-            dmg: 48,
+            dmg: 32,
             type: 'emp_mine',
             col: '#38bdf8'
           });
@@ -22885,12 +23001,14 @@ function update(dt){
         for(let k = 0; k < 8; k++){
           const ba = (k / 8) * 6.283 + Math.random() * 0.45;
           const bd = 40 + Math.random() * 145;
+          const bp = { x: p.x + Math.cos(ba) * bd, y: p.y + Math.sin(ba) * bd };
+          keepInsideBossArena(bp, g.bossArena, 50);
           g.bossShockwaves.push({
-            x: p.x + Math.cos(ba) * bd,
-            y: p.y + Math.sin(ba) * bd,
+            x: bp.x,
+            y: bp.y,
             vx: 0, vy: 0,
             l: 1.45 + (k * 0.16), maxL: 1.45 + (k * 0.16),
-            dmg: 42,
+            dmg: 34,
             type: 'carpet_bomb',
             col: '#ef4444'
           });
@@ -22917,9 +23035,10 @@ function update(dt){
           e.action = 'idle';
           Sfx.play('anvil');
           if(d <= 125 && p.inv <= 0){
-            damagePlayer(50);
+            damagePlayer(36);
             p.x += (dx / d) * 55;
             p.y += (dy / d) * 55;
+            keepInsideBossArena(p, g.bossArena, (p.r || 16) + 6);
             g.shake = Math.max(g.shake, 0.55);
           }
           const baseAng = Math.atan2(dy, dx);
@@ -22931,7 +23050,7 @@ function update(dt){
               vx: Math.cos(qa) * qSpd,
               vy: Math.sin(qa) * qSpd,
               l: 1.4, maxL: 1.4,
-              dmg: 28,
+              dmg: 20,
               type: 'cerberus_quill',
               col: '#ef4444'
             });
@@ -22975,7 +23094,7 @@ function update(dt){
               vx: Math.cos(fa) * fSpd,
               vy: Math.sin(fa) * fSpd,
               l: 1.1, maxL: 1.1,
-              dmg: 32,
+              dmg: 20,
               type: 'napalm_burst',
               col: '#f97316'
             });
@@ -22996,17 +23115,18 @@ function update(dt){
       }
       if(e.action === 'dash_prep'){
         e.actionT -= dt;
-        if(e.actionT > 0.34){
+        if(e.actionT > 0.24){
           e.chargeAng = Math.atan2(p.y - e.y, p.x - e.x);
         }
         if(e.actionT <= 0){
-          e.action = 'dash_run';
-          e.actionT = 0.45;
-          const dSpd = e.enraged ? 470 : 400;
+          e.action = e.hasRebounded ? 'dash_rebound' : 'dash_run';
+          e.actionT = e.hasRebounded ? 0.40 : 0.45;
+          const dSpd = e.hasRebounded ? 440 : (e.enraged ? 440 : 400);
           e.chargeVx = Math.cos(e.chargeAng) * dSpd;
           e.chargeVy = Math.sin(e.chargeAng) * dSpd;
+          e.trailTick = 0;
           Sfx.play('dash');
-          g.shake = Math.max(g.shake, 0.35);
+          g.shake = Math.max(g.shake, e.hasRebounded ? 0.45 : 0.35);
         }
         continue;
       }
@@ -23017,36 +23137,36 @@ function update(dt){
         e.facing = e.chargeVx >= 0 ? 1 : -1;
         keepInsideBossArena(e, g.bossArena, (e.c?.r || 44) + 10);
         
-        if(Math.random() < 0.75){
-          g.bossShockwaves.push({
-            x: e.x + (Math.random() - 0.5) * 16,
-            y: e.y + (Math.random() - 0.5) * 16,
-            vx: 0, vy: 0,
-            l: 2.8, maxL: 2.8,
-            dmg: 14,
-            type: 'napalm_trail',
-            col: '#f97316'
-          });
+        e.trailTick = (e.trailTick || 0) - dt;
+        if(e.trailTick <= 0){
+          e.trailTick = 0.11;
+          if(g.bossShockwaves.filter(s => s.type === 'napalm_trail').length < 16){
+            g.bossShockwaves.push({
+              x: e.x + (Math.random() - 0.5) * 16,
+              y: e.y + (Math.random() - 0.5) * 16,
+              vx: 0, vy: 0,
+              l: 2.6, maxL: 2.6,
+              dmg: 10,
+              type: 'napalm_trail',
+              col: '#f97316'
+            });
+          }
         }
         if(d <= e.c.r + p.r + 6 && p.inv <= 0){
-          damagePlayer(48);
+          damagePlayer(36);
           p.x += Math.cos(e.chargeAng) * 34;
           p.y += Math.sin(e.chargeAng) * 34;
+          keepInsideBossArena(p, g.bossArena, (p.r || 16) + 6);
           g.shake = Math.max(g.shake, 0.5);
           Sfx.play('hit');
         }
         if(e.actionT <= 0){
           if(e.enraged && !e.hasRebounded && e.action === 'dash_run'){
             e.hasRebounded = true;
-            e.action = 'dash_rebound';
-            e.actionT = 0.40;
-            const rebAng = Math.atan2(p.y - e.y, p.x - e.x);
-            e.chargeAng = rebAng;
-            const rSpd = 560;
-            e.chargeVx = Math.cos(rebAng) * rSpd;
-            e.chargeVy = Math.sin(rebAng) * rSpd;
+            e.action = 'dash_prep';
+            e.actionT = 0.42;
+            e.chargeAng = Math.atan2(p.y - e.y, p.x - e.x);
             Sfx.play('dash');
-            g.shake = Math.max(g.shake, 0.45);
           } else {
             e.action = 'idle';
           }
@@ -23076,7 +23196,7 @@ function update(dt){
               vx: Math.cos(launchAng) * launchSpd,
               vy: Math.sin(launchAng) * launchSpd,
               l: 2.2, maxL: 2.2,
-              dmg: 52,
+              dmg: 30,
               type: 'cyber_missile',
               col: '#ef4444'
             });
@@ -23104,13 +23224,13 @@ function update(dt){
               x: e.x, y: e.y - 8,
               vx: 0, vy: 0,
               l: 0.9 + w * 0.25, maxL: 0.9 + w * 0.25,
-              dmg: 44,
+              dmg: 30,
               type: 'sonic_howl',
               col: '#ef4444'
             });
           }
           if(d <= 145 && p.inv <= 0){
-            damagePlayer(42);
+            damagePlayer(30);
             p.slowT = 1.2;
           }
         }
@@ -23129,7 +23249,7 @@ function update(dt){
             y: e.y + Math.sin(ma) * md,
             vx: 0, vy: 0,
             l: 6.5, maxL: 6.5,
-            dmg: 48,
+            dmg: 32,
             type: 'emp_mine',
             col: '#38bdf8'
           });
@@ -23137,7 +23257,7 @@ function update(dt){
       }
 
       if(e.action === 'idle'){
-        const spd = (e.enraged ? 132 : 102) * g.lvlConfig.multSpeed;
+        const spd = (e.enraged ? 108 : 96) * g.lvlConfig.multSpeed;
         e.x += (dx / d) * spd * dt;
         e.y += (dy / d) * spd * dt;
         keepInsideBossArena(e, g.bossArena, (e.c?.r || 44) + 10);
@@ -23171,7 +23291,7 @@ function update(dt){
       if(e.action !== 'rush_dash') e.facing = dx >= 0 ? 1 : -1;
 
       if(!e.enraged && e.hp <= e.maxHp * 0.5){
-        e.c.speed = 100;
+        e.c.speed = 98;
         e.cageCd = 1.2;
         triggerBossEnrage(e, '+WHIRLWIND / STEEL CAGE SAWS', '+ВИХРЬ МЯСОРУБКИ / СТАЛЬНОЙ КАПКАН', '#dc2626', { ico: '🪓' });
       }
@@ -23213,7 +23333,7 @@ function update(dt){
               vx: Math.cos(targetAng) * sSpd,
               vy: Math.sin(targetAng) * sSpd,
               l: 5.5, maxL: 5.5,
-              dmg: 54, bounces: 0,
+              dmg: 30, bounces: 0,
               type: 'execution_saw',
               col: '#ef4444'
             });
@@ -23240,9 +23360,10 @@ function update(dt){
           g.shake = Math.max(g.shake, 0.7);
           Sfx.play('anvil');
           if(d <= 135 && p.inv <= 0){
-            damagePlayer(105);
+            damagePlayer(44);
             p.x += (dx / d) * 42;
             p.y += (dy / d) * 42;
+            keepInsideBossArena(p, g.bossArena, (p.r || 16) + 6);
           }
           const fAng = Math.atan2(p.y - e.y, p.x - e.x);
           const fSpd = 370;
@@ -23252,19 +23373,21 @@ function update(dt){
             vx: Math.cos(fAng) * fSpd,
             vy: Math.sin(fAng) * fSpd,
             l: 0.65, maxL: 0.65,
-            dmg: 62,
+            dmg: 32,
             type: 'fissure',
             col: '#dc2626'
           });
-          g.bossShockwaves.push({
-            x: e.x + (e.facing > 0 ? 30 : -30),
-            y: e.y + 15,
-            vx: 0, vy: 0,
-            l: 5.0, maxL: 5.0,
-            dmg: 20,
-            type: 'puddle',
-            col: '#991b1b'
-          });
+          if(g.bossShockwaves.filter(s => s.type === 'puddle').length < 14){
+            g.bossShockwaves.push({
+              x: e.x + (e.facing > 0 ? 30 : -30),
+              y: e.y + 15,
+              vx: 0, vy: 0,
+              l: 5.0, maxL: 5.0,
+              dmg: 10,
+              type: 'puddle',
+              col: '#991b1b'
+            });
+          }
         }
         continue;
       }
@@ -23284,7 +23407,9 @@ function update(dt){
       }
       if(e.action === 'rush_prep'){
         e.actionT -= dt;
-        e.rushAng = Math.atan2(p.y - e.y, p.x - e.x);
+        if(e.actionT > 0.24){
+          e.rushAng = Math.atan2(p.y - e.y, p.x - e.x);
+        }
         if(Math.random() < 0.4 && g.fx.length < 130){
           g.fx.push({
             x: e.x + (e.facing > 0 ? 30 : -30) + (Math.random() - 0.5) * 16,
@@ -23311,9 +23436,10 @@ function update(dt){
         e.facing = Math.cos(e.rushAng) >= 0 ? 1 : -1;
         keepInsideBossArena(e, g.bossArena, (e.c?.r || 48) + 10);
         if(d <= 72 && p.inv <= 0){
-          damagePlayer(72);
+          damagePlayer(38);
           p.x += Math.cos(e.rushAng) * 32;
           p.y += Math.sin(e.rushAng) * 32;
+          keepInsideBossArena(p, g.bossArena, (p.r || 16) + 6);
           g.shake = Math.max(g.shake, 0.55);
           Sfx.play('hit');
         }
@@ -23331,7 +23457,7 @@ function update(dt){
       }
       if(e.action === 'spin_cleaver'){
         e.actionT -= dt;
-        const spinSpd = (e.enraged ? 138 : 104) * g.lvlConfig.multSpeed;
+        const spinSpd = (e.enraged ? 108 : 96) * g.lvlConfig.multSpeed;
         e.x += (dx / d) * spinSpd * dt;
         e.y += (dy / d) * spinSpd * dt;
         e.facing = dx >= 0 ? 1 : -1;
@@ -23348,7 +23474,7 @@ function update(dt){
           });
         }
         if(d <= 85 && p.inv <= 0){
-          damagePlayer(48);
+          damagePlayer(28);
           p.slowT = 0.5;
           g.shake = Math.max(g.shake, 0.35);
         }
@@ -23362,23 +23488,27 @@ function update(dt){
         e.actionT = 0.55;
         e.hookTargetX = p.x;
         e.hookTargetY = p.y;
+        e.hookAng = Math.atan2(dy, dx);
         e.hookCd = e.enraged ? 4.0 : 5.8;
         continue;
       }
       if(e.action === 'hook_prep'){
         e.actionT -= dt;
-        e.hookTargetX = p.x; e.hookTargetY = p.y;
+        if(e.actionT > 0.24){
+          e.hookTargetX = p.x; e.hookTargetY = p.y;
+          e.hookAng = Math.atan2(p.y - e.y, p.x - e.x);
+        }
         if(e.actionT <= 0){
           e.action = 'hook_throw';
           e.actionT = 0.55;
           Sfx.play('dash');
-          const hookAng = Math.atan2(p.y - e.y, p.x - e.x);
+          const hookAng = e.hookAng !== undefined ? e.hookAng : Math.atan2(e.hookTargetY - e.y, e.hookTargetX - e.x);
           g.bossShockwaves.push({
             x: e.x, y: e.y - 6,
-            vx: Math.cos(hookAng) * 500,
-            vy: Math.sin(hookAng) * 500,
-            l: 0.72, maxL: 0.72,
-            dmg: 52,
+            vx: Math.cos(hookAng) * 430,
+            vy: Math.sin(hookAng) * 430,
+            l: 0.76, maxL: 0.76,
+            dmg: 26,
             type: 'butcher_hook',
             col: '#dc2626'
           });
@@ -23412,7 +23542,7 @@ function update(dt){
               vx: Math.cos(sAng) * sSpd,
               vy: Math.sin(sAng) * sSpd,
               l: 4.5, maxL: 4.5,
-              dmg: 48,
+              dmg: 28,
               bounces: 0,
               type: 'bouncing_saw',
               col: '#e2e8f0'
@@ -23425,7 +23555,8 @@ function update(dt){
       // 5. Выброс ядовитого пара дезинфектора
       if(e.action === 'idle' && e.toxicGasCd <= 0){
         e.toxicGasCd = e.enraged ? 4.2 : 6.5;
-        for(let k = 0; k < 6; k++){
+        let curPuddles = g.bossShockwaves.filter(s => s.type === 'puddle').length;
+        for(let k = 0; k < 6 && curPuddles < 14; k++){
           const ga = Math.random() * 6.283;
           const gDist = 20 + Math.random() * 50;
           g.bossShockwaves.push({
@@ -23433,15 +23564,16 @@ function update(dt){
             y: e.y + Math.sin(ga) * gDist,
             vx: 0, vy: 0,
             l: 4.5, maxL: 4.5,
-            dmg: 18,
+            dmg: 10,
             type: 'puddle',
             col: '#16a34a'
           });
+          curPuddles++;
         }
       }
 
       if(e.action === 'idle'){
-        const spd = (e.enraged ? 105 : 82) * g.lvlConfig.multSpeed;
+        const spd = (e.enraged ? 98 : 84) * g.lvlConfig.multSpeed;
         e.x += (dx / d) * spd * dt;
         e.y += (dy / d) * spd * dt;
         keepInsideBossArena(e, g.bossArena, (e.c?.r || 48) + 10);
@@ -23513,7 +23645,7 @@ function update(dt){
               y: e.y,
               vx: 0, vy: 0,
               l: 4.8, maxL: 4.8,
-              dmg: 38,
+              dmg: 22,
               twinId: tw,
               orbitRad: 125,
               orbitAngle: tw * Math.PI,
@@ -23545,7 +23677,7 @@ function update(dt){
           const nearX = bx1 + proj * lDx, nearY = by1 + proj * lDy;
           const distToBeam = Math.hypot(p.x - nearX, p.y - nearY);
           if(distToBeam < p.r + 16 && p.inv <= 0){
-            damagePlayer(58);
+            damagePlayer(30);
             p.slowT = 0.5;
             g.shake = Math.max(g.shake, 0.35);
           }
@@ -23569,14 +23701,15 @@ function update(dt){
             x: e.x, y: e.y,
             vx: 0, vy: 0,
             l: 0.8, maxL: 0.8,
-            dmg: 58,
+            dmg: 32,
             type: 'psi_nova',
             col: '#a855f7'
           });
           if(d < 125 && p.inv <= 0){
-            damagePlayer(55);
+            damagePlayer(32);
             p.x += (dx / d) * 48;
             p.y += (dy / d) * 48;
+            keepInsideBossArena(p, g.bossArena, (p.r || 16) + 6);
           }
           for(let k = 0; k < 8; k++){
             const ba = (k / 8) * 6.283;
@@ -23584,7 +23717,7 @@ function update(dt){
               x: e.x, y: e.y - 8,
               vx: Math.cos(ba) * 265, vy: Math.sin(ba) * 265,
               l: 1.5, maxL: 1.5,
-              dmg: 42,
+              dmg: 22,
               type: 'psi_bolt',
               col: '#c084fc'
             });
@@ -23617,9 +23750,10 @@ function update(dt){
         e.actionT -= dt;
         e.lastNeedleT = (e.lastNeedleT || 0) - dt;
         if(d < 105 && p.inv <= 0){
-          damagePlayer(48);
+          damagePlayer(26);
           p.x += (dx / d) * 38;
           p.y += (dy / d) * 38;
+          keepInsideBossArena(p, g.bossArena, (p.r || 16) + 6);
           g.shake = Math.max(g.shake, 0.35);
         }
         if(e.lastNeedleT <= 0){
@@ -23628,10 +23762,10 @@ function update(dt){
           const nAng = Math.atan2(dy, dx) + (Math.random() - 0.5) * 0.4;
           g.bossShockwaves.push({
             x: e.x, y: e.y - 12,
-            vx: Math.cos(nAng) * 320,
-            vy: Math.sin(nAng) * 320,
+            vx: Math.cos(nAng) * 260,
+            vy: Math.sin(nAng) * 260,
             l: 2.0, maxL: 2.0,
-            dmg: 42,
+            dmg: 20,
             type: 'psi_needle',
             col: '#38bdf8'
           });
@@ -23665,7 +23799,7 @@ function update(dt){
         let diffA = targetAng - e.beamAngle;
         while(diffA > Math.PI) diffA -= Math.PI * 2;
         while(diffA < -Math.PI) diffA += Math.PI * 2;
-        e.beamAngle += Math.max(-1.45 * dt, Math.min(1.45 * dt, diffA));
+        e.beamAngle += Math.max(-0.85 * dt, Math.min(0.85 * dt, diffA));
 
         const beamLen = 420;
         const bx1 = e.x, by1 = e.y - 12;
@@ -23678,7 +23812,7 @@ function update(dt){
         const distToBeam = Math.hypot(p.x - nearX, p.y - nearY);
 
         if(distToBeam < p.r + 16 && p.inv <= 0){
-          damagePlayer(62);
+          damagePlayer(34);
           p.slowT = 0.5;
           g.shake = Math.max(g.shake, 0.35);
         }
@@ -23703,7 +23837,7 @@ function update(dt){
             x: p.x, y: p.y,
             vx: 0, vy: 0,
             l: 4.2, maxL: 4.2,
-            dmg: 28,
+            dmg: 18,
             type: 'singularity',
             col: '#a855f7'
           });
@@ -23725,7 +23859,7 @@ function update(dt){
             vx: Math.cos(bAng) * bSpd,
             vy: Math.sin(bAng) * bSpd,
             l: 1.6, maxL: 1.6,
-            dmg: 46,
+            dmg: 22,
             type: 'psi_bolt',
             col: '#c084fc'
           });
@@ -23743,7 +23877,7 @@ function update(dt){
             y: e.y + Math.sin(da) * 55,
             hp: 95 * (g.lvlConfig?.multHp || 1),
             maxHp: 95 * (g.lvlConfig?.multHp || 1),
-            c: { r: 13, speed: 115, damage: 22, color: '#c084fc', xp: 6 },
+            c: { r: 13, speed: 115, damage: 14, color: '#c084fc', xp: 6 },
             isMinion: true,
             minionType: 'drone',
             oh: 0, fl: 0, dead: false, frame: 0, animT: Math.random() * 8, facing: 1
@@ -23786,7 +23920,7 @@ function update(dt){
         e.actionT = Math.max(0, (e.actionT || 0) - dt);
         const hatchProg = Math.max(0, Math.min(1, 1 - (e.actionT / 2.6)));
         e.frame = Math.min(7, Math.floor(hatchProg * 8));
-        const targetP2Hp = e.p2MaxHp || scaledBossHp(g, 185000);
+        const targetP2Hp = e.p2MaxHp || scaledBossHp(g, 62000);
         e.maxHp = targetP2Hp;
         e.hp = Math.max(1, Math.round(targetP2Hp * Math.min(1, hatchProg * 1.05)));
         g.shake = Math.max(g.shake || 0, hatchProg > 0.65 ? 0.55 : 0.22);
@@ -23814,23 +23948,23 @@ function update(dt){
           e.hp = targetP2Hp;
           e.name = 'ДВУХВОСТЫЙ ЖНЕЦ';
           e.nameEn = 'TWIN-TAILED REAPER';
-          e.c.speed = 116;
-          e.c.damage = 108;
+          e.c.speed = 104;
+          e.c.damage = 38;
           e.c.r = 58;
           e.twinStingCd = 1.6;
           e.slashCd = 1.3;
-          e.burrowCd = 4.0;
-          e.broodCd = 6.5;
+          e.burrowCd = 8.5;
+          e.broodCd = 18.0;
           g.bossShockwaves.push({
             x: e.x, y: e.y, vx: 0, vy: 0, rad: 28, l: 1.15, maxL: 1.15,
-            dmg: 48, type: 'chitin_toxic_nova', col: '#f97316'
+            dmg: 26, type: 'chitin_toxic_nova', col: '#f97316'
           });
           for(let k = 0; k < 12; k++){
             const sa = (k / 12) * 6.283;
             g.bossShockwaves.push({
               x: e.x + Math.cos(sa) * 26, y: e.y + Math.sin(sa) * 26,
               vx: Math.cos(sa) * 255, vy: Math.sin(sa) * 255,
-              l: 1.45, maxL: 1.45, dmg: 38, type: 'chitin_spine', col: '#f97316'
+              l: 1.45, maxL: 1.45, dmg: 20, type: 'chitin_spine', col: '#f97316'
             });
           }
           triggerBossEnrage(e, 'ARMORED TWIN-TAILED SCORPION HATCHED!', 'ВЫЛУПИЛСЯ БРОНИРОВАННЫЙ ЖНЕЦ С 2 ХВОСТАМИ!', '#f97316', { ico: '🦂' });
@@ -23843,11 +23977,11 @@ function update(dt){
       e.frame = Math.floor(e.animT) % 8;
       if(e.action !== 'burrow_travel' && e.action !== 'brood_burrow') e.facing = dx >= 0 ? 1 : -1;
 
-      e.burrowCd = (e.burrowCd !== undefined ? e.burrowCd : 4.8) - dt;
+      e.burrowCd = (e.burrowCd !== undefined ? e.burrowCd : 7.5) - dt;
       e.slashCd = (e.slashCd !== undefined ? e.slashCd : 2.5) - dt;
       e.acidCd = (e.acidCd !== undefined ? e.acidCd : 4.2) - dt;
       e.geyserCd = (e.geyserCd !== undefined ? e.geyserCd : 4.0) - dt;
-      e.broodCd = (e.broodCd !== undefined ? e.broodCd : 3.0) - dt;
+      e.broodCd = (e.broodCd !== undefined ? e.broodCd : 10.0) - dt;
       e.twinStingCd = (e.twinStingCd !== undefined ? e.twinStingCd : 3.4) - dt;
 
       // ОСОБАЯ АТАКА ФАЗЫ 2: «ДВОЙНОЕ ЖАЛО СКОРПИОНА» (Twin-Tail Dual Sting Volley)
@@ -23879,7 +24013,7 @@ function update(dt){
                 vy: Math.sin(a) * spd,
                 angle: a,
                 l: 1.55, maxL: 1.55,
-                dmg: 42,
+                dmg: 22,
                 type: 'chitin_spine',
                 col: '#f97316'
               });
@@ -23893,7 +24027,7 @@ function update(dt){
       if(e.enraged && e.action === 'idle' && e.broodCd <= 0){
         e.action = 'brood_prep';
         e.actionT = 0.65;
-        e.broodCd = 14.0;
+        e.broodCd = 18.0;
         Sfx.play('anvil');
         g.shake = Math.max(g.shake, 0.65);
         continue;
@@ -23902,7 +24036,7 @@ function update(dt){
         e.actionT -= dt;
         if(e.actionT <= 0){
           e.action = 'brood_burrow';
-          e.actionT = 1.75;
+          e.actionT = 1.25;
           e.invulnerable = true;
           e.burrowTargetX = (g.bossArena?.cx ?? p.x);
           e.burrowTargetY = (g.bossArena?.cy ?? p.y);
@@ -23922,7 +24056,7 @@ function update(dt){
                 vx: Math.cos(sa) * 240,
                 vy: Math.sin(sa) * 240,
                 l: 1.5, maxL: 1.5,
-                dmg: 42,
+                dmg: 22,
                 type: 'chitin_spine',
                 col: '#22c55e'
               });
@@ -23951,21 +24085,23 @@ function update(dt){
             vx: 0, vy: 0,
             rad: 25,
             l: 1.4, maxL: 1.4,
-            dmg: 72,
+            dmg: 34,
             type: 'chitin_toxic_nova',
             col: '#22c55e'
           });
-          for(let k = 0; k < 12; k++){
+          let curPuddles = g.bossShockwaves.filter(s => s.type === 'puddle').length;
+          for(let k = 0; k < 8 && curPuddles < 14; k++){
             const pa = Math.random() * 6.283, pd = 30 + Math.random() * 90;
             g.bossShockwaves.push({
               x: e.x + Math.cos(pa) * pd,
               y: e.y + Math.sin(pa) * pd,
               vx: 0, vy: 0,
               l: 4.5, maxL: 4.5,
-              dmg: 18,
+              dmg: 10,
               type: 'puddle',
               col: '#22c55e'
             });
+            curPuddles++;
           }
         }
         continue;
@@ -23990,9 +24126,10 @@ function update(dt){
           e.actionT = 0.35;
           Sfx.play('dash');
           if(d < 120 && p.inv <= 0){
-            damagePlayer(92);
+            damagePlayer(42);
             p.x += (dx / d) * 44;
             p.y += (dy / d) * 44;
+            keepInsideBossArena(p, g.bossArena, (p.r || 16) + 6);
             g.shake = Math.max(g.shake, 0.5);
           }
           const baseS = Math.atan2(dy, dx);
@@ -24004,7 +24141,7 @@ function update(dt){
               vx: Math.cos(wa) * 265,
               vy: Math.sin(wa) * 265,
               l: 1.2, maxL: 1.2,
-              dmg: 40,
+              dmg: 20,
               type: 'slime_glob',
               col: '#22c55e'
             });
@@ -24038,12 +24175,14 @@ function update(dt){
         for(let gIdx = 0; gIdx < 5; gIdx++){
           const gAng = Math.random() * 6.283;
           const gDist = (gIdx * 32) + Math.random() * 25;
+          const gp = { x: p.x + Math.cos(gAng) * gDist, y: p.y + Math.sin(gAng) * gDist };
+          keepInsideBossArena(gp, g.bossArena, 48);
           g.bossShockwaves.push({
-            x: p.x + Math.cos(gAng) * gDist,
-            y: p.y + Math.sin(gAng) * gDist,
+            x: gp.x,
+            y: gp.y,
             vx: 0, vy: 0,
             l: 0.80 + gIdx * 0.12, maxL: 0.80 + gIdx * 0.12,
-            dmg: 58,
+            dmg: 30,
             type: 'acid_geyser',
             col: '#22c55e'
           });
@@ -24060,7 +24199,7 @@ function update(dt){
       if(e.action === 'idle' && e.burrowCd <= 0 && d > 100){
         e.action = 'burrow_dig';
         e.actionT = 0.55;
-        e.burrowCd = e.enraged ? 5.2 : 7.5;
+        e.burrowCd = e.enraged ? 8.5 : 10.5;
         e.burrowTargetX = p.x;
         e.burrowTargetY = p.y;
         Sfx.play('hit');
@@ -24070,7 +24209,7 @@ function update(dt){
         e.actionT -= dt;
         if(e.actionT <= 0){
           e.action = 'burrow_travel';
-          e.actionT = 1.1;
+          e.actionT = 0.75;
           e.invulnerable = true;
         }
         continue;
@@ -24079,7 +24218,10 @@ function update(dt){
         e.actionT -= dt;
         e.burrowTargetX += (p.x - e.burrowTargetX) * Math.min(1, 1.35 * dt);
         e.burrowTargetY += (p.y - e.burrowTargetY) * Math.min(1, 1.35 * dt);
-        keepInsideBossArena({ x: e.burrowTargetX, y: e.burrowTargetY }, g.bossArena, 40);
+        const bt = { x: e.burrowTargetX, y: e.burrowTargetY };
+        keepInsideBossArena(bt, g.bossArena, 40);
+        e.burrowTargetX = bt.x;
+        e.burrowTargetY = bt.y;
         const tx = e.burrowTargetX, ty = e.burrowTargetY;
         const bdx = tx - e.x, bdy = ty - e.y, bd = Math.hypot(bdx, bdy) || 1;
         const bSpd = 285;
@@ -24105,21 +24247,23 @@ function update(dt){
           g.shake = Math.max(g.shake, 0.7);
           const erDist = Math.hypot(p.x - e.x, p.y - e.y);
           if(erDist < 105 && p.inv <= 0){
-            damagePlayer(82);
+            damagePlayer(38);
             p.slowT = 1.5;
           }
-          for(let k = 0; k < 10; k++){
-            const sa = (k / 10) * 6.283;
+          let curPuddles = g.bossShockwaves.filter(s => s.type === 'puddle').length;
+          for(let k = 0; k < 8 && curPuddles < 14; k++){
+            const sa = (k / 8) * 6.283;
             g.bossShockwaves.push({
               x: e.x + Math.cos(sa) * 30,
               y: e.y + Math.sin(sa) * 30,
               vx: Math.cos(sa) * 85,
               vy: Math.sin(sa) * 85,
               l: 3.5, maxL: 3.5,
-              dmg: 18,
+              dmg: 10,
               type: 'puddle',
               col: '#22c55e'
             });
+            curPuddles++;
           }
         }
         continue;
@@ -24146,7 +24290,7 @@ function update(dt){
             vx: Math.cos(nAng) * nSpd,
             vy: Math.sin(nAng) * nSpd,
             l: 1.6, maxL: 1.6,
-            dmg: 38,
+            dmg: 20,
             type: 'slime_glob',
             col: '#84cc16'
           });
@@ -24160,7 +24304,7 @@ function update(dt){
       }
 
       if(e.action === 'idle'){
-        const spd = (e.enraged ? 118 : 96) * g.lvlConfig.multSpeed;
+        const spd = (e.enraged ? 106 : 92) * g.lvlConfig.multSpeed;
         e.x += (dx / d) * spd * dt;
         e.y += (dy / d) * spd * dt;
         keepInsideBossArena(e, g.bossArena, (e.c?.r || 52) + 10);
@@ -24247,7 +24391,7 @@ function update(dt){
             x: zx, y: zy, vx: 0, vy: 0,
             l: 1.25, maxL: 1.25,
             rad: 76, hitR: 76,
-            dmg: 46,
+            dmg: 32,
             type: 'blood_eclipse_zone',
             col: '#dc2626'
           });
@@ -24269,7 +24413,7 @@ function update(dt){
               vx: Math.cos(sa) * 285,
               vy: Math.sin(sa) * 285,
               l: 1.9, maxL: 1.9,
-              dmg: 30,
+              dmg: 20,
               type: 'blood_eclipse_orb',
               col: '#ef4444'
             });
@@ -24311,7 +24455,7 @@ function update(dt){
               vx: Math.cos(sa) * 260,
               vy: Math.sin(sa) * 260,
               l: 1.8, maxL: 1.8,
-              dmg: 28,
+              dmg: 20,
               type: 'apocalypse_orb',
               col: '#ef4444'
             });
@@ -24336,7 +24480,7 @@ function update(dt){
           const nearX = bx1 + proj * lDx, nearY = by1 + proj * lDy;
           const distToBeam = Math.hypot(p.x - nearX, p.y - nearY);
           if(distToBeam < p.r + 14 && p.inv <= 0){
-            damagePlayer(38);
+            damagePlayer(24);
             p.slowT = 0.5;
             g.shake = Math.max(g.shake, 0.35);
           }
@@ -24363,7 +24507,7 @@ function update(dt){
             vy: Math.sin(a) * bSpd,
             originX: e.x, originY: e.y,
             l: 2.35, maxL: 2.35,
-            dmg: 38,
+            dmg: 24,
             flightT: 0,
             type: 'bone_boomerang',
             col: '#ef4444'
@@ -24392,13 +24536,15 @@ function update(dt){
           for(let s = 1; s <= steps; s++){
             const dist = s * 52;
             const delay = 0.58 + s * 0.14;
+            const sp = { x: e.x + Math.cos(ang) * dist, y: e.y + Math.sin(ang) * dist };
+            keepInsideBossArena(sp, g.bossArena, 45);
             g.bossShockwaves.push({
-              x: e.x + Math.cos(ang) * dist,
-              y: e.y + Math.sin(ang) * dist,
+              x: sp.x,
+              y: sp.y,
               vx: 0, vy: 0,
               l: delay, maxL: delay,
               rad: 45, hitR: 45,
-              dmg: 42,
+              dmg: 28,
               type: 'abyssal_spike_eruption',
               col: '#ef4444'
             });
@@ -24428,9 +24574,10 @@ function update(dt){
           Sfx.play('dash');
           g.shake = Math.max(g.shake, 0.6);
           if(d <= 140 && p.inv <= 0){
-            damagePlayer(Math.round(85));
+            damagePlayer(36);
             p.x += Math.cos(Math.atan2(dy, dx)) * 30;
             p.y += Math.sin(Math.atan2(dy, dx)) * 30;
+            keepInsideBossArena(p, g.bossArena, (p.r || 16) + 6);
           }
           const sAng = Math.atan2(dy, dx);
           const slashAngles = e.phase3 ? [sAng - 0.35, sAng, sAng + 0.35] : [sAng];
@@ -24441,7 +24588,7 @@ function update(dt){
               vx: Math.cos(sa) * 320,
               vy: Math.sin(sa) * 320,
               l: 0.85, maxL: 0.85,
-              dmg: 35,
+              dmg: 22,
               type: 'abomination',
               col: '#ef4444'
             });
@@ -24497,7 +24644,7 @@ function update(dt){
         const nearX = e.x + u * ldx, nearY = e.y + u * ldy;
         const hitDist = Math.hypot(p.x - nearX, p.y - nearY);
         if(hitDist < 30 && p.inv <= 0){
-          damagePlayer(18);
+          damagePlayer(14);
         }
         if(e.actionT <= 0) e.action = 'idle';
         continue;
@@ -24522,12 +24669,12 @@ function update(dt){
             x: e.x, y: e.y,
             vx: 0, vy: 0,
             l: 0.9, maxL: 0.9,
-            dmg: 28,
+            dmg: 20,
             type: 'sonic_howl',
             col: '#ef4444'
           });
           if(d < 160 && p.inv <= 0){
-            damagePlayer(30);
+            damagePlayer(22);
             p.slowT = 2.0;
           }
         }
@@ -24578,12 +24725,15 @@ function update(dt){
         Sfx.play('dash');
         const curSpiders = g.enemies.filter(en => !en.dead && (en.c === CONFIG.enemies.spiderling || en.isMinion)).length;
         const spawnCount = Math.min(2, Math.max(0, 10 - curSpiders));
+        const hatchW = g.wave || 1;
+        const hatchWaveScale = hatchW <= 10 ? (1 + (hatchW - 1) * 0.035) : (hatchW <= 20 ? (1.315 + (hatchW - 10) * 0.075) : (2.065 + (hatchW - 20) * 0.115));
+        const hatchSpiderHp = Math.round(CONFIG.enemies.spiderling.hp * ((g.lvlConfig && g.lvlConfig.multHp) || 1) * hatchWaveScale * 0.75);
         for(let si = 0; si < spawnCount; si++){
           const ang = Math.random() * 6.283, dst = 12 + Math.random() * 16;
           g.enemies.push({
             x: e.x + Math.cos(ang) * dst,
             y: e.y + Math.sin(ang) * dst,
-            hp: CONFIG.enemies.spiderling.hp * (1 + ((g.wave || 1) - 1) * 0.025),
+            hp: hatchSpiderHp,
             c: CONFIG.enemies.spiderling,
             isMinion: true,
             oh: 0, fl: 0, dead: false, frame: 0, animT: Math.random() * 8, facing: Math.random() > 0.5 ? 1 : -1
@@ -24593,15 +24743,15 @@ function update(dt){
         continue;
       }
     }
-    // Поведение стрелков дальнего боя (Пустотная мышь, Каменная гаргулья, Грибной мутант, Био-Плеватель, Хим-Санитар)
+    // Поведение стрелков дальнего боя (стреляют только в пределах экрана и с телеграфом замаха!)
     if((e.isRanged || e.c?.ranged || e.c === CONFIG.enemies.bat || e.c === CONFIG.enemies.gargoyle || e.c === CONFIG.enemies.mushroom) && !e.isBoss){
       e.shootCd = (e.shootCd !== undefined ? e.shootCd : (1.2 + Math.random() * 2)) - dt;
       const isGargoyle = (e.c === CONFIG.enemies.gargoyle);
       const isMushroom = (e.c === CONFIG.enemies.mushroom);
       const isSpitter = (e.c === CONFIG.enemies.bunker_bio_spitter);
       const isHazmat = (e.c === CONFIG.enemies.bunker_hazmat_brute);
-      const fireDist = isGargoyle ? 260 : (isSpitter ? 245 : (isMushroom || isHazmat ? 230 : 240));
-      if((isSpitter || isHazmat) && e.atkPrep > 0){
+      const fireDist = isGargoyle ? 245 : (isSpitter ? 230 : (isMushroom || isHazmat ? 220 : 225));
+      if(e.atkPrep > 0){
         e.atkPrep -= dt;
         if(e.atkPrep <= 0){
           const shotAng = Math.atan2(dy, dx);
@@ -24611,93 +24761,54 @@ function update(dt){
             for(const a of angles){
               pushBunkerProjectile(g, e, a, 'spitter_glob', { speed: 210, life: 1.55, dmg: dPer, col: '#c084fc', sparkCol: '#84cc16', hitR: 15, sparks: 4 });
             }
-          } else {
+          } else if(isHazmat){
             const angles = (g.wave || 1) >= 24 ? [shotAng - 0.16, shotAng, shotAng + 0.16] : [shotAng - 0.12, shotAng + 0.12];
             const dPer = Math.round((e.c.damage || 15) * 0.78);
             for(const a of angles){
               pushBunkerProjectile(g, e, a, 'hazmat_acid', { speed: 220, life: 1.45, dmg: dPer, col: '#eab308', sparkCol: '#a3e635', hitR: 14, sparks: 3 });
             }
+          } else if(isGargoyle){
+            // Каменная гаргулья запускает вращающийся каменный валун
+            g.bossShockwaves.push({
+              x: e.x, y: e.y,
+              vx: Math.cos(shotAng) * 225, vy: Math.sin(shotAng) * 225,
+              angle: shotAng, l: 1.6, maxL: 1.6,
+              dmg: e.c.damage || 13, col: '#94a3b8', type: 'gargoyle_rock'
+            });
+            Sfx.play('hit');
+            for(let k = 0; k < 6; k++){
+              g.fx.push({ x: e.x, y: e.y, vx: Math.cos(shotAng + (Math.random() - 0.5)) * 70, vy: Math.sin(shotAng + (Math.random() - 0.5)) * 70, col: '#94a3b8', r: 2.2, l: 0.28 });
+            }
+          } else if(isMushroom){
+            // Грибной мутант выпускает ядовитую спору
+            g.bossShockwaves.push({
+              x: e.x, y: e.y,
+              vx: Math.cos(shotAng) * 190, vy: Math.sin(shotAng) * 190,
+              angle: shotAng, l: 1.6, maxL: 1.6,
+              dmg: e.c.damage || 8, col: '#84cc16', type: 'mushroom_spore'
+            });
+            Sfx.play('dash');
+            for(let k = 0; k < 6; k++){
+              g.fx.push({ x: e.x, y: e.y, vx: Math.cos(shotAng + (Math.random() - 0.5)) * 65, vy: Math.sin(shotAng + (Math.random() - 0.5)) * 65, col: '#84cc16', r: 2.2, l: 0.28 });
+            }
+          } else {
+            // Пустотная летучая мышь запускает звуковую волну
+            g.bossShockwaves.push({
+              x: e.x, y: e.y,
+              vx: Math.cos(shotAng) * 210, vy: Math.sin(shotAng) * 210,
+              angle: shotAng, l: 1.5, maxL: 1.5,
+              dmg: e.c.damage || 5, col: '#c084fc', type: 'bat_sonic'
+            });
+            Sfx.play('dash');
+            for(let k = 0; k < 4; k++){
+              g.fx.push({ x: e.x, y: e.y, vx: Math.cos(shotAng + (Math.random() - 0.5)) * 60, vy: Math.sin(shotAng + (Math.random() - 0.5)) * 60, col: '#a78bfa', r: 2, l: 0.25 });
+            }
           }
         }
-      } else if(d <= fireDist && e.shootCd <= 0){
-        e.shootCd = isGargoyle ? (2.8 + Math.random() * 1.0) : (isHazmat ? (2.8 + Math.random() * 0.9) : (isSpitter ? (2.6 + Math.random() * 0.9) : (isMushroom ? (2.4 + Math.random() * 0.9) : (2.5 + Math.random() * 1.0))));
-        const shotAng = Math.atan2(dy, dx);
-        if(isSpitter || isHazmat){
-          e.atkPrep = 0.25;
-          e.atkPrepMax = 0.25;
-        } else if(isGargoyle){
-          // Каменная гаргулья запускает вращающийся каменный валун
-          g.bossShockwaves.push({
-            x: e.x,
-            y: e.y,
-            vx: Math.cos(shotAng) * 225,
-            vy: Math.sin(shotAng) * 225,
-            angle: shotAng,
-            l: 1.6,
-            maxL: 1.6,
-            dmg: e.c.damage || 13,
-            col: '#94a3b8',
-            type: 'gargoyle_rock'
-          });
-          Sfx.play('hit');
-          for(let k = 0; k < 6; k++){
-            g.fx.push({
-              x: e.x, y: e.y,
-              vx: Math.cos(shotAng + (Math.random() - 0.5)) * 70,
-              vy: Math.sin(shotAng + (Math.random() - 0.5)) * 70,
-              col: '#94a3b8',
-              r: 2.2, l: 0.28
-            });
-          }
-        } else if(isMushroom){
-          // Грибной мутант выпускает ядовитую спору
-          g.bossShockwaves.push({
-            x: e.x,
-            y: e.y,
-            vx: Math.cos(shotAng) * 190,
-            vy: Math.sin(shotAng) * 190,
-            angle: shotAng,
-            l: 1.6,
-            maxL: 1.6,
-            dmg: e.c.damage || 8,
-            col: '#84cc16',
-            type: 'mushroom_spore'
-          });
-          Sfx.play('dash');
-          for(let k = 0; k < 6; k++){
-            g.fx.push({
-              x: e.x, y: e.y,
-              vx: Math.cos(shotAng + (Math.random() - 0.5)) * 65,
-              vy: Math.sin(shotAng + (Math.random() - 0.5)) * 65,
-              col: '#84cc16',
-              r: 2.2, l: 0.28
-            });
-          }
-        } else {
-          // Пустотная летучая мышь запускает звуковую волну
-          g.bossShockwaves.push({
-            x: e.x,
-            y: e.y,
-            vx: Math.cos(shotAng) * 210,
-            vy: Math.sin(shotAng) * 210,
-            angle: shotAng,
-            l: 1.5,
-            maxL: 1.5,
-            dmg: e.c.damage || 5,
-            col: '#c084fc',
-            type: 'bat_sonic'
-          });
-          Sfx.play('dash');
-          for(let k = 0; k < 4; k++){
-            g.fx.push({
-              x: e.x, y: e.y,
-              vx: Math.cos(shotAng + (Math.random() - 0.5)) * 60,
-              vy: Math.sin(shotAng + (Math.random() - 0.5)) * 60,
-              col: '#a78bfa',
-              r: 2, l: 0.25
-            });
-          }
-        }
+      } else if(d <= fireDist && e.shootCd <= 0 && isEnemyOnScreen(e, -8)){
+        e.shootCd = isGargoyle ? (2.9 + Math.random() * 1.0) : (isHazmat ? (3.1 + Math.random() * 1.0) : (isSpitter ? (2.9 + Math.random() * 1.0) : (isMushroom ? (2.6 + Math.random() * 0.9) : (2.7 + Math.random() * 1.0))));
+        e.atkPrep = 0.26;
+        e.atkPrepMax = 0.26;
       }
       const preferDist = isGargoyle ? 180 : (isSpitter ? 168 : (isHazmat ? 158 : (isMushroom ? 150 : 145)));
       let moveVx = dx / d, moveVy = dy / d;
@@ -24708,7 +24819,7 @@ function update(dt){
         moveVx = -dy / d * 0.65;
         moveVy = dx / d * 0.65;
       }
-      const slowK = (e.slowT > 0) ? Math.max(0.1, 1 - (e.slow || 0.4)) : 1;
+      const slowK = ((e.slowT > 0) ? Math.max(0.1, 1 - (e.slow || 0.4)) : 1) * (e.atkPrep > 0 ? 0.25 : 1);
       if(e.slowT > 0) e.slowT -= dt;
       e.x += moveVx * e.c.speed * g.lvlConfig.multSpeed * slowK * dt;
       e.y += moveVy * e.c.speed * g.lvlConfig.multSpeed * slowK * dt;
@@ -24732,14 +24843,15 @@ function update(dt){
     const slowK = (e.slowT > 0) ? Math.max(0.1, 1 - (e.slow || 0.4)) : 1;
     if(e.slowT > 0) e.slowT -= dt;
 
-    // Поведение Пустошного гуля: быстрый хищник с яростным наскоком (Lunge Leap)
+    // Поведение Пустошного гуля: быстрый хищник с телеграфируемым рывком по фиксированной линии
     let curEnemySpeed = e.c.speed;
     let moveVx = dx / d, moveVy = dy / d;
     if(e.c === CONFIG.enemies.ghoul){
       e.lungeCd = (e.lungeCd !== undefined ? e.lungeCd : (1.5 + Math.random())) - dt;
       if(e.lungeT > 0){
         e.lungeT -= dt;
-        curEnemySpeed = e.c.speed * 2.5; // Свирепый бросок вперед
+        curEnemySpeed = e.c.speed * 1.95; // Бросок по зафиксированному вектору (можно уйти вбок!)
+        moveVx = e.rushVx ?? moveVx; moveVy = e.rushVy ?? moveVy;
         if(Math.random() < 0.6){
           g.fx.push({
             x: e.x + (Math.random() - 0.5) * 12,
@@ -24750,24 +24862,25 @@ function update(dt){
             l: 0.18
           });
         }
-      } else if(d >= 70 && d <= 170 && e.lungeCd <= 0){
-        e.lungePrep = 0.20;
-        e.lungeCd = 3.2 + Math.random() * 1.5;
-      }
-      if(e.lungePrep > 0){
+      } else if(e.lungePrep > 0){
         e.lungePrep -= dt;
         curEnemySpeed = 0;
         if(e.lungePrep <= 0){
-          e.lungeT = 0.38;
+          e.lungeT = 0.36;
           Sfx.play('dash');
         }
+      } else if(d >= 70 && d <= 170 && e.lungeCd <= 0 && isEnemyOnScreen(e, -6)){
+        e.rushVx = dx / d; e.rushVy = dy / d;
+        e.lungePrep = 0.32; e.lungePrepMax = 0.32;
+        e.lungeCd = 3.4 + Math.random() * 1.5;
       }
     } else if(e.c === CONFIG.enemies.mimic){
-      // Поведение Мимика-сундука: свирепый наскок с зубастым кусем (Bite Rush)
+      // Поведение Мимика-сундука: телеграфируемый рывок с зубастым укусом
       e.biteCd = (e.biteCd !== undefined ? e.biteCd : (1.2 + Math.random())) - dt;
       if(e.biteT > 0){
         e.biteT -= dt;
-        curEnemySpeed = e.c.speed * 2.4; // Стремительный рывок челюстями
+        curEnemySpeed = e.c.speed * 2.0;
+        moveVx = e.rushVx ?? moveVx; moveVy = e.rushVy ?? moveVy;
         if(Math.random() < 0.5){
           g.fx.push({
             x: e.x + (Math.random() - 0.5) * 14,
@@ -24778,17 +24891,13 @@ function update(dt){
             l: 0.20
           });
         }
-      } else if(d >= 65 && d <= 155 && e.biteCd <= 0){
-        e.bitePrep = 0.22;
-        e.biteCd = 3.0 + Math.random() * 1.5;
-      }
-      if(e.bitePrep > 0){
+      } else if(e.bitePrep > 0){
         e.bitePrep -= dt;
         curEnemySpeed = 0;
         if(e.bitePrep <= 0){
           e.biteT = 0.35;
           Sfx.play('dash');
-          const biteAng = Math.atan2(dy, dx);
+          const biteAng = Math.atan2(e.rushVy || dy, e.rushVx || dx);
           g.fx.push({
             type: 'mimicBite',
             x: e.x + Math.cos(biteAng) * 20,
@@ -24798,10 +24907,13 @@ function update(dt){
             maxL: 0.35
           });
         }
+      } else if(d >= 65 && d <= 155 && e.biteCd <= 0 && isEnemyOnScreen(e, -6)){
+        e.rushVx = dx / d; e.rushVy = dy / d;
+        e.bitePrep = 0.32; e.bitePrepMax = 0.32;
+        e.biteCd = 3.2 + Math.random() * 1.5;
       }
     } else if(e.c && e.c.sprite && String(e.c.sprite).includes('bunker_')){
-      const waveDmgMultB = ((g.lvlConfig && g.lvlConfig.id === 2) ? 1.15 : 1.0) * (1 + Math.max(0, (g.wave || 1) - 8) * 0.02);
-      const bk = updateBunkerSpecialBehavior(g, e, p, dx, dy, d, dt, waveDmgMultB);
+      const bk = updateBunkerSpecialBehavior(g, e, p, dx, dy, d, dt, 1);
       curEnemySpeed = bk.curEnemySpeed;
       moveVx = bk.moveVx;
       moveVy = bk.moveVy;
@@ -24938,8 +25050,7 @@ function update(dt){
         e.y=p.y-ny*minContact;
       }
       if(p.inv<=0){
-        const waveDmgMult=((g.lvlConfig&&g.lvlConfig.id===2)?1.15:1.0)*(1+Math.max(0,(g.wave||1)-8)*0.02);
-        const dmgVal=Math.max(1,Math.round(e.c.damage*waveDmgMult));
+        const dmgVal=Math.max(1,Math.round(e.c.damage));
         damagePlayer(dmgVal);
         // Эффект отравления при укусе паука (Паучонок, Пещерный паук, Паучиха-праматерь)
         const isSpider = (e.c === CONFIG.enemies.spider || e.c === CONFIG.enemies.spiderling || e.bossId === 'broodmother' || e.c === CONFIG.enemies.broodmother);
@@ -25072,10 +25183,11 @@ function update(dt){
       if(sw.type === 'singularity'){
         const sDist = Math.hypot(p.x - sw.x, p.y - sw.y);
         if(sDist < 130 && sDist > 8){
-          const pullPwr = (130 - sDist) * 1.6;
+          const pullPwr = (130 - sDist) * 1.15;
           const pullA = Math.atan2(sw.y - p.y, sw.x - p.x);
           p.x += Math.cos(pullA) * pullPwr * dt;
           p.y += Math.sin(pullA) * pullPwr * dt;
+          keepInsideBossArena(p, g.bossArena, (p.r || 16) + 6);
           if(Math.random() < 0.4){
             g.fx.push({
               x: p.x + (Math.random() - 0.5) * 20,
@@ -25125,7 +25237,7 @@ function update(dt){
           let diffA = mAng - curAng;
           while(diffA > Math.PI) diffA -= Math.PI * 2;
           while(diffA < -Math.PI) diffA += Math.PI * 2;
-          const turn = Math.max(-3.2 * dt, Math.min(3.2 * dt, diffA));
+          const turn = Math.max(-2.4 * dt, Math.min(2.4 * dt, diffA));
           const newAng = curAng + turn;
           const spd = Math.hypot(sw.vx, sw.vy);
           sw.vx = Math.cos(newAng) * spd;
@@ -25156,10 +25268,11 @@ function update(dt){
         }
         const sDist = Math.hypot(p.x - sw.x, p.y - sw.y);
         if(sDist < 145 && sDist > 8){
-          const pullPwr = (145 - sDist) * 1.85;
+          const pullPwr = (145 - sDist) * 1.15;
           const pullA = Math.atan2(sw.y - p.y, sw.x - p.x);
           p.x += Math.cos(pullA) * pullPwr * dt;
           p.y += Math.sin(pullA) * pullPwr * dt;
+          keepInsideBossArena(p, g.bossArena, (p.r || 16) + 6);
           if(Math.random() < 0.45){
             g.fx.push({
               x: p.x + (Math.random() - 0.5) * 20,
@@ -25212,7 +25325,7 @@ function update(dt){
         let diffA = nAng - curAng;
         while(diffA > Math.PI) diffA -= Math.PI * 2;
         while(diffA < -Math.PI) diffA += Math.PI * 2;
-        const turn = Math.max(-4.2 * dt, Math.min(4.2 * dt, diffA));
+        const turn = Math.max(-1.9 * dt, Math.min(1.9 * dt, diffA));
         const newAng = curAng + turn;
         const spd = Math.hypot(sw.vx, sw.vy);
         sw.vx = Math.cos(newAng) * spd;
@@ -25247,6 +25360,10 @@ function update(dt){
         // ЧИСТЫЕ НАЗЕМНЫЕ ТЕЛЕГРАФЫ ОБРАТНОГО ОТСЧЕТА: взрываются строго при sw.l <= 0
         if(sw.type === 'carpet_bomb' || sw.type === 'acid_geyser' || sw.type === 'abyssal_spike_eruption' || sw.type === 'blood_eclipse_zone' || sw.type === 'mutagen_bomb'){
           // Пропускаем нанесение урона в фазе предупреждения!
+        } else if(sw.type === 'bunker_puddle'){
+          p.poisonT = Math.max(p.poisonT || 0, 1.8);
+          p.poisonDps = Math.max(p.poisonDps || 0, 2.2);
+          p.poisonSlow = Math.min(p.poisonSlow || 1, 0.88);
         } else if(sw.type === 'puddle'){
           p.poisonT = Math.max(p.poisonT || 0, 2.2);
           p.poisonDps = Math.max(p.poisonDps || 0, Math.max(4, (sw.dmg || 8) * 0.45));
@@ -25256,20 +25373,25 @@ function update(dt){
             sw.hitHeroCd = 0.55;
           }
         } else if(sw.type === 'abom_puddle'){
-          p.poisonT = Math.max(p.poisonT || 0, 3.2);
-          p.poisonDps = Math.max(p.poisonDps || 0, 6.0);
-          p.poisonSlow = Math.min(p.poisonSlow || 1, 0.70);
-          if((sw.dmg || 0) >= 8 && (!sw.hitHeroCd || sw.hitHeroCd <= 0)){
+          p.poisonT = Math.max(p.poisonT || 0, 2.6);
+          p.poisonDps = Math.max(p.poisonDps || 0, 4.0);
+          p.poisonSlow = Math.min(p.poisonSlow || 1, 0.78);
+          if((sw.dmg || 0) >= 12 && (!sw.hitHeroCd || sw.hitHeroCd <= 0)){
             damagePlayer(Math.max(4, Math.round(sw.dmg)));
             sw.hitHeroCd = 0.55;
           }
-          showGameToast('☣️ ' + T('DRENCHED IN ABYSSAL INK!', 'ОБЛИТ ЧЕРНИЛАМИ БЕЗДНЫ!'), '#a855f7', 1.6);
+          if(!sw.toastCd || sw.toastCd <= 0){
+            showGameToast('☣️ ' + T('DRENCHED IN ABYSSAL INK!', 'ОБЛИТ ЧЕРНИЛАМИ БЕЗДНЫ!'), '#a855f7', 1.6);
+            sw.toastCd = 2.0;
+          }
         } else if(sw.type === 'abom_glob'){
           p.poisonT = Math.max(p.poisonT || 0, 3.0);
           p.poisonDps = Math.max(p.poisonDps || 0, 4.0);
           p.poisonSlow = Math.min(p.poisonSlow || 1, 0.70);
           showGameToast('☣️ ' + T('ABYSSAL INK VOLLEY HIT!', 'УДАР ЧЕРНИЛ БЕЗДНЫ!'), '#a855f7', 1.6);
-          g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 4.5, maxL: 4.5, dmg: 8, type: 'abom_puddle', col: '#a855f7' });
+          if(g.bossShockwaves.filter(s => s.type === 'abom_puddle').length < 10){
+            g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 4.5, maxL: 4.5, dmg: 8, type: 'abom_puddle', col: '#a855f7' });
+          }
           for(let k = 0; k < 12; k++){
             g.fx.push({ x: p.x, y: p.y, vx: (Math.random() - 0.5) * 80, vy: -15 - Math.random() * 25, col: '#a855f7', r: 2.5, l: 0.35 });
           }
@@ -25356,31 +25478,14 @@ function update(dt){
           damagePlayer(dmg);
           g.bossShockwaves.splice(i, 1);
           continue;
-        } else if(sw.type === 'spitter_glob' || sw.type === 'hazmat_acid'){
-          const isAcid = (sw.type === 'hazmat_acid');
-          p.poisonT = Math.max(p.poisonT || 0, 1.5);
-          p.poisonDps = Math.max(p.poisonDps || 0, isAcid ? 2.5 : 2.0);
-          p.poisonSlow = Math.min(p.poisonSlow || 1, 0.88);
-          for(let k = 0; k < 10; k++){
-            g.fx.push({
-              x: p.x, y: p.y,
-              vx: (Math.random() - 0.5) * 65,
-              vy: -15 - Math.random() * 25,
-              col: isAcid ? (Math.random() > 0.4 ? '#a3e635' : '#eab308') : (Math.random() > 0.4 ? '#c084fc' : '#84cc16'),
-              l: 0.35
-            });
-          }
-          Sfx.play('hit');
-          const dmg = Math.max(1, Math.round((sw.dmg || 14)));
-          damagePlayer(dmg);
-          g.bossShockwaves.splice(i, 1);
-          continue;
         } else if(sw.type === 'slime_glob'){
           p.poisonT = Math.max(p.poisonT || 0, 2.0);
           p.poisonDps = Math.max(p.poisonDps || 0, 2.5);
           p.poisonSlow = Math.min(p.poisonSlow || 1, 0.85);
           showGameToast('☣️ ' + T('SPLASHED WITH ACID!', 'ОБЛИТ ЕДКОЙ СЛИЗЬЮ!'), '#22c55e', 1.6);
-          g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 4.5, maxL: 4.5, dmg: 4, type: 'puddle', col: '#22c55e' });
+          if(g.bossShockwaves.filter(s => s.type === 'puddle').length < 14){
+            g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 4.5, maxL: 4.5, dmg: 4, type: 'puddle', col: '#22c55e' });
+          }
           for(let k = 0; k < 12; k++){
             g.fx.push({ x: p.x, y: p.y, vx: (Math.random() - 0.5) * 80, vy: -15 - Math.random() * 25, col: '#22c55e', r: 2.5, l: 0.35 });
           }
@@ -25428,13 +25533,16 @@ function update(dt){
           }
           continue;
         } else if(sw.type === 'twin_singularity'){
-          const dmg = Math.max(1, (sw.dmg || 16));
-          damagePlayer(dmg);
-          p.slowT = Math.max(p.slowT || 0, 1.0);
+          if(!sw.hitHeroCd || sw.hitHeroCd <= 0){
+            const dmg = Math.max(1, (sw.dmg || 22));
+            damagePlayer(dmg);
+            p.slowT = Math.max(p.slowT || 0, 0.8);
+            sw.hitHeroCd = 0.65;
+          }
           continue;
         } else if(sw.type === 'bone_boomerang'){
           if(!sw.hitHeroCd || sw.hitHeroCd <= 0){
-            const dmg = Math.max(1, Math.round((sw.dmg || 38) ));
+            const dmg = Math.max(1, Math.round((sw.dmg || 24) ));
             damagePlayer(dmg);
             g.shake = Math.max(g.shake, 0.5);
             Sfx.play('hit');
@@ -25442,19 +25550,21 @@ function update(dt){
           }
           continue;
         } else if(sw.type === 'napalm_burst'){
-          const dmg = Math.max(1, Math.round((sw.dmg || 24) ));
+          const dmg = Math.max(1, Math.round((sw.dmg || 20) ));
           damagePlayer(dmg);
           p.poisonT = Math.max(p.poisonT || 0, 2.2);
-          p.poisonDps = Math.max(p.poisonDps || 0, 6.0);
-          g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 2.5, maxL: 2.5, dmg: 18, type: 'napalm_trail', col: '#f97316' });
+          p.poisonDps = Math.max(p.poisonDps || 0, 5.0);
+          if(g.bossShockwaves.filter(s => s.type === 'napalm_trail').length < 16){
+            g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 2.5, maxL: 2.5, dmg: 10, type: 'napalm_trail', col: '#f97316' });
+          }
           Sfx.play('hit');
           g.bossShockwaves.splice(i, 1);
           continue;
         } else if(sw.type === 'napalm_trail'){
           p.poisonT = Math.max(p.poisonT || 0, 1.8);
-          p.poisonDps = Math.max(p.poisonDps || 0, 5.0);
+          p.poisonDps = Math.max(p.poisonDps || 0, 4.5);
           if(!sw.hitHeroCd || sw.hitHeroCd <= 0){
-            damagePlayer(Math.max(8, Math.round(sw.dmg || 18)));
+            damagePlayer(Math.max(6, Math.round(sw.dmg || 10)));
             sw.hitHeroCd = 0.55;
           }
           continue;
@@ -25487,7 +25597,6 @@ function update(dt){
           continue;
         } else if(sw.type === 'drone_bolt'){
           damagePlayer(Math.max(1, Math.round(sw.dmg || 9)));
-          p.slowT = Math.max(p.slowT || 0, 0.45);
           for(let k = 0; k < 6; k++){
             g.fx.push({ x: p.x, y: p.y, vx: (Math.random() - 0.5) * 95, vy: -15 - Math.random() * 35, col: k % 2 ? '#e0f2fe' : '#38bdf8', r: 2.1, l: 0.26 });
           }
@@ -25504,7 +25613,7 @@ function update(dt){
           continue;
         } else if(sw.type === 'brain_psi'){
           damagePlayer(Math.max(1, Math.round(sw.dmg || 14)));
-          p.slowT = Math.max(p.slowT || 0, 0.65);
+          p.slowT = Math.max(p.slowT || 0, 0.45);
           for(let k = 0; k < 7; k++){
             g.fx.push({ x: p.x, y: p.y, vx: (Math.random() - 0.5) * 85, vy: -15 - Math.random() * 30, col: k % 2 ? '#f472b6' : '#ec4899', r: 2.3, l: 0.30 });
           }
@@ -25516,7 +25625,7 @@ function update(dt){
           p.poisonT = Math.max(p.poisonT || 0, 1.6);
           p.poisonDps = Math.max(p.poisonDps || 0, 2.2);
           p.poisonSlow = Math.min(p.poisonSlow || 1, 0.88);
-          spawnBunkerAcidPuddle(g, sw.x, sw.y, 'abom_puddle', 3, 1.8);
+          spawnBunkerAcidPuddle(g, sw.x, sw.y, 'bunker_puddle', 3, 1.8, '#a855f7');
           Sfx.play('hit');
           g.bossShockwaves.splice(i, 1);
           continue;
@@ -25545,10 +25654,12 @@ function update(dt){
           g.shake = Math.max(g.shake, 0.65);
           const cDist = Math.hypot(p.x - sw.x, p.y - sw.y);
           if(cDist < 64 && p.inv <= 0){
-            damagePlayer(sw.dmg || 56);
-            p.poisonT = 2.4; p.poisonDps = 6.0;
+            damagePlayer(sw.dmg || 34);
+            p.poisonT = 2.4; p.poisonDps = 5.0;
           }
-          g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 3.5, maxL: 3.5, dmg: 18, type: 'napalm_trail', col: '#ef4444' });
+          if(g.bossShockwaves.filter(s => s.type === 'napalm_trail').length < 16){
+            g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 3.5, maxL: 3.5, dmg: 10, type: 'napalm_trail', col: '#ef4444' });
+          }
           if(g.fx.length < 150){
             for(let k = 0; k < 10; k++){
               const ca = Math.random() * 6.283, cspd = 50 + Math.random() * 110;
@@ -25560,10 +25671,12 @@ function update(dt){
           g.shake = Math.max(g.shake, 0.45);
           const gDist = Math.hypot(p.x - sw.x, p.y - sw.y);
           if(gDist < 64 && p.inv <= 0){
-            damagePlayer(sw.dmg || 58);
-            p.slowT = 1.6; p.poisonT = 2.6; p.poisonDps = 5.5;
+            damagePlayer(sw.dmg || 30);
+            p.slowT = 1.6; p.poisonT = 2.6; p.poisonDps = 5.0;
           }
-          g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 4.5, maxL: 4.5, dmg: 16, type: 'puddle', col: '#22c55e' });
+          if(g.bossShockwaves.filter(s => s.type === 'puddle').length < 14){
+            g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 4.5, maxL: 4.5, dmg: 10, type: 'puddle', col: '#22c55e' });
+          }
           for(let k = 0; k < 12; k++){
             g.fx.push({ x: sw.x, y: sw.y, vx: (Math.random() - 0.5) * 80, vy: -30 - Math.random() * 40, col: '#22c55e', r: 2.8, l: 0.4 });
           }
@@ -25572,7 +25685,7 @@ function update(dt){
           g.shake = Math.max(g.shake, 0.5);
           const spDist = Math.hypot(p.x - sw.x, p.y - sw.y);
           if(spDist < (sw.rad || 45) && p.inv <= 0){
-            damagePlayer(sw.dmg || 42);
+            damagePlayer(sw.dmg || 28);
           }
           g.fx.push({ type: 'blast', x: sw.x, y: sw.y, r: sw.rad || 45, l: 0.34, maxL: 0.34, col: '#ef4444' });
           for(let k = 0; k < 6; k++){
@@ -25583,7 +25696,7 @@ function update(dt){
           g.shake = Math.max(g.shake, 0.65);
           const beR = sw.rad || 76;
           if(Math.hypot(p.x - sw.x, p.y - sw.y) < beR && p.inv <= 0){
-            damagePlayer(sw.dmg || 46);
+            damagePlayer(sw.dmg || 32);
             p.slowT = Math.max(p.slowT || 0, 1.0);
           }
           g.fx.push({ type: 'blast', x: sw.x, y: sw.y, r: beR, l: 0.42, maxL: 0.42, col: '#dc2626' });
@@ -25593,21 +25706,29 @@ function update(dt){
           g.shake = Math.max(g.shake, 0.42);
           const mbR = sw.rad || 62;
           if(Math.hypot(p.x - sw.x, p.y - sw.y) < mbR && p.inv <= 0){
-            damagePlayer(sw.dmg || 32);
+            damagePlayer(sw.dmg || 26);
             p.poisonT = Math.max(p.poisonT || 0, 2.0);
             p.poisonDps = Math.max(p.poisonDps || 0, 3.0);
           }
           g.fx.push({ type: 'blast', x: sw.x, y: sw.y, r: mbR, l: 0.34, maxL: 0.34, col: '#84cc16' });
           g.fx.push({ type: 'frostRing', x: sw.x, y: sw.y, r: 12, maxR: mbR, l: 0.30, maxL: 0.30, col: '#a3e635' });
-          g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 3.2, maxL: 3.2, dmg: 6, type: 'puddle', col: '#84cc16' });
+          if(g.bossShockwaves.filter(s => s.type === 'puddle').length < 14){
+            g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 3.2, maxL: 3.2, dmg: 6, type: 'puddle', col: '#84cc16' });
+          }
         } else if(sw.type === 'slime_glob'){
-          g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 4.5, maxL: 4.5, dmg: 4, type: 'puddle', col: '#22c55e' });
+          if(g.bossShockwaves.filter(s => s.type === 'puddle').length < 14){
+            g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 4.5, maxL: 4.5, dmg: 4, type: 'puddle', col: '#22c55e' });
+          }
         } else if(sw.type === 'abom_glob'){
-          g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 4.0, maxL: 4.0, dmg: 5, type: 'abom_puddle', col: '#a855f7' });
+          if(g.bossShockwaves.filter(s => s.type === 'abom_puddle').length < 10){
+            g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 4.0, maxL: 4.0, dmg: 5, type: 'abom_puddle', col: '#a855f7' });
+          }
         } else if(sw.type === 'rat_salvo'){
-          g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 4.5, maxL: 4.5, dmg: 6, type: 'puddle', col: '#84cc16' });
+          if(g.bossShockwaves.filter(s => s.type === 'puddle').length < 14){
+            g.bossShockwaves.push({ x: sw.x, y: sw.y, vx: 0, vy: 0, l: 4.5, maxL: 4.5, dmg: 6, type: 'puddle', col: '#84cc16' });
+          }
         } else if(sw.type === 'spitter_glob'){
-          spawnBunkerAcidPuddle(g, sw.x, sw.y, 'abom_puddle', 3, 1.7);
+          spawnBunkerAcidPuddle(g, sw.x, sw.y, 'bunker_puddle', 3, 1.7, '#a855f7');
         }
         g.bossShockwaves.splice(i, 1);
       }
@@ -25657,7 +25778,7 @@ function update(dt){
       }
       if(hasVoidTarget){
         const extraVoidProj=Math.max(0,(p.proj||1)-(weaponDef.projectiles||1));
-        const voidMultiMult=(1+extraVoidProj*0.18)*(1+(p.pierce||0)*0.05);
+        const voidMultiMult=(1+extraVoidProj*0.24)*(1+(p.pierce||0)*0.05);
         // Двойное расширяющееся гравитационное кольцо Бездны (+ дополнительные эхо-кольца от Мультикаста)
         g.fx.push({type:'frostRing',x:p.x,y:p.y,r:14,maxR:radius,l:.55,maxL:.55,col:'#a78bfa'});
         g.fx.push({type:'frostRing',x:p.x,y:p.y,r:6,maxR:radius*0.65,l:.42,maxL:.42,col:'#7c3aed'});
@@ -26919,7 +27040,7 @@ function update(dt){
       const petUp = (save && save.itemUpgrades && pet.id && save.itemUpgrades[pet.id]) || {};
       const petDef = ITEMS[pet.id] || {};
       const petRar = petDef.r || 1;
-      const petRarMult = petRar === 5 ? 3.6 : (petRar === 4 ? 2.85 : (petRar === 3 ? 2.2 : (petRar === 2 ? 1.65 : 1.2)));
+      const petRarMult = petRar === 5 ? 1.65 : (petRar === 4 ? 1.28 : (petRar === 3 ? 0.96 : (petRar === 2 ? 0.70 : 0.48)));
       const petDmgStep = petRar === 5 ? 0.08 : (petRar === 4 ? 0.062 : (petRar === 3 ? 0.048 : (petRar === 2 ? 0.035 : 0.025)));
       const petCoolStep = petRar === 5 ? 0.048 : (petRar === 4 ? 0.038 : (petRar === 3 ? 0.030 : (petRar === 2 ? 0.024 : 0.018)));
       const petDmgMult = 1 + (petUp.dmg || 0) * petDmgStep;
@@ -27238,16 +27359,20 @@ function update(dt){
       for(const e of g.enemies){
         if(isEnemyUntargetable(e))continue;
         if(Math.hypot(e.x-f.x,e.y-f.y)<=f.r){
-          e.slow=Math.max(e.slow||0,0.60);e.slowT=Math.max(e.slowT||0,0.25);
+          applyEnemySlowOrCC(e, 0.60, 0.25);
         }
       }
     }else if(f.type==='entanglingRoots'){
       if(f.target && !f.target.dead){
         f.x = f.target.x;
         f.y = f.target.y;
-        f.target.rootT = Math.max(f.target.rootT || 0, f.l);
-        f.target.slow = 1.0;
-        f.target.slowT = Math.max(f.target.slowT || 0, f.l);
+        if(isBossOrMini(f.target)){
+          applyEnemySlowOrCC(f.target, 0.78, Math.max(0.25, f.l), 0.35);
+        } else {
+          f.target.rootT = Math.max(f.target.rootT || 0, f.l);
+          f.target.slow = 1.0;
+          f.target.slowT = Math.max(f.target.slowT || 0, f.l);
+        }
         f.tick = (f.tick || 0) - dt;
         if(f.tick <= 0){
           f.tick = 0.22;
@@ -29080,7 +29205,7 @@ function drawBossShockwaves(g, ox, oy, cam){
     cx.save();
     const swAlpha = Math.max(0, Math.min(1, sw.l / sw.maxL));
     cx.globalAlpha = swAlpha;
-    if(sw.type === 'puddle' || sw.type === 'abom_puddle'){
+    if(sw.type === 'puddle' || sw.type === 'abom_puddle' || sw.type === 'bunker_puddle'){
       const isPurple = sw.type === 'abom_puddle' || sw.col === '#a855f7';
       const sc = sw.scale || 1;
       cx.translate(sx, sy);
@@ -37820,7 +37945,7 @@ async function initializeGameData(){
         save=Object.assign(createDefaultSave(),cloudData);
         normalizeSave();
         SafeStorage.setItem('surv_save',JSON.stringify(save));
-        LANG=save.settings.lang==='ru'?'ru':'en';
+        LANG=SUPPORTED_LANGS.includes(save.settings.lang)?save.settings.lang:'en';
         Sfx.enabled=save.settings.sfx!==false;
         if(window.Bgm){Bgm.enabled=save.settings.bgm!==false;Bgm.sync();}
         Sfx.setVolume(save.settings.volume);

@@ -119,8 +119,8 @@ async function testProgression() {
   assert.equal(e.run('JSON.stringify(save.unlockedLvls)'), '[1]', 'Browsing/inventory must not unlock chapters');
   assert.equal(e.context.G, null, 'Locked chapters cannot start');
   assert.equal(e.run('DEV_TOOLS'), false);
-  assert.notEqual(e.element('btn-test-skip-wave').style.display, 'none');
-  assert.notEqual(e.element('btn-test-skip-boss').style.display, 'none');
+  assert.equal(e.element('btn-test-skip-wave').style.display, 'none', 'Release build must hide wave skip button');
+  assert.equal(e.element('btn-test-skip-boss').style.display, 'none', 'Release build must hide boss skip button');
   e.run('selectedLvlIdx=0; startGame();');
   e.emit('keydown');
   assert.equal(e.context.G.wave, 1, 'Release keyboard shortcuts must not skip waves');
@@ -133,6 +133,7 @@ async function testProgression() {
   const dev = environment({ search: '?dev=1' });
   assert.equal(dev.run('DEV_TOOLS'), true);
   assert.notEqual(dev.element('btn-test-skip-wave').style.display, 'none');
+  assert.notEqual(dev.element('btn-test-skip-boss').style.display, 'none');
 }
 
 async function testLifecycleAndAds() {

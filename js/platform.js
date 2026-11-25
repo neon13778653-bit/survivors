@@ -15,6 +15,7 @@
   const Platform = {
     type: 'web', // 'poki' | 'crazygames' | 'telegram' | 'gamedistribution' | 'fbinstant' | 'web'
     isReady: false,
+    _adInProgress: false,
     lastInterstitialTime: 0,
     interstitialCooldown: 60000, // 60s cooldown between mid-roll ads
 
@@ -157,39 +158,44 @@
      */
     rewarded(callback) {
       if (typeof callback !== 'function') callback = () => {};
+      if (this._adInProgress) {
+        console.log('[Platform] Rewarded ad request ignored: ad already in progress');
+        callback(false);
+        return;
+      }
       console.log(`[Platform] Requesting Rewarded Ad on [${this.type}]`);
 
       const prevVolume = (window.Sfx && typeof window.Sfx.volume === 'number') ? window.Sfx.volume : 0.85;
-      const muteGame = () => { if (window.Sfx) window.Sfx.setVolume(0); };
-      const unmuteGame = () => { if (window.Sfx) window.Sfx.setVolume(prevVolume); };
+      let settled = false;
+      const startAd = () => {
+        this._adInProgress = true;
+        if (window.Sfx) window.Sfx.setVolume(0);
+      };
+      const finishAd = (isRewarded) => {
+        if (settled) return;
+        settled = true;
+        this._adInProgress = false;
+        if (window.Sfx) window.Sfx.setVolume(prevVolume);
+        callback(!!isRewarded);
+      };
 
       // 1. Poki
       if (this.type === 'poki' && window.PokiSDK) {
-        muteGame();
+        startAd();
         window.PokiSDK.rewardedBreak()
-          .then((success) => {
-            unmuteGame();
-            callback(success);
-          })
-          .catch(() => {
-            unmuteGame();
-            callback(false);
-          });
+          .then((success) => finishAd(success))
+          .catch(() => finishAd(false));
         return;
       }
 
       // 2. CrazyGames
       if (this.type === 'crazygames' && window.CrazyGames?.SDK?.ad) {
-        muteGame();
+        startAd();
         window.CrazyGames.SDK.ad.requestAd('rewarded', {
-          adFinished: () => {
-            unmuteGame();
-            callback(true);
-          },
+          adFinished: () => finishAd(true),
           adError: (err) => {
             console.warn('[Platform] CrazyGames rewarded ad error:', err);
-            unmuteGame();
-            callback(false);
+            finishAd(false);
           }
         });
         return;
@@ -197,55 +203,42 @@
 
       // 3. Telegram Mini Apps (via Adsgram or partner network)
       if (this.type === 'telegram' && window.Adsgram) {
-        muteGame();
+        startAd();
         try {
           const blockId = window.ADSGRAM_BLOCK_ID || "int-0";
           const AdController = window.Adsgram.init({ blockId: blockId });
           AdController.show()
-            .then(() => {
-              unmuteGame();
-              callback(true);
-            })
+            .then(() => finishAd(true))
             .catch((err) => {
               console.warn('[Platform] Adsgram rewarded error:', err);
-              unmuteGame();
-              callback(false);
+              finishAd(false);
             });
           return;
         } catch (e) {
-          unmuteGame();
+          finishAd(false);
+          return;
         }
       }
 
       // 4. GameDistribution
       if (this.type === 'gamedistribution' && typeof window.gdsdk !== 'undefined' && window.gdsdk.showAd) {
-        muteGame();
+        startAd();
         window.gdsdk.showAd('rewarded')
-          .then(() => {
-            unmuteGame();
-            callback(true);
-          })
-          .catch(() => {
-            unmuteGame();
-            callback(false);
-          });
+          .then(() => finishAd(true))
+          .catch(() => finishAd(false));
         return;
       }
 
       // 5. Facebook Instant Games
       if (this.type === 'fbinstant' && window.FBInstant) {
-        muteGame();
+        startAd();
         const placementId = window.FB_REWARDED_PLACEMENT_ID || 'YOUR_PLACEMENT_ID';
         window.FBInstant.getRewardedVideoAsync(placementId)
           .then(rewardedVideo => rewardedVideo.loadAsync().then(() => rewardedVideo.showAsync()))
-          .then(() => {
-            unmuteGame();
-            callback(true);
-          })
+          .then(() => finishAd(true))
           .catch((err) => {
             console.warn('[Platform] FBInstant Rewarded error:', err);
-            unmuteGame();
-            callback(false);
+            finishAd(false);
           });
         return;
       }
@@ -261,6 +254,11 @@
      */
     interstitial(callback) {
       if (typeof callback !== 'function') callback = () => {};
+      if (this._adInProgress) {
+        console.log('[Platform] Interstitial skipped (another ad in progress)');
+        callback();
+        return;
+      }
 
       const now = Date.now();
       if (now - this.lastInterstitialTime < this.interstitialCooldown) {
@@ -271,36 +269,36 @@
       this.lastInterstitialTime = now;
 
       const prevVolume = (window.Sfx && typeof window.Sfx.volume === 'number') ? window.Sfx.volume : 0.85;
-      const muteGame = () => { if (window.Sfx) window.Sfx.setVolume(0); };
-      const unmuteGame = () => { if (window.Sfx) window.Sfx.setVolume(prevVolume); };
+      let settled = false;
+      const startAd = () => {
+        this._adInProgress = true;
+        if (window.Sfx) window.Sfx.setVolume(0);
+      };
+      const finishAd = () => {
+        if (settled) return;
+        settled = true;
+        this._adInProgress = false;
+        if (window.Sfx) window.Sfx.setVolume(prevVolume);
+        callback();
+      };
 
       // 1. Poki
       if (this.type === 'poki' && window.PokiSDK) {
-        muteGame();
+        startAd();
         window.PokiSDK.commercialBreak()
-          .then(() => {
-            unmuteGame();
-            callback();
-          })
-          .catch(() => {
-            unmuteGame();
-            callback();
-          });
+          .then(() => finishAd())
+          .catch(() => finishAd());
         return;
       }
 
       // 2. CrazyGames
       if (this.type === 'crazygames' && window.CrazyGames?.SDK?.ad) {
-        muteGame();
+        startAd();
         window.CrazyGames.SDK.ad.requestAd('midgame', {
-          adFinished: () => {
-            unmuteGame();
-            callback();
-          },
+          adFinished: () => finishAd(),
           adError: (err) => {
             console.warn('[Platform] CrazyGames interstitial ad error:', err);
-            unmuteGame();
-            callback();
+            finishAd();
           }
         });
         return;
@@ -308,24 +306,23 @@
 
       // 3. GameDistribution
       if (this.type === 'gamedistribution' && typeof window.gdsdk !== 'undefined' && window.gdsdk.showAd) {
-        muteGame();
+        startAd();
         window.gdsdk.showAd()
-          .then(() => { unmuteGame(); callback(); })
-          .catch(() => { unmuteGame(); callback(); });
+          .then(() => finishAd())
+          .catch(() => finishAd());
         return;
       }
 
       // 4. Facebook Instant Games
       if (this.type === 'fbinstant' && window.FBInstant) {
-        muteGame();
+        startAd();
         const placementId = window.FB_INTERSTITIAL_PLACEMENT_ID || 'YOUR_PLACEMENT_ID';
         window.FBInstant.getInterstitialAdAsync(placementId)
           .then(interstitial => interstitial.loadAsync().then(() => interstitial.showAsync()))
-          .then(() => { unmuteGame(); callback(); })
+          .then(() => finishAd())
           .catch((err) => {
             console.warn('[Platform] FBInstant Interstitial error:', err);
-            unmuteGame();
-            callback();
+            finishAd();
           });
         return;
       }
